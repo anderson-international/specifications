@@ -66,9 +66,10 @@ To maintain clarity and simplicity in the Next.js project structure:
 
 ### Authentication Strategy
 
-- **Production:** Use email magic link authentication (Neon Auth or Auth.js with NeonDB)
-- **Development:** Allow user selection from the database for rapid testing; never use in production
-- **No Passwords:** Never store or transmit passwords
+> For detailed authentication implementation, see [Best Practices: Authentication](./best-practices.md#authentication-strategy)
+
+- **Solution:** Auth.js (NextAuth) with email provider
+- **Database Adapter:** NeonDB adapter for persistence
 - **Error Handling:** Surface authentication errors immediately; avoid fallback or silent failure
 
 ## Code Quality Standards
@@ -175,7 +176,7 @@ Prettier ensures consistent code formatting:
 #### Components and Interfaces
 
 - **React Components**: PascalCase (e.g., `UserProfile`, `NavigationBar`)
-- **TypeScript Interfaces**: Prefix with "I" (e.g., `IUser`, `IFormProps`)
+- **TypeScript Interfaces**: PascalCase without prefix (e.g., `User`, `FormProps`) to match modern TypeScript best practices
 - **Type Aliases**: PascalCase, descriptive of the type (e.g., `ButtonSize`, `ThemeColors`)
 
 ### Code Structure and Organization
@@ -185,6 +186,9 @@ Prettier ensures consistent code formatting:
 Follow this general structure for the Next.js project:
 
 ```
+/app                   # Next.js App Router pages and layouts
+  /api                 # API routes
+  /[routes]            # Application routes with page.tsx files
 /components            # React components
   /common              # Shared components
   /layout              # Layout components
@@ -193,9 +197,7 @@ Follow this general structure for the Next.js project:
 /lib                   # Core utilities and services
   /api                 # API utilities
   /utils               # Helper functions
-/pages                 # Next.js pages and API routes
-  /api                 # API endpoints
-  /[routes]            # Application routes
+  /validations         # Zod schemas and validation
 /public                # Static assets
 /styles                # Global styles
 ```
@@ -213,14 +215,14 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/common/Button';
 
 // Types
-interface IProps {
+interface Props {
   title: string;
   isActive?: boolean;
   onSubmit: (data: FormData) => void;
 }
 
 // Component definition
-export const ExampleComponent: React.FC<IProps> = ({ title, isActive = false, onSubmit }) => {
+export const ExampleComponent: React.FC<Props> = ({ title, isActive = false, onSubmit }) => {
   // Hook calls first
   const [data, setData] = useState(null);
   
@@ -308,12 +310,18 @@ A snuff specification builder and CRUD admin application.
 
 ## Setup
 
-```bash
-# Install dependencies
+```cmd
+:: Install dependencies
 npm install
 
-# Start development server
+:: Start development server
 npm run dev
+
+:: Build for production
+npm run build
+
+:: Run production build
+npm start
 ```
 
 ## Features
@@ -408,19 +416,19 @@ As a solo developer, use a simple versioning approach:
 
 #### Basic Git Workflow
 
-```bash
-# Start work on a new feature
+```cmd
+:: Start work on a new feature
 git add .
 git commit -m "Descriptive message about what changed and why"
 git push
 
-# For experimental features that might break things
+:: For experimental features that might break things
 git checkout -b experimental/feature-name
-# Work on the feature...
+:: Work on the feature...
 git add .
 git commit -m "Describe experimental feature"
 
-# When ready to integrate
+:: When ready to integrate
 git checkout main
 git merge experimental/feature-name
 git push
@@ -482,7 +490,21 @@ Keep tooling minimal but effective:
 - Push to GitHub/remote repository regularly
 - Consider occasional local backups of important data
 
+### File Operations Best Practices
+
+#### Always Create Destination Folders Before Writing Files
+
+When working with files:
+
+1. Always check if destination directories exist before writing files
+2. Create necessary directories with appropriate commands
+3. Handle errors properly if file operations fail
+
+This prevents errors when trying to write files to non-existent directories.
+
 ## Testing Standards
+
+> For comprehensive testing guidance, see [Testing Standards](./testing-standards.md)
 
 ### Core Testing Philosophy
 
@@ -726,22 +748,33 @@ The architecture follows these guiding principles aligned with our solo developm
 
    Separate data fetching from presentation:
 
-   ```javascript
-   // Container component
-   const SpecificationListContainer = () => {
-     const [specifications, setSpecifications] = useState([]);
-     
-     useEffect(() => {
-       const fetchData = async () => {
-         const data = await fetchSpecifications();
-         setSpecifications(data);
-       };
-       fetchData();
-     }, []);
-     
-     return <SpecificationList specifications={specifications} />;
-   };
+   ```typescript
+// app/specifications/[id]/page.tsx
+import { notFound } from 'next/navigation';
 
+async function getSpecification(id: string) {
+  try {
+    const specification = await getSpecificationById(id);
+    if (!specification) {
+      return null;
+    }
+    return specification;
+  } catch (error) {
+    console.error('Failed to fetch specification:', error);
+    return null;
+  }
+}
+
+export default async function SpecificationPage({ params }: { params: { id: string } }) {
+  const specification = await getSpecification(params.id);
+  
+  if (!specification) {
+    notFound();
+  }
+  
+  return <SpecificationDetails specification={specification} />;
+}
+```
    // Presentation component
    const SpecificationList = ({ specifications }) => (
      <div>
@@ -778,13 +811,16 @@ The architecture follows these guiding principles aligned with our solo developm
 Use Next.js API Routes for backend functionality:
 
 ```
-/pages/api
+/app/api
   /specifications
-    index.js         # GET (list), POST (create)
-    [id].js          # GET, PUT, DELETE for a specific specification
+    route.ts         # GET (list), POST (create)
+    [id]/
+      route.ts      # GET, PUT, DELETE for a specific specification
   /auth
-    login.js         # Authentication endpoints
-    logout.js
+    login/
+      route.ts      # Authentication endpoints
+    logout/
+      route.ts
 ```
 
 #### API Patterns
@@ -801,20 +837,61 @@ Use Next.js API Routes for backend functionality:
 
 2. **Response Format**
 
-   Standardize API responses:
+   Standardize API responses using the following format:
 
-   ```javascript
+   ```typescript
    // Success response
    {
      data: {...},      // The response data
-     meta: {...}       // Optional metadata (pagination, etc.)
+     meta?: {...}      // Optional metadata (pagination, etc.)
    }
 
    // Error response
    {
      error: {
-       message: "Error message",
-       code: "ERROR_CODE"
+       message: string,  // Human-readable error message
+       code: string,     // Error code (e.g., "INVALID_INPUT", "NOT_FOUND")
+       details?: any     // Optional additional error details
+     }
+   }
+   ```
+   
+   Standard error status codes:
+   - `400` - Bad Request (validation errors, malformed inputs)
+   - `401` - Unauthorized (authentication required)
+   - `403` - Forbidden (authenticated but not authorized)
+   - `404` - Not Found (resource doesn't exist)
+   - `409` - Conflict (e.g., duplicate entry)
+   - `422` - Unprocessable Entity (semantic validation errors)
+   - `500` - Internal Server Error (unexpected server errors)
+
+   Example implementation:
+   
+   ```typescript
+   // app/api/specifications/[id]/route.ts
+   import { NextResponse } from 'next/server';
+   import { prisma } from '@/lib/db';
+   
+   export async function GET(request: Request, { params }: { params: { id: string } }) {
+     try {
+       const specification = await prisma.specification.findUnique({
+         where: { id: params.id }
+       });
+       
+       if (!specification) {
+         return NextResponse.json(
+           { error: { message: 'Specification not found', code: 'NOT_FOUND' } },
+           { status: 404 }
+         );
+       }
+       
+       return NextResponse.json({ data: specification });
+     } catch (error) {
+       console.error('Failed to fetch specification:', error);
+       return NextResponse.json(
+         { error: { message: 'Failed to fetch specification', code: 'SERVER_ERROR' } },
+         { status: 500 }
+       );
      }
    }
    ```

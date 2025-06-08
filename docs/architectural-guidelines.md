@@ -128,20 +128,97 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => useContext(AuthContext);
 ```
 
+### Form Management
+
+#### Form Implementation Decision Tree
+
+```
+Is this a multi-step wizard or complex form?
+├── Yes → Use Full React Hook Form with Multi-step Pattern
+│         (See Multi-step Wizard Implementation below)
+│
+└── No → Is validation required beyond simple required fields?
+    ├── Yes → Use Standard React Hook Form with Zod
+    │         (See Standard Form Implementation below)
+    │
+    └── No → Use Simplified React Hook Form
+            (See Simplified Pattern below)
+```
+
+- Use **React Hook Form** for all form handling, especially multi-step forms
+- Leverage its built-in validation, performance optimization, and state persistence
+- Keep form logic separate from UI components for better testability
+
+Example multi-step form pattern:
+
+```javascript
+// hooks/useSpecificationForm.js
+import { useForm } from 'react-hook-form';
+
+export const useSpecificationForm = () => {
+  const form = useForm({
+    defaultValues: {
+      product: null,
+      characteristics: {},
+      sensoryProfile: {},
+      rating: null
+    },
+    mode: 'onChange' // Validate on change for better UX
+  });
+
+  const nextStep = async (currentStep) => {
+    // Validate current step before proceeding
+    const isValid = await form.trigger(getFieldsForStep(currentStep));
+    if (!isValid) return false;
+    
+    return true;
+  };
+
+  return { form, nextStep };
+};
+
+// components/SpecificationWizard.jsx
+const SpecificationWizard = () => {
+  const { form, nextStep } = useSpecificationForm();
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const handleNext = async () => {
+    if (await nextStep(currentStep)) {
+      setCurrentStep(prev => prev + 1);
+    }
+  };
+
+  return (
+    <FormProvider {...form}>
+      {currentStep === 0 && <ProductSelectionStep />}
+      {currentStep === 1 && <CharacteristicsStep />}
+      {currentStep === 2 && <SensoryProfileStep />}
+      {currentStep === 3 && <ReviewStep />}
+    </FormProvider>
+  );
+};
+
 ## API Design Principles
 
 ### API Routes Structure
 
-Use Next.js API Routes for backend functionality:
+Use Next.js App Router for backend functionality:
 
 ```
-/pages/api
+/app/api
   /specifications
-    index.js         # GET (list), POST (create)
-    [id].js          # GET, PUT, DELETE for a specific specification
+    route.ts              # GET (list), POST (create)
+    [id]/
+      route.ts            # GET, PUT, DELETE for a specific specification
   /auth
-    login.js         # Authentication endpoints
-    logout.js
+    login/
+      route.ts            # Authentication endpoints
+    logout/
+      route.ts
+  /enum/[table]
+    route.ts              # Generic CRUD for enum tables
+    [id]/
+      route.ts            # Individual enum operations
 ```
 
 ### API Patterns
@@ -158,23 +235,33 @@ Use Next.js API Routes for backend functionality:
 
 2. **Response Format**
 
-   Standardize API responses:
+   Standardize API responses using the following format:
 
-   ```javascript
+   ```typescript
    // Success response
    {
      data: {...},      // The response data
-     meta: {...}       // Optional metadata (pagination, etc.)
+     meta?: {...}      // Optional metadata (pagination, etc.)
    }
 
    // Error response
    {
      error: {
-       message: "Error message",
-       code: "ERROR_CODE"
+       message: string,  // Human-readable error message
+       code: string,     // Error code (e.g., "INVALID_INPUT", "NOT_FOUND")
+       details?: any     // Optional additional error details
      }
    }
    ```
+   
+   Standard error status codes:
+   - `400` - Bad Request (validation errors, malformed inputs)
+   - `401` - Unauthorized (authentication required)
+   - `403` - Forbidden (authenticated but not authorized)
+   - `404` - Not Found (resource doesn't exist)
+   - `409` - Conflict (e.g., duplicate entry)
+   - `422` - Unprocessable Entity (semantic validation errors)
+   - `500` - Internal Server Error (unexpected server errors)
 
 3. **Shopify GraphQL Integration**
 
@@ -299,17 +386,56 @@ Use Next.js API Routes for backend functionality:
 
 2. **Data Validation**
 
-   Validate data before saving to the database:
+   Use Zod schemas for type-safe validation across client and server:
 
-   ```javascript
-   function validateSpecification(spec) {
-     const errors = {};
+   ```typescript
+   // lib/validations/specification.ts
+   import { z } from 'zod';
+
+   export const specificationSchema = z.object({
+     shopifyHandle: z.string().min(1),
+     productTypeId: z.number().int().positive(),
+     isFermented: z.boolean().default(false),
+     isOralTobacco: z.boolean().default(false),
+     isArtisan: z.boolean().default(false),
+     grindId: z.number().int().positive(),
+     nicotineLevelId: z.number().int().positive(),
+     experienceLevelId: z.number().int().positive(),
+     review: z.string().optional(),
+     starRating: z.number().int().min(0).max(5).default(0),
+     ratingBoost: z.number().int().default(0),
+     moistureLevelId: z.number().int().positive(),
+     productBrandId: z.number().int().positive(),
+     statusId: z.number().int().default(1), // 1 = draft
      
-     if (!spec.title) errors.title = 'Title is required';
-     if (spec.title && spec.title.length > 100) errors.title = 'Title too long';
-     if (!spec.category) errors.category = 'Category is required';
+     // Junction table relations (arrays of IDs)
+     tastingNoteIds: z.array(z.number().int()).optional(),
+     cureIds: z.array(z.number().int()).optional(),
+     tobaccoTypeIds: z.array(z.number().int()).optional()
+   });
+
+   // Use with React Hook Form
+   import { zodResolver } from '@hookform/resolvers/zod';
+
+   const form = useForm({
+     resolver: zodResolver(specificationSchema)
+   });
+
+   // Reuse on API routes
+   export async function POST(request: Request) {
+     const body = await request.json();
      
-     return Object.keys(errors).length ? { errors } : { isValid: true };
+     try {
+       const validated = specificationSchema.parse(body);
+       // Process validated data
+     } catch (error) {
+       if (error instanceof z.ZodError) {
+         return NextResponse.json(
+           { error: error.errors },
+           { status: 400 }
+         );
+       }
+     }
    }
    ```
 
@@ -389,7 +515,7 @@ Use Next.js API Routes for backend functionality:
 
    ```javascript
    // pages/api/specifications/[id].js
-   export default async function handler(req, res) {
+   export async function handler(req, res) {
      const { id } = req.query;
      
      try {
@@ -420,40 +546,179 @@ Use Next.js API Routes for backend functionality:
    }
    ```
 
-4. **Client-Side Error Handling**
+### Shopify Data Caching
 
-   Manage errors in component data fetching:
+Use Incremental Static Regeneration (ISR) with cache for Shopify product data:
 
-   ```javascript
-   const SpecificationDetail = ({ id }) => {
-     const [specification, setSpecification] = useState(null);
-     const [error, setError] = useState(null);
-     const [loading, setLoading] = useState(true);
-     
-     useEffect(() => {
-       const fetchData = async () => {
-         try {
-           setLoading(true);
-           setError(null);
-           const data = await fetchSpecification(id);
-           setSpecification(data);
-         } catch (error) {
-           setError(error.message);
-         } finally {
-           setLoading(false);
-         }
-       };
-       
-       fetchData();
-     }, [id]);
-     
-     if (loading) return <LoadingSpinner />;
-     if (error) return <ErrorDisplay message={error} />;
-     if (!specification) return <NotFound />;
-     
-     return (/* render specification */);
-   };
-   ```
+```typescript
+// app/api/shopify/products/route.ts
+import { NextResponse } from 'next/server';
+
+export const revalidate = 3600; // Revalidate every hour
+
+export async function GET() {
+  try {
+    // Fetch minimal product data from Shopify
+    const products = await fetchShopifyProducts({
+      fields: ['handle', 'title', 'images', 'vendor'],
+      limit: 1000 // Fetch all ~600 products
+    });
+
+    return NextResponse.json(products);
+  } catch (error) {
+    console.error('Shopify fetch error:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch products' },
+      { status: 500 }
+    );
+  }
+}
+
+// Client-side usage with SWR for additional caching
+// components/ProductSelector.tsx
+import useSWR from 'swr';
+  });
+
+  const onSubmit = (data: FormValues) => {
+    console.log(data);
+    // API submission logic here
+    reset();
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div>
+        <label htmlFor="name">Name</label>
+        <input id="name" {...register("name")} />
+        {errors.name && <p className="error">{errors.name.message}</p>}
+      </div>
+      
+      <div>
+        <label htmlFor="email">Email</label>
+        <input id="email" {...register("email")} />
+        {errors.email && <p className="error">{errors.email.message}</p>}
+      </div>
+      
+      <div>
+        <label htmlFor="age">Age (Optional)</label>
+        <input id="age" type="number" {...register("age", { valueAsNumber: true })} />
+        {errors.age && <p className="error">{errors.age.message}</p>}
+      </div>
+      
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+```
+
+#### Simplified Pattern (For Simple Forms)
+
+```tsx
+import { useForm } from 'react-hook-form';
+
+type SimpleFormValues = {
+  searchQuery: string;
+};
+
+export function SimpleSearchForm() {
+  const { register, handleSubmit } = useForm<SimpleFormValues>();
+
+  const onSubmit = (data: SimpleFormValues) => {
+    console.log(data);
+    // Search logic
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input 
+        {...register("searchQuery", { required: true })} 
+        placeholder="Search..." 
+      />
+      <button type="submit">Search</button>
+    </form>
+  );
+}
+```
+
+#### Multi-step Wizard Implementation
+
+```tsx
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import { z } from 'zod';
+
+// Step 1 Schema
+const step1Schema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+});
+
+// Step 2 Schema
+const step2Schema = z.object({
+  category: z.string().min(1, "Category is required"),
+  tags: z.string().array().min(1, "At least one tag is required"),
+});
+
+// Combined schema
+const formSchema = z.object({
+  ...step1Schema.shape,
+  ...step2Schema.shape,
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+// Custom hook for multi-step form
+export function useMultiStepForm() {
+  const [currentStep, setCurrentStep] = useState(0);
+  
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    mode: 'onChange',
+    defaultValues: {
+      title: '',
+      description: '',
+      category: '',
+      tags: [],
+    },
+  });
+  
+  // Get current step schema for validation
+  const getCurrentStepSchema = () => {
+    return currentStep === 0 ? step1Schema : step2Schema;
+  };
+  
+  // Validate current step fields only
+  const validateStep = async () => {
+    const currentSchema = getCurrentStepSchema();
+    const currentFields = Object.keys(currentSchema.shape);
+    
+    const result = await form.trigger(currentFields as any);
+    return result;
+  };
+  
+  // Go to next step with validation
+  const nextStep = async () => {
+    const isValid = await validateStep();
+    if (isValid) setCurrentStep(prev => prev + 1);
+    return isValid;
+  };
+  
+  // Go to previous step
+  const prevStep = () => {
+    setCurrentStep(prev => Math.max(0, prev - 1));
+  };
+  
+  return {
+    currentStep,
+    form,
+    nextStep,
+    prevStep,
+    isFirstStep: currentStep === 0,
+    isLastStep: currentStep === 1, // Adjust based on total steps
+  };
+};
+```
 
 ## Performance Optimization
 
@@ -581,3 +846,141 @@ Use Next.js API Routes for backend functionality:
    - Consider using Prisma's transaction API for operations that need to be atomic
 
 Remember, these architectural guidelines are focused on simplicity and maintainability for a solo developer while ensuring the application remains scalable and performant.
+
+## Mobile-First Implementation
+
+### Core Mobile Design Principles
+
+1. **Touch-Optimized UI**
+   - Use minimum tap target size of 44×44px
+   - Implement swipe gestures for wizard navigation
+   - Avoid hover-dependent interactions
+   - Use bottom navigation for primary actions
+
+2. **Responsive Layout Strategy**
+   
+   ```css
+   /* Base mobile styles (up to 640px) */
+   .container {
+     padding: 1rem;
+   }
+   
+   /* Small tablets (641px to 768px) */
+   @media (min-width: 641px) {
+     .container {
+       padding: 1.5rem;
+     }
+   }
+   
+   /* Desktop (769px and above) */
+   @media (min-width: 769px) {
+     .container {
+       padding: 2rem;
+       max-width: 1200px;
+       margin: 0 auto;
+     }
+   }
+   ```
+
+3. **Touch-First Form Components**
+
+   ```tsx
+   // components/TouchSelect.tsx
+   import { Listbox } from '@headlessui/react'
+   
+   export function TouchSelect({ options, value, onChange }) {
+     return (
+       <Listbox value={value} onChange={onChange}>
+         <div className="touch-select">
+           <Listbox.Button className="touch-select-button">
+             {value?.label || 'Select option...'}
+           </Listbox.Button>
+           <Listbox.Options className="touch-select-options">
+             {options.map((option) => (
+               <Listbox.Option
+                 key={option.id}
+                 value={option}
+                 className="touch-select-option"
+               >
+                 {option.label}
+               </Listbox.Option>
+             ))}
+           </Listbox.Options>
+         </div>
+       </Listbox>
+     );
+   }
+   ```
+
+4. **Gesture Handling**
+
+   Implement swipe navigation for the form wizard:
+
+   ```tsx
+   // hooks/useSwipeNavigation.ts
+   import { useSwipeable } from 'react-swipeable';
+   
+   export function useSwipeNavigation({ onNext, onPrev, validationFn }) {
+     const handlers = useSwipeable({
+       onSwipedLeft: () => {
+         // Validate current step before allowing progression
+         if (validationFn && !validationFn()) return;
+         onNext();
+       },
+       onSwipedRight: () => onPrev(),
+       preventDefaultTouchmoveEvent: true,
+       trackMouse: false
+     });
+     
+     return handlers;
+   }
+   ```
+
+## Deployment Strategy
+
+### Netlify Platform
+
+Deploy the application to Netlify:
+
+```javascript
+// netlify.toml
+[build]
+  command = "npm run build"
+  publish = ".next"
+  
+[build.environment]
+  NEXT_TELEMETRY_DISABLED = "1"
+  NODE_VERSION = "18"
+  
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  
+[dev]
+  command = "npm run dev"
+  port = 3000
+  publish = ".next"
+```
+
+### Deployment Workflow
+
+Use Windsurf's native Netlify integration for IDE-based deployments:
+
+1. **Development**: Local development with `npm run dev`
+2. **Preview**: One-click Netlify deployments directly from Windsurf IDE
+3. **Production**: Automatic deploys from main branch
+
+### Environment Configuration
+
+Store sensitive credentials in Netlify environment variables:
+
+- Database credentials
+- Auth secrets
+- Shopify API keys
+- Email service credentials
+
+Remember, these are never committed to the repository, always use `.env.example` as a template.

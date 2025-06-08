@@ -36,6 +36,18 @@ These are not hard technical limits imposed by Next.js, but exceeding them can h
 
 This approach balances simplicity with the specific requirements of Shopify's GraphQL API while maintaining a straightforward development experience.
 
+### Form Management Strategy
+
+> For comprehensive form implementation patterns, see [Architectural Guidelines: Form Management](./architectural-guidelines.md#form-management)
+
+- **React Hook Form** with Zod validation for all forms
+- **Zod Schema-Driven Validation** for type safety and consistent validation
+- **Multi-Step Forms** with wizard pattern for complex forms
+- **Form State Management** contained within the form components
+- **Error Handling** with clear user feedback tied to specific fields
+
+This strategy provides a consistent, type-safe approach to forms with minimal boilerplate and excellent developer experience.
+
 ### CSS/Styling Strategy
 
 - **Default to CSS Modules** for all component styling
@@ -48,7 +60,8 @@ CSS Modules provide automatic scoping, prevent style conflicts, and have minimal
 
 ### Authentication Strategy
 
-- **Production:** Use email magic link authentication (Neon Auth or Auth.js with NeonDB)
+- **Solution:** Auth.js (NextAuth) with email provider
+- **Production:** Use email magic link authentication with NeonDB as the database adapter
 - **Development:** Allow user selection from the database for rapid testing; never use in production
 - **No Passwords:** Never store or transmit passwords
 - **Error Handling:** Surface authentication errors immediately; avoid fallback or silent failure

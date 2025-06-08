@@ -4,7 +4,7 @@
 # Last Updated: 2025-06-07
 
 ## Overview
-This database supports a nasal snuff specification management system with:
+This database supports a snuff specification management system with:
 - Multi-reviewer specifications for products
 - Enum-based categorization
 - Junction tables for many-to-many relationships

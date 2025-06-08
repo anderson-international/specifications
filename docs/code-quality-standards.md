@@ -124,7 +124,7 @@ To integrate Prettier with ESLint, we use:
 ### Components and Interfaces
 
 - **React Components**: PascalCase (e.g., `UserProfile`, `NavigationBar`)
-- **TypeScript Interfaces**: Prefix with "I" (e.g., `IUser`, `IFormProps`)
+- **TypeScript Interfaces**: PascalCase without prefix (e.g., `User`, `FormProps`) to match modern TypeScript best practices
 - **TypeScript Types**: PascalCase, descriptive (e.g., `UserRole`, `FormState`)
 - **Enums**: PascalCase, singular naming (e.g., `ButtonType`, `NotificationType`)
 
@@ -136,18 +136,18 @@ To integrate Prettier with ESLint, we use:
 specifications/
 ├── docs/                   # Project documentation
 ├── .next/                  # Next.js build output
+├── app/                    # Next.js App Router pages and layouts
+│   ├── api/                # API routes
+│   └── [routes]/           # Application routes with page.tsx files
 ├── components/             # Reusable UI components
 │   ├── common/             # Shared components across features
 │   ├── layout/             # Layout components
 │   └── [feature]/          # Feature-specific components
-├── config/                 # Configuration files
 ├── hooks/                  # Custom React hooks
 ├── lib/                    # Core utilities and services
 │   ├── api/                # API utilities
-│   └── utils/              # Helper functions
-├── pages/                  # Next.js pages and API routes
-│   ├── api/                # API endpoints
-│   └── [routes]/           # Application routes
+│   ├── utils/              # Helper functions
+│   └── validations/        # Zod schemas and validation
 ├── public/                 # Static assets
 ├── styles/                 # Global styles
 ├── types/                  # TypeScript type definitions
@@ -169,14 +169,14 @@ import { Button } from '@/components/common/Button';
 import { formatDate } from '@/lib/utils/formatDate';
 
 // Types
-interface IProps {
+interface Props {
   title: string;
   isActive?: boolean;
   onSubmit: (data: FormData) => void;
 }
 
 // Component definition
-export const ExampleComponent: React.FC<IProps> = ({ title, isActive = false, onSubmit }) => {
+export const ExampleComponent: React.FC<Props> = ({ title, isActive = false, onSubmit }) => {
   // Hook calls first
   const [data, setData] = useState(null);
   const { user } = useAuth();
@@ -255,25 +255,25 @@ For application-wide state management, we use [React Context API](https://reactj
 // UserContext.tsx
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
-interface IUser {
+interface User {
   id: string;
   name: string;
   email: string;
   role: 'admin' | 'user';
 }
 
-interface IUserContext {
-  user: IUser | null;
+interface UserContext {
+  user: User | null;
   loading: boolean;
   error: Error | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
-const UserContext = createContext<IUserContext | undefined>(undefined);
+const UserContext = createContext<UserContext | undefined>(undefined);
 
 export const UserProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState<IUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 

@@ -12,19 +12,19 @@ This document outlines a lightweight workflow for the specifications project - a
 
 ### Basic Git Workflow
 
-```bash
-# Start work on a new feature
+```cmd
+:: Start work on a new feature
 git add .
 git commit -m "Descriptive message about what changed and why"
 git push
 
-# For experimental features that might break things
+:: For experimental features that might break things
 git checkout -b experimental/feature-name
-# Work on the feature...
+:: Work on the feature...
 git add .
 git commit -m "Describe experimental feature"
 
-# When ready to integrate
+:: When ready to integrate
 git checkout main
 git merge experimental/feature-name
 git push
@@ -48,12 +48,26 @@ Keep commit messages clear but concise:
 
 Example structure:
 ```
+/app             # Next.js App Router pages and layouts
+  /api           # API routes
+  /[routes]      # Application routes with page.tsx files
 /components      # UI components
-/pages           # Page components/routes
-/api             # API routes and handlers
 /lib             # Shared utilities and helpers
+  /api           # API utilities
+  /utils         # Helper functions
+  /validations   # Zod schemas and validation
 /styles          # CSS/styling
 ```
+
+## Development Setup
+
+For complete development environment setup instructions, see [Getting Started](./project-blueprint.md#getting-started) in the project blueprint document. This includes:
+
+1. Prerequisites installation
+2. Repository setup
+3. Environment configuration
+4. Database connection with NeonDB and Prisma
+5. Development server startup
 
 ## Development Workflow
 

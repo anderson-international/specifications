@@ -58,11 +58,11 @@ A snuff specification builder and CRUD admin application.
 
 ## Setup
 
-```bash
-# Install dependencies
+```cmd
+:: Install dependencies
 npm install
 
-# Start development server
+:: Start development server
 npm run dev
 ```
 
