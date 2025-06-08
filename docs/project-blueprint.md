@@ -160,7 +160,7 @@ To avoid information overload, different tasks have distinct UI flows:
    - **Reviewers**: 
      - Create, read, update, delete their own specifications
      - Read-only access to other reviewers' specifications
-   - **Admin** (Jonny - jonny@ail.im):
+   - **Admin**:
      - Full CRUD access to all specifications
      - Full CRUD access to all enum tables
      - User management
