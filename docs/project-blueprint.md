@@ -1,66 +1,7 @@
 # Specifications Project Blueprint
 
 ## Overview
-This document serves as the comprehensive blueprint for the snuff specification management application, defining its vision, requirements, and implementation plan. It represents the single source of truth for project direction and key decisions. Last updated: 2025-06-07
-
-## Getting Started
-
-### Development Environment Setup
-
-#### Prerequisites
-- Node.js 18+ (LTS)
-- Git
-- A code editor (Windsurf IDE recommended for native Netlify integration)
-
-#### Initial Setup
-
-1. **Clone the Repository**
-   ```cmd
-   git clone <repository-url>
-   cd specifications
-   ```
-
-2. **Install Dependencies**
-   ```cmd
-   npm install
-   ```
-
-3. **Environment Configuration**
-   ```cmd
-   copy .env.example .env
-   ```
-   Edit `.env` with your specific environment values:
-   - `DATABASE_URL` - NeonDB connection string for PostgreSQL
-   - `SHOPIFY_STORE_URL` - Your Shopify store URL
-   - `SHOPIFY_ACCESS_TOKEN` - Shopify Storefront API access token
-   - `SHOPIFY_API_VERSION` - Shopify API version to use
-   - `SHOPIFY_API_KEY` - Shopify API key
-   - `SHOPIFY_API_SECRET_KEY` - Shopify API secret key
-
-4. **Database Setup**
-   ```cmd
-   :: Generate Prisma client based on schema
-   npx prisma generate
-   
-   :: Apply migrations to your development database
-   npx prisma migrate dev
-   ```
-
-5. **Start Development Server**
-   ```cmd
-   npm run dev
-   ```
-   The application will be available at http://localhost:3000
-
-#### NeonDB Connection
-
-You'll need to create a NeonDB project and obtain a connection string from the NeonDB dashboard. The connection string format is:
-
-```
-postgres://user:password@host:port/database
-```
-
-Connect to your development branch for local development and the main branch for production deployment.
+This document serves as the comprehensive blueprint for the Specification Builder application, defining its vision, requirements, and implementation plan. It represents the single source of truth for project direction and key decisions. Last updated: 2025-06-08
 
 ## Business Context
 
@@ -78,14 +19,23 @@ Building a comprehensive dataset for AI/LLM training with multiple perspectives 
 ## User Types and Access
 
 ### Phase 1 (MVP)
-1. **Trusted Reviewers** (~20 users)
+1. **Reviewers** (~20 users)
    - Can create and edit their own specifications
    - Can view (but not edit) other reviewers' specifications
    - Each reviewer expected to eventually review all 600 products
+   - Can save specifications as drafts before publishing
 
 2. **Admin** (store owner)
-   - Full access to all data and features
-   - Manages reviewer accounts
+   - Full CRUD access to all primary tables:
+     - specifications: Can create, read, update, and delete any specification regardless of author
+     - users: Complete user management (create, update, delete reviewer accounts)
+     - All enum tables: Can manage values for all 11 enum tables (product types, grinds, nicotine levels, etc.)
+   - Workflow management:
+     - Can change specification status (draft, published, needs_revision, under_review)
+     - Can approve or request revisions for specifications
+   - System configuration: Can modify system settings and integrations
+   - Data management: Export data and generate reports
+   - Can manually trigger product data refresh from Shopify
 
 ### Phase 2 (Future)
 3. **Public Reviewers**
@@ -102,91 +52,72 @@ Building a comprehensive dataset for AI/LLM training with multiple perspectives 
 5. Creates specification in JotForm
 
 ### Problems to Solve
-- Hard to track which of 1,200+ products have been reviewed
+- Hard to track which of 600 products have been reviewed
 - Popular products become over-represented
 - Manual process is inefficient
 
 ### New App Workflow
 1. **Product Discovery**
-   - Clear display of completed vs available products
-   - Integration with Shopify for product data and images
+   - Clear visual indicator showing which products have already been reviewed vs. those awaiting review
+   - Products displayed as cards with filters by brand and type-ahead search box
+   - Product images displayed only on product cards
+   - Products stored in local database, refreshed from Shopify via scheduled jobs
 
-2. **Snuff Request Builder** (Semi-automated)
-   - System automatically includes under-represented products
-   - Allows limited slots for personal picks
-   - Prevents over-representation
+2. **Specification Creation**
+   - Direct entry in app (replacing JotForm) using multi-step wizard form
+   - Rich form with all specification fields organized in logical steps
+   - Draft saving capability using status workflow
+   - Form validation with clear feedback
 
-3. **Specification Creation**
-   - Direct entry in app (replacing JotForm)
-   - Rich form with all specification fields
+3. **Specification Management**
+   - View lists grouped by status (Draft, Published, Needs Revision, Under Review)
+   - Edit draft specifications
+   - View read-only published specifications
+   - Filter by product attributes
 
-## Technical Considerations
-
-### Shopify Integration
-- Read-only access to ~600 products
-- Performance issue: Slow to fetch product list
-- Solution: Pre-fetch and cache data before user authentication
-- Used for: Product images, product list for requests
-- Relationship: One product → many specifications (one per reviewer)
+## Technical Architecture
 
 ### Authentication
-- Development: User selection mode
-- Production: Magic link email authentication
-- No password storage
+- **Production**: Magic link email authentication (no password storage)
+- **Development**: User selection dropdown for testing
+- Role-based access control (Admin vs Reviewer)
 
-## User Experience Strategy
+## Feature Requirements
 
-### Separate User Journeys
-To avoid information overload, different tasks have distinct UI flows:
-1. Creating new specifications
-2. Editing existing specifications
-3. Improving specification quality
-4. Viewing others' specifications as examples
+### Core MVP Features
 
-### Quality Control (Nice-to-Have)
-- AI-assisted scoring system for specifications
-- Metrics: Completeness, review sentiment/clarity
-- Reviewer leaderboard for gamification
-- Goal: Maintain high standards, avoid extreme reviews
+1. **Authentication & User Management**
+   - Email magic links for production, user selection dropdown for development
+   - Role-based access control (Admin and Reviewer roles)
+   - Protected routes based on user role
 
-## MVP Scope - Simplified Focus
+2. **Product Discovery & Integration**
+   - Products displayed as cards with filters by brand and type-ahead search box
+   - Visual indicator showing which products have been reviewed vs. those awaiting review
+   - Product images displayed only on product cards
+   - Products stored in local database table, refreshed via scheduled jobs using pg_cron
+   - No direct Shopify API interaction from the application
 
-### Core MVP Features (Essential CRUD Application)
-1. **Authentication**
-   - Email magic links (production)
-   - User selection mode (development)
-   
-2. **User Roles**
-   - **Reviewers**: 
-     - Create, read, update, delete their own specifications
-     - Read-only access to other reviewers' specifications
-   - **Admin**:
-     - Full CRUD access to all specifications
-     - Full CRUD access to all enum tables
-     - User management
-
-3. **Specifications CRUD**
-   - Create new specifications with all required fields
+3. **Specification Management**
+   - Create new specifications with all required fields via multi-step wizard
    - Edit draft specifications
-   - Save as draft functionality (using status field)
-   - Publish specifications
+   - Status workflow (draft, published, needs_revision, under_review)
    - View list with filters (status, brand, product title)
+   - Grouped by status in UI (Draft, Published, Needs Revision, Under Review)
 
-4. **Basic Shopify Integration**
-   - Product dropdown for specification creation
-   - Display product images where available
-   - Pre-fetch and cache for performance
+### Post-MVP Features
 
-### Nice-to-Have Features (Post-MVP)
 1. **Snuff Request Builder**
    - Semi-automated product selection (70% system, 30% personal)
    - Weight constraint management (1800g limit)
    - Track reviewed vs available products
    
-2. **Quality Scoring System**
+2. **Quality Control System**
    - AI-assisted specification scoring
-   - Reviewer leaderboard
+   - Metrics: Completeness, review sentiment/clarity
+   - Reviewer leaderboard for gamification
    - Review improvement suggestions
+   - Goal: Maintain high standards, avoid extreme reviews
 
 3. **Public Reviewer Access**
    - Extended user type with limited permissions
@@ -198,12 +129,6 @@ To avoid information overload, different tasks have distinct UI flows:
    - Advanced analytics
    - Slack integration for notifications
 
-## Open Questions
-1. 10-20 products, constrained by 1800g weight limit
-2. 70% system-selected, 30% personal choice
-3. Simple algorithm: products with fewest total specifications
-4. Specific UI/UX preferences?
-
 ## Specification Field Requirements
 
 ### Always Required Fields
@@ -212,65 +137,79 @@ To avoid information overload, different tasks have distinct UI flows:
 - Grind
 - Nicotine level
 - Experience level (reviewer's experience)
-- Moisture level
-- Product brand
-- Is fermented (default: false)
-- Is oral tobacco (default: false)
-- Is artisan (default: false)
-- Star rating (default: 0)
-- Rating boost (default: 0)
 
-### Multi-Select Fields
-- **Tasting notes** - Should always have at least 1 selection
-  - Key quality indicator: more notes = better review
-  - Provides formalized categorization for linking snuffs
-- **Cures** - Often empty (requires specialized knowledge)
-- **Tobacco types** - Often empty (requires specialized knowledge)
+#### Required Fields
+- **Product selection** (shopify_handle) - Links to product data from Shopify
+- **Product type** - Selected from enum_product_types table
+- **Star rating** - Numeric rating on standard 5-star scale
+- **Experience level** - Selected from enum_experience_levels
+- **Nicotine level** - Selected from enum_nicotine_levels
+- **Moisture level** - Selected from enum_moisture_levels
+- **Grind** - Selected from enum_grinds table
+- **Review text** - Free text narrative review
+- **Tasting notes** - Multi-select from enum_tasting_notes (minimum 1 required)
+- **Cures** - Multi-select from enum_cures (at least one required)
 
-### Free Text Fields
-- Review text - The narrative review
+#### Optional Fields
+- **Tobacco types** - Multi-select from enum_tobacco_types (optional, requires specialized knowledge)
+- **Boolean Flags**:
+  - Fermented? (yes/no)
+  - Oral tobacco? (yes/no)
+  - Artisan? (yes/no)
+- **Rating boost** - Optional field for exceptional products
+
+### Form Validation Rules
+
+- **Tasting Notes**: Minimum 1 tasting note required
+  - **Validation Message**: "Please select at least one tasting note. The more notes you can identify, the better your review will be - but only select notes you can genuinely smell or taste. If you can only identify one, that's fine."
 
 ### Quality Indicators
 - Number of tasting notes (more is better)
 - Completeness of review text
 - Appropriate star rating
 
-## Form Validation Rules
-
-### Tasting Notes Requirement
-- **Minimum**: 1 tasting note required
-- **Validation Message**: "Please select at least one tasting note. The more notes you can identify, the better your review will be - but only select notes you can genuinely smell or taste. If you can only identify one, that's fine."
-
-## User Interface Decisions
-
-### Specification List View
-- Drafts integrated into main specification list
-- Filter system to view different slices of data
-- Filters include:
-  - Draft vs Published status
-  - Product brand (dropdown from enum_product_brands)
-  - Product title (type-ahead search box)
-
-### Enum Table Management (Admin)
-- **Enum values are editable** - The text of enum values can be modified after creation
-- **Deletion prevention** - Cannot delete enum values that are referenced by specifications
-- **Addition allowed** - New enum values can be added at any time
-- **Rationale**: Normalization allows for fixing typos, improving clarity, and maintaining consistency
-
-### Dev Mode Authentication UI
-- **Decision**: Dropdown list for user selection
-- **Implementation**:
-  - Simple dropdown with test users
-  - Shows user name and role (admin/reviewer)
-  - "Login" button below dropdown
-- **Rationale**: Simple, familiar pattern for development testing
-
-### UI/UX Design Decisions
+## UI/UX Design Decisions
 
 ### Mobile-First Design
 - **Primary Design Target**: Mobile devices
 - All UX decisions will prioritize mobile user experience
 - Desktop experience will be an enhancement of the mobile design
+- Touch-friendly UI elements throughout the application
+
+### App Navigation Structure
+- **Decision**: Left-hand navigation panel with collapsible behavior on mobile
+- **Implementation**:
+  - Fixed left nav with main sections:
+    - Specifications
+    - Products
+    - New Specification
+    - Admin (only visible to admin users)
+  - Main content area shows relevant data for selected section
+  - Collapsible on mobile for maximum screen space
+  - Shows progress stats (e.g., "245/600 products reviewed")
+- **Rationale**: Clear entry points, shows progress, scales well for future features
+
+### Specifications List View
+- **Decision**: Grouped by status layout
+- **Implementation**:
+  - Sections: Draft, Published, Needs Revision, Under Review
+  - Each section collapsible with count badge
+  - Within sections: product title, date, and star rating
+  - Swipe actions for quick edit/delete (draft only)
+  - Filter system to view different slices of data:
+    - Product brand (dropdown from enum_product_brands)
+    - Product title (type-ahead search box)
+
+### Admin Interface Elements
+- **Enum Table Management**:
+  - Enum values are editable - The text can be modified after creation
+  - Deletion prevention - Cannot delete values referenced by specifications
+  - Addition allowed - New enum values can be added at any time
+- **User Management**:
+  - Simple table view with role assignment
+  - No password management (magic link authentication)
+- **Data Refresh**:
+  - Manual trigger button for product data refresh
 
 ### Specification Form Layout: Multi-Step Wizard
 - **Decision**: Multi-step wizard approach for specification forms
@@ -287,27 +226,27 @@ To avoid information overload, different tasks have distinct UI flows:
    - Type-ahead search box within selected brand
    - **Excludes products already reviewed by current user**
    - Shows product image and name in search results
-   - Leverages pre-fetched Shopify data (cached before auth)
    - Visual indicator showing total products vs. remaining to review
    
-2. **Step 2: Product Characteristics**
+2. **Step 2: Product Characteristics 1**
    - Product type - segmented control/chip selector
+   - Experience level
+   - Tobacco types (multi-select, optional)
+
+3. **Step 3: Product Characteristics 2**
+   - Cures (multi-select, optional)
    - Grind - segmented control/chip selector  
-   - Nicotine level - segmented control/chip selector
-   - Moisture level - segmented control/chip selector
-   - Product brand - compact dropdown/modal picker
    - Boolean flags - toggle switches (fermented, oral tobacco, artisan)
    
-3. **Step 3: Sensory Profile**
+4. **Step 4: Sensory Profile**
    - Tasting notes (multi-select, minimum 1 required)
-   - Cures (multi-select, optional)
-   - Tobacco types (multi-select, optional)
+   - Nicotine level - segmented control/chip selector
+   - Moisture level - segmented control/chip selector
    
-4. **Step 4: Review & Rating**
+5. **Step 5: Review & Rating**
    - Review text (textarea)
    - Star rating
    - Rating boost
-   - Experience level
 
 #### Wizard Navigation Pattern
 - **Decision**: Swipe gestures for step navigation
@@ -329,12 +268,15 @@ To avoid information overload, different tasks have distinct UI flows:
 - **Rationale**: Natural checkpoint, all errors visible on single screen, less distracting
 
 #### App Navigation Structure
-- **Decision**: Home dashboard - central screen with cards/buttons
+- **Decision**: Dashboard with left-hand navigation panel
 - **Implementation**:
-  - Dashboard shows main actions as cards
-  - "My Specifications" card
-  - "Create New Specification" card  
-  - "Admin" card (only visible to admin users)
+  - Fixed left-hand navigation panel with main sections:
+    - Dashboard (home/overview)
+    - My Specifications 
+    - New Specification
+    - Admin (only visible to admin users)
+  - Main content area shows relevant data for selected section
+  - Collapsible on mobile for maximum screen space
   - Shows progress stats (e.g., "245/600 products reviewed")
 - **Rationale**: Clear entry points, shows progress, scales well for future features
 
@@ -367,7 +309,6 @@ To avoid information overload, different tasks have distinct UI flows:
   - Primary Button: #1878B9 (24, 120, 185)
   - Success Button: #469B3B (70, 155, 59)
   - Divider: #A1A1A1 (161, 161, 161)
-  - Banner: #FFFFFF (255, 255, 255)
 - **Implementation**:
   - Cards with both border and lighter background for maximum distinction
   - Each form section in its own card
@@ -412,173 +353,103 @@ To avoid information overload, different tasks have distinct UI flows:
 - **Use Headless UI for**:
   - Combobox (product search with autocomplete)
   - Listbox (dropdowns like brand filter)
-  - Dialog (modal pickers)
-  - Transition (wizard step animations)
-- **Build from scratch**:
-  - Cards, buttons, toggles
-  - Progress indicators
-  - Simple form inputs
-- **Rationale**: 
-  - Handles complex mobile/accessibility concerns
-  - Maintains full visual control with CSS Modules
-  - Minimal dependencies
 
 ### Form State Management
-- **Decision**: React Hook Form
-- **Rationale**:
-  - Built-in validation and error handling
-  - Excellent performance with many fields
-  - Automatic state persistence across wizard steps
-  - Minimal re-renders
-  - Works well with TypeScript
-- **Key patterns**:
-  - Custom hook for multi-step form logic
+- **Library**: React Hook Form with Zod schemas
+- **Implementation**:
+  - Multi-step wizard with controlled progression
+  - Custom hook for form state across steps
   - Step validation before progression
-  - Draft saving capabilities
+  - Draft saving capabilities via status field
 
-### API Route Structure
-- **Decision**: RESTful pattern with App Router
-- **Structure**:
-  - `/api/specifications` - GET (list), POST (create)
-  - `/api/specifications/[id]` - GET, PUT, DELETE
-  - `/api/enum/[table]` - Generic CRUD for enum tables
+### API Design
+- **Pattern**: RESTful endpoints with Next.js App Router
+- **Key Routes**:
+  - `/api/specifications` - Specification management
+  - `/api/enum/[table]` - Enum table CRUD operations
   - `/api/auth/*` - Authentication endpoints
-- **Rationale**:
-  - Standard REST conventions
-  - Clear resource-based organization
-  - Easy to understand and maintain
-  - Works well with Prisma models
+  - `/api/admin/refresh-products` - Manual product refresh trigger
 
-### Data Validation Strategy
-- **Decision**: Zod schemas for validation
-- **Rationale**:
+### Data Validation
+- **Strategy**: Single source of truth with Zod schemas
+- **Implementation**:
+  - Shared schemas between client and server
   - Type-safe validation with TypeScript
-  - Single source of truth for validation rules
-  - Reusable between client and server
-  - Integrates perfectly with React Hook Form
-  - Automatic error messages
+  - Integration with React Hook Form
+  - Consistent error messaging
+
+### Product Data Management
+- **Approach**: Database-driven with scheduled and manual refresh
 - **Implementation**:
-  - Define schemas in `lib/validations/`
-  - Use zodResolver with React Hook Form
-  - Parse API inputs with same schemas
-  - Generate TypeScript types from schemas
+  - Products stored in local database table
+  - `refresh_shopify_products()` stored procedure handles Shopify API calls
+  - NeonDB's pg_cron extension for scheduled refresh (every 6 hours)
+  - Admin API endpoint for manual refresh
+  - Logging of all refresh operations
 
-### Shopify Caching Strategy
-- **Decision**: ISR (Incremental Static Regeneration) with client-side caching
-- **Implementation**:
-  - API route with `revalidate: 3600` (1 hour)
-  - Fetch minimal fields only (handle, title, images, vendor)
-  - Client-side SWR for additional caching layer
-  - Pre-fetch before auth for perceived performance
-- **Rationale**:
-  - Balances freshness with performance
-  - Simple implementation, no background jobs
-  - Handles ~600 products efficiently
-  - Updates automatically without manual intervention
-
-### Deployment Strategy
-- **Decision**: Netlify with Windsurf IDE integration
-- **Implementation**:
-  - Deploy via Windsurf's native Netlify integration
-  - Configure with netlify.toml for Next.js App Router
-  - Configure environment variables in Netlify dashboard
-- **Rationale**:
-  - Seamless one-click deployments from Windsurf IDE
-  - Excellent Next.js support with the Netlify plugin
-  - Built-in preview deployments for testing changes
-  - No manual deployment steps required
-
-## Confirmed Database Schema (from NeonDB branch: br-tiny-lab-abtu8c62)
-
-### Main Tables
-- **specifications** - Core specification data 
-- **users** - Reviewer accounts
-- **spec_cures, spec_tasting_notes, spec_tobacco_types** - Junction tables
-- **enum_* tables** (10 total) - Lookup values
-- **jotform, jotform_shopify, transform_log** - Temporary tables to be dropped post-migration
-
-### Key Schema Insights
-- NO separate reviews or star_ratings tables exist
-- `star_rating` is a field within specifications table
-- **NO draft/published field exists** - will need to implement status workflow
-- All enum references are foreign key constrained
-
-## Pending Database Work
-- Created `enum_specification_statuses` table with values: draft, published, needs_revision, under_review
-- Added `status_id` column to specifications table (defaults to 1/draft)
-- Need to UPDATE all existing specifications to status_id = 2 (published) when Prisma is configured
-
-## Current Discussion Point
-### UI/UX Preferences ✓ COMPLETED
-All major UI/UX decisions have been documented above, including:
-- Mobile-first approach
-- Multi-step wizard for forms
-- Dark theme with existing brand colors
-- Navigation and component patterns
-
-### Technical Stack ✓ CORE DECISIONS MADE
-Core technical decisions documented:
-- Frontend: Next.js
-- Styling: CSS Modules
-- Database: Prisma ORM
-- UI Components: Headless UI for complex interactions
-
-Further technical decisions will be made during implementation as needed.
+### Deployment
+- **Platform**: Netlify via Windsurf IDE integration
+- **Configuration**: netlify.toml with environment variables
+- **Benefits**: Seamless deployment, preview environments, excellent Next.js support
 
 ## Implementation Roadmap
 
-> This consolidated roadmap serves as the single source of truth for implementation priorities across all documentation.
+### Phase 1: Foundation
 
-### Phase 1: Foundation Setup
-
-1. **Documentation & Planning**
-   - Create comprehensive documentation (this phase)
-   - Define database schema and API contracts
-   - Establish project standards and guidelines
-
-2. **Project Setup**
+1. **Project Setup**
    - Initialize Next.js 14 project with App Router
    - Configure TypeScript, ESLint, and Prettier
-   - Set up Prisma ORM and connect to NeonDB
-   - Configure environment variables
+   - Connect to existing NeonDB database with Prisma ORM
+   - Set up environment variables for development and production
 
-3. **Authentication System**
-   - Implement Auth.js (NextAuth) with email provider
-   - Configure NeonDB adapter for auth persistence
-   - Create login/logout flows with magic link authentication
+2. **Authentication System**
+   - Implement Auth.js (NextAuth) with email magic link provider
+   - Configure NeonDB adapter for user data persistence
+   - Create login/logout flows with appropriate redirects
+   - Implement user roles (Admin, Reviewer) with middleware
+   - Set up protected routes based on user role
 
 ### Phase 2: Core Functionality
 
-4. **Database & API Structure**
-   - Implement Prisma models for specifications
+3. **Database & API Integration**
+   - Implement Prisma models for all required tables
    - Create RESTful API routes with consistent error handling
-   - Set up Shopify API integration with ISR caching
+   - Configure stored procedure `refresh_shopify_products()` for Shopify data
+   - Set up NeonDB's pg_cron extension for scheduled product refresh (every 6 hours)
+   - Create admin API endpoint for manual product data refresh
 
-5. **Form Foundation**
-   - Implement React Hook Form with Zod validation
+4. **Form Architecture**
+   - Define Zod validation schemas for all forms
+   - Implement React Hook Form with validation integration
    - Create multi-step wizard form components
-   - Build form state management utilities
+   - Build form state management with step transition handling
+   - Implement draft saving functionality using specification status
 
 ### Phase 3: User Interface
 
-6. **Mobile-First Implementation**
-   - Implement responsive layouts prioritizing mobile experience
-   - Optimize touch targets and gestures
-   - Implement dark theme with system preference detection
+5. **Product Discovery & Selection UI**
+   - Implement product cards with filtering by brand
+   - Create type-ahead search functionality
+   - Build visual indicators for reviewed vs. unreviewed products
+   - Implement responsive product browsing interface
 
-7. **CRUD Operations**
-   - Build specification creation workflow
-   - Implement listing, editing, and deletion interfaces
-   - Add search and filtering capabilities
+6. **Specification Management UI**
+   - Implement left-hand navigation panel with mobile collapse
+   - Build specifications list view with status grouping
+   - Create filtering and sorting capabilities
+   - Implement CRUD operations for specifications
+   - Develop admin-only interfaces for enum table management
 
-### Phase 4: Refinement
+### Phase 4: Refinement & Deployment
 
-8. **Performance Optimization**
-   - Implement ISR caching for Shopify product data
+7. **Mobile Optimization**
+   - Fine-tune responsive layouts for all form steps
+   - Optimize touch targets and gesture controls
+   - Test and refine mobile user flows
+
+8. **Performance & Deployment**
+   - Implement client-side data fetching with SWR
    - Add pagination for large data sets
-   - Optimize client-side data fetching with SWR
-
-9. **Deployment & Testing**
    - Configure Netlify deployment pipeline
    - Implement critical path testing
-   - Verify mobile and desktop experiences
+   - Final QA verification on mobile and desktop
