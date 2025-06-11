@@ -1,0 +1,244 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model enum_cures {
+  id         Int          @id @default(autoincrement())
+  name       String       @unique @db.VarChar(255)
+  created_at DateTime?    @default(now()) @db.Timestamp(6)
+  updated_at DateTime?    @default(now()) @db.Timestamp(6)
+  spec_cures spec_cures[]
+}
+
+model enum_experience_levels {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(255)
+  created_at     DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  specifications specifications[]
+}
+
+model enum_grinds {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(255)
+  created_at     DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  specifications specifications[]
+}
+
+model enum_moisture_levels {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(255)
+  created_at     DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  specifications specifications[]
+}
+
+model enum_nicotine_levels {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(255)
+  created_at     DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  specifications specifications[]
+}
+
+model enum_product_brands {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(255)
+  created_at     DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  specifications specifications[]
+}
+
+model enum_product_types {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(255)
+  created_at     DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  specifications specifications[]
+}
+
+model enum_roles {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+  users      users[]
+}
+
+model enum_snuff_types {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model enum_specification_statuses {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(255)
+  created_at     DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  specifications specifications[]
+}
+
+model enum_statuses {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model enum_tasting_notes {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique @db.VarChar(255)
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?            @default(now()) @db.Timestamp(6)
+  spec_tasting_notes spec_tasting_notes[]
+}
+
+model enum_tobacco_types {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique @db.VarChar(255)
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?            @default(now()) @db.Timestamp(6)
+  spec_tobacco_types spec_tobacco_types[]
+}
+
+model jotform {
+  submission_id         String    @unique @db.VarChar(20)
+  reviewer              String?   @db.VarChar(50)
+  select_product        String?
+  snuff_type            String?   @db.VarChar(20)
+  tobacco               String?
+  moisture              String?   @db.VarChar(20)
+  grind                 String?   @db.VarChar(20)
+  nicotine              String?   @db.VarChar(20)
+  ease_of_use           String?   @db.VarChar(20)
+  review                String?
+  star_rating           Int?      @db.SmallInt
+  cure                  String?
+  tasting_notes         String?
+  fermented             Boolean?  @default(false)
+  oral_tobacco          Boolean?  @default(false)
+  artisan               Boolean?  @default(false)
+  rating_boost          Int?      @db.SmallInt
+  last_updated          DateTime? @default(now()) @db.Timestamp(6)
+  raw_json              String?
+  created_at            DateTime? @db.Timestamp(6)
+  cleaned_product_title String?   @db.VarChar
+  status                String    @default("fetched") @db.VarChar(40)
+  status_updated_at     DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model jotform_shopify {
+  id             Int     @id @default(autoincrement())
+  submission_id  String  @unique(map: "unique_submission_id") @db.VarChar
+  shopify_handle String? @db.VarChar
+  product_type   String? @db.VarChar(255)
+  product_brand  String? @db.VarChar(255)
+  shopify_title  String?
+}
+
+model spec_cures {
+  specification_id Int
+  enum_cure_id     Int
+  enum_cures       enum_cures     @relation(fields: [enum_cure_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  specifications   specifications @relation(fields: [specification_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([specification_id, enum_cure_id])
+}
+
+model spec_tasting_notes {
+  specification_id     Int
+  enum_tasting_note_id Int
+  enum_tasting_notes   enum_tasting_notes @relation(fields: [enum_tasting_note_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  specifications       specifications     @relation(fields: [specification_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([specification_id, enum_tasting_note_id])
+}
+
+model spec_tobacco_types {
+  specification_id     Int
+  enum_tobacco_type_id Int
+  enum_tobacco_types   enum_tobacco_types @relation(fields: [enum_tobacco_type_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  specifications       specifications     @relation(fields: [specification_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([specification_id, enum_tobacco_type_id])
+}
+
+model specifications {
+  id                          Int                         @id @default(autoincrement())
+  shopify_handle              String                      @db.VarChar(255)
+  product_type_id             Int
+  is_fermented                Boolean?                    @default(false)
+  is_oral_tobacco             Boolean?                    @default(false)
+  is_artisan                  Boolean?                    @default(false)
+  grind_id                    Int
+  nicotine_level_id           Int
+  experience_level_id         Int
+  review                      String?
+  star_rating                 Int?                        @default(0)
+  rating_boost                Int?                        @default(0)
+  created_at                  DateTime?                   @default(now()) @db.Timestamp(6)
+  updated_at                  DateTime?                   @default(now()) @db.Timestamp(6)
+  user_id                     String                      @db.Uuid
+  moisture_level_id           Int
+  product_brand_id            Int
+  submission_id               String?                     @unique @db.VarChar(20)
+  status_id                   Int                         @default(1)
+  spec_cures                  spec_cures[]
+  spec_tasting_notes          spec_tasting_notes[]
+  spec_tobacco_types          spec_tobacco_types[]
+  enum_product_brands         enum_product_brands         @relation(fields: [product_brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_specifications_brand_id_product_brands")
+  enum_experience_levels      enum_experience_levels      @relation(fields: [experience_level_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_specifications_experience_level_id")
+  enum_grinds                 enum_grinds                 @relation(fields: [grind_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_specifications_grind_id_grinds")
+  enum_moisture_levels        enum_moisture_levels        @relation(fields: [moisture_level_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_specifications_moisture_level_id")
+  enum_nicotine_levels        enum_nicotine_levels        @relation(fields: [nicotine_level_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_specifications_nicotine_level_id")
+  enum_product_types          enum_product_types          @relation(fields: [product_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_specifications_product_type_id")
+  users                       users                       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_specifications_user_id_users")
+  enum_specification_statuses enum_specification_statuses @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([experience_level_id], map: "idx_specifications_experience_level_id")
+  @@index([grind_id], map: "idx_specifications_grind_id")
+  @@index([nicotine_level_id], map: "idx_specifications_nicotine_level_id")
+  @@index([product_brand_id], map: "idx_specifications_product_brand_id")
+  @@index([product_type_id], map: "idx_specifications_product_type_id")
+  @@index([shopify_handle], map: "idx_specifications_shopify_handle")
+  @@index([status_id], map: "idx_specifications_status_id")
+  @@index([submission_id], map: "idx_specifications_submission_id")
+}
+
+model transform_log {
+  id            Int       @id @default(autoincrement())
+  log_time      DateTime? @default(now()) @db.Timestamptz(6)
+  submission_id String?
+  message       String?
+  field         String?
+  value         String?
+}
+
+model users {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email          String           @unique
+  name           String?
+  created_at     DateTime?        @default(now()) @db.Timestamptz(6)
+  slack_userid   String?          @db.VarChar(30)
+  jotform_name   String?          @db.VarChar(100)
+  role_id        Int              @default(2)
+  specifications specifications[]
+  enum_roles     enum_roles       @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_role_id")
+
+  @@index([email], map: "idx_user_email")
+  @@index([slack_userid], map: "idx_user_slack_userid")
+}
+
+enum login_event_type {
+  attempt
+  success
+  failure
+}
