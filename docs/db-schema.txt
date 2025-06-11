@@ -1,0 +1,492 @@
+# AI-Optimized Database Schema Documentation
+# Generated: 2025-06-11
+# Purpose: Provide structured database information for AI models to plan interactions and generate CRUD forms
+
+## Overview
+This database supports a snuff specification management system with:
+- Multi-reviewer specifications for products
+- Enum-based categorization system
+- Junction tables for many-to-many relationships
+- Draft/published workflow via status system
+- Integration with Shopify for product data
+
+## Core Tables
+
+### spec_cures
+// AI_TABLE_PURPOSE: Junction table - handle as multi-select in forms
+// AI_FORM_TYPE: Multi-select checkboxes or tags
+
+```sql
+CREATE TABLE spec_cures (
+    specification_id     INTEGER NOT NULL, -- FK: specifications.id, REQUIRED
+    enum_cure_id         INTEGER NOT NULL -- FORM: dropdown from enum_cures, REQUIRED
+);
+```
+
+// AI_RELATIONSHIPS:
+//   specification_id → specifications.id
+//   enum_cure_id → enum_cures.id
+
+### spec_tasting_notes
+// AI_TABLE_PURPOSE: Junction table - handle as multi-select in forms
+// AI_FORM_TYPE: Multi-select checkboxes or tags
+
+```sql
+CREATE TABLE spec_tasting_notes (
+    specification_id     INTEGER NOT NULL, -- FK: specifications.id, REQUIRED
+    enum_tasting_note_id INTEGER NOT NULL -- FORM: dropdown from enum_tasting_notes, REQUIRED
+);
+```
+
+// AI_RELATIONSHIPS:
+//   enum_tasting_note_id → enum_tasting_notes.id
+//   specification_id → specifications.id
+
+### spec_tobacco_types
+// AI_TABLE_PURPOSE: Junction table - handle as multi-select in forms
+// AI_FORM_TYPE: Multi-select checkboxes or tags
+
+```sql
+CREATE TABLE spec_tobacco_types (
+    specification_id     INTEGER NOT NULL, -- FK: specifications.id, REQUIRED
+    enum_tobacco_type_id INTEGER NOT NULL -- FORM: dropdown from enum_tobacco_types, REQUIRED
+);
+```
+
+// AI_RELATIONSHIPS:
+//   specification_id → specifications.id
+//   enum_tobacco_type_id → enum_tobacco_types.id
+
+### specifications
+// AI_TABLE_PURPOSE: Core specification data - main CRUD operations focus here
+// AI_FORM_TYPE: Multi-step wizard form (product selection, ratings, text review, enum selections)
+// AI_WORKFLOW: Draft → Published → Needs Revision → Under Review
+
+```sql
+CREATE TABLE specifications (
+    id                   INTEGER NOT NULL DEFAULT nextval('specifications_id_seq'::regclass),
+    shopify_handle       CHARACTER VARYING(255) NOT NULL, -- REQUIRED
+    product_type_id      INTEGER NOT NULL, -- FORM: dropdown from enum_product_types, REQUIRED
+    is_fermented         BOOLEAN DEFAULT false, -- FORM: checkbox or toggle
+    is_oral_tobacco      BOOLEAN DEFAULT false, -- FORM: checkbox or toggle
+    is_artisan           BOOLEAN DEFAULT false, -- FORM: checkbox or toggle
+    grind_id             INTEGER NOT NULL, -- FORM: dropdown from enum_grinds, REQUIRED
+    nicotine_level_id    INTEGER NOT NULL, -- FORM: dropdown from enum_nicotine_levels, REQUIRED
+    experience_level_id  INTEGER NOT NULL, -- FORM: dropdown from enum_experience_levels, REQUIRED
+    review               TEXT, -- FORM: textarea for long text
+    star_rating          INTEGER DEFAULT 0, -- FORM: 1-5 star rating input
+    rating_boost         INTEGER DEFAULT 0,
+    created_at           TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at           TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    user_id              UUID NOT NULL, -- FK: users.id, REQUIRED
+    moisture_level_id    INTEGER NOT NULL, -- FORM: dropdown from enum_moisture_levels, REQUIRED
+    product_brand_id     INTEGER NOT NULL, -- FORM: dropdown from enum_product_brands, REQUIRED
+    submission_id        CHARACTER VARYING(20),
+    status_id            INTEGER NOT NULL DEFAULT 1 -- FORM: dropdown from enum_specification_statuses
+);
+```
+
+// AI_RELATIONSHIPS:
+//   product_type_id → enum_product_types.id
+//   moisture_level_id → enum_moisture_levels.id
+//   status_id → enum_specification_statuses.id
+//   grind_id → enum_grinds.id
+//   experience_level_id → enum_experience_levels.id
+//   product_brand_id → enum_product_brands.id
+//   user_id → users.id
+//   nicotine_level_id → enum_nicotine_levels.id
+
+### users
+// AI_TABLE_PURPOSE: User management - Admin vs Reviewer roles
+// AI_FORM_TYPE: Simple user profile form
+
+```sql
+CREATE TABLE users (
+    id                   UUID NOT NULL DEFAULT gen_random_uuid(),
+    email                TEXT NOT NULL, -- REQUIRED, FORM: email input with validation
+    name                 TEXT, -- FORM: text input
+    created_at           TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    slack_userid         CHARACTER VARYING(30),
+    jotform_name         CHARACTER VARYING(100),
+    role_id              INTEGER NOT NULL DEFAULT 2 -- FORM: dropdown from enum_roles
+);
+```
+
+// AI_RELATIONSHIPS:
+//   role_id → enum_roles.id
+
+## Junction Tables (Many-to-Many Relationships)
+
+### spec_cures
+// AI_TABLE_PURPOSE: Junction table - handle as multi-select in forms
+// AI_FORM_TYPE: Multi-select checkboxes or tags
+
+```sql
+CREATE TABLE spec_cures (
+    specification_id     INTEGER NOT NULL, -- FK: specifications.id, REQUIRED
+    enum_cure_id         INTEGER NOT NULL -- FORM: dropdown from enum_cures, REQUIRED
+);
+```
+
+// AI_RELATIONSHIPS:
+//   specification_id → specifications.id
+//   enum_cure_id → enum_cures.id
+
+### spec_tasting_notes
+// AI_TABLE_PURPOSE: Junction table - handle as multi-select in forms
+// AI_FORM_TYPE: Multi-select checkboxes or tags
+
+```sql
+CREATE TABLE spec_tasting_notes (
+    specification_id     INTEGER NOT NULL, -- FK: specifications.id, REQUIRED
+    enum_tasting_note_id INTEGER NOT NULL -- FORM: dropdown from enum_tasting_notes, REQUIRED
+);
+```
+
+// AI_RELATIONSHIPS:
+//   enum_tasting_note_id → enum_tasting_notes.id
+//   specification_id → specifications.id
+
+### spec_tobacco_types
+// AI_TABLE_PURPOSE: Junction table - handle as multi-select in forms
+// AI_FORM_TYPE: Multi-select checkboxes or tags
+
+```sql
+CREATE TABLE spec_tobacco_types (
+    specification_id     INTEGER NOT NULL, -- FK: specifications.id, REQUIRED
+    enum_tobacco_type_id INTEGER NOT NULL -- FORM: dropdown from enum_tobacco_types, REQUIRED
+);
+```
+
+// AI_RELATIONSHIPS:
+//   specification_id → specifications.id
+//   enum_tobacco_type_id → enum_tobacco_types.id
+
+## Enum Tables (Lookup Values)
+
+All enum tables follow the standard structure with id, name, created_at, updated_at.
+
+### enum_cures
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "Air Cured"
+//   2: "Fire Cured"
+//   3: "Flue Cured"
+//   4: "Sun Cured"
+//   5: "Toasted"
+// }
+
+### enum_experience_levels
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "Beginner"
+//   2: "Intermediate"
+//   3: "Experienced"
+// }
+
+### enum_grinds
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "Fine"
+//   2: "Medium Fine"
+//   3: "Medium"
+//   4: "Medium Course"
+//   5: "Course"
+//   6: "Small Pellets"
+// }
+
+### enum_moisture_levels
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "Very Dry"
+//   2: "Dry"
+//   3: "Slightly Moist"
+//   4: "Moist"
+// }
+
+### enum_nicotine_levels
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "None"
+//   2: "Low"
+//   3: "Low-Medium"
+//   4: "Medium"
+//   5: "Medium-High"
+//   6: "High"
+// }
+
+### enum_product_brands
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "McChrystals"
+//   2: "Mullins & Westley"
+//   3: "NTSU"
+//   4: "Odens"
+//   5: "Oliver Twist"
+//   6: "Poschl"
+//   7: "Paul Gotard"
+//   8: "41 Photo"
+//   9: "6 Photo"
+//   10: "Mr Snuff"
+//   11: "Babaton"
+//   12: "Bernard"
+//   13: "FUBAR"
+//   14: "Gawith Hoggarth"
+//   15: "Gold Eagle"
+//   16: "Hit"
+//   17: "J & H Wilson"
+//   18: "Jaxons"
+//   19: "JNF"
+//   20: "Makla"
+//   21: "Samuel Gawith"
+//   22: "Siberia"
+//   23: "Silverback"
+//   24: "Sir Walter Scotts"
+//   25: "SNUV Black"
+//   26: "SNUV Herbal Strong Nicotine"
+//   27: "SNUV Limited Edition"
+//   28: "SNUV Rusty"
+//   29: "SNUV White"
+//   30: "TAXI"
+//   31: "Temple Car"
+//   32: "Viking"
+//   33: "White Fox"
+//   34: "Wilsons of Sharrow"
+//   35: "Hedges"
+//   36: "Van Erkoms"
+//   37: "SNUV"
+//   38: "Wilsons"
+//   39: "Simply Snuff"
+//   40: "Fribourg & Treyer"
+//   41: "Dr. Rumneys"
+//   42: "Singletons"
+//   43: "Snubie World Tour"
+// }
+
+### enum_product_types
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "Tobacco Snuff"
+//   2: "Chew Bag"
+//   3: "Oral Tobacco"
+//   4: "Glucose Snuff"
+//   5: "Accessory"
+//   6: "Nicotine Pouch"
+//   7: "Herbal Snuff"
+//   8: "Nasal Snuff"
+// }
+
+### enum_roles
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "Admin"
+//   2: "Expert"
+//   3: "Public"
+// }
+
+### enum_snuff_types
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "American Scotch"
+//   2: "Chewing Tobacco"
+//   3: "Complex and Unique"
+//   4: "Dessert"
+//   5: "Floral"
+//   6: "Fruit"
+//   7: "Gourmand"
+//   8: "Herbal"
+//   9: "High Toast"
+//   10: "Makla"
+//   11: "Madras"
+//   12: "Medicated"
+//   13: "Naswar"
+//   14: "Natural"
+//   15: "Non-Tobacco"
+//   16: "Rappee"
+//   17: "Schmalzler"
+//   18: "SP"
+//   19: "Spice"
+//   20: "Toast"
+//   21: "White Snuff"
+// }
+
+### enum_specification_statuses
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "draft"
+//   2: "published"
+//   3: "needs_revision"
+//   4: "under_review"
+// }
+
+### enum_statuses
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "Draft"
+//   2: "Published"
+//   6: "Need revision"
+//   7: "Under Review"
+// }
+
+### enum_tasting_notes
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "Almond"
+//   2: "Ammonia"
+//   3: "Anise"
+//   4: "Apricot"
+//   5: "Banana"
+//   6: "Bergamot"
+//   7: "Biscuit"
+//   8: "Blackberry"
+//   9: "Brandy"
+//   10: "Bread"
+//   11: "Burnt"
+//   12: "Butter"
+//   13: "Camphor"
+//   14: "Candy"
+//   15: "Cardamom"
+//   16: "Cedar"
+//   17: "Cinnamon"
+//   18: "Clove"
+//   19: "Cherry"
+//   20: "Chocolate"
+//   21: "Citrus"
+//   22: "Coconut"
+//   23: "Coffee"
+//   24: "Cola"
+//   25: "Creamy"
+//   26: "Date"
+//   27: "Earthy"
+//   28: "Eucalyptus"
+//   29: "Fig"
+//   30: "Floral"
+//   31: "Fruity"
+//   32: "Grass"
+//   33: "Guarana"
+//   34: "Hay"
+//   35: "Hazelnut"
+//   36: "Herbal"
+//   37: "Honey"
+//   38: "Incense"
+//   39: "Leather"
+//   40: "Lemon"
+//   41: "Liquorice"
+//   42: "Mango"
+//   43: "Maple"
+//   44: "Menthol"
+//   45: "Minty"
+//   46: "Molasses"
+//   47: "Natural Tobacco"
+//   48: "Nutmeg"
+//   49: "Nutty"
+//   50: "Oats"
+//   51: "Orange"
+//   52: "Peppermint"
+//   53: "Raisins"
+//   54: "Raspberry"
+//   55: "Rose"
+//   56: "Rum"
+//   57: "Salty"
+//   58: "Smokey"
+//   59: "Spicy"
+//   60: "Spruce Pine"
+//   61: "Strawberry"
+//   62: "Sweet"
+//   63: "Tonka"
+//   64: "Vanilla"
+//   65: "Violet"
+//   66: "Whiskey"
+//   67: "Wintergreen"
+//   68: "Neroli"
+//   69: "Medicated"
+//   70: "Mentholated"
+//   71: "Pepper"
+//   72: "Spearmint"
+//   73: "Whisky"
+//   74: "Wheat"
+//   75: "Mocha"
+// }
+
+### enum_tobacco_types
+// AI_FORM_HINT: Use as dropdown/select options
+// AI_VALIDATION: Required field, foreign key constraint
+// AI_VALUES: {
+//   1: "Bahia"
+//   2: "Basma"
+//   3: "Brazilian"
+//   4: "Broadleaf"
+//   5: "Burley"
+//   6: "Cavendish"
+//   7: "Chopadia"
+//   8: "German"
+//   9: "Indian"
+//   10: "Kentucky"
+//   11: "Latakia"
+//   12: "Ligero"
+//   13: "Malawi"
+//   14: "Nicaraguan Seco"
+//   15: "Non-Tobacco"
+//   16: "Oriental"
+//   17: "Perique"
+//   18: "Polish"
+//   19: "Punjabi Rustica"
+//   20: "Russian"
+//   21: "Rustica"
+//   22: "Sumatra"
+//   23: "Turkish"
+//   24: "Virginia"
+//   25: "Virginia Lemon Leaf"
+//   26: "Virginia Seed Leaf"
+// }
+
+
+## AI Development Guidance
+
+### CRUD Form Generation Priority
+1. **specifications** - Primary focus, multi-step wizard form
+2. **users** - Simple user management forms  
+3. **enum_* tables** - Admin-only management forms
+4. **Junction tables** - Handle as multi-select in specification forms
+
+### Key Relationships for AI Models
+- specifications.user_id → users.id (one-to-many)
+- specifications.status_id → enum_specification_statuses.id (workflow)
+- specifications → spec_tasting_notes → enum_tasting_notes (many-to-many)
+- specifications → spec_cures → enum_cures (many-to-many)
+- specifications → spec_tobacco_types → enum_tobacco_types (many-to-many)
+
+### Form Validation Rules
+- All enum foreign keys: REQUIRED
+- star_rating: INTEGER 1-5 range
+- review: TEXT minimum 10 characters recommended
+- Multi-select fields: At least 1 tasting note required, cures optional
+- Email: Valid email format for users table
+
+### Status Workflow Logic
+- Draft (1): Editable by owner, not visible to others
+- Published (2): Read-only for reviewers, visible to all
+- Needs Revision (3): Flagged for improvement, editable by owner
+- Under Review (4): Awaiting admin approval, read-only for reviewers
+
+### Performance Considerations
+- Use indexes on foreign key columns for joins
+- specifications table will be largest - optimize queries
+- Enum tables are small - safe to cache in memory
+- Junction tables - use batch operations for multi-select updates
+
+---
+Generated by sync-schema.js - DO NOT EDIT MANUALLY
+Run 'npm run sync-schema' to regenerate this file

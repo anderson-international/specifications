@@ -38,257 +38,194 @@
       "completedAt": "2025-06-07T22:02:46.513Z"
     },
     {
-      "id": "222a6252-3e48-4333-ac72-fec829d27761",
-      "name": "Configure Prisma ORM with NeonDB schema",
-      "description": "Set up Prisma with the existing NeonDB schema, generate types, and create database connection utilities",
-      "notes": "Ensure all relationships are properly defined, use the existing db-schema.txt as reference",
+      "id": "0653665f-2a60-4fca-8b79-9c3aad188d10",
+      "name": "Set up Prisma schema and environment configuration",
+      "description": "Initialize Prisma in the project, create the schema.prisma file with proper connection to NeonDB, and configure environment variables for different environments.",
+      "notes": "Make sure to properly secure connection strings and follow NeonDB best practices for connection parameters. Add connection timeout parameters to prevent serverless function timeout issues.",
       "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "6e690cf2-5485-4f7c-bec8-baf6e8df4c81"
-        }
-      ],
-      "createdAt": "2025-06-07T15:20:38.321Z",
-      "updatedAt": "2025-06-07T15:20:38.321Z",
+      "dependencies": [],
+      "createdAt": "2025-06-10T16:34:17.902Z",
+      "updatedAt": "2025-06-10T16:34:17.902Z",
       "relatedFiles": [
         {
           "path": "prisma/schema.prisma",
           "type": "CREATE",
-          "description": "Complete Prisma schema definition"
+          "description": "Main Prisma schema file defining database connection"
         },
         {
-          "path": "src/lib/prisma/client.ts",
+          "path": "prisma/.env",
           "type": "CREATE",
-          "description": "Prisma client singleton"
+          "description": "Environment variables for database connection"
         },
         {
-          "path": "db-schema.txt",
-          "type": "REFERENCE",
-          "description": "Existing database schema reference"
-        }
-      ],
-      "implementationGuide": "1. Initialize Prisma with PostgreSQL provider\n2. Convert existing schema to Prisma schema format\n3. Define all models: users, specifications, enum tables, junction tables\n4. Configure database connection with NeonDB\n5. Generate Prisma client\n6. Create singleton Prisma client instance in lib/prisma/client.ts",
-      "verificationCriteria": "Prisma generates without errors, can connect to database, all models have correct types and relationships",
-      "analysisResult": "Build a Next.js 14 CRUD application for managing tobacco product specifications with NeonDB integration, authentication, role-based access control, and modern UI/UX following the project's architectural guidelines for simplicity and maintainability"
-    },
-    {
-      "id": "a13ca51e-7163-408f-b352-2de5800a3072",
-      "name": "Implement Auth.js authentication with magic links",
-      "description": "Set up Auth.js v5 (NextAuth) with email magic link authentication, session management, and development mode user selection",
-      "notes": "Follow the authentication strategy: production uses magic links, development allows user selection",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "222a6252-3e48-4333-ac72-fec829d27761"
-        }
-      ],
-      "createdAt": "2025-06-07T15:20:38.321Z",
-      "updatedAt": "2025-06-07T15:20:38.321Z",
-      "relatedFiles": [
-        {
-          "path": "src/lib/auth/config.ts",
-          "type": "CREATE",
-          "description": "Auth.js configuration"
-        },
-        {
-          "path": "src/app/api/auth/[...nextauth]/route.ts",
-          "type": "CREATE",
-          "description": "Auth API routes"
-        },
-        {
-          "path": "src/lib/auth/context.tsx",
-          "type": "CREATE",
-          "description": "Auth context provider"
-        },
-        {
-          "path": "src/app/auth/signin/page.tsx",
-          "type": "CREATE",
-          "description": "Sign in page"
-        }
-      ],
-      "implementationGuide": "1. Configure Auth.js with email provider for magic links\n2. Set up Prisma adapter for session storage\n3. Create auth configuration in lib/auth/config.ts\n4. Implement development mode with user selection\n5. Create authentication API routes\n6. Add AuthProvider context wrapper\n7. Create useAuth hook for components",
-      "verificationCriteria": "Can send magic link emails, sessions persist in database, development mode shows user selection, protected routes redirect unauthenticated users",
-      "analysisResult": "Build a Next.js 14 CRUD application for managing tobacco product specifications with NeonDB integration, authentication, role-based access control, and modern UI/UX following the project's architectural guidelines for simplicity and maintainability"
-    },
-    {
-      "id": "21c8841f-e7a5-491f-8af6-f0cafdc1e3ae",
-      "name": "Create base UI components and layout structure",
-      "description": "Build foundational UI components and layout following the project's CSS Modules strategy and component organization guidelines",
-      "notes": "Keep components under 150 lines, use CSS Modules exclusively, follow the component hierarchy from architectural guidelines",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "a13ca51e-7163-408f-b352-2de5800a3072"
-        }
-      ],
-      "createdAt": "2025-06-07T15:20:38.321Z",
-      "updatedAt": "2025-06-07T15:20:38.321Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/layout/AppLayout.tsx",
-          "type": "CREATE",
-          "description": "Main application layout"
-        },
-        {
-          "path": "src/components/common/Button.tsx",
-          "type": "CREATE",
-          "description": "Reusable button component"
-        },
-        {
-          "path": "src/components/common/DataTable.tsx",
-          "type": "CREATE",
-          "description": "Generic data table component"
-        },
-        {
-          "path": "src/styles/",
-          "type": "CREATE",
-          "description": "CSS Modules for components"
-        }
-      ],
-      "implementationGuide": "1. Create AppLayout component with header, sidebar, main content area\n2. Build common components: Button, Card, Modal, Form elements\n3. Implement data table component with sorting and pagination\n4. Create loading states and error boundaries\n5. Set up CSS Modules for each component\n6. Implement responsive design patterns",
-      "verificationCriteria": "All components render correctly, CSS Modules work, responsive on mobile/tablet, consistent visual design",
-      "analysisResult": "Build a Next.js 14 CRUD application for managing tobacco product specifications with NeonDB integration, authentication, role-based access control, and modern UI/UX following the project's architectural guidelines for simplicity and maintainability"
-    },
-    {
-      "id": "5251579f-049d-424f-8160-3c7bb644508d",
-      "name": "Build specifications CRUD functionality",
-      "description": "Implement complete CRUD operations for specifications including API routes, UI components, and junction table management",
-      "notes": "This is the main entity, ensure all relationships are properly handled through junction tables",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "21c8841f-e7a5-491f-8af6-f0cafdc1e3ae"
-        }
-      ],
-      "createdAt": "2025-06-07T15:20:38.321Z",
-      "updatedAt": "2025-06-07T15:20:38.321Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/api/specifications/",
-          "type": "CREATE",
-          "description": "Specifications API routes"
-        },
-        {
-          "path": "src/components/specifications/",
-          "type": "CREATE",
-          "description": "Specification components"
-        },
-        {
-          "path": "src/app/specifications/",
-          "type": "CREATE",
-          "description": "Specifications pages"
-        },
-        {
-          "path": "src/lib/validations/specifications.ts",
-          "type": "CREATE",
-          "description": "Zod validation schemas"
-        }
-      ],
-      "implementationGuide": "1. Create API routes for specifications CRUD\n2. Build SpecificationList with filtering and pagination\n3. Create SpecificationForm with multi-select for junction tables\n4. Implement detail view with all relationships\n5. Add validation using Zod schemas\n6. Handle junction tables (cures, tasting notes, tobacco types)\n7. Implement role-based permissions",
-      "verificationCriteria": "Can create, read, update, delete specifications; junction tables update correctly; validation works on client and server; proper error handling",
-      "analysisResult": "Build a Next.js 14 CRUD application for managing tobacco product specifications with NeonDB integration, authentication, role-based access control, and modern UI/UX following the project's architectural guidelines for simplicity and maintainability"
-    },
-    {
-      "id": "aaac6512-2fc2-459e-a2e2-ea60cbce19d1",
-      "name": "Implement enum tables management",
-      "description": "Create generic CRUD components for all 10 enum tables with validation to prevent deletion of referenced values",
-      "notes": "Enum tables: cures, experience_levels, grinds, moisture_levels, nicotine_levels, product_brands, product_types, snuff_types, tasting_notes, tobacco_types",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "5251579f-049d-424f-8160-3c7bb644508d"
-        }
-      ],
-      "createdAt": "2025-06-07T15:20:38.321Z",
-      "updatedAt": "2025-06-07T15:20:38.321Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/api/enums/[type]/",
-          "type": "CREATE",
-          "description": "Dynamic enum API routes"
-        },
-        {
-          "path": "src/components/enums/EnumManager.tsx",
-          "type": "CREATE",
-          "description": "Generic enum management component"
-        },
-        {
-          "path": "src/app/admin/enums/",
-          "type": "CREATE",
-          "description": "Enum management pages"
-        }
-      ],
-      "implementationGuide": "1. Create generic EnumManager component\n2. Build API routes with dynamic routing for enum types\n3. Implement referential integrity checks before deletion\n4. Add bulk import/export functionality\n5. Create admin-only access control\n6. Build UI for each enum type management",
-      "verificationCriteria": "All enum tables have CRUD operations; cannot delete referenced values; bulk operations work; proper access control",
-      "analysisResult": "Build a Next.js 14 CRUD application for managing tobacco product specifications with NeonDB integration, authentication, role-based access control, and modern UI/UX following the project's architectural guidelines for simplicity and maintainability"
-    },
-    {
-      "id": "b3a56186-e0ed-4a32-8b7a-e32dd32ad7e7",
-      "name": "Build user management and role-based access control",
-      "description": "Implement user CRUD operations with role management and enforce role-based permissions throughout the application",
-      "notes": "Roles from users table should control access to different features, especially admin functions",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "aaac6512-2fc2-459e-a2e2-ea60cbce19d1"
-        }
-      ],
-      "createdAt": "2025-06-07T15:20:38.321Z",
-      "updatedAt": "2025-06-07T15:20:38.321Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/api/users/",
-          "type": "CREATE",
-          "description": "User management API routes"
-        },
-        {
-          "path": "src/middleware.ts",
-          "type": "CREATE",
-          "description": "Auth and role checking middleware"
-        },
-        {
-          "path": "src/app/admin/users/",
-          "type": "CREATE",
-          "description": "User management pages"
-        }
-      ],
-      "implementationGuide": "1. Create user management API routes (admin only)\n2. Build UserList and UserForm components\n3. Implement role assignment UI\n4. Create middleware for route protection\n5. Add role checks to all API endpoints\n6. Build activity tracking dashboard",
-      "verificationCriteria": "Admin can manage users and roles; role-based access works across all routes; non-admin users have limited access; activity is tracked",
-      "analysisResult": "Build a Next.js 14 CRUD application for managing tobacco product specifications with NeonDB integration, authentication, role-based access control, and modern UI/UX following the project's architectural guidelines for simplicity and maintainability"
-    },
-    {
-      "id": "59d64e6f-e8c1-477e-8bd8-c9a47a934c90",
-      "name": "Implement search, filtering, and data export features",
-      "description": "Add advanced search and filtering capabilities for specifications with saved filters and data export functionality",
-      "notes": "Ensure filters work efficiently with large datasets using proper Prisma queries",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "b3a56186-e0ed-4a32-8b7a-e32dd32ad7e7"
-        }
-      ],
-      "createdAt": "2025-06-07T15:20:38.321Z",
-      "updatedAt": "2025-06-07T15:20:38.321Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/common/AdvancedFilter.tsx",
-          "type": "CREATE",
-          "description": "Advanced filtering component"
-        },
-        {
-          "path": "src/components/common/Search.tsx",
+          "path": ".gitignore",
           "type": "TO_MODIFY",
-          "description": "Enhanced search component"
+          "description": "Update to ensure environment variables are not committed"
         },
         {
-          "path": "src/lib/utils/export.ts",
+          "path": "prisma/.env.example",
           "type": "CREATE",
-          "description": "Data export utilities"
+          "description": "Example environment variable template"
         }
       ],
-      "implementationGuide": "1. Build advanced filter component with all enum options\n2. Implement full-text search on specifications\n3. Create saved filter presets functionality\n4. Add date range filtering\n5. Build export to CSV/JSON functionality\n6. Implement filter state management\n7. Add keyboard shortcuts for power users",
-      "verificationCriteria": "Search returns relevant results; filters work individually and combined; saved filters persist; export produces valid files; keyboard shortcuts function",
-      "analysisResult": "Build a Next.js 14 CRUD application for managing tobacco product specifications with NeonDB integration, authentication, role-based access control, and modern UI/UX following the project's architectural guidelines for simplicity and maintainability"
+      "implementationGuide": "1. Install Prisma CLI and client dependencies if not already present\n2. Create a .env file in the prisma directory with the NeonDB connection string\n3. Create a basic schema.prisma file with PostgreSQL provider configuration\n4. Configure environment variables in .env file with proper NeonDB connection strings, including SSL settings\n5. Add .env to .gitignore while creating an .env.example template\n6. Configure schema.prisma generator to enable TypeScript types generation",
+      "verificationCriteria": "1. Prisma dependencies are correctly installed\n2. schema.prisma file exists with proper PostgreSQL provider configuration\n3. .env file contains secure connection string to NeonDB\n4. Connection string includes SSL and timeout parameters\n5. .gitignore is updated to exclude .env files\n6. .env.example provides a template without sensitive data",
+      "analysisResult": "The Specifications project requires integrating Prisma ORM with an existing NeonDB PostgreSQL database following Next.js 14 App Router best practices. Key requirements include establishing secure database connections, implementing a singleton Prisma client pattern, setting up proper connection pooling for production/serverless environments, and generating TypeScript types from the existing schema while adhering to project coding standards."
+    },
+    {
+      "id": "2de30d42-6cbb-4d31-bdd3-818f9ee88e9b",
+      "name": "Introspect existing NeonDB schema and generate types",
+      "description": "Use Prisma's introspection capabilities to pull the existing database schema from NeonDB, generate the data model in the schema.prisma file, and generate TypeScript types.",
+      "notes": "Ensure database connection is properly configured before introspection. The introspection will map all tables and relationships from the existing schema to Prisma models.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "0653665f-2a60-4fca-8b79-9c3aad188d10"
+        }
+      ],
+      "createdAt": "2025-06-10T16:34:17.902Z",
+      "updatedAt": "2025-06-10T16:34:17.902Z",
+      "relatedFiles": [
+        {
+          "path": "prisma/schema.prisma",
+          "type": "TO_MODIFY",
+          "description": "Update with introspected schema"
+        },
+        {
+          "path": "lib/db/types.ts",
+          "type": "CREATE",
+          "description": "Optional utility types extending Prisma types"
+        }
+      ],
+      "implementationGuide": "1. Use `npx prisma db pull` to introspect the existing NeonDB schema\n2. Review the generated models in schema.prisma and ensure they match expectations\n3. Make any necessary adjustments to the auto-generated schema\n4. Run `npx prisma generate` to generate TypeScript client and types\n5. Create utility types extending Prisma-generated types if needed for application-specific use cases",
+      "verificationCriteria": "1. schema.prisma contains all tables from the existing NeonDB database\n2. All relationships are correctly mapped in the schema\n3. TypeScript types are generated in node_modules/.prisma/client\n4. Manual schema adjustments (if any) are documented with comments",
+      "analysisResult": "The Specifications project requires integrating Prisma ORM with an existing NeonDB PostgreSQL database following Next.js 14 App Router best practices. Key requirements include establishing secure database connections, implementing a singleton Prisma client pattern, setting up proper connection pooling for production/serverless environments, and generating TypeScript types from the existing schema while adhering to project coding standards."
+    },
+    {
+      "id": "4e9df254-47a7-42d1-9b84-62b7f9cb064d",
+      "name": "Implement singleton Prisma client for Next.js",
+      "description": "Create a singleton implementation of the Prisma client to prevent multiple instance creation during development hot-reloading, following Next.js best practices.",
+      "notes": "Next.js hot-reloading can cause multiple Prisma Client instances to be created during development, leading to exceeding connection limits. The singleton pattern prevents this by reusing an existing instance.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "2de30d42-6cbb-4d31-bdd3-818f9ee88e9b"
+        }
+      ],
+      "createdAt": "2025-06-10T16:34:17.902Z",
+      "updatedAt": "2025-06-10T16:34:17.902Z",
+      "relatedFiles": [
+        {
+          "path": "lib/prisma/index.ts",
+          "type": "CREATE",
+          "description": "Singleton Prisma client implementation"
+        }
+      ],
+      "implementationGuide": "1. Create a prisma.ts file in the lib directory\n2. Implement the singleton pattern using global variables for development\n3. Configure logging based on environment\n4. Export the prisma client instance for use throughout the application\n5. Add proper TypeScript typing for the global augmentation",
+      "verificationCriteria": "1. prisma.ts exports a single client instance\n2. Global variables are properly typed with TypeScript\n3. Environment-specific logging configuration is implemented\n4. Hot-reloading doesn't create multiple instances",
+      "analysisResult": "The Specifications project requires integrating Prisma ORM with an existing NeonDB PostgreSQL database following Next.js 14 App Router best practices. Key requirements include establishing secure database connections, implementing a singleton Prisma client pattern, setting up proper connection pooling for production/serverless environments, and generating TypeScript types from the existing schema while adhering to project coding standards."
+    },
+    {
+      "id": "775113a3-f0ca-4211-900b-d457dcd39078",
+      "name": "Create database utility functions",
+      "description": "Develop utility functions for common database operations with proper error handling, following project coding standards for separation of concerns.",
+      "notes": "Follow the project's error handling patterns and coding standards. Use the singleton Prisma client for all database operations.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "4e9df254-47a7-42d1-9b84-62b7f9cb064d"
+        }
+      ],
+      "createdAt": "2025-06-10T16:34:17.902Z",
+      "updatedAt": "2025-06-10T16:34:17.902Z",
+      "relatedFiles": [
+        {
+          "path": "lib/db/index.ts",
+          "type": "CREATE",
+          "description": "Main database utility functions"
+        },
+        {
+          "path": "lib/db/specifications.ts",
+          "type": "CREATE",
+          "description": "Specification-specific database operations"
+        },
+        {
+          "path": "lib/db/users.ts",
+          "type": "CREATE",
+          "description": "User-specific database operations"
+        },
+        {
+          "path": "lib/db/enums.ts",
+          "type": "CREATE",
+          "description": "Enum table operations"
+        }
+      ],
+      "implementationGuide": "1. Create a db directory in the lib folder\n2. Implement utility functions for common database operations\n3. Create an executeQuery wrapper for consistent error handling\n4. Develop entity-specific utility functions (specifications, users, enum tables, etc.)\n5. Export typed functions with proper return types\n6. Add appropriate JSDoc comments for function documentation",
+      "verificationCriteria": "1. Database utility functions follow project coding standards\n2. Error handling is consistent across all functions\n3. Functions are properly typed with TypeScript\n4. All exported functions are documented with JSDoc comments\n5. Code organization follows separation of concerns principle",
+      "analysisResult": "The Specifications project requires integrating Prisma ORM with an existing NeonDB PostgreSQL database following Next.js 14 App Router best practices. Key requirements include establishing secure database connections, implementing a singleton Prisma client pattern, setting up proper connection pooling for production/serverless environments, and generating TypeScript types from the existing schema while adhering to project coding standards."
+    },
+    {
+      "id": "12bb0f9f-d3b5-4f53-aff5-0feba09df1b0",
+      "name": "Configure connection pooling for production",
+      "description": "Set up database connection pooling for production and serverless environments by configuring Prisma with appropriate connection parameters for NeonDB.",
+      "notes": "Serverless functions can quickly exhaust connection limits due to the stateless nature of function invocations. Proper pooling configuration is essential for production deployments.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "4e9df254-47a7-42d1-9b84-62b7f9cb064d"
+        }
+      ],
+      "createdAt": "2025-06-10T16:34:17.902Z",
+      "updatedAt": "2025-06-10T16:34:17.902Z",
+      "relatedFiles": [
+        {
+          "path": "lib/prisma/index.ts",
+          "type": "TO_MODIFY",
+          "description": "Update with environment-specific connection settings"
+        },
+        {
+          "path": "prisma/.env.production",
+          "type": "CREATE",
+          "description": "Production environment variables"
+        },
+        {
+          "path": "lib/config.ts",
+          "type": "CREATE",
+          "description": "Configuration utilities for environment management"
+        }
+      ],
+      "implementationGuide": "1. Update database URL in production environment with NeonDB's pooler endpoint\n2. Configure appropriate connection limits and timeouts\n3. Create separate environment configurations for development and production\n4. Implement conditional connection settings based on environment\n5. Consider implementing Neon serverless driver if edge compatibility is needed",
+      "verificationCriteria": "1. Production database URL uses NeonDB pooler endpoint\n2. Connection limits and timeouts are appropriately configured\n3. Different environment configurations are properly separated\n4. Connection handling works in both development and production",
+      "analysisResult": "The Specifications project requires integrating Prisma ORM with an existing NeonDB PostgreSQL database following Next.js 14 App Router best practices. Key requirements include establishing secure database connections, implementing a singleton Prisma client pattern, setting up proper connection pooling for production/serverless environments, and generating TypeScript types from the existing schema while adhering to project coding standards."
+    },
+    {
+      "id": "fafa407e-52a0-4514-9073-4da6ab0d87f5",
+      "name": "Create database connection testing utilities",
+      "description": "Develop utilities for testing database connections, validating schema integrity, and ensuring proper error recovery.",
+      "notes": "These utilities are valuable for both development and production monitoring. They help catch database connection issues early and provide useful debugging information.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "775113a3-f0ca-4211-900b-d457dcd39078"
+        }
+      ],
+      "createdAt": "2025-06-10T16:34:17.902Z",
+      "updatedAt": "2025-06-10T16:34:17.902Z",
+      "relatedFiles": [
+        {
+          "path": "lib/db/testing.ts",
+          "type": "CREATE",
+          "description": "Database testing utilities"
+        },
+        {
+          "path": "app/api/health/route.ts",
+          "type": "CREATE",
+          "description": "Health check API endpoint"
+        }
+      ],
+      "implementationGuide": "1. Create test utility to verify database connection\n2. Implement health check function for API endpoint use\n3. Create schema validation utility to ensure database matches expected schema\n4. Implement basic database seeding function for development/testing\n5. Add basic query profiling utility for development",
+      "verificationCriteria": "1. Connection testing utility successfully validates database access\n2. Health check endpoint correctly reports database status\n3. Schema validation confirms database structure matches Prisma schema\n4. Development utilities provide useful debugging information",
+      "analysisResult": "The Specifications project requires integrating Prisma ORM with an existing NeonDB PostgreSQL database following Next.js 14 App Router best practices. Key requirements include establishing secure database connections, implementing a singleton Prisma client pattern, setting up proper connection pooling for production/serverless environments, and generating TypeScript types from the existing schema while adhering to project coding standards."
     }
   ]
 }

@@ -61,7 +61,7 @@ Building a comprehensive dataset for AI/LLM training with multiple perspectives 
    - Clear visual indicator showing which products have already been reviewed vs. those awaiting review
    - Products displayed as cards with filters by brand and type-ahead search box
    - Product images displayed only on product cards
-   - Products stored in local database, refreshed from Shopify via scheduled jobs
+   - Products managed via database-driven sync strategy (see [Architectural Guidelines](architectural-guidelines.md#database-driven-product-sync) for implementation details)
 
 2. **Specification Creation**
    - Direct entry in app (replacing JotForm) using multi-step wizard form
@@ -95,8 +95,7 @@ Building a comprehensive dataset for AI/LLM training with multiple perspectives 
    - Products displayed as cards with filters by brand and type-ahead search box
    - Visual indicator showing which products have been reviewed vs. those awaiting review
    - Product images displayed only on product cards
-   - Products stored in local database table, refreshed via scheduled jobs using pg_cron
-   - No direct Shopify API interaction from the application
+   - Products managed via database-driven sync strategy (see [Architectural Guidelines](architectural-guidelines.md#database-driven-product-sync) for implementation details)
 
 3. **Specification Management**
    - Create new specifications with all required fields via multi-step wizard
@@ -380,12 +379,7 @@ Building a comprehensive dataset for AI/LLM training with multiple perspectives 
 
 ### Product Data Management
 - **Approach**: Database-driven with scheduled and manual refresh
-- **Implementation**:
-  - Products stored in local database table
-  - `refresh_shopify_products()` stored procedure handles Shopify API calls
-  - NeonDB's pg_cron extension for scheduled refresh (every 6 hours)
-  - Admin API endpoint for manual refresh
-  - Logging of all refresh operations
+- **Implementation**: See [Architectural Guidelines - Database-Driven Product Sync](architectural-guidelines.md#database-driven-product-sync) for complete implementation details including table structure, sync procedures, and API endpoints
 
 ### Deployment
 - **Platform**: Netlify via Windsurf IDE integration

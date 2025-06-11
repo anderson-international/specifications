@@ -546,178 +546,80 @@ Use Next.js App Router for backend functionality:
    }
    ```
 
-### Shopify Data Caching
+### Database-Driven Product Sync
 
-Use Incremental Static Regeneration (ISR) with cache for Shopify product data:
+**Strategy**: Store products in local database, sync via scheduled pg_cron jobs with incremental updates using Shopify's `updated_at` timestamps.
 
+**Products Table Structure**:
+```sql
+CREATE TABLE products (
+  handle VARCHAR(255) PRIMARY KEY,           -- Shopify product handle (unique identifier)
+  title TEXT NOT NULL,                       -- Product name/title
+  image TEXT,                                -- Product image URL
+  product_type VARCHAR(255),                 -- Product category/type
+  custom_brands TEXT,                        -- Brand from Shopify custom.brands metafield
+  updated_at TIMESTAMP NOT NULL,             -- Shopify's updated_at for incremental sync
+  last_synced TIMESTAMP DEFAULT NOW(),       -- Our sync timestamp
+  is_active BOOLEAN DEFAULT true             -- Soft delete flag for removed Shopify products
+);
+```
+
+**Sync Implementation**:
+```sql
+-- Stored procedure for incremental product sync
+CREATE OR REPLACE FUNCTION refresh_shopify_products()
+RETURNS void AS $$
+DECLARE
+  latest_update TIMESTAMP;
+BEGIN
+  -- Get latest updated_at from existing products
+  SELECT MAX(updated_at) INTO latest_update FROM products;
+  
+  -- Call Shopify API with updated_at_min filter (implemented in app layer)
+  -- Upsert returned products with conflict resolution on handle
+  -- Mark products not returned as potentially deleted (soft delete)
+  
+  -- Error handling: fail fast on API errors
+  -- Log sync completion timestamp
+END;
+$$ LANGUAGE plpgsql;
+```
+
+**Scheduled Sync Configuration**:
+```sql
+-- pg_cron job for automatic refresh every 6 hours
+SELECT cron.schedule('shopify-product-sync', '0 */6 * * *', 'SELECT refresh_shopify_products();');
+```
+
+**Development Strategy**:
+- **Development phase**: Limit sync to small product subset for testing
+- **Initial deployment**: Manual full sync via admin interface
+- **Production**: Automated 6-hour scheduled syncs with manual refresh option
+
+**Admin API Endpoints**:
 ```typescript
-// app/api/shopify/products/route.ts
-import { NextResponse } from 'next/server';
-
-export const revalidate = 3600; // Revalidate every hour
-
-export async function GET() {
-  try {
-    // Fetch minimal product data from Shopify
-    const products = await fetchShopifyProducts({
-      fields: ['handle', 'title', 'images', 'vendor'],
-      limit: 1000 // Fetch all ~600 products
-    });
-
-    return NextResponse.json(products);
-  } catch (error) {
-    console.error('Shopify fetch error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch products' },
-      { status: 500 }
-    );
-  }
-}
-
-// Client-side usage with SWR for additional caching
-// components/ProductSelector.tsx
-import useSWR from 'swr';
-  });
-
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
-    // API submission logic here
-    reset();
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <label htmlFor="name">Name</label>
-        <input id="name" {...register("name")} />
-        {errors.name && <p className="error">{errors.name.message}</p>}
-      </div>
-      
-      <div>
-        <label htmlFor="email">Email</label>
-        <input id="email" {...register("email")} />
-        {errors.email && <p className="error">{errors.email.message}</p>}
-      </div>
-      
-      <div>
-        <label htmlFor="age">Age (Optional)</label>
-        <input id="age" type="number" {...register("age", { valueAsNumber: true })} />
-        {errors.age && <p className="error">{errors.age.message}</p>}
-      </div>
-      
-      <button type="submit">Submit</button>
-    </form>
-  );
-}
+// POST /api/admin/sync-products - Manual product sync trigger
+// GET /api/admin/sync-status - Check last sync status and timestamp
 ```
 
-#### Simplified Pattern (For Simple Forms)
-
-```tsx
-import { useForm } from 'react-hook-form';
-
-type SimpleFormValues = {
-  searchQuery: string;
-};
-
-export function SimpleSearchForm() {
-  const { register, handleSubmit } = useForm<SimpleFormValues>();
-
-  const onSubmit = (data: SimpleFormValues) => {
-    console.log(data);
-    // Search logic
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input 
-        {...register("searchQuery", { required: true })} 
-        placeholder="Search..." 
-      />
-      <button type="submit">Search</button>
-    </form>
-  );
-}
-```
-
-#### Multi-step Wizard Implementation
-
-```tsx
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-import { z } from 'zod';
-
-// Step 1 Schema
-const step1Schema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-});
-
-// Step 2 Schema
-const step2Schema = z.object({
-  category: z.string().min(1, "Category is required"),
-  tags: z.string().array().min(1, "At least one tag is required"),
-});
-
-// Combined schema
-const formSchema = z.object({
-  ...step1Schema.shape,
-  ...step2Schema.shape,
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-// Custom hook for multi-step form
-export function useMultiStepForm() {
-  const [currentStep, setCurrentStep] = useState(0);
-  
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    mode: 'onChange',
-    defaultValues: {
-      title: '',
-      description: '',
-      category: '',
-      tags: [],
+**Application Integration**:
+```typescript
+// lib/products.ts - Application product queries
+export async function getProducts(filters?: ProductFilters) {
+  return await prisma.product.findMany({
+    where: {
+      is_active: true,
+      ...filters
     },
+    orderBy: { title: 'asc' }
   });
-  
-  // Get current step schema for validation
-  const getCurrentStepSchema = () => {
-    return currentStep === 0 ? step1Schema : step2Schema;
-  };
-  
-  // Validate current step fields only
-  const validateStep = async () => {
-    const currentSchema = getCurrentStepSchema();
-    const currentFields = Object.keys(currentSchema.shape);
-    
-    const result = await form.trigger(currentFields as any);
-    return result;
-  };
-  
-  // Go to next step with validation
-  const nextStep = async () => {
-    const isValid = await validateStep();
-    if (isValid) setCurrentStep(prev => prev + 1);
-    return isValid;
-  };
-  
-  // Go to previous step
-  const prevStep = () => {
-    setCurrentStep(prev => Math.max(0, prev - 1));
-  };
-  
-  return {
-    currentStep,
-    form,
-    nextStep,
-    prevStep,
-    isFirstStep: currentStep === 0,
-    isLastStep: currentStep === 1, // Adjust based on total steps
-  };
-};
+}
+
+export async function getProductByHandle(handle: string) {
+  return await prisma.product.findUnique({
+    where: { handle, is_active: true }
+  });
+}
 ```
 
 ## Performance Optimization
