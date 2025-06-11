@@ -51,26 +51,17 @@ To maintain clarity and simplicity in the Next.js project structure:
 
 ### API Strategy
 
-- **Default to Next.js API Routes** for custom backend needs
-- **Use direct GraphQL queries** to the Shopify Storefront API with a minimal client
-- **Keep API integration code** simple, concise, and modular
-- **Avoid unnecessary abstractions** or extra infrastructure
+**Complete Implementation**: See [API Design Documentation](../concerns/api-design.md) for comprehensive API strategy including RESTful patterns, error handling, and external integrations.
 
 ### CSS/Styling Strategy
 
-- **Default to CSS Modules** for all component styling
-- **Keep style files small** and scoped to individual components
-- **Use clear, descriptive class names** that reflect the component's structure
-- **Only use inline styles or CSS-in-JS** for rare, highly dynamic styling needs
-- **Avoid global styles** and large, shared CSS files
+**Complete Implementation**: See [UI/UX Patterns Documentation](../concerns/ui-ux-patterns.md) for comprehensive styling strategy including component-scoped CSS, responsive design, and mobile-first patterns.
 
 ### Authentication Strategy
 
-> For detailed authentication implementation, see [Best Practices: Authentication](./best-practices.md#authentication-strategy)
+> For detailed authentication implementation, see [Authentication Documentation](../concerns/authentication.md)
 
-- **Solution:** Auth.js (NextAuth) with email provider
-- **Database Adapter:** NeonDB adapter for persistence
-- **Error Handling:** Surface authentication errors immediately; avoid fallback or silent failure
+**Complete Strategy**: See [Authentication Documentation](../concerns/authentication.md) for magic link approach, role management, and development patterns.
 
 ## Code Quality Standards
 
@@ -949,34 +940,7 @@ Use Next.js API Routes for backend functionality:
 
 #### Database Interaction
 
-1. **Use Prisma ORM as Data Access Layer**
-
-   Use Prisma ORM for all database operations:
-
-   ```javascript
-   // lib/db.js
-   import { PrismaClient } from '@prisma/client';
-   
-   // Create a singleton instance
-   const globalForPrisma = global as { prisma?: PrismaClient };
-   export const prisma = globalForPrisma.prisma || new PrismaClient();
-   
-   if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
-   
-   export async function getSpecifications() {
-     return prisma.specification.findMany();
-   }
-   
-   export async function getSpecificationById(id) {
-     return prisma.specification.findUnique({
-       where: { id }
-     });
-   }
-   ```
-
-2. **Data Validation**
-
-   Always validate data before saving to the database
+**Complete Implementation**: See [Database Documentation - Database Interaction Patterns](../concerns/database.md#database-interaction-patterns) for comprehensive Prisma setup, query patterns, and optimization strategies.
 
 ### Error Handling Patterns
 
@@ -1000,43 +964,7 @@ Use Next.js API Routes for backend functionality:
 
 ### Performance Optimization
 
-#### Client-Side Optimization
-
-1. **Component Optimization**
-
-   Use React optimization techniques like `memo`, `useMemo`, and `useCallback` judiciously
-
-2. **Code Splitting**
-
-   Use Next.js dynamic imports for code splitting large components
-
-3. **Image Optimization**
-
-   Use Next.js Image component for optimized image loading
-
-#### Server-Side Optimization
-
-1. **Static Site Generation (SSG)**
-
-   Use SSG for pages that don't need frequent updates
-
-2. **Server-Side Rendering (SSR)**
-
-   Use SSR for pages that need fresh data
-
-3. **API Route Optimization**
-
-   Keep API routes lightweight and efficient using Prisma
-
-4. **Database Query Optimization with Prisma**
-
-   Use Prisma's features for efficient database access:
-   
-   - Use `select` to retrieve only needed fields
-   - Implement pagination with `skip` and `take`
-   - Use appropriate indexes for frequently queried fields
-   - Optimize relation fetching with `include`
-   - Use Prisma's transaction API for atomic operations
+**Complete Implementation**: See [Performance Optimization Documentation](../concerns/performance-optimization.md) for comprehensive performance strategy including client-side optimization, backend performance, and monitoring patterns.
 
 ## Revision History
 

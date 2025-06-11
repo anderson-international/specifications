@@ -130,75 +130,21 @@ export const useAuth = () => useContext(AuthContext);
 
 ### Form Management
 
-#### Form Implementation Decision Tree
-
-```
-Is this a multi-step wizard or complex form?
-├── Yes → Use Full React Hook Form with Multi-step Pattern
-│         (See Multi-step Wizard Implementation below)
-│
-└── No → Is validation required beyond simple required fields?
-    ├── Yes → Use Standard React Hook Form with Zod
-    │         (See Standard Form Implementation below)
-    │
-    └── No → Use Simplified React Hook Form
-            (See Simplified Pattern below)
-```
-
-- Use **React Hook Form** for all form handling, especially multi-step forms
-- Leverage its built-in validation, performance optimization, and state persistence
-- Keep form logic separate from UI components for better testability
-
-Example multi-step form pattern:
-
-```javascript
-// hooks/useSpecificationForm.js
-import { useForm } from 'react-hook-form';
-
-export const useSpecificationForm = () => {
-  const form = useForm({
-    defaultValues: {
-      product: null,
-      characteristics: {},
-      sensoryProfile: {},
-      rating: null
-    },
-    mode: 'onChange' // Validate on change for better UX
-  });
-
-  const nextStep = async (currentStep) => {
-    // Validate current step before proceeding
-    const isValid = await form.trigger(getFieldsForStep(currentStep));
-    if (!isValid) return false;
-    
-    return true;
-  };
-
-  return { form, nextStep };
-};
-
-// components/SpecificationWizard.jsx
-const SpecificationWizard = () => {
-  const { form, nextStep } = useSpecificationForm();
-  const [currentStep, setCurrentStep] = useState(0);
-
-  const handleNext = async () => {
-    if (await nextStep(currentStep)) {
-      setCurrentStep(prev => prev + 1);
-    }
-  };
-
-  return (
-    <FormProvider {...form}>
-      {currentStep === 0 && <ProductSelectionStep />}
-      {currentStep === 1 && <CharacteristicsStep />}
-      {currentStep === 2 && <SensoryProfileStep />}
-      {currentStep === 3 && <ReviewStep />}
-    </FormProvider>
-  );
-};
+**Complete Implementation**: See [Form Management Documentation](../concerns/form-management.md) for comprehensive form strategy including:
+- Form complexity decision framework and technology patterns
+- Schema-driven validation and error handling strategies
+- Multi-step form management and state persistence
+- Component integration and performance optimization
 
 ## API Design Principles
+
+### API Patterns
+
+**Complete Implementation**: See [API Design Documentation](../concerns/api-design.md) for comprehensive API strategy including:
+- RESTful endpoint patterns and URL structures
+- Error handling and response format standards
+- External API integration (Shopify GraphQL)
+- Validation strategies and performance guidelines
 
 ### API Routes Structure
 
@@ -220,70 +166,6 @@ Use Next.js App Router for backend functionality:
     [id]/
       route.ts            # Individual enum operations
 ```
-
-### API Patterns
-
-1. **RESTful Endpoints**
-
-   Follow REST principles for CRUD operations:
-   
-   - `GET /api/specifications` - List specifications
-   - `POST /api/specifications` - Create a specification
-   - `GET /api/specifications/[id]` - Get a specific specification
-   - `PUT /api/specifications/[id]` - Update a specification
-   - `DELETE /api/specifications/[id]` - Delete a specification
-
-2. **Response Format**
-
-   Standardize API responses using the following format:
-
-   ```typescript
-   // Success response
-   {
-     data: {...},      // The response data
-     meta?: {...}      // Optional metadata (pagination, etc.)
-   }
-
-   // Error response
-   {
-     error: {
-       message: string,  // Human-readable error message
-       code: string,     // Error code (e.g., "INVALID_INPUT", "NOT_FOUND")
-       details?: any     // Optional additional error details
-     }
-   }
-   ```
-   
-   Standard error status codes:
-   - `400` - Bad Request (validation errors, malformed inputs)
-   - `401` - Unauthorized (authentication required)
-   - `403` - Forbidden (authenticated but not authorized)
-   - `404` - Not Found (resource doesn't exist)
-   - `409` - Conflict (e.g., duplicate entry)
-   - `422` - Unprocessable Entity (semantic validation errors)
-   - `500` - Internal Server Error (unexpected server errors)
-
-3. **Shopify GraphQL Integration**
-
-   For Shopify interactions, use direct GraphQL queries:
-
-   ```javascript
-   // lib/shopify.js - Simple wrapper for Shopify GraphQL queries
-   export async function shopifyQuery(query, variables = {}) {
-     const response = await fetch(SHOPIFY_API_URL, {
-       method: 'POST',
-       headers: {
-         'Content-Type': 'application/json',
-         'X-Shopify-Storefront-Access-Token': STOREFRONT_ACCESS_TOKEN,
-       },
-       body: JSON.stringify({ query, variables }),
-     });
-
-     const { data, errors } = await response.json();
-     if (errors) throw new Error(errors[0].message);
-     return data;
-   }
-   ```
 
 ## Data Modeling Conventions
 
@@ -548,79 +430,11 @@ Use Next.js App Router for backend functionality:
 
 ### Database-Driven Product Sync
 
-**Strategy**: Store products in local database, sync via scheduled pg_cron jobs with incremental updates using Shopify's `updated_at` timestamps.
-
-**Products Table Structure**:
-```sql
-CREATE TABLE products (
-  handle VARCHAR(255) PRIMARY KEY,           -- Shopify product handle (unique identifier)
-  title TEXT NOT NULL,                       -- Product name/title
-  image TEXT,                                -- Product image URL
-  product_type VARCHAR(255),                 -- Product category/type
-  custom_brands TEXT,                        -- Brand from Shopify custom.brands metafield
-  updated_at TIMESTAMP NOT NULL,             -- Shopify's updated_at for incremental sync
-  last_synced TIMESTAMP DEFAULT NOW(),       -- Our sync timestamp
-  is_active BOOLEAN DEFAULT true             -- Soft delete flag for removed Shopify products
-);
-```
-
-**Sync Implementation**:
-```sql
--- Stored procedure for incremental product sync
-CREATE OR REPLACE FUNCTION refresh_shopify_products()
-RETURNS void AS $$
-DECLARE
-  latest_update TIMESTAMP;
-BEGIN
-  -- Get latest updated_at from existing products
-  SELECT MAX(updated_at) INTO latest_update FROM products;
-  
-  -- Call Shopify API with updated_at_min filter (implemented in app layer)
-  -- Upsert returned products with conflict resolution on handle
-  -- Mark products not returned as potentially deleted (soft delete)
-  
-  -- Error handling: fail fast on API errors
-  -- Log sync completion timestamp
-END;
-$$ LANGUAGE plpgsql;
-```
-
-**Scheduled Sync Configuration**:
-```sql
--- pg_cron job for automatic refresh every 6 hours
-SELECT cron.schedule('shopify-product-sync', '0 */6 * * *', 'SELECT refresh_shopify_products();');
-```
-
-**Development Strategy**:
-- **Development phase**: Limit sync to small product subset for testing
-- **Initial deployment**: Manual full sync via admin interface
-- **Production**: Automated 6-hour scheduled syncs with manual refresh option
-
-**Admin API Endpoints**:
-```typescript
-// POST /api/admin/sync-products - Manual product sync trigger
-// GET /api/admin/sync-status - Check last sync status and timestamp
-```
-
-**Application Integration**:
-```typescript
-// lib/products.ts - Application product queries
-export async function getProducts(filters?: ProductFilters) {
-  return await prisma.product.findMany({
-    where: {
-      is_active: true,
-      ...filters
-    },
-    orderBy: { title: 'asc' }
-  });
-}
-
-export async function getProductByHandle(handle: string) {
-  return await prisma.product.findUnique({
-    where: { handle, is_active: true }
-  });
-}
-```
+**Complete Implementation**: See [Database Documentation - Product Sync Strategy](../concerns/database.md#product-sync-strategy) for comprehensive details including:
+- Products table structure and sync procedures
+- Stored procedure implementation and scheduling
+- Admin API endpoints and application integration
+- Development strategy and error handling approach
 
 ## Performance Optimization
 

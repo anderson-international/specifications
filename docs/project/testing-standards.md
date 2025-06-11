@@ -140,6 +140,10 @@ export const sampleSpecifications = [
 ];
 ```
 
+## Testing Strategy
+
+**Complete Implementation**: See [Testing Strategy Documentation](../concerns/testing-strategy.md) for comprehensive testing approach including unit testing patterns, component testing, integration testing, and development workflow integration.
+
 ## Test Naming Conventions
 
 Follow simple, descriptive naming:

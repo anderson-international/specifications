@@ -38,15 +38,7 @@ This approach balances simplicity with the specific requirements of Shopify's Gr
 
 ### Form Management Strategy
 
-> For comprehensive form implementation patterns, see [Architectural Guidelines: Form Management](./architectural-guidelines.md#form-management)
-
-- **React Hook Form** with Zod validation for all forms
-- **Zod Schema-Driven Validation** for type safety and consistent validation
-- **Multi-Step Forms** with wizard pattern for complex forms
-- **Form State Management** contained within the form components
-- **Error Handling** with clear user feedback tied to specific fields
-
-This strategy provides a consistent, type-safe approach to forms with minimal boilerplate and excellent developer experience.
+**Complete Implementation**: See [Form Management Documentation](../concerns/form-management.md) for comprehensive form handling strategy including React Hook Form patterns, validation approaches, and multi-step form management.
 
 ### CSS/Styling Strategy
 
@@ -60,13 +52,7 @@ CSS Modules provide automatic scoping, prevent style conflicts, and have minimal
 
 ### Authentication Strategy
 
-- **Solution:** Auth.js (NextAuth) with email provider
-- **Production:** Use email magic link authentication with NeonDB as the database adapter
-- **Development:** Allow user selection from the database for rapid testing; never use in production
-- **No Passwords:** Never store or transmit passwords
-- **Error Handling:** Surface authentication errors immediately; avoid fallback or silent failure
-
-This two-tier approach ensures secure, user-friendly authentication in production while maintaining development speed and simplicity during local development.
+**Complete Implementation**: See [Authentication Documentation](../concerns/authentication.md) for comprehensive authentication strategy including magic link approach, role management, and development patterns.
 
 ## File Operations
 
