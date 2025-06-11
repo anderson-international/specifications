@@ -84,6 +84,32 @@ This document provides strategic guidance for API design decisions and patterns.
 - **Error Monitoring**: Basic error logging and monitoring for production
 - **Documentation**: Minimal API documentation for complex endpoints
 
+## Shopify Integration
+
+### API Configuration
+- **Store Domain**: Configure via SHOPIFY_STORE_DOMAIN environment variable
+- **Admin Access Token**: Read permissions for products via SHOPIFY_ADMIN_ACCESS_TOKEN
+- **Webhook Secret**: Secure webhook validation via SHOPIFY_WEBHOOK_SECRET
+- **API Version**: Use 2024-01 or latest stable version
+
+### Product Sync Implementation
+- **Scheduled Sync**: pg_cron every 6 hours for incremental updates using `updated_at` timestamps
+- **Manual Refresh**: Admin API endpoint `/api/admin/refresh-products` for on-demand sync
+- **Soft Delete Strategy**: Mark removed products as inactive rather than deleting
+- **Error Handling**: Retry logic with exponential backoff for API failures
+
+### Integration Patterns
+- **Rate Limiting**: Respect Shopify's API limits (40 calls/second)
+- **Webhook Processing**: Real-time product updates via webhook endpoints
+- **Fallback Procedures**: Cached data display when API unavailable
+- **Data Validation**: Verify webhook signatures and sanitize incoming data
+
+### Development Strategy
+- **Mock API**: Use mock responses for local development and testing
+- **Sandbox Testing**: Test integration with Shopify development store
+- **Error Simulation**: Test various API failure scenarios
+- **Performance Testing**: Validate sync performance with realistic data volumes
+
 ---
 
 *This document focuses on strategic API guidance. Implementation details should reference current API libraries and Next.js patterns.*

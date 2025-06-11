@@ -66,6 +66,60 @@ This document provides strategic guidance for deployment and environment decisio
 - **Local Testing**: Run tests locally before deployment
 - **Debug Support**: Development-only debugging and profiling tools
 
+## Development Environment Setup
+
+### Local Development Configuration
+
+#### Required Environment Variables
+```bash
+# Database Configuration
+DATABASE_URL="postgresql://username:password@localhost:5432/specifications_dev"
+DIRECT_URL="postgresql://username:password@localhost:5432/specifications_dev"
+
+# Authentication (Development)
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-dev-secret-key"
+
+# Email Provider (Production)
+EMAIL_SERVER_HOST="smtp.gmail.com"
+EMAIL_SERVER_PORT=587
+EMAIL_SERVER_USER="your-email@domain.com"
+EMAIL_SERVER_PASSWORD="your-app-password"
+EMAIL_FROM="noreply@yourdomain.com"
+
+# Shopify Integration
+SHOPIFY_STORE_DOMAIN="your-store.myshopify.com"
+SHOPIFY_ADMIN_ACCESS_TOKEN="your-admin-access-token"
+SHOPIFY_WEBHOOK_SECRET="your-webhook-secret"
+
+# Netlify Deployment
+NETLIFY_AUTH_TOKEN="your-netlify-token"
+NETLIFY_SITE_ID="your-site-id"
+```
+
+#### Database Connection Setup
+- **Development**: Direct connection to NeonDB development database
+- **Production**: Connection pooling via NeonDB serverless adapter
+- **Testing**: Separate test database instance or local PostgreSQL
+- **Schema Management**: Prisma migrations for schema changes
+
+#### API Credentials Management
+- **Shopify API**: Admin API access token with read permissions for products
+- **Email Service**: SMTP credentials for magic link authentication
+- **Third-party Services**: Rate limiting and error handling for external APIs
+
+#### Local Development Tools
+- **Node.js**: Version 18.17+ (LTS recommended)
+- **Package Manager**: npm or yarn (consistent across team)
+- **Database Client**: Prisma Studio for database inspection
+- **API Testing**: Thunder Client or Postman for endpoint testing
+
+### Development Workflow Integration
+- **Environment Switching**: Clear separation between dev/staging/production
+- **Secret Management**: Use .env.local for local secrets, never commit
+- **Database Migrations**: Test migrations locally before production deployment
+- **API Integration Testing**: Mock Shopify API responses for development
+
 ## Security Considerations
 
 ### Environment Security
