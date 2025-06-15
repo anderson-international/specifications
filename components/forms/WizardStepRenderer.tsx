@@ -65,16 +65,15 @@ export function WizardStepRenderer({
       case 1:
         return (
           <ProductSelection
-            formData={formData}
+            initialData={formData}
             onNext={onStepNext}
-            onPrev={onStepPrev}
-            productId={productId}
+            preselectedProductId={productId}
           />
         )
       case 2:
         return (
           <Characteristics1
-            formData={formData}
+            initialData={formData}
             onNext={onStepNext}
             onPrev={onStepPrev}
           />
@@ -82,7 +81,7 @@ export function WizardStepRenderer({
       case 3:
         return (
           <Characteristics2
-            formData={formData}
+            initialData={formData}
             onNext={onStepNext}
             onPrev={onStepPrev}
           />
@@ -90,7 +89,7 @@ export function WizardStepRenderer({
       case 4:
         return (
           <SensoryProfile
-            formData={formData}
+            initialData={formData}
             onNext={onStepNext}
             onPrev={onStepPrev}
           />
@@ -98,7 +97,7 @@ export function WizardStepRenderer({
       case 5:
         return (
           <ReviewRating
-            formData={formData}
+            initialData={formData}
             onComplete={onComplete}
             onPrev={onStepPrev}
           />
