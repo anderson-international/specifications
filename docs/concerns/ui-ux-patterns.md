@@ -1,14 +1,21 @@
 # UI/UX Patterns Documentation
 
-*Centralized user interface and experience strategy for the Specification Builder project.*
+*Implementation patterns and technical guidance for UI/UX development.*
+
+> **📋 Quick Navigation:**
+> - **Authoritative Strategy**: [UI/UX Design Decisions](../project/ui-ux-design.md) ← **Primary UI/UX resource**
+> - **Implementation Guides**: [React Development Patterns](../guides/react-patterns.md) | [Database-Form Integration](../guides/database-form-integration.md)
+> - **Development Standards**: [Best Practices](../guides/best-practices.md) | [Architectural Guidelines](../guides/architectural-guidelines.md)
+> - **Form Strategy**: [Form Management](form-management.md) | [Code Quality Standards](../guides/code-quality-standards.md)
+> - **Technical Context**: [Technical Stack](../project/technical-stack.md) | [API Design](api-design.md)
+
+> **📋 For comprehensive UI/UX strategy and design decisions, see the authoritative [UI/UX Design Decisions](../project/ui-ux-design.md) document.**
 
 ## Overview
 
-This document provides strategic guidance for UI/UX decisions and patterns. Focus is on simplicity and consistency for a solo hobbyist project with mobile-first responsive design.
+This document provides technical implementation patterns for UI/UX development. For strategic guidance, design philosophy, and comprehensive patterns, reference the main UI/UX Design document.
 
 ## Styling Strategy
-
-**Core Approach**: Component-scoped styling with clear naming conventions and minimal global styles.
 
 ### CSS Philosophy
 - **Component-Scoped**: Styles tied directly to individual components
@@ -24,8 +31,6 @@ This document provides strategic guidance for UI/UX decisions and patterns. Focu
 
 ## Component Organization
 
-**Philosophy**: Modular, reusable components with clear responsibilities and reasonable size limits.
-
 ### Component Structure
 - **Single Responsibility**: Each component handles one clear purpose
 - **Reasonable Size**: Keep components focused and maintainable
@@ -38,35 +43,26 @@ This document provides strategic guidance for UI/UX decisions and patterns. Focu
 - **Shared Components**: Common UI elements in dedicated shared directory
 - **Clear Naming**: Consistent file and component naming conventions
 
-## User Experience Patterns
+## Development Workflow
 
-### Navigation Strategy
-- **Simple Structure**: Clear, intuitive navigation hierarchy
-- **Mobile-Friendly**: Touch-friendly navigation for mobile devices
-- **Consistent Patterns**: Standardized navigation behaviors across the application
-- **Accessibility**: Keyboard navigation and screen reader support
+### Style Organization
+- **Component Testing**: Basic testing for critical UI components
+- **Browser Compatibility**: Focus on modern browsers with graceful degradation
+- **Development Tools**: Simple tooling for style debugging and optimization
 
-### Interaction Patterns
-- **Immediate Feedback**: Visual feedback for user actions
-- **Loading States**: Clear indication of async operations
-- **Error Handling**: User-friendly error messages and recovery options
-- **Progressive Disclosure**: Show information as needed, avoid overwhelming users
+### Implementation Patterns
+- **Consistent Behaviors**: Similar components behave in predictable ways
+- **Reusable Elements**: Common patterns like buttons, forms, and cards
+- **State Variations**: Clear visual states (disabled, loading, error, success)
+- **Flexible Sizing**: Components that adapt to different content and contexts
 
-## Design System Approach
-
-**Strategy**: Lightweight design system with consistent patterns and reusable components.
+## Design System Implementation
 
 ### Color and Typography
 - **Limited Palette**: Small, focused color scheme for consistency
 - **Semantic Colors**: Colors that convey meaning (success, error, warning)
 - **Readable Typography**: Font choices optimized for readability across devices
 - **Consistent Spacing**: Standardized spacing and sizing patterns
-
-### Component Patterns
-- **Consistent Behaviors**: Similar components behave in predictable ways
-- **Reusable Elements**: Common patterns like buttons, forms, and cards
-- **State Variations**: Clear visual states (disabled, loading, error, success)
-- **Flexible Sizing**: Components that adapt to different content and contexts
 
 ## Performance Considerations
 
@@ -75,12 +71,6 @@ This document provides strategic guidance for UI/UX decisions and patterns. Focu
 - **Code Splitting**: Load only necessary CSS and JavaScript for each page
 - **Minimal Dependencies**: Avoid heavy UI libraries for simple styling needs
 - **Efficient Rendering**: Minimize unnecessary re-renders and DOM manipulations
-
-### Development Workflow
-- **Style Organization**: Clear patterns for organizing and maintaining styles
-- **Component Testing**: Basic testing for critical UI components
-- **Browser Compatibility**: Focus on modern browsers with graceful degradation
-- **Development Tools**: Simple tooling for style debugging and optimization
 
 ## Accessibility Guidelines
 
@@ -98,4 +88,4 @@ This document provides strategic guidance for UI/UX decisions and patterns. Focu
 
 ---
 
-*This document focuses on strategic UI/UX guidance. Implementation details should reference current design tokens and component libraries.*
+*This document focuses on implementation patterns. For strategic UI/UX guidance, design philosophy, and comprehensive patterns, see [UI/UX Design Decisions](../project/ui-ux-design.md).*

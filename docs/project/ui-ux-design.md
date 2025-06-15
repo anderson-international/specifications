@@ -1,5 +1,95 @@
 # UI/UX Design Decisions
 
+*Comprehensive UI/UX strategy, design system, and component patterns for the Specification Builder.*
+
+> **📋 Quick Navigation:**
+> - **Implementation Guides**: [Database-Form Integration](../guides/database-form-integration.md) | [React Development Patterns](../guides/react-patterns.md)
+> - **Development Standards**: [Best Practices](../guides/best-practices.md) | [Architectural Guidelines](../guides/architectural-guidelines.md)
+> - **Form Strategy**: [Form Management](../concerns/form-management.md) | [Component Patterns](../concerns/ui-ux-patterns.md)
+> - **Technical Context**: [Technical Stack](technical-stack.md) | [Code Quality Standards](../guides/code-quality-standards.md)
+> - **Project Context**: [Feature Requirements](feature-requirements.md) | [Business Context](business-context.md)
+
+## Strategic Overview
+
+This document serves as the **authoritative source** for all UI/UX design decisions, component patterns, and implementation strategies for the Specification Builder project.
+
+> **🔄 Implementation Status:** See [our-plan.md](../our-plan.md) → Phase 2.1 Product Discovery UI and Phase 2.2 Specification Form Wizard for current UI implementation progress.
+
+This document provides comprehensive UI/UX guidance combining strategic patterns with specific design decisions. Focus is on simplicity and consistency for a solo hobbyist project with mobile-first responsive design.
+
+## Core UI/UX Philosophy
+
+### Mobile-First Design Philosophy
+- **Primary Design Target**: Mobile devices
+- All UX decisions will prioritize mobile user experience
+- Desktop experience will be an enhancement of the mobile design
+- Touch-friendly UI elements throughout the application
+- Progressive enhancement: Add desktop features as screen size increases
+- Performance focus: Optimize for mobile performance and loading times
+
+### Design Principles
+- **Simplicity**: Clear, intuitive interfaces following KISS principle
+- **Consistency**: Standardized patterns and behaviors across the application
+- **Accessibility**: Keyboard navigation and screen reader support throughout
+- **Performance**: Efficient rendering and minimal resource usage
+
+## Styling Strategy
+
+### CSS Modules Implementation
+- **Approach**: Component-scoped styling with CSS Modules
+- **Rationale**:
+  - Simplicity - plain CSS, no new syntax
+  - Zero runtime overhead (small file sizes)
+  - Clear separation of concerns
+  - Built into Next.js (no dependencies)
+  - Automatic style scoping
+- **Implementation**:
+  - Global CSS variables for theme colors
+  - Component-specific `.module.css` files
+  - Mobile-first responsive design
+
+### Component Organization Philosophy
+- **Single Responsibility**: Each component handles one clear purpose
+- **Reasonable Size**: Keep components focused and maintainable (see file size limits in best-practices.md)
+- **Composition Over Inheritance**: Build complex UIs from simple component combinations
+- **Clear Interfaces**: Well-defined props and consistent API patterns
+- **Feature-Based Organization**: Group related components by functionality
+- **Co-location**: Keep component files near related logic and styles
+
+## User Experience Patterns
+
+### Navigation Strategy
+- **Simple Structure**: Clear, intuitive navigation hierarchy
+- **Mobile-Friendly**: Touch-friendly navigation for mobile devices
+- **Consistent Patterns**: Standardized navigation behaviors across the application
+- **Accessibility**: Keyboard navigation and screen reader support
+
+### Interaction Patterns
+- **Immediate Feedback**: Visual feedback for user actions
+- **Loading States**: Clear indication of async operations
+- **Error Handling**: User-friendly error messages and recovery options
+- **Progressive Disclosure**: Show information as needed, avoid overwhelming users
+
+### Performance Considerations
+- **Image Optimization**: Appropriate image formats and sizing for web delivery
+- **Code Splitting**: Load only necessary CSS and JavaScript for each page
+- **Minimal Dependencies**: Avoid heavy UI libraries for simple styling needs
+- **Efficient Rendering**: Minimize unnecessary re-renders and DOM manipulations
+
+## Accessibility Guidelines
+
+### Core Principles
+- **Keyboard Navigation**: All interactive elements accessible via keyboard
+- **Screen Reader Support**: Proper semantic markup and ARIA labels
+- **Color Accessibility**: Sufficient contrast ratios and color-independent information
+- **Focus Management**: Clear visual focus indicators and logical tab order
+
+### Implementation Patterns
+- **Semantic HTML**: Use appropriate HTML elements for their intended purpose
+- **Progressive Enhancement**: Core functionality works without JavaScript
+- **Error Accessibility**: Screen reader accessible error messages and validation
+- **Skip Links**: Navigation shortcuts for keyboard and screen reader users
+
 ## Mobile-First Design Philosophy
 
 ### Primary Design Target
@@ -142,3 +232,51 @@
   - Each form section in its own card
   - Consistent spacing using 8px grid
 - **Rationale**: Brand consistency, visual organization, reduces eye strain
+
+## Multi-Step Form Wizard UI Design
+
+### Wizard Structure and Navigation
+- **Design Pattern**: Step-based progression with clear visual indicators
+- **Step Navigation**:
+  - Progress bar showing completed/current/remaining steps
+  - Step numbers and titles visible throughout wizard
+  - Previous step navigation always available (preserves data)
+  - Next step blocked until current step validation passes
+- **Visual Elements**:
+  - Each step in dedicated card container
+  - Consistent button placement (Previous/Next at bottom)
+  - Loading states during validation and submission
+  - Clear step completion indicators
+
+### Form Field Organization
+- **Card-Based Layout**: Each logical section in separate cards within steps
+- **Field Grouping**: Related fields grouped visually with section headers
+- **Input Styling**: Consistent form controls matching dark theme
+- **Validation Display**: Inline error messages below each field
+- **Required Field Indicators**: Clear visual markers for required fields
+
+### Progress and State Management
+- **Visual Progress**: Multi-level progress indication
+  - Overall wizard progress (e.g., "Step 2 of 5")
+  - Step-level progress for complex steps (e.g., "3 of 7 sections complete")
+- **Draft State Handling**:
+  - Auto-save indicators and status
+  - Draft resume prompts with clear options
+  - Visual differentiation for saved vs unsaved changes
+- **Loading States**: Consistent loading indicators for async operations
+
+### Mobile-First Wizard Considerations
+- **Touch-Friendly Navigation**: Large tap targets for step navigation
+- **Swipe Support**: Optional gesture navigation between steps
+- **Compact Layout**: Optimized form field spacing for mobile screens
+- **Keyboard Handling**: Proper focus management and virtual keyboard optimization
+- **Scroll Behavior**: Smooth step transitions with proper scroll positioning
+
+### Error Handling and Validation UI
+- **Step-Level Validation**: Block progression with clear error summary
+- **Field-Level Feedback**: Immediate validation feedback during input
+- **Error Recovery**: Clear path to fix validation errors
+- **Success Indicators**: Positive feedback for completed sections
+- **Consistent Messaging**: Standardized error message styling and placement
+
+**Technical Implementation**: See [Form Management Documentation](../concerns/form-management.md) for React Hook Form integration, validation patterns, and state management strategies.

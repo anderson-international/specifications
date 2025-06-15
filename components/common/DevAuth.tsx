@@ -10,7 +10,7 @@ interface DevAuthProps {
   currentUser: AuthUser | null
 }
 
-export default function DevAuth({ onUserSelect, currentUser }: DevAuthProps) {
+export default function DevAuth({ onUserSelect, currentUser }: DevAuthProps): JSX.Element {
   const [users, setUsers] = useState<AuthUser[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -18,7 +18,7 @@ export default function DevAuth({ onUserSelect, currentUser }: DevAuthProps) {
     fetchUsers()
   }, [])
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (): Promise<void> => {
     try {
       const response = await fetch('/api/auth/dev-users')
       if (response.ok) {
@@ -32,7 +32,7 @@ export default function DevAuth({ onUserSelect, currentUser }: DevAuthProps) {
     }
   }
 
-  const handleUserChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleUserChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     const userId = e.target.value
     if (userId === '') {
       onUserSelect(null)
@@ -46,7 +46,7 @@ export default function DevAuth({ onUserSelect, currentUser }: DevAuthProps) {
     }
   }
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     onUserSelect(null)
     localStorage.removeItem('dev-user')
   }

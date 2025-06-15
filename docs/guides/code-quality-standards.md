@@ -1,5 +1,25 @@
 # Code Quality Standards
 
+*ESLint, Prettier, and TypeScript configuration standards for consistent code quality.*
+
+<!-- AI_NAVIGATION
+Primary Focus: TypeScript ESLint rules, return type requirements, import organization
+Key Compliance Points:
+- @typescript-eslint/explicit-function-return-type: error (line 49)
+- @typescript-eslint/no-explicit-any: error (line 50) 
+- import/order configuration (line 62-72)
+- File size limits referenced from best-practices.md
+Critical for: All .ts/.tsx files, function definitions, import statements
+Cross-references: best-practices.md (file limits), react-patterns.md (React-specific rules)
+-->
+
+> **📋 Quick Navigation:**
+> - **Development Guidelines**: [Best Practices](best-practices.md) | [Architectural Guidelines](architectural-guidelines.md)
+> - **React Implementation**: [React Development Patterns](react-patterns.md) | [Database-Form Integration](database-form-integration.md)
+> - **UI/UX Standards**: [UI/UX Design Decisions](../project/ui-ux-design.md) | [Component Patterns](../concerns/ui-ux-patterns.md)
+> - **Technical Strategy**: [Form Management](../concerns/form-management.md) | [API Design](../concerns/api-design.md)
+> - **Project Setup**: [Technical Stack](../project/technical-stack.md) | [Deployment Environment](../concerns/deployment-environment.md)
+
 This document outlines the code quality standards for the specifications project - a snuff specification builder and CRUD admin application.
 
 ## Table of Contents
@@ -9,12 +29,14 @@ This document outlines the code quality standards for the specifications project
 3. [Naming Conventions](#naming-conventions)
 4. [Code Structure and Organization](#code-structure-and-organization)
 5. [State Management](#state-management)
+6. [⚠️ **CRITICAL**: TypeScript Return Type Requirements](#typescript-return-type-requirements)
+7. [AI_VALIDATION](#ai-validation)
 
-## ESLint Configuration
+## 🔥 **HIGH**: ESLint Configuration
 
 We use ESLint to enforce code quality and consistency across the codebase.
 
-### Base Configuration
+### ⚠️ **CRITICAL**: Base Configuration
 
 ```json
 {
@@ -38,27 +60,27 @@ We use ESLint to enforce code quality and consistency across the codebase.
     "import"
   ],
   "rules": {
-    // Error prevention
+    // ⚠️ **CRITICAL**: Error prevention
     "no-console": ["warn", { "allow": ["warn", "error"] }],
     "no-debugger": "error",
     "no-alert": "error",
     "no-var": "error",
     "prefer-const": "error",
     
-    // TypeScript specific
+    // ⚠️ **CRITICAL**: TypeScript specific
     "@typescript-eslint/explicit-function-return-type": ["error", { "allowExpressions": true }],
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/ban-ts-comment": "warn",
     
-    // React specific
+    // 🔥 **HIGH**: React specific
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-curly-brace-presence": ["error", { "props": "never", "children": "never" }],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     
-    // Import organization
+    // ⚙️ **MEDIUM**: Import organization
     "import/order": [
       "error",
       {
@@ -72,7 +94,7 @@ We use ESLint to enforce code quality and consistency across the codebase.
 }
 ```
 
-## Prettier Formatting
+## ⚙️ **MEDIUM**: Prettier Formatting
 
 We use Prettier to ensure consistent code formatting across the codebase.
 
@@ -99,7 +121,7 @@ To integrate Prettier with ESLint, we use:
 - `eslint-config-prettier`: Disables ESLint rules that might conflict with Prettier
 - `eslint-plugin-prettier`: Runs Prettier as an ESLint rule
 
-## Naming Conventions
+## ⚙️ **MEDIUM**: Naming Conventions
 
 ### Files and Directories
 
@@ -128,7 +150,7 @@ To integrate Prettier with ESLint, we use:
 - **TypeScript Types**: PascalCase, descriptive (e.g., `UserRole`, `FormState`)
 - **Enums**: PascalCase, singular naming (e.g., `ButtonType`, `NotificationType`)
 
-## Code Structure and Organization
+## ⚙️ **MEDIUM**: Code Structure and Organization
 
 ### Project Structure
 
@@ -218,7 +240,7 @@ ExampleComponent.propTypes = {
 };
 ```
 
-## State Management
+## 🔥 **HIGH**: State Management
 
 ### Local State
 
@@ -259,14 +281,14 @@ interface User {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'user';
+  role: 'admin' | 'expert' | 'public';
 }
 
 interface UserContext {
   user: User | null;
   loading: boolean;
   error: Error | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -277,13 +299,13 @@ export const UserProvider: React.FC = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (email: string) => {
     setLoading(true);
     setError(null);
     
     try {
       // Login logic
-      const userData = await loginService(email, password);
+      const userData = await loginService(email);
       setUser(userData);
     } catch (err) {
       setError(err as Error);
@@ -312,3 +334,55 @@ export const useUser = (): IUserContext => {
   return context;
 };
 ```
+
+## ⚠️ **CRITICAL - MANDATORY COMPLIANCE**: TypeScript Return Type Requirements
+
+All functions must have explicit return types as enforced by ESLint configuration:
+
+```typescript
+// ❌ FORBIDDEN - No return type
+const MyComponent = () => {
+  return <div>Hello</div>;
+};
+
+// ✅ MANDATORY - Explicit return type
+const MyComponent = (): JSX.Element => {
+  return <div>Hello</div>;
+};
+
+// ❌ FORBIDDEN - No return type
+function handleSubmit(data) {
+  console.log(data);
+}
+
+// ✅ MANDATORY - Explicit return type
+function handleSubmit(data: FormData): void {
+  console.log(data);
+}
+```
+
+## AI_VALIDATION
+
+ESLint Rule Patterns:
+- Function return types: ": (void|Promise<\w+>|\w+)" required after function parameters
+- No explicit any: Reject patterns containing ": any" or "any[]"
+- Console usage: Only allow "console\.(warn|error)" not "console\.log"
+- Import organization: Require blank lines between import groups
+
+Validation Regex:
+- Missing return types: /^[\s]*const\s+\w+\s*=\s*\([^)]*\)\s*=>\s*{/ (without return type)
+- Explicit any usage: /:\s*any\b/
+- Console.log usage: /console\.log\(/
+- Import violations: /^import.*from.*\n^import/ (missing blank line)
+
+File Size Validation:
+- Component files: Line count <= 150
+- Page files: Line count <= 200  
+- Utility files: Line count <= 100
+
+Critical Patterns to Enforce:
+1. All functions have explicit return types
+2. No usage of 'any' type
+3. No console.log in production code
+4. Proper import organization with blank lines
+5. File size limits strictly enforced

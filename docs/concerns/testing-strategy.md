@@ -6,111 +6,111 @@
 
 This document provides strategic guidance for testing decisions and patterns. Focus is on practical testing for a solo hobbyist project with emphasis on critical functionality and maintainable test suites.
 
-## Testing Philosophy
+## ⚠️ **CRITICAL**: Testing Philosophy
 
-**Core Approach**: Practical testing with focus on critical paths and high-value test coverage.
+**⚠️ **CRITICAL**: Core Approach**: Practical testing with focus on critical paths and high-value test coverage.
 
-### Testing Principles
-- **Test What Matters**: Focus testing efforts on critical business functionality
-- **Quality Over Quantity**: Prioritize meaningful tests over comprehensive coverage metrics
-- **Simple Setup**: Maintain lightweight testing infrastructure and tooling
-- **Manual + Automated**: Strategic combination of manual testing and automation
+### ⚠️ **CRITICAL**: Testing Principles
+- **⚠️ CRITICAL: Test What Matters**: Focus testing efforts on critical business functionality
+- **🔥 HIGH: Quality Over Quantity**: Prioritize meaningful tests over comprehensive coverage metrics
+- **⚙️ MEDIUM: Simple Setup**: Maintain lightweight testing infrastructure and tooling
+- **🔥 HIGH: Manual + Automated**: Strategic combination of manual testing and automation
 
-### Testing Strategy
-- **Critical Path Focus**: Ensure core user workflows are thoroughly tested
-- **Risk-Based Testing**: Concentrate testing on areas with highest impact if broken
-- **Practical Coverage**: Test complex logic, avoid testing trivial implementations
-- **Fast Feedback**: Quick test execution for rapid development iteration
+### 🔥 **HIGH**: Testing Strategy
+- **⚠️ CRITICAL: Critical Path Focus**: Ensure core user workflows are thoroughly tested
+- **🔥 HIGH: Risk-Based Testing**: Concentrate testing on areas with highest impact if broken
+- **🔥 HIGH: Practical Coverage**: Test complex logic, avoid testing trivial implementations
+- **⚙️ MEDIUM: Fast Feedback**: Quick test execution for rapid development iteration
 
-## Testing Approaches
+## ⚙️ **MEDIUM**: Testing Approaches
 
-### Manual Testing Strategy
-- **User Flow Testing**: Manual validation of complete user workflows
-- **Exploratory Testing**: Ad-hoc testing to discover edge cases and usability issues
-- **Cross-Browser Testing**: Validation across target browser environments
-- **Accessibility Testing**: Basic accessibility verification for key features
+### ⚙️ **MEDIUM**: Manual Testing Strategy
+- **🔥 HIGH: User Flow Testing**: Manual validation of complete user workflows
+- **⚙️ MEDIUM: Exploratory Testing**: Ad-hoc testing to discover edge cases and usability issues
+- **⚙️ MEDIUM: Cross-Browser Testing**: Validation across target browser environments
+- **⚙️ MEDIUM: Accessibility Testing**: Basic accessibility verification for key features
 
-### Automated Testing Strategy
-- **Unit Testing**: Test isolated functions and business logic
-- **Component Testing**: Test UI components in isolation
-- **Integration Testing**: Test critical workflows end-to-end
-- **API Testing**: Validate API endpoints and data flows
+### 🔥 **HIGH**: Automated Testing Strategy
+- **⚠️ CRITICAL: Unit Testing**: Test isolated functions and business logic
+- **🔥 HIGH: Component Testing**: Test UI components in isolation
+- **🔥 HIGH: Integration Testing**: Test critical workflows end-to-end
+- **🔥 HIGH: API Testing**: Validate API endpoints and data flows
 
-## Unit Testing Patterns
+## ⚠️ **CRITICAL**: Unit Testing Patterns
 
 **Philosophy**: Test complex business logic and utility functions that have clear inputs and outputs.
 
-### Testing Scope
-- **Business Logic**: Core application logic and calculations
-- **Utility Functions**: Helper functions and data transformations
-- **Data Processing**: Functions that manipulate or validate data
-- **Error Handling**: Edge cases and error conditions
+### ⚠️ **CRITICAL**: Testing Scope
+- **⚠️ CRITICAL: Business Logic**: Core application logic and calculations
+- **🔥 HIGH: Utility Functions**: Helper functions and data transformations
+- **🔥 HIGH: Data Processing**: Functions that manipulate or validate data
+- **🔥 HIGH: Error Handling**: Edge cases and error conditions
 
-### Testing Approach
-- **Isolated Testing**: Test functions independently of external dependencies
-- **Clear Test Cases**: Descriptive test names and comprehensive scenarios
-- **Fast Execution**: Quick-running tests for rapid feedback
-- **Maintainable Tests**: Tests that are easy to understand and modify
+### 🔥 **HIGH**: Testing Approach
+- **⚠️ CRITICAL: Isolated Testing**: Test functions independently of external dependencies
+- **🔥 HIGH: Clear Test Cases**: Descriptive test names and comprehensive scenarios
+- **⚙️ MEDIUM: Fast Execution**: Quick-running tests for rapid feedback
+- **🔥 HIGH: Maintainable Tests**: Tests that are easy to understand and modify
 
-## Component Testing Patterns
+## 🔥 **HIGH**: Component Testing Patterns
 
 **Philosophy**: Test complex interactive components that handle user input and state management.
 
-### Testing Focus
-- **User Interactions**: Test how components respond to user actions
-- **State Management**: Verify component state changes and side effects
-- **Conditional Rendering**: Test different component states and variations
-- **Accessibility**: Basic accessibility testing for interactive elements
+### 🔥 **HIGH**: Testing Focus
+- **⚠️ CRITICAL: User Interactions**: Test how components respond to user actions
+- **⚠️ CRITICAL: State Management**: Verify component state changes and side effects
+- **🔥 HIGH: Conditional Rendering**: Test different component states and variations
+- **⚙️ MEDIUM: Accessibility**: Basic accessibility testing for interactive elements
 
-### Testing Strategy
-- **User-Centered Testing**: Test from the user's perspective, not implementation details
-- **Integration Testing**: Test components with their dependencies when appropriate
-- **Visual Testing**: Verify component rendering and appearance
-- **Error Scenarios**: Test component behavior during error conditions
+### 🔥 **HIGH**: Testing Strategy
+- **⚠️ CRITICAL: User-Centered Testing**: Test from the user's perspective, not implementation details
+- **🔥 HIGH: Integration Testing**: Test components with their dependencies when appropriate
+- **⚙️ MEDIUM: Visual Testing**: Verify component rendering and appearance
+- **🔥 HIGH: Error Scenarios**: Test component behavior during error conditions
 
-## Integration Testing Patterns
+## 🔥 **HIGH**: Integration Testing Patterns
 
 **Philosophy**: Test critical user workflows end-to-end to ensure system components work together correctly.
 
-### Testing Scope
-- **Critical Workflows**: Essential user journeys and business processes
-- **API Integration**: Test frontend and backend integration points
-- **Data Flow**: Verify data moves correctly through the system
-- **Authentication Flows**: Test user authentication and authorization
+### ⚠️ **CRITICAL**: Testing Scope
+- **⚠️ CRITICAL: Critical Workflows**: Essential user journeys and business processes
+- **🔥 HIGH: API Integration**: Test frontend and backend integration points
+- **🔥 HIGH: Data Flow**: Verify data moves correctly through the system
+- **🔥 HIGH: Authentication Flows**: Test user authentication and authorization
 
-### Testing Approach
-- **Realistic Scenarios**: Test with data and scenarios similar to production
-- **Environment Isolation**: Use dedicated test environments and data
-- **End-to-End Validation**: Test complete workflows from start to finish
-- **Error Recovery**: Test system behavior during failures and recovery
+### 🔥 **HIGH**: Testing Approach
+- **🔥 HIGH: Realistic Scenarios**: Test with data and scenarios similar to production
+- **⚙️ MEDIUM: Environment Isolation**: Use dedicated test environments and data
+- **⚠️ CRITICAL: End-to-End Validation**: Test complete workflows from start to finish
+- **🔥 HIGH: Error Recovery**: Test system behavior during failures and recovery
 
-## Test Organization and Maintenance
+## ⚙️ **MEDIUM**: Test Organization and Maintenance
 
-### Test Structure
-- **Clear Organization**: Logical grouping of tests by feature or component
-- **Consistent Naming**: Descriptive test names that explain what is being tested
-- **Test Documentation**: Clear test descriptions and setup instructions
-- **Easy Execution**: Simple commands to run different types of tests
+### ⚙️ **MEDIUM**: Test Structure
+- **⚙️ MEDIUM: Clear Organization**: Logical grouping of tests by feature or component
+- **⚙️ MEDIUM: Consistent Naming**: Descriptive test names that explain what is being tested
+- **⚙️ MEDIUM: Test Documentation**: Clear test descriptions and setup instructions
+- **⚙️ MEDIUM: Easy Execution**: Simple commands to run different types of tests
 
-### Test Maintenance
-- **Regular Review**: Periodic review of test effectiveness and relevance
-- **Test Cleanup**: Remove outdated or redundant tests
-- **Performance Monitoring**: Keep test suites fast and efficient
-- **Failure Analysis**: Investigate and fix flaky or unreliable tests
+### ⚙️ **MEDIUM**: Test Maintenance
+- **⚙️ MEDIUM: Regular Review**: Periodic review of test effectiveness and relevance
+- **⚙️ MEDIUM: Test Cleanup**: Remove outdated or redundant tests
+- **⚙️ MEDIUM: Performance Monitoring**: Keep test suites fast and efficient
+- **🔥 HIGH: Failure Analysis**: Investigate and fix flaky or unreliable tests
 
-## Development Workflow Integration
+## 🔥 **HIGH**: Development Workflow Integration
 
-### Development Process
-- **Test-Driven Development**: Write tests for complex logic before implementation
-- **Continuous Testing**: Run tests during development for immediate feedback
-- **Pre-Commit Testing**: Run critical tests before code commits
-- **Deployment Testing**: Verify tests pass before production deployment
+### 🔥 **HIGH**: Development Process
+- **🔥 HIGH: Test-Driven Development**: Write tests for complex logic before implementation
+- **⚠️ CRITICAL: Continuous Testing**: Run tests during development for immediate feedback
+- **🔥 HIGH: Pre-Commit Testing**: Run critical tests before code commits
+- **⚠️ CRITICAL: Deployment Testing**: Verify tests pass before production deployment
 
-### Quality Assurance
-- **Code Review**: Include test review as part of code review process
-- **Test Coverage**: Monitor test coverage for critical code paths
-- **Bug Prevention**: Use tests to prevent regression of fixed bugs
-- **Documentation**: Keep testing documentation up-to-date with changes
+### 🔥 **HIGH**: Quality Assurance
+- **🔥 HIGH: Code Review**: Include test review as part of code review process
+- **⚙️ MEDIUM: Test Coverage**: Monitor test coverage for critical code paths
+- **🔥 HIGH: Bug Prevention**: Use tests to prevent regression of fixed bugs
+- **⚙️ MEDIUM: Documentation**: Keep testing documentation up-to-date with changes
 
 ---
 

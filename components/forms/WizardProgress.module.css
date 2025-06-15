@@ -1,0 +1,214 @@
+.container {
+  margin-bottom: 2rem;
+}
+
+.progressContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.progressBar {
+  flex: 1;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.stepProgress {
+  margin-bottom: 1.5rem;
+}
+
+.stepProgressText {
+  display: block;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.stepProgressBar {
+  height: 4px;
+  background: #f3f4f6;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stepProgressFill {
+  height: 100%;
+  background: #10b981;
+  transition: width 0.3s ease;
+}
+
+.stepIndicators {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+}
+
+.stepIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.stepIndicator:disabled {
+  cursor: default;
+}
+
+.stepIndicator:hover:not(:disabled) {
+  border-color: #3b82f6;
+  background: #f8fafc;
+}
+
+.stepActive {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.stepCompleted {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.stepError {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.stepNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.stepActive .stepNumber {
+  background: #3b82f6;
+  color: white;
+}
+
+.stepCompleted .stepNumber {
+  background: #10b981;
+  color: white;
+}
+
+.stepError .stepNumber {
+  background: #ef4444;
+  color: white;
+}
+
+.stepTitle {
+  font-size: 0.625rem;
+  text-align: center;
+  line-height: 1.2;
+  color: #6b7280;
+}
+
+.stepActive .stepTitle {
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.stepCompleted .stepTitle {
+  color: #10b981;
+}
+
+.stepError .stepTitle {
+  color: #ef4444;
+}
+
+.validationErrors {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.errorIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.errorContent {
+  flex: 1;
+}
+
+.errorTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #dc2626;
+  margin-bottom: 0.5rem;
+}
+
+.errorList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.errorItem {
+  font-size: 0.875rem;
+  color: #7f1d1d;
+  padding: 0.125rem 0;
+}
+
+.currentStepTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .stepIndicators {
+    gap: 0.25rem;
+  }
+  
+  .stepIndicator {
+    min-width: 60px;
+    padding: 0.375rem 0.25rem;
+  }
+  
+  .stepTitle {
+    font-size: 0.5rem;
+  }
+  
+  .currentStepTitle {
+    font-size: 1.25rem;
+  }
+}

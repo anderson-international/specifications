@@ -1,30 +1,71 @@
 # Technical Stack Decisions
 
+> **📋 For comprehensive UI/UX strategy and styling philosophy, see [UI/UX Design Decisions](ui-ux-design.md).**
+
 ## Frontend Framework
 
-### Next.js
-- **Decision**: Next.js
+### Next.js 15 (App Router)
+- **Decision**: Next.js 15 with App Router
 - **Rationale**: 
   - React-based with strong ecosystem
   - Excellent mobile performance
   - Server-side rendering for fast initial loads
   - Built-in API routes
   - Image optimization for product images
+- **Framework Architecture:**
+  - **App Router**: File-system based routing with `app/` directory structure
+  - **Server Components**: Default rendering mode for optimal performance
+  - **Client Components**: Explicit `'use client'` directive for interactivity
+  - **Server Actions**: Built-in form handling with `'use server'` functions
 
-## CSS/Styling Approach
+- **Key App Router Benefits:**
+  - **Performance**: Server Components reduce client bundle size
+  - **SEO**: Server-side rendering improves search engine optimization  
+  - **Developer Experience**: Simplified data fetching with async/await
+  - **Type Safety**: Full TypeScript integration with route parameters
+
+- **Component Boundary Strategy:**
+```typescript
+// Server Component (default) - for data fetching and static content
+export default async function ProductsPage(): Promise<JSX.Element> {
+  const products = await prisma.product.findMany(); // Direct DB access
+  return <ProductList products={products} />;
+}
+
+// Client Component - for interactivity and state management
+'use client';
+export default function ProductFilters(): JSX.Element {
+  const [search, setSearch] = useState('');
+  // Browser APIs and event handlers
+}
+```
+
+- **File Structure Patterns:**
+```
+app/
+├── layout.tsx          # Root layout (Server Component)
+├── page.tsx           # Home page
+├── products/
+│   ├── layout.tsx     # Products layout  
+│   └── page.tsx       # Products listing (Server Component)
+└── create-specification/
+    └── page.tsx       # Form wizard (Client Component)
+```
+
+## CSS/Styling Implementation
 
 ### CSS Modules
 - **Decision**: CSS Modules
-- **Rationale**:
-  - Simplicity - plain CSS, no new syntax
-  - Zero runtime overhead (small file sizes)
-  - Clear separation of concerns
+- **Technical Benefits**:
   - Built into Next.js (no dependencies)
   - Automatic style scoping
-- **Implementation**:
+  - Zero runtime overhead
+- **Implementation Details**:
   - Global CSS variables for theme colors
   - Component-specific `.module.css` files
-  - Mobile-first responsive design
+  - Mobile-first responsive design patterns
+
+*For comprehensive styling strategy and design philosophy, see [UI/UX Design Decisions](ui-ux-design.md).*
 
 ## Database ORM
 

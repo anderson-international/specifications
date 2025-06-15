@@ -1,5 +1,5 @@
 # AI-Optimized Database Schema Documentation
-# Generated: 2025-06-11
+# Generated: 2025-06-14
 # Purpose: Provide structured database information for AI models to plan interactions and generate CRUD forms
 
 ## Overview
@@ -9,6 +9,19 @@ This database supports a snuff specification management system with:
 - Junction tables for many-to-many relationships
 - Draft/published workflow via status system
 - Integration with Shopify for product data
+
+<!-- AI_NAVIGATION
+Primary Focus: Database schema with AI annotations for form generation
+Key Compliance Points:
+- AI_TABLE_PURPOSE annotations for form complexity (line 16, throughout)
+- AI_FORM_TYPE specifications for UI components (line 17, throughout)
+- Junction table patterns for multi-select (line 15-23, 25-32, 34-41)
+- Enum table structures for dropdowns (line 43-400+)
+- FORM comments for field-specific guidance (line 22, throughout)
+Critical for: Form generation, database operations, validation patterns
+Cross-references: database-form-integration.md (implementation), form-management.md (strategy)
+Schema Structure: specifications (main CRUD), users (auth), enums (dropdowns), junctions (multi-select)
+-->
 
 ## Core Tables
 

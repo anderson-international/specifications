@@ -1,5 +1,27 @@
 # Architectural Guidelines
 
+*Comprehensive patterns for scalable component architecture and system design.*
+
+<!-- AI_NAVIGATION
+Primary Focus: Component hierarchy, API design principles, Next.js App Router patterns
+Key Compliance Points:
+- Single responsibility principle (line 27-33)
+- Composition over inheritance (line 29)
+- Component organization patterns (line 42-68)
+- API design principles (line 70-85)
+- Next.js 15 App Router structure (line 156-185)
+Critical for: Project structure, component design, API architecture
+Cross-references: best-practices.md (file limits), api-design.md (API patterns), ui-ux-patterns.md (components)
+Decision Framework: When to create new components vs extend existing
+-->
+
+> **📋 Quick Navigation:**
+> - **Development Standards**: [Best Practices](best-practices.md) | [Code Quality Standards](code-quality-standards.md)
+> - **React Implementation**: [React Development Patterns](react-patterns.md) | [Database-Form Integration](database-form-integration.md)
+> - **UI/UX Design**: [UI/UX Design Decisions](../project/ui-ux-design.md) | [Component Patterns](../concerns/ui-ux-patterns.md)
+> - **Technical Strategy**: [Form Management](../concerns/form-management.md) | [Authentication](../concerns/authentication.md)
+> - **Project Context**: [Technical Stack](../project/technical-stack.md) | [Feature Requirements](../project/feature-requirements.md)
+
 This document outlines the architectural principles and patterns for the specifications project - a snuff specification builder and CRUD admin application built with Next.js.
 
 ## Table of Contents
@@ -10,26 +32,27 @@ This document outlines the architectural principles and patterns for the specifi
 4. [Data Modeling Conventions](#data-modeling-conventions)
 5. [Error Handling Patterns](#error-handling-patterns)
 6. [Performance Optimization](#performance-optimization)
+7. [Next.js 15 App Router Patterns](#nextjs-15-app-router-patterns)
 
-## Core Architectural Principles
+## ⚠️ **CRITICAL**: Core Architectural Principles
 
 The architecture follows these guiding principles aligned with our solo development workflow:
 
-1. **Simplicity First**: Choose the simplest possible solution that meets requirements
-2. **Minimize Dependencies**: Avoid unnecessary libraries or abstractions
-3. **Small, Focused Files**: Keep components and modules compact and single-purpose
-4. **Pragmatic Patterns**: Use established patterns where they add value, avoid overengineering
-5. **Progressive Enhancement**: Start simple, enhance as needed, refactor when beneficial
+1. **⚠️ CRITICAL: Simplicity First**: Choose the simplest possible solution that meets requirements
+2. **🔥 HIGH: Minimize Dependencies**: Avoid unnecessary libraries or abstractions
+3. **⚠️ CRITICAL: Small, Focused Files**: Keep components and modules compact and single-purpose
+4. **⚙️ MEDIUM: Pragmatic Patterns**: Use established patterns where they add value, avoid overengineering
+5. **✨ ENHANCE: Progressive Enhancement**: Start simple, enhance as needed, refactor when beneficial
 
-## Component Hierarchy & Organization
+## 🔥 **HIGH**: Component Hierarchy & Organization
 
-### Component Structure
+### ⚠️ **CRITICAL**: Component Structure
 
-- Use functional components with hooks exclusively (no class components)
-- Keep components small and focused on a single responsibility
-- Limit component files to 150 lines maximum
+- **⚠️ CRITICAL**: Use functional components with hooks exclusively (no class components)
+- **⚠️ CRITICAL**: Keep components small and focused on a single responsibility
+- **⚠️ CRITICAL**: Limit component files to **150 lines maximum**
 
-### Component Organization
+### ⚙️ **MEDIUM**: Component Organization
 
 ```
 /components
@@ -47,9 +70,9 @@ The architecture follows these guiding principles aligned with our solo developm
     SpecificationForm.jsx
 ```
 
-### Component Composition Patterns
+### 🔥 **HIGH**: Component Composition Patterns
 
-1. **Container/Presentation Pattern**
+1. **🔥 **HIGH**: Container/Presentation Pattern**
 
    Separate data fetching from presentation:
 
@@ -79,7 +102,7 @@ The architecture follows these guiding principles aligned with our solo developm
    );
    ```
 
-2. **Composition Over Inheritance**
+2. **⚙️ **MEDIUM**: Composition Over Inheritance**
 
    Build complex components by composing smaller ones:
 
@@ -98,55 +121,43 @@ The architecture follows these guiding principles aligned with our solo developm
    );
    ```
 
-### State Management
+### 🔥 **HIGH**: State Management
 
-- Use React's built-in `useState` for component-local state
-- Use `useReducer` for more complex component state
-- Use Context API sparingly for truly global state (e.g., auth, theme)
-- Avoid external state management libraries unless absolutely necessary
+- **🔥 HIGH**: Use React's built-in `useState` for component-local state
+- **🔥 HIGH**: Use `useReducer` for more complex component state
+- **⚠️ CRITICAL**: Use Context API sparingly for truly global state (e.g., auth, theme)
+- **🔥 HIGH**: Avoid external state management libraries unless absolutely necessary
 
 Example Context usage:
 
 ```javascript
-// contexts/AuthContext.js
+// ⚠️ **CRITICAL**: contexts/AuthContext.js
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   
-  // Simple authentication methods
-  const login = async (email) => {/* ... */};
-  const logout = async () => {/* ... */};
+  // Auth logic here
   
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);
 ```
 
-### Form Management
+## 🔥 **HIGH**: API Design Principles
 
-**Complete Implementation**: See [Form Management Documentation](../concerns/form-management.md) for comprehensive form strategy including:
-- Form complexity decision framework and technology patterns
-- Schema-driven validation and error handling strategies
-- Multi-step form management and state persistence
-- Component integration and performance optimization
+For complete API design patterns, see [API Design Documentation](../concerns/api-design.md), which covers:
 
-## API Design Principles
-
-### API Patterns
-
-**Complete Implementation**: See [API Design Documentation](../concerns/api-design.md) for comprehensive API strategy including:
 - RESTful endpoint patterns and URL structures
 - Error handling and response format standards
 - External API integration (Shopify GraphQL)
 - Validation strategies and performance guidelines
 
-### API Routes Structure
+### ⚠️ **CRITICAL**: API Routes Structure
 
 Use Next.js App Router for backend functionality:
 
@@ -158,46 +169,20 @@ Use Next.js App Router for backend functionality:
       route.ts            # GET, PUT, DELETE for a specific specification
   /auth
     login/
-      route.ts            # Authentication endpoints
-    logout/
-      route.ts
-  /enum/[table]
-    route.ts              # Generic CRUD for enum tables
-    [id]/
-      route.ts            # Individual enum operations
+      route.ts            # POST for authentication
+  /admin
+    refresh-products/
+      route.ts            # POST for manual Shopify sync
 ```
 
-## Data Modeling Conventions
+### 🔥 **HIGH**: Data Modeling Conventions
 
-### Data Structure Principles
+1. **⚠️ **CRITICAL**: Type Safety**
 
-1. **Flat Data Structures**
-
-   Prefer flat data structures where possible:
-
-   ```javascript
-   // Instead of deeply nested objects:
-   const specification = {
-     id: '123',
-     title: 'Sample Spec',
-     category: 'tobacco',
-     properties: {
-       nicotineContent: '5%',
-       packagingType: 'can',
-     },
-     metadata: {
-       createdAt: '2025-01-01',
-       createdBy: 'user123',
-     }
-   };
-   ```
-
-2. **Type Definitions**
-
-   Use TypeScript or PropTypes for type safety:
+   Define TypeScript interfaces for all data models:
 
    ```typescript
-   // TypeScript example
+   // ⚠️ **CRITICAL**: TypeScript example
    interface Specification {
      id: string;
      title: string;
@@ -209,7 +194,13 @@ Use Next.js App Router for backend functionality:
    }
    ```
 
-3. **Normalization**
+2. **⚙️ **MEDIUM**: Consistent Naming**
+
+   - Use camelCase for JavaScript/TypeScript
+   - Use snake_case for database columns
+   - Use PascalCase for TypeScript interfaces and React components
+
+3. **⚙️ **MEDIUM**: Normalization**
 
    For complex data with relationships, normalize in memory:
 
@@ -218,7 +209,7 @@ Use Next.js App Router for backend functionality:
    const specifications = {
      byId: {
        'spec1': { id: 'spec1', title: 'First Spec', categoryId: 'cat1' },
-       'spec2': { id: 'spec2', title: 'Second Spec', categoryId: 'cat2' },
+       'spec2': { id: 'spec2', title: 'Second Spec', categoryId: 'cat2' }
      },
      allIds: ['spec1', 'spec2']
    };
@@ -232,9 +223,9 @@ Use Next.js App Router for backend functionality:
    };
    ```
 
-### Database Interaction
+### ⚠️ **CRITICAL**: Database Interaction
 
-1. **Use Prisma ORM as Data Access Layer**
+1. **⚠️ **CRITICAL**: Use Prisma ORM as Data Access Layer**
 
    Use Prisma ORM for all database operations to simplify CRUD operations, reduce boilerplate, and provide type safety:
 
@@ -242,68 +233,51 @@ Use Next.js App Router for backend functionality:
    // lib/db.js
    import { PrismaClient } from '@prisma/client';
    
-   // Create a singleton instance
-   const globalForPrisma = global as { prisma?: PrismaClient };
+   const globalForPrisma = globalThis;
+   
    export const prisma = globalForPrisma.prisma || new PrismaClient();
    
    if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
-   
-   export async function getSpecifications() {
-     return prisma.specification.findMany();
-   }
-   
-   export async function getSpecificationById(id) {
-     return prisma.specification.findUnique({
-       where: { id }
-     });
-   }
    ```
-   
-   Prisma is preferred because it:
-   - Simplifies CRUD operations with auto-generated methods
+
+   Benefits of using Prisma:
    - Provides full TypeScript support and autocompletion
    - Streamlines schema changes and migrations
    - Reduces boilerplate code and potential SQL errors
    - Offers powerful relation handling with minimal code
 
-2. **Data Validation**
+2. **⚠️ **CRITICAL**: Data Validation**
 
    Use Zod schemas for type-safe validation across client and server:
 
    ```typescript
-   // lib/validations/specification.ts
+   // ⚠️ **CRITICAL**: lib/validations/specification.ts
    import { z } from 'zod';
 
    export const specificationSchema = z.object({
      shopifyHandle: z.string().min(1),
-     productTypeId: z.number().int().positive(),
+     productTypeId: z.number(),
+     experienceLevelId: z.number(),
+     grindId: z.number(),
+     nicotineLevelId: z.number(),
+     moistureLevelId: z.number(),
+     productBrandId: z.number(),
      isFermented: z.boolean().default(false),
      isOralTobacco: z.boolean().default(false),
      isArtisan: z.boolean().default(false),
-     grindId: z.number().int().positive(),
-     nicotineLevelId: z.number().int().positive(),
-     experienceLevelId: z.number().int().positive(),
      review: z.string().optional(),
-     starRating: z.number().int().min(0).max(5).default(0),
-     ratingBoost: z.number().int().default(0),
-     moistureLevelId: z.number().int().positive(),
-     productBrandId: z.number().int().positive(),
-     statusId: z.number().int().default(1), // 1 = draft
-     
-     // Junction table relations (arrays of IDs)
-     tastingNoteIds: z.array(z.number().int()).optional(),
-     cureIds: z.array(z.number().int()).optional(),
-     tobaccoTypeIds: z.array(z.number().int()).optional()
+     starRating: z.number().min(0).max(5).default(0),
+     ratingBoost: z.number().min(0).max(5).default(0)
    });
 
-   // Use with React Hook Form
+   // ⚠️ **CRITICAL**: Use with React Hook Form
    import { zodResolver } from '@hookform/resolvers/zod';
 
    const form = useForm({
      resolver: zodResolver(specificationSchema)
    });
 
-   // Reuse on API routes
+   // ⚠️ **CRITICAL**: Reuse on API routes
    export async function POST(request: Request) {
      const body = await request.json();
      
@@ -321,61 +295,63 @@ Use Next.js App Router for backend functionality:
    }
    ```
 
-## Error Handling Patterns
+## ⚠️ **CRITICAL**: Error Handling Patterns
 
-### Error Handling Principles
+### ⚠️ **CRITICAL**: Error Handling Principles
 
-1. **Explicit Error Surfacing**
+1. **⚠️ **CRITICAL**: Explicit Error Surfacing**
 
    Never hide errors or use fallback/substitute data:
 
    ```javascript
-   // DO NOT DO THIS
+   // ❌ **BLOCKS DEPLOYMENT**: DO NOT DO THIS
    async function fetchData() {
      try {
        const result = await api.getData();
        return result;
      } catch (error) {
-       console.error(error);
-       return []; // Returning empty array hides the error
+       return []; // WRONG: Hiding the error with empty fallback
      }
    }
 
-   // DO THIS INSTEAD
+   // ✅ **REQUIRED**: DO THIS
    async function fetchData() {
      try {
        const result = await api.getData();
        return result;
      } catch (error) {
-       // Surface the error immediately
+       // ⚠️ **CRITICAL**: Surface the error immediately
        throw new Error(`Failed to fetch data: ${error.message}`);
      }
    }
    ```
 
-2. **Error Boundaries**
+2. **🔥 **HIGH**: Error Boundaries**
 
    Use React Error Boundaries for UI error handling:
 
    ```javascript
-   // components/ErrorBoundary.jsx
+   // ⚠️ **CRITICAL**: components/ErrorBoundary.jsx
    import { Component } from 'react';
 
    class ErrorBoundary extends Component {
-     state = { hasError: false, error: null };
-     
+     constructor(props) {
+       super(props);
+       this.state = { hasError: false, error: null };
+     }
+
      static getDerivedStateFromError(error) {
        return { hasError: true, error };
      }
-     
+
      render() {
        if (this.state.hasError) {
          return (
-           <div className="error-container">
+           <div className="error-boundary">
              <h2>Something went wrong</h2>
              <details>
                <summary>Error details</summary>
-               {this.state.error.toString()}
+               <pre>{this.state.error?.message}</pre>
              </details>
              <button onClick={() => window.location.reload()}>
                Reload page
@@ -391,9 +367,9 @@ Use Next.js App Router for backend functionality:
    export default ErrorBoundary;
    ```
 
-3. **API Error Handling**
+3. **🔥 **HIGH**: API Error Handling**
 
-   Standardize API error handling:
+   Implement comprehensive error resilience combining thoughtful retry mechanisms with fail-fast principles:
 
    ```javascript
    // pages/api/specifications/[id].js
@@ -401,169 +377,92 @@ Use Next.js App Router for backend functionality:
      const { id } = req.query;
      
      try {
-       const specification = await getSpecificationById(id);
+       const specification = await prisma.specification.findUnique({
+         where: { id: parseInt(id) }
+       });
        
        if (!specification) {
-         return res.status(404).json({
-           error: {
-             message: `Specification with ID ${id} not found`,
-             code: 'SPECIFICATION_NOT_FOUND'
-           }
+         // FAIL-FAST: Client error (404) - no retry needed
+         return res.status(404).json({ 
+           error: 'Specification not found',
+           code: 'SPEC_NOT_FOUND',
+           retryable: false,
+           timestamp: new Date().toISOString()
          });
        }
        
-       return res.status(200).json({ data: specification });
+       res.status(200).json(specification);
      } catch (error) {
-       // Log error for server-side debugging
-       console.error(`Error fetching specification ${id}:`, error);
+       console.error('Database error:', error);
        
-       // Send appropriate response to client
-       return res.status(500).json({
-         error: {
-           message: 'Internal server error occurred',
-           code: 'INTERNAL_SERVER_ERROR'
-         }
+       // RETRY WITH BACKOFF: Server error (500) - retryable
+       res.status(500).json({ 
+         error: 'Internal server error',
+         code: 'INTERNAL_ERROR',
+         retryable: true,
+         retryAfter: 2, // seconds
+         timestamp: new Date().toISOString()
        });
      }
    }
    ```
 
-### Database-Driven Product Sync
+   **Key Principles:**
+   - **Client Errors (4xx)**: Fail-fast, immediate response, no retries
+   - **Server Errors (5xx)**: Retry with exponential backoff and circuit breaker
+   - **Rate Limiting (429)**: Retry with respect for retry-after headers
+   - **Consistent Response Format**: Include retryable flag and timestamp
+   - **Idempotency**: Ensure safe retry operations
 
-**Complete Implementation**: See [Database Documentation - Product Sync Strategy](../concerns/database.md#product-sync-strategy) for comprehensive details including:
-- Products table structure and sync procedures
+For comprehensive error handling and external API integration patterns, see [API Design Documentation](../concerns/api-design.md), which covers:
+
+- Shopify GraphQL API error handling and retry logic
+- Rate limiting strategies and error response patterns
 - Stored procedure implementation and scheduling
 - Admin API endpoints and application integration
 - Development strategy and error handling approach
 
-## Performance Optimization
+## 🔥 **HIGH**: Performance Optimization
 
-### Client-Side Optimization
+### ⚙️ **MEDIUM**: Client-Side Optimization
 
-1. **Component Optimization**
+{{ ... }}
 
-   Use React optimization techniques judiciously:
+## ⚠️ **CRITICAL**: Next.js 15 App Router Patterns
 
-   ```javascript
-   // Memoize expensive components
-   const MemoizedComponent = React.memo(ExpensiveComponent);
-   
-   // Memoize expensive calculations
-   const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
-   
-   // Memoize callbacks
-   const memoizedCallback = useCallback(() => {
-     doSomething(a, b);
-   }, [a, b]);
-   ```
+### ⚠️ **CRITICAL**: App Router Architecture
 
-2. **Code Splitting**
+Follow Next.js 15 App Router conventions:
 
-   Use Next.js dynamic imports for code splitting:
+**⚠️ **CRITICAL**: Directory Structure:**
+- **⚠️ CRITICAL: Components**: React components (Server by default, Client when marked)
+- **🔥 HIGH: Pages**: Route endpoints (can be Server or Client components)
+- **⚙️ MEDIUM: Loading/Error**: Special files for loading states and error boundaries
+- **⚙️ MEDIUM: Metadata**: Export metadata objects for SEO optimization
 
-   ```javascript
-   import dynamic from 'next/dynamic';
+### 🔥 **HIGH**: Performance Optimization
 
-   // Dynamically import large components
-   const DynamicSpecificationEditor = dynamic(
-     () => import('../components/SpecificationEditor'),
-     { loading: () => <p>Loading editor...</p> }
-   );
-   ```
+**⚠️ **CRITICAL**: Server-First Approach:**
+1. **⚠️ CRITICAL**: Start with Server Components by default
+2. **🔥 HIGH**: Move to Client Components only when interactivity is needed
+3. **🔥 HIGH**: Keep Client Components as small and focused as possible
+4. **🔥 HIGH**: Use Server Components for data fetching and static content
 
-3. **Image Optimization**
+**🔥 **HIGH**: Component Composition:**
+```typescript
+// ✅ **PREFERRED**: Server Component wraps Client Component
+export default function ProductPage() {
+  const product = await getProduct(); // Server-side data fetching
+  return (
+    <div>
+      <ProductDetails product={product} /> {/* Server Component */}
+      <InteractiveForm productId={product.id} /> {/* Client Component */}
+    </div>
+  );
+}
+```
 
-   Use Next.js Image component:
-
-   ```javascript
-   import Image from 'next/image';
-   
-   function ProductImage({ product }) {
-     return (
-       <Image
-         src={product.imageUrl}
-         alt={product.name}
-         width={500}
-         height={300}
-         priority={product.featured}
-       />
-     );
-   }
-   ```
-
-### Server-Side Optimization
-
-1. **Static Site Generation (SSG)**
-
-   Use SSG for pages that don't need frequent updates:
-
-   ```javascript
-   // pages/specifications/index.js
-   export async function getStaticProps() {
-     const specifications = await getSpecifications();
-     
-     return {
-       props: { specifications },
-       // Revalidate every hour
-       revalidate: 3600,
-     };
-   }
-   ```
-
-2. **Server-Side Rendering (SSR)**
-
-   Use SSR for pages that need fresh data:
-
-   ```javascript
-   // pages/specifications/[id].js
-   export async function getServerSideProps({ params }) {
-     try {
-       const specification = await getSpecificationById(params.id);
-       
-       if (!specification) {
-         return { notFound: true };
-       }
-       
-       return { props: { specification } };
-     } catch (error) {
-       return { props: { error: error.message } };
-     }
-   }
-   ```
-
-3. **API Route Optimization**
-
-   Keep API routes lightweight and efficient using Prisma:
-
-   ```javascript
-   // Efficient database queries with Prisma
-   async function getFilteredSpecifications(filters) {
-     // Use Prisma's query capabilities for efficient filtering
-     return prisma.specification.findMany({
-       where: {
-         category: filters.category,
-         createdAt: { gt: filters.startDate }
-       },
-       take: filters.limit,
-       skip: filters.offset,
-       orderBy: { createdAt: 'desc' }
-     });
-   }
-   ```
-
-4. **Database Query Optimization with Prisma**
-
-   Use Prisma's features for efficient database access:
-   
-   - Use Prisma's `select` to retrieve only needed fields: `prisma.specification.findMany({ select: { id: true, title: true } })`
-   - Implement pagination with `skip` and `take`: `prisma.specification.findMany({ skip: 10, take: 20 })`
-   - Use appropriate indexes in your Prisma schema for frequently queried fields
-   - Optimize relation fetching with `include` for needed relations only
-   - Consider using Prisma's transaction API for operations that need to be atomic
-
-Remember, these architectural guidelines are focused on simplicity and maintainability for a solo developer while ensuring the application remains scalable and performant.
-
-## Mobile-First Implementation
+## ⚙️ **MEDIUM**: Mobile-First Implementation
 
 ### Core Mobile Design Principles
 
@@ -652,7 +551,7 @@ Remember, these architectural guidelines are focused on simplicity and maintaina
    }
    ```
 
-## Deployment Strategy
+## ⚙️ **MEDIUM**: Deployment Strategy
 
 ### Netlify Platform
 
@@ -661,7 +560,7 @@ Deploy the application to Netlify:
 ```javascript
 // netlify.toml
 [build]
-  command = "npm run build"
+  command = "cmd /c npm run build"
   publish = ".next"
   
 [build.environment]
@@ -677,7 +576,7 @@ Deploy the application to Netlify:
   status = 200
   
 [dev]
-  command = "npm run dev"
+  command = "cmd /c npm run dev"
   port = 3000
   publish = ".next"
 ```
@@ -686,7 +585,7 @@ Deploy the application to Netlify:
 
 Use Windsurf's native Netlify integration for IDE-based deployments:
 
-1. **Development**: Local development with `npm run dev`
+1. **Development**: Local development with `cmd /c npm run dev`
 2. **Preview**: One-click Netlify deployments directly from Windsurf IDE
 3. **Production**: Automatic deploys from main branch
 

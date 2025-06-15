@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import '@/styles/globals.css'
+import AppLayout from '@/components/layout/AppLayout'
 
 export const metadata: Metadata = {
   title: 'Snuff Specifications',
@@ -15,7 +16,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AppLayout>
+          {children}
+        </AppLayout>
+      </body>
     </html>
   )
 }

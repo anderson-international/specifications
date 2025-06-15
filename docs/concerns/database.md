@@ -8,11 +8,11 @@ This document provides strategic guidance for database-related decisions and pat
 
 ## Schema Reference
 
-**Current Schema**: See [docs/db-schema.txt](../db-schema.txt) for complete, up-to-date table structures, relationships, constraints, and enum values.
+**Current Schema**: Read [docs/db-schema.txt](../db-schema.txt) for complete, up-to-date table structures, relationships, constraints, and enum values.
 
 Auto-sync schema documentation after changes:
 ```bash
-npm run sync-schema
+cmd /c npm run sync-schema
 ```
 
 ## Product Sync Strategy

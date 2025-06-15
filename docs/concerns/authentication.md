@@ -2,9 +2,33 @@
 
 *Centralized authentication strategy and implementation planning for the Specification Builder project.*
 
+<!-- AI_NAVIGATION
+Primary Focus: Magic link authentication, role-based access, development vs production patterns
+Key Compliance Points:
+- Magic link email authentication (line 22, 25)
+- Role-based access control (line 65-85)
+- Development DevAuth component (line 40-55)
+- Fail-fast authentication failures (line 87-95)
+- JWT token management (line 97-110)
+Critical for: Authentication implementation, user management, access control
+Cross-references: feature-requirements.md (user roles), api-design.md (auth endpoints), technical-stack.md (auth libraries)
+Strategy: Development simplicity with DevAuth, production security with magic links
+-->
+
+> **📋 Quick Navigation:**
+> - **Implementation Context**: [Technical Stack](../project/technical-stack.md) | [Feature Requirements](../project/feature-requirements.md)
+> - **Development Standards**: [Best Practices](../guides/best-practices.md) | [Code Quality Standards](../guides/code-quality-standards.md)
+> - **Related Patterns**: [API Design](api-design.md) | [Form Management](form-management.md)
+> - **Technical Guides**: [React Development Patterns](../guides/react-patterns.md) | [Architectural Guidelines](../guides/architectural-guidelines.md)
+> - **Project Status**: [Implementation Plan](../our-plan.md) | [Deployment Environment](deployment-environment.md)
+
+> **📋 This is the authoritative source for authentication strategy. For implementation status, see [our-plan.md](../our-plan.md). For requirements, see [feature-requirements.md](../project/feature-requirements.md).**
+
 ## Overview
 
 This document provides strategic guidance for authentication decisions and patterns. Focus is on simplicity and security for a solo hobbyist project with role-based access control.
+
+> **🔄 Implementation Status:** See [our-plan.md](../our-plan.md) → Phase 1.2 Authentication System for current progress and completed tasks.
 
 ## Authentication Strategy
 
