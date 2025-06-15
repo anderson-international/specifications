@@ -10,7 +10,7 @@ export interface Product {
   is_reviewed: boolean
 }
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
     // Get unique products from specifications table
     // Group by shopify_handle and get the first specification for each product

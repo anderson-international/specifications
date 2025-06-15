@@ -13,9 +13,9 @@ import styles from './SpecificationWizard.module.css'
 interface WizardStepRendererProps {
   currentStep: number
   formData: Partial<SpecificationFormData>
-  onStepNext: (stepData: Record<string, any>) => void
+  onStepNext: (stepData: Partial<SpecificationFormData>) => void
   onStepPrev: () => void
-  onComplete: (finalStepData: Record<string, any>) => void
+  onComplete: (finalStepData: Partial<SpecificationFormData>) => void
   productId?: string
 }
 
@@ -34,9 +34,9 @@ export function WizardStepRenderer({
     if (canSwipeRight) {
       // For swipe left (next step), we need to trigger validation through onStepNext
       // We'll pass the current form data to trigger step validation
-      onStepNext({})
+      onStepNext(formData)
     }
-  }, [canSwipeRight, onStepNext])
+  }, [canSwipeRight, onStepNext, formData])
 
   const handleSwipeRight = useCallback((): void => {
     if (canSwipeLeft) {

@@ -1,12 +1,13 @@
 'use client'
 
-import { useCallback, useState, useMemo } from 'react'
+import React from 'react'
+import { useCallback, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { SensoryProfile as SensoryProfileType, sensoryProfileSchema } from '@/lib/schemas/specification'
-import { TastingNoteSelector } from './TastingNoteSelector'
-import { SliderControl } from './SliderControl'
+import TastingNoteSelector from './TastingNoteSelector'
+import SliderControl from './SliderControl'
 import styles from './SensoryProfile.module.css'
 
 interface SensoryProfileProps {

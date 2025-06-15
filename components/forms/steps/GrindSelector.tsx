@@ -1,11 +1,12 @@
 'use client'
 
-import { UseFormRegister, FieldErrors } from 'react-hook-form'
-import { Characteristics2 as Characteristics2Type } from '@/lib/schemas/specification'
+import React from 'react'
+import { Control } from 'react-hook-form'
+import { Characteristics2 } from '@/lib/schemas/specification'
 import styles from './Characteristics2.module.css'
 
 interface GrindSelectorProps {
-  register: UseFormRegister<Characteristics2Type>
+  register: Control<Characteristics2>
   error?: string
 }
 

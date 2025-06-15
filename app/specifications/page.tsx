@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import Link from 'next/link'
 import { SpecificationCard } from '@/components/specifications/SpecificationCard'
 import { SpecificationFilters } from '@/components/specifications/SpecificationFilters'

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 import styles from './SpecificationFilters.module.css'
 
 interface SpecificationFiltersProps {

@@ -1,7 +1,6 @@
 'use client'
 
-import React from 'react'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { AuthUser, USER_ROLES } from '@/types'
 import styles from '@/styles/auth.module.css'
 

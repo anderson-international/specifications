@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -32,7 +32,10 @@ export function Characteristics2({
     defaultValues: initialData
   })
 
-  const watchedCures = watch('cures') || []
+  const watchedCures = useMemo(() => 
+    watch('cures') as string[] || [], 
+    [watch]
+  )
 
   const handleCureToggle = useCallback((cure: string): void => {
     const current = watchedCures

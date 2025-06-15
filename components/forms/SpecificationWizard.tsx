@@ -35,7 +35,7 @@ function WizardContent({ productId, onComplete, onCancel, currentStep, setCurren
   const { validationErrors, stepValidation, validateCurrentStep } = useWizardValidation()
   const { isLoading, showDraftPrompt, setShowDraftPrompt, handleLoadDraft, handleDiscardDraft, saveDraft, clearDraft } = useWizardDraftManager({ productId, setFormData, setCurrentStep })
 
-  const handleStepData = useCallback((stepData: Record<string, any>): void => {
+  const handleStepData = useCallback((stepData: Partial<SpecificationFormData>): void => {
     const updatedData = { ...formData, ...stepData }
     setFormData(updatedData)
     saveDraft(updatedData)
@@ -49,7 +49,7 @@ function WizardContent({ productId, onComplete, onCancel, currentStep, setCurren
     if (currentStep > 1) setCurrentStep(currentStep - 1)
   }, [currentStep, setCurrentStep])
 
-  const handleStepNext = useCallback((stepData: Record<string, any>): void => {
+  const handleStepNext = useCallback((stepData: Partial<SpecificationFormData>): void => {
     const updatedData = { ...formData, ...stepData }
     const validation = validateCurrentStep(currentStep, updatedData)
     if (validation.isValid) {
@@ -61,7 +61,7 @@ function WizardContent({ productId, onComplete, onCancel, currentStep, setCurren
     }
   }, [formData, currentStep, validateCurrentStep, handleStepData, handleNext, setFormData, saveDraft])
 
-  const handleComplete = useCallback((finalStepData: Record<string, any>): void => {
+  const handleComplete = useCallback((finalStepData: Partial<SpecificationFormData>): void => {
     const completeData = { ...formData, ...finalStepData } as SpecificationFormData
     const validation = validateCurrentStep(5, completeData)
     if (validation.isValid) {

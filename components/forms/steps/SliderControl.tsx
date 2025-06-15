@@ -1,7 +1,7 @@
 'use client'
 
-import { memo } from 'react'
-import { UseFormRegister, FieldErrors } from 'react-hook-form'
+import React, { memo } from 'react'
+import { Control } from 'react-hook-form'
 import { SensoryProfile as SensoryProfileType } from '@/lib/schemas/specification'
 import styles from './SensoryProfile.module.css'
 
@@ -10,7 +10,7 @@ interface SliderControlProps {
   title: string
   description: string
   value: number
-  register: UseFormRegister<SensoryProfileType>
+  register: Control<SensoryProfileType>
   error?: string
 }
 

@@ -20,6 +20,14 @@
     "es2022": true,
     "node": true
   },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "globals": {
+    "JSX": "readonly"
+  },
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",

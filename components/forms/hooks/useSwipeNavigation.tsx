@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 
 interface SwipeState {
   startX: number
@@ -75,7 +75,7 @@ export function useSwipeNavigation({
     setOffset(deltaX)
   }, [preventScroll])
 
-  const handleTouchEnd = useCallback((e: React.TouchEvent): void => {
+  const handleTouchEnd = useCallback((_e: TouchEvent): void => {
     if (!swipeRef.current.isDragging) return
 
     const deltaX = swipeRef.current.currentX - swipeRef.current.startX

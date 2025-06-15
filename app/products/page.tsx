@@ -9,53 +9,44 @@ import styles from './products.module.css'
 
 interface Product {
   id: string
-  handle: string
+  shopify_handle: string
   title: string
   brand: string
-  image_url: string | null
+  price: number
+  imageUrl: string
+  type: string
   is_reviewed: boolean
-}
-
-interface ProductsApiResponse {
-  products: Product[]
-  total: number
-  reviewed_count: number
 }
 
 export default function ProductsPage(): JSX.Element {
   const [products, setProducts] = useState<Product[]>([])
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [selectedBrand, setSelectedBrand] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
   const { stats } = useDashboardStats()
 
-  useEffect(() => {
-    fetchProducts()
-  }, [])
-
   const fetchProducts = useCallback(async (): Promise<void> => {
+    setIsLoading(true)
+    setError(null)
     try {
-      setLoading(true)
-      setError(null)
-      
       const response = await fetch('/api/products')
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        throw new Error(`Failed to fetch products: ${response.status}`)
       }
-      
-      const data: ProductsApiResponse = await response.json()
+      const data = await response.json()
       setProducts(data.products)
-      
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch products'
-      setError(errorMessage)
-      console.error('Error fetching products:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error occurred')
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }, [])
+
+  useEffect(() => {
+    fetchProducts()
+  }, [fetchProducts])
 
   // Use useMemo for derived state instead of useEffect to prevent loops
   const filteredProducts = useMemo((): Product[] => {
@@ -97,7 +88,7 @@ export default function ProductsPage(): JSX.Element {
     )
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className={styles.container}>
         <div className={styles.loading}>Loading products...</div>
@@ -131,7 +122,7 @@ export default function ProductsPage(): JSX.Element {
         ))}
       </div>
 
-      {filteredProducts.length === 0 && !loading && (
+      {filteredProducts.length === 0 && !isLoading && (
         <div className={styles.empty}>
           <p>No products found matching your criteria.</p>
         </div>

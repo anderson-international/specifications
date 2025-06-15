@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -32,7 +32,10 @@ export function Characteristics1({
     defaultValues: initialData
   })
 
-  const watchedTobaccoTypes = watch('tobaccoTypes') || []
+  const watchedTobaccoTypes = useMemo(() => 
+    watch('tobaccoTypes') as string[] || [], 
+    [watch]
+  )
 
   const handleTobaccoTypeToggle = useCallback((type: string): void => {
     const current = watchedTobaccoTypes

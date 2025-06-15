@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react'
+import React from 'react'
 import styles from './Characteristics2.module.css'
 
 interface CureTypeSelectorProps {

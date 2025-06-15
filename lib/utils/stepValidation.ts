@@ -3,7 +3,8 @@ import {
   characteristics1Schema, 
   characteristics2Schema, 
   sensoryProfileSchema, 
-  reviewRatingSchema 
+  reviewRatingSchema, 
+  SpecificationFormData
 } from '@/lib/schemas/specification'
 import { ZodError } from 'zod'
 
@@ -12,7 +13,7 @@ export interface ValidationResult {
   errors: string[]
 }
 
-export function validateStep(stepNumber: number, data: Record<string, any>): ValidationResult {
+export function validateStep(stepNumber: number, data: Partial<SpecificationFormData>): ValidationResult {
   try {
     switch (stepNumber) {
       case 1:
@@ -65,7 +66,7 @@ export function getStepRequiredFields(stepNumber: number): string[] {
   }
 }
 
-export function getStepProgress(stepNumber: number, data: Record<string, any>): number {
+export function getStepProgress(stepNumber: number, data: Partial<SpecificationFormData>): number {
   const requiredFields = getStepRequiredFields(stepNumber)
   if (requiredFields.length === 0) return 100
   
