@@ -3,22 +3,21 @@
 ## Core MVP Features
 
 ### 1. Authentication & User Management
-- Email magic links for production, user selection dropdown for development
-- Role-based access control (Admin and Reviewer roles)
+- Email magic links for production, user selection for development
+- Role-based access control (Admin and Reviewer)
 - Protected routes based on user role
 
 ### 2. Product Discovery & Integration
-- Products displayed as cards with filters by brand and type-ahead search box
-- Visual indicator showing which products have been reviewed vs. those awaiting review
-- Product images displayed only on product cards
-- Products managed via database-driven sync strategy
+- Product cards with filters and search
+- Visual indicators for reviewed vs. unreviewed products
+- Product images displayed on cards only
+- Database-driven product sync strategy
 
 ### 3. Specification Management
-- Create new specifications with all required fields via multi-step wizard
-- Edit draft specifications
+- Multi-step wizard for creating specifications
+- Draft editing capability
 - Status workflow (draft, published, needs_revision, under_review)
-- View list with filters (status, brand, product title)
-- Grouped by status in UI (Draft, Published, Needs Revision, Under Review)
+- Filtered list view grouped by status
 
 ## Post-MVP Features
 
@@ -29,10 +28,9 @@
 
 ### 2. Quality Control System
 - AI-assisted specification scoring
-- Metrics: Completeness, review sentiment/clarity
+- Metrics for completeness and clarity
 - Reviewer leaderboard for gamification
 - Review improvement suggestions
-- Goal: Maintain high standards, avoid extreme reviews
 
 ### 3. Public Reviewer Access
 - Extended user type with limited permissions
@@ -42,7 +40,7 @@
 - Bulk operations
 - Data export functionality
 - Advanced analytics
-- Slack integration for notifications
+- Slack integration
 
 ## Specification Field Requirements
 
@@ -54,46 +52,46 @@
 - Experience level (reviewer's experience)
 
 ### Required Fields
-- **Product selection** (shopify_handle) - Links to product data from Shopify
-- **Product type** - Selected from enum_product_types table
-- **Star rating** - Numeric rating on standard 5-star scale
-- **Experience level** - Selected from enum_experience_levels
-- **Nicotine level** - Selected from enum_nicotine_levels
-- **Moisture level** - Selected from enum_moisture_levels
-- **Grind** - Selected from enum_grinds table
-- **Review text** - Free text narrative review
-- **Tasting notes** - Multi-select from enum_tasting_notes (minimum 1 required)
-- **Cures** - Multi-select from enum_cures (at least one required)
+- **Product selection** - Links to Shopify product data
+- **Product type** - From enum_product_types
+- **Star rating** - 5-star scale
+- **Experience level** - From enum_experience_levels
+- **Nicotine level** - From enum_nicotine_levels
+- **Moisture level** - From enum_moisture_levels
+- **Grind** - From enum_grinds
+- **Review text** - Narrative review
+- **Tasting notes** - Multi-select (minimum 1)
+- **Cures** - Multi-select (minimum 1)
 
 ### Optional Fields
-- **Tobacco types** - Multi-select from enum_tobacco_types (optional, requires specialized knowledge)
+- **Tobacco types** - Multi-select
 - **Boolean Flags**:
   - Fermented? (yes/no)
   - Oral tobacco? (yes/no)
   - Artisan? (yes/no)
-- **Rating boost** - Optional field for exceptional products
+- **Rating boost** - Provides a boost to the current star rating
 
 ### Form Validation Rules
 
 #### Tasting Notes
 - Minimum 1 tasting note required
-- **Validation Message**: "Please select at least one tasting note. The more notes you can identify, the better your review will be - but only select notes you can genuinely smell or taste. If you can only identify one, that's fine."
+- **Validation Message**: "Please select at least one tasting note. The more notes you can identify, the better your review will be - but only select notes you can genuinely smell or taste."
 
 ### Quality Indicators
-- Number of tasting notes (more is better)
-- Completeness of review text
+- Number of tasting notes
+- Review text completeness
 - Appropriate star rating
 
 ## Admin Interface Requirements
 
 ### Enum Table Management
-- Enum values are editable - The text can be modified after creation
-- Deletion prevention - Cannot delete values referenced by specifications
-- Addition allowed - New enum values can be added at any time
+- Editable enum values
+- Deletion prevention for referenced values
+- Addition of new values allowed
 
 ### User Management
-- Simple table view with role assignment
-- No password management (magic link authentication)
+- Table view with role assignment
+- Magic link authentication (no passwords)
 
 ### Data Refresh
-- Manual trigger button for product data refresh
+- Manual product data refresh trigger

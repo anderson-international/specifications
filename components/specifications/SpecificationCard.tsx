@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from 'react'
 import Image from 'next/image'
-import { useSwipeNavigation } from '../forms/hooks/useSwipeNavigation'
+import { useSwipeNavigation } from '../wizard/hooks/useSwipeNavigation'
 import { DeleteConfirmModal } from './DeleteConfirmModal'
 import { formatLastModified, getStatusColor, getStatusLabel } from '../../lib/utils/specificationCardUtils'
 import styles from './SpecificationCard.module.css'

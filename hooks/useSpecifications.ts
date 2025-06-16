@@ -20,24 +20,7 @@ const mockSpecifications: Specification[] = [
       brand: 'Peterson',
       imageUrl: '/images/products/peterson-early-morning.jpg'
     },
-    // Form data (partial for draft)
-    productId: 'prod-1',
-    productHandle: 'peterson-early-morning-pipe',
-    productTitle: 'Peterson Early Morning Pipe',
-    productType: 'nasal_snuff',
-    experienceLevel: 'intermediate',
-    tobaccoTypes: ['virginia', 'burley'],
-    cures: ['air_cured'],
-    grind: 'medium',
-    isScented: false,
-    isMenthol: false,
-    isToasted: true,
-    tastingNotes: ['woody', 'earthy'],
-    nicotineStrength: 6,
-    moistureLevel: 4,
-    reviewText: '',
-    overallRating: 1,
-    ratingBoost: 0
+    // Form data stored elsewhere in production
   },
   {
     id: '2',
@@ -54,24 +37,7 @@ const mockSpecifications: Specification[] = [
       brand: 'Dunhill',
       imageUrl: '/images/products/dunhill-nightcap.jpg'
     },
-    // Complete form data
-    productId: 'prod-2',
-    productHandle: 'dunhill-nightcap',
-    productTitle: 'Dunhill Nightcap',
-    productType: 'nasal_snuff',
-    experienceLevel: 'advanced',
-    tobaccoTypes: ['latakia', 'oriental'],
-    cures: ['fire_cured'],
-    grind: 'fine',
-    isScented: false,
-    isMenthol: false,
-    isToasted: false,
-    tastingNotes: ['smoky', 'spicy', 'leather'],
-    nicotineStrength: 8,
-    moistureLevel: 5,
-    reviewText: 'A complex and robust blend with deep smoky flavors and a long finish.',
-    overallRating: 4,
-    ratingBoost: 1
+    // Form data stored elsewhere in production
   },
   {
     id: '3',
@@ -96,24 +62,7 @@ const mockSpecifications: Specification[] = [
       comments: 'Excellent detailed review with accurate tasting notes.',
       reviewedAt: '2024-01-12T11:30:00Z'
     },
-    // Complete form data
-    productId: 'prod-3',
-    productHandle: 'mac-baren-hh-old-dark-fired',
-    productTitle: 'Mac Baren HH Old Dark Fired',
-    productType: 'nasal_snuff',
-    experienceLevel: 'advanced',
-    tobaccoTypes: ['dark_fired'],
-    cures: ['fire_cured'],
-    grind: 'coarse',
-    isScented: false,
-    isMenthol: false,
-    isToasted: true,
-    tastingNotes: ['smoky', 'earthy', 'robust'],
-    nicotineStrength: 7,
-    moistureLevel: 6,
-    reviewText: 'A bold and intense blend with distinctive fire-cured characteristics and rich complexity.',
-    overallRating: 5,
-    ratingBoost: 0
+    // Form data stored elsewhere in production
   }
 ]
 
@@ -178,28 +127,24 @@ export function useSpecifications(): UseSpecificationsReturn {
   const handleDuplicate = useCallback((id: string): void => {
     const specToDuplicate = specifications.find(spec => spec.id === id)
     if (specToDuplicate) {
+      const newId = Date.now().toString()
+      // Create a new specification with review removed
+      const { review, ...specWithoutReview } = specToDuplicate
+      
       const newSpec: Specification = {
-        ...specToDuplicate,
-        id: `${Date.now()}`,
-        userId: specToDuplicate.userId,
+        ...specWithoutReview,
+        id: newId,
         status: 'draft',
         progress: 0, // Reset progress for new draft
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         lastModified: new Date().toISOString(),
-        reviewedAt: undefined,
-        publishedAt: undefined,
-        score: undefined,
-        review: undefined,
         product: {
           ...specToDuplicate.product,
           title: `${specToDuplicate.product.title} (Copy)`
         },
-        productTitle: `${specToDuplicate.productTitle} (Copy)`,
-        // Reset form completion status
-        reviewText: '',
-        overallRating: 1,
-        ratingBoost: 0
+        // Reset review status to undefined
+        review: undefined
       }
       setSpecifications(prev => [newSpec, ...prev])
     }

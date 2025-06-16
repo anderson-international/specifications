@@ -71,7 +71,7 @@ export function getStepProgress(stepNumber: number, data: Partial<SpecificationF
   if (requiredFields.length === 0) return 100
   
   const completedFields = requiredFields.filter(field => {
-    const value = data[field]
+    const value = (data as Record<string, unknown>)[field]
     if (Array.isArray(value)) return value.length > 0
     return value !== undefined && value !== null && value !== ''
   })

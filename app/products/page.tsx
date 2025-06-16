@@ -9,11 +9,11 @@ import styles from './products.module.css'
 
 interface Product {
   id: string
-  shopify_handle: string
+  handle: string
   title: string
   brand: string
   price: number
-  imageUrl: string
+  image_url: string
   type: string
   is_reviewed: boolean
 }

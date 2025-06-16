@@ -30,18 +30,18 @@ Implementation Strategy: Schema annotations drive component generation
 
 The database schema includes AI-optimized annotations that guide form implementation:
 
-- **⚠️ CRITICAL: `AI_TABLE_PURPOSE`**: Defines the primary use case and form complexity
-- **🔥 HIGH: `AI_FORM_TYPE`**: Specifies the recommended UI component patterns
+- **⚠️ CRITICAL: `AI_TABLE_PURPOSE`**: Defines primary use case and form complexity
+- **🔥 HIGH: `AI_FORM_TYPE`**: Specifies recommended UI component patterns
 - **⚙️ MEDIUM: `AI_WORKFLOW`**: Indicates state management requirements
 - **🔥 HIGH: `// FORM:`**: Inline field-specific implementation guidance
 
-### ⚙️ **MEDIUM**: Form Complexity Mapping
+### Example Annotations
 
 ```typescript
 // Core specification data - Multi-step wizard
 specifications: {
   purpose: "Core specification data - main CRUD operations focus here",
-  formType: "Multi-step wizard form (product selection, ratings, text review, enum selections)",
+  formType: "Multi-step wizard form (product selection, ratings, review, enums)",
   workflow: "Draft → Published → Needs Revision → Under Review"
 }
 
@@ -56,10 +56,10 @@ spec_cures: {
 
 ### ⚠️ **CRITICAL**: Single-Select Enum Fields
 
-For fields with enum relationships (e.g., `product_type_id`, `grind_id`):
+For fields with enum relationships:
 
 ```typescript
-// ⚠️ **CRITICAL**: Schema annotation: FORM: dropdown from enum_product_types, REQUIRED
+// Schema annotation: FORM: dropdown from enum_product_types, REQUIRED
 const ProductTypeSelect = ({ control, errors }: FormFieldProps): JSX.Element => {
   const { data: productTypes } = useProductTypes(); // Fetch enum data
 
@@ -67,14 +67,12 @@ const ProductTypeSelect = ({ control, errors }: FormFieldProps): JSX.Element => 
     <Controller
       name="product_type_id"
       control={control}
-      rules={{ required: "Product type is required" }} // ⚠️ **CRITICAL**: Required validation
+      rules={{ required: "Product type is required" }}
       render={({ field }) => (
-        <select {...field} className={styles.select}>
+        <select {...field}>
           <option value="">Select product type...</option>
           {productTypes?.map(type => (
-            <option key={type.id} value={type.id}>
-              {type.name}
-            </option>
+            <option key={type.id} value={type.id}>{type.name}</option>
           ))}
         </select>
       )}
@@ -86,7 +84,7 @@ const ProductTypeSelect = ({ control, errors }: FormFieldProps): JSX.Element => 
 ### 🔥 **HIGH**: Enum Data Fetching Pattern
 
 ```typescript
-// 🔥 **HIGH**: Custom hook for enum data fetching
+// Custom hook for enum data fetching
 const useEnumData = (enumType: string) => {
   return useQuery({
     queryKey: ['enum', enumType],
@@ -95,9 +93,8 @@ const useEnumData = (enumType: string) => {
   });
 };
 
-// Usage in components
+// Usage
 const { data: productTypes } = useEnumData('product_types');
-const { data: nicotineLevels } = useEnumData('nicotine_levels');
 ```
 
 ## 🔥 **HIGH**: Junction Table Handling
@@ -107,8 +104,8 @@ const { data: nicotineLevels } = useEnumData('nicotine_levels');
 For junction tables (many-to-many relationships):
 
 ```typescript
-// ⚠️ **CRITICAL**: Schema annotation: AI_FORM_TYPE: Multi-select checkboxes or tags
-const TastingNotesMultiSelect = ({ control, errors }: FormFieldProps): JSX.Element => {
+// Schema annotation: AI_FORM_TYPE: Multi-select checkboxes or tags
+const TastingNotesMultiSelect = ({ control }: FormFieldProps): JSX.Element => {
   const { data: tastingNotes } = useEnumData('tasting_notes');
 
   return (
@@ -118,7 +115,7 @@ const TastingNotesMultiSelect = ({ control, errors }: FormFieldProps): JSX.Eleme
       render={({ field: { value = [], onChange } }) => (
         <div className={styles.multiSelect}>
           {tastingNotes?.map(note => (
-            <label key={note.id} className={styles.checkboxLabel}>
+            <label key={note.id}>
               <input
                 type="checkbox"
                 checked={value.includes(note.id)}
@@ -143,7 +140,7 @@ const TastingNotesMultiSelect = ({ control, errors }: FormFieldProps): JSX.Eleme
 ### ⚠️ **CRITICAL**: Junction Table Data Transformation
 
 ```typescript
-// ⚠️ **CRITICAL**: Transform form data for junction table creation
+// Transform form data for junction table creation
 const transformSpecificationData = (formData: SpecificationFormData) => {
   const { tasting_note_ids, cure_ids, tobacco_type_ids, ...coreData } = formData;
 
@@ -169,71 +166,63 @@ const transformSpecificationData = (formData: SpecificationFormData) => {
 
 ## ⚠️ **CRITICAL**: Schema-to-Zod Validation
 
-### ⚠️ **CRITICAL**: Automatic Schema Generation
-
 ```typescript
-// ⚠️ **CRITICAL**: Generate Zod schemas from database annotations
+// Generate Zod schemas from database annotations
 const createSpecificationSchema = () => z.object({
-  // ⚠️ **CRITICAL**: Required fields from schema annotations
+  // Required fields from schema annotations
   shopify_handle: z.string().min(1, "Product selection required"),
   product_type_id: z.number().min(1, "Product type required"),
   
-  // 🔥 **HIGH**: Field-specific validation based on schema hints
+  // Field-specific validation based on schema hints
   star_rating: z.number().min(1, "Rating required").max(5, "Rating must be 1-5"),
-  review: z.string().min(10, "Review must be at least 10 characters"),
   
-  // ⚙️ **MEDIUM**: Junction table arrays
+  // Junction table arrays
   tasting_note_ids: z.array(z.number()).min(1, "Select at least one tasting note"),
   cure_ids: z.array(z.number()).default([]),
-  tobacco_type_ids: z.array(z.number()).default([]),
   
   // Boolean fields with defaults
   is_fermented: z.boolean().default(false),
-  is_oral_tobacco: z.boolean().default(false),
-  is_artisan: z.boolean().default(false)
+  is_oral_tobacco: z.boolean().default(false)
 });
 ```
 
 ## 🔥 **HIGH**: Multi-Step Form Implementation
 
-### 🔥 **HIGH**: Step-Based Schema Validation
+### Step-Based Schema Validation
 
 ```typescript
-// 🔥 **HIGH**: Split schema by wizard steps based on UI groupings
+// Split schema by wizard steps based on UI groupings
 const Step1Schema = z.object({
   shopify_handle: z.string().min(1, "Product selection required"),
 });
 
 const Step2Schema = z.object({
   product_type_id: z.number().min(1, "Product type required"),
-  experience_level_id: z.number().min(1, "Experience level required"),
-  tobacco_type_ids: z.array(z.number()).min(1, "Select at least one tobacco type")
+  experience_level_id: z.number().min(1, "Experience level required")
 });
 
 const Step3Schema = z.object({
   cure_ids: z.array(z.number()).default([]),
   grind_id: z.number().min(1, "Grind selection required"),
-  is_fermented: z.boolean().default(false),
-  is_oral_tobacco: z.boolean().default(false),
-  is_artisan: z.boolean().default(false)
+  is_fermented: z.boolean().default(false)
 });
 ```
 
 ### ⚠️ **CRITICAL**: Database Transaction Handling
 
 ```typescript
-// ⚠️ **CRITICAL**: Handle specification creation with junction tables
+// Handle specification creation with junction tables
 const createSpecificationWithRelations = async (data: SpecificationFormData) => {
   const { specification, junctionData } = transformSpecificationData(data);
 
-  // ⚠️ **CRITICAL**: Use database transaction for atomic operations
+  // Use database transaction for atomic operations
   return await db.transaction(async (trx) => {
     // Create core specification
     const [spec] = await trx('specifications')
       .insert(specification)
       .returning('*');
 
-    // ⚠️ **CRITICAL**: Create junction table entries
+    // Create junction table entries
     if (junctionData.spec_tasting_notes.length > 0) {
       await trx('spec_tasting_notes').insert(
         junctionData.spec_tasting_notes.map(item => ({
@@ -242,17 +231,15 @@ const createSpecificationWithRelations = async (data: SpecificationFormData) => 
         }))
       );
     }
-
-    // Repeat for other junction tables...
     
     return spec;
   });
 };
 ```
 
-## ⚙️ **MEDIUM**: Boolean Field Patterns
+## ⚙️ **MEDIUM**: Field Components
 
-### Toggle Implementation
+### Boolean Toggle Component
 
 ```typescript
 // Schema annotation: FORM: checkbox or toggle
@@ -262,14 +249,12 @@ const BooleanToggle = ({ name, label, control }: BooleanFieldProps): JSX.Element
       name={name}
       control={control}
       render={({ field: { value, onChange } }) => (
-        <label className={styles.toggleLabel}>
+        <label>
           <input
             type="checkbox"
             checked={value || false}
             onChange={onChange}
-            className={styles.toggleInput}
           />
-          <span className={styles.toggleSlider} />
           {label}
         </label>
       )}
@@ -277,8 +262,6 @@ const BooleanToggle = ({ name, label, control }: BooleanFieldProps): JSX.Element
   );
 };
 ```
-
-## ⚙️ **MEDIUM**: Rating Input Implementation
 
 ### Star Rating Component
 
@@ -291,13 +274,13 @@ const StarRating = ({ control, name }: RatingFieldProps): JSX.Element => {
       control={control}
       rules={{ min: 1, max: 5, required: "Rating is required" }}
       render={({ field: { value, onChange } }) => (
-        <div className={styles.starRating}>
+        <div>
           {[1, 2, 3, 4, 5].map(star => (
             <button
               key={star}
               type="button"
-              className={`${styles.star} ${star <= value ? styles.filled : ''}`}
               onClick={() => onChange(star)}
+              className={star <= value ? 'filled' : ''}
             >
               ★
             </button>
@@ -314,7 +297,7 @@ const StarRating = ({ control, name }: RatingFieldProps): JSX.Element => {
 ### ⚠️ **CRITICAL**: Enum Data Caching
 
 ```typescript
-// ⚠️ **CRITICAL**: Cache enum data globally to prevent repeated fetches
+// Cache enum data globally to prevent repeated fetches
 const useEnumCache = () => {
   const queryClient = useQueryClient();
   
@@ -339,15 +322,5 @@ const useEnumCache = () => {
   return { preloadEnums };
 };
 ```
-
-## ⚙️ **MEDIUM**: Integration with Form Management
-
-This guide complements the [Form Management Documentation](../concerns/form-management.md):
-
-- **Technical Patterns**: Use form management patterns for React Hook Form setup
-- **UI Patterns**: Use [UI/UX Design Decisions](../project/ui-ux-design.md) for wizard layout
-- **Performance**: Apply [React Patterns](react-patterns.md) for optimization
-
----
 
 *Database schema annotations are maintained in `docs/db-schema.txt`. Update annotations when schema changes to maintain form implementation guidance.*

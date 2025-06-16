@@ -1,73 +1,223 @@
-## ⚠️ **CRITICAL**: Enforce safeguards against infinite loops in React effect hooks
+# Preventing React Effect Infinite Loops
 
-### ⚠️ **CRITICAL**: React useEffect Dependency Management
+This guide helps prevent infinite loops and performance issues caused by improper React effect hook implementation.
 
-1. **⚠️ CRITICAL**: Functions that update state must be wrapped in `useCallback`.
-2. **⚠️ CRITICAL**: Derived state must use `useMemo`.
-3. **🔥 HIGH**: Context interactions must have clear ownership.
+## Common Causes of React Effect Loops
 
-### 🔥 **HIGH**: Context Interaction Guidelines
+| Priority | Issue | Description |
+|----------|-------|-------------|
+| ⚠️ **CRITICAL** | Function dependencies | State setters or functions that aren't wrapped in `useCallback` |
+| ⚠️ **CRITICAL** | Derived state | Calculated values not wrapped in `useMemo` |
+| 🔥 **HIGH** | Object/array literals | New objects/arrays created on each render |
+| 🔥 **HIGH** | Context interactions | Circular dependencies between contexts |
+| ⚙️ **MEDIUM** | Missing dependencies | Not including all dependencies used in effect |
 
-- **🔥 HIGH**: One context should own data fetching; others should only consume.
-- **🔥 HIGH**: Avoid circular dependencies between contexts.
-- **⚙️ MEDIUM**: When using multiple data contexts, clearly define which context is responsible for loading specific data.
-- **⚠️ CRITICAL**: Never duplicate data fetching logic between a component and its context provider.
+## Best Practices for Preventing Loops
 
-### ⚠️ **CRITICAL**: Derived State in Dependencies
+### 1. Function Management (⚠️ CRITICAL)
 
-- **⚠️ CRITICAL**: Always memoize derived state with `useMemo`.
-- **🔥 HIGH**: Validate effect dependency arrays carefully.
-- **🔥 HIGH**: Prefer stable identifiers over objects or arrays in dependencies.
-- **⚙️ MEDIUM**: For array transformations (sort, filter, map), use a stable cached result instead of creating new arrays on each render.
+**Problem:** Functions created during render cause infinite loops when used in dependency arrays.
 
-### ⚠️ **CRITICAL**: Specific Anti-Patterns to Avoid
+```jsx
+// ❌ WRONG: Function recreated on every render
+useEffect(() => {
+  fetchUserData(userId);
+}, [fetchUserData]); // fetchUserData is a new function every render
 
-- **⚠️ CRITICAL - BLOCKS DEPLOYMENT**: Dual fetching**: Don't fetch the same data from both a component and its context.
-- **⚠️ CRITICAL - BLOCKS DEPLOYMENT**: Unstable identifiers in dependencies**: Avoid using functions that return new objects/arrays in dependency arrays.
-- **🔥 HIGH**: Cross-context update cycles**: One context update should not trigger another context update in a cyclical manner.
-- **🔥 HIGH**: Missed dependency warnings**: Always address React Hook dependency warnings rather than suppressing them.
+const handleUpdate = () => {
+  setData(newData);
+};
+useEffect(() => {
+  document.addEventListener('click', handleUpdate);
+  return () => document.removeEventListener('click', handleUpdate);
+}, [handleUpdate]); // handleUpdate is a new function every render
+```
 
-### ⚠️ **CRITICAL**: AI_VALIDATION
+**Solution:** Always wrap functions in `useCallback` when used in dependency arrays.
 
-React Effect Loop Prevention Patterns:
+```jsx
+// ✅ CORRECT: Function is stable across renders
+const fetchUserData = useCallback((id) => {
+  // fetch logic
+}, []);
 
-Critical Effect Loop Detection:
-- useEffect with state setter in dependency array: /useEffect\(.*\[.*set\w+.*\]/
-- Functions in dependency arrays without useCallback: Check for function refs in deps
-- Object/array literals in dependencies: /useEffect\(.*\[.*\{.*\}.*\]/ or /useEffect\(.*\[.*\[.*\].*\]/
-- Missing dependencies that should be included: Use React Hook ESLint rule
+useEffect(() => {
+  fetchUserData(userId);
+}, [fetchUserData, userId]);
 
-UseCallback Validation:
-- State setters wrapped in useCallback: /const.*=.*useCallback.*set\w+/
-- Event handlers wrapped in useCallback: /const.*handler.*=.*useCallback/
-- Functions passed as props are memoized: Check prop drilling of unmemoized functions
+const handleUpdate = useCallback(() => {
+  setData(newData);
+}, [newData]);
 
-UseMemo for Derived State:
-- Computed values use useMemo: /const.*=.*useMemo\(.*\[.*\]/
-- Array transformations memoized: filter/map/sort operations wrapped in useMemo
-- Complex object creation memoized: Object literals moved to useMemo
+useEffect(() => {
+  document.addEventListener('click', handleUpdate);
+  return () => document.removeEventListener('click', handleUpdate);
+}, [handleUpdate]);
+```
 
-Effect Dependency Validation:
-- Stable primitive dependencies only: Numbers, strings, booleans in dependency arrays
-- No unstable object references: Objects created with useMemo/useCallback
-- Empty arrays only for mount effects: useEffect(fn, []) for mount/unmount only
+### 2. Derived State (⚠️ CRITICAL)
 
-Anti-Pattern Detection Regex:
-- Dual fetching: Multiple useEffect hooks calling same API endpoint
-- Unstable dependencies: /useEffect\(.*\[.*\{.*\}/
-- Missing useCallback: Functions defined in render without useCallback wrapper
-- Effect triggering effect: useEffect calling state setter that triggers another useEffect
+**Problem:** Calculated values change identity on each render, triggering effects.
 
-Critical Loop Patterns:
+```jsx
+// ❌ WRONG: filteredItems has a new reference every render
+useEffect(() => {
+  console.log('Items changed');
+}, [items.filter(item => item.active)]); // New array on every render
+```
+
+**Solution:** Memoize derived values with `useMemo`.
+
+```jsx
+// ✅ CORRECT: filteredItems is stable unless items or filter condition changes
+const filteredItems = useMemo(() => 
+  items.filter(item => item.active), 
+  [items]
+);
+
+useEffect(() => {
+  console.log('Items changed');
+}, [filteredItems]);
+```
+
+### 3. Context Interactions (🔥 HIGH)
+
+**Problem:** Multiple contexts updating each other create circular dependencies.
+
+```jsx
+// ❌ WRONG: UserContext and DataContext update each other
+// In UserContext
+useEffect(() => {
+  if (dataContext.data) {
+    setUser(buildUserFromData(dataContext.data));
+  }
+}, [dataContext.data]);
+
+// In DataContext
+useEffect(() => {
+  if (userContext.user) {
+    fetchDataForUser(userContext.user.id);
+  }
+}, [userContext.user]);
+```
+
+**Solutions:**
+- ✅ One context should own data fetching; others should only consume
+- ✅ Establish clear hierarchies between contexts
+- ✅ Avoid circular updates between contexts
+
+```jsx
+// ✅ CORRECT: Clear ownership - UserContext owns user data
+// In UserContext (data owner)
+useEffect(() => {
+  fetchUser(userId);
+  if (user) {
+    fetchDataForUser(user.id);
+  }
+}, [userId, user]);
+
+// DataContext just consumes, doesn't fetch
+```
+
+### 4. Dependency Array Management (🔥 HIGH)
+
+**Problem:** Incomplete or incorrect dependency arrays.
+
+```jsx
+// ❌ WRONG: Missing dependencies
+useEffect(() => {
+  const filtered = items.filter(item => item.category === selectedCategory);
+  setFilteredItems(filtered);
+}, []); // Missing items and selectedCategory
+```
+
+**Solutions:**
+- ✅ Include ALL dependencies used inside the effect
+- ✅ Use the ESLint react-hooks/exhaustive-deps rule
+- ✅ Prefer primitive values over objects in dependency arrays
+
+```jsx
+// ✅ CORRECT: All dependencies included
+useEffect(() => {
+  const filtered = items.filter(item => item.category === selectedCategory);
+  setFilteredItems(filtered);
+}, [items, selectedCategory, setFilteredItems]);
+```
+
+## Specific Anti-Patterns to Avoid
+
+### 1. Dual Fetching (⚠️ CRITICAL)
+
+**Problem:** Fetching the same data in both component and context.
+
+```jsx
+// ❌ WRONG: Both context and component fetch user data
+// In UserContext
+useEffect(() => {
+  fetchUserData(userId);
+}, [userId]);
+
+// In UserProfile component
+useEffect(() => {
+  fetchUserData(userId);
+}, [userId]);
+```
+
+**Solution:** Define clear ownership of data fetching.
+
+```jsx
+// ✅ CORRECT: Only context fetches data
+// In UserContext
+useEffect(() => {
+  fetchUserData(userId);
+}, [userId]);
+
+// In UserProfile component
+const { user } = useUserContext(); // Just consume data
+```
+
+### 2. Unstable References (⚠️ CRITICAL)
+
+**Problem:** Object/array literals in dependency arrays.
+
+```jsx
+// ❌ WRONG: New object in dependency array
+useEffect(() => {
+  doSomething();
+}, [{ id: userId }]); // New object identity every render
+
+// ❌ WRONG: Inline function in dependency
+useEffect(() => {
+  fetchData();
+}, [() => formatData(data)]); // New function every render
+```
+
+**Solution:** Use primitive values or memoized objects.
+
+```jsx
+// ✅ CORRECT: Use primitive
+useEffect(() => {
+  doSomething();
+}, [userId]); // Stable primitive value
+
+// ✅ CORRECT: Memoize function
+const formatDataFn = useCallback(() => formatData(data), [data]);
+useEffect(() => {
+  fetchData();
+}, [formatDataFn]); // Stable function reference
+```
+
+## Testing for Infinite Loops
+
+1. **Monitor network traffic** for repeated API calls
+2. Add **console.log statements** in useEffect to check execution frequency
+3. Use **React DevTools Profiler** to identify excessive re-renders
+4. Implement **error boundaries** that catch render limits
+
+## Common Effect Loop Patterns to Watch For
+
 1. useEffect → setState → trigger useEffect (infinite loop)
 2. useEffect with function dependency not wrapped in useCallback
 3. Context value changing causing subscriber effects to re-run
 4. Derived state calculated in useEffect instead of useMemo
 5. Object/array dependencies changing every render
-
-### 📝 **LOW**: Testing for Infinite Loop Prevention
-
-- When implementing data fetching with React contexts:
-  1. Monitor network traffic to check for repeated identical API calls.
-  2. Add console.log statements in useEffect hooks to verify execution frequency.
-  3. Use React DevTools profiler to identify components re-rendering excessively.

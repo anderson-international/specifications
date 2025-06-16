@@ -1,6 +1,60 @@
 import NextAuth from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
+import { JWT } from 'next-auth/jwt'
+import { Session, User } from 'next-auth'
 import { prisma } from '@/lib/prisma'
+
+// Define proper types to replace any
+interface ExtendedToken extends JWT {
+  userId?: string
+  role_id?: number
+  role_name?: string
+}
+
+// Update the User interface from next-auth to include our custom fields
+declare module "next-auth" {
+  interface User {
+    role_id?: number
+    role_name?: string
+  }
+  
+  interface Session {
+    user: {
+      id: string
+      role_id?: number
+      role_name?: string
+      email?: string | null
+      name?: string | null
+      image?: string | null
+    }
+  }
+}
+
+interface ExtendedSession extends Session {
+  user: {
+    id: string
+    role_id: number
+    role_name: string
+    email?: string | null
+    name?: string | null
+    image?: string | null
+  }
+}
+
+interface SignInCallbackParams {
+  user: User
+  account: unknown
+  profile?: unknown
+  email?: unknown
+  credentials?: unknown
+}
+
+interface EventMessage {
+  user: User
+  isNewUser?: boolean
+  token?: ExtendedToken
+  session?: ExtendedSession
+}
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
@@ -18,7 +72,7 @@ export const authOptions = {
     error: '/auth/error',
   },
   callbacks: {
-    async jwt({ token, user }: { token: Record<string, unknown>; user?: { id?: string; email?: string } }) {
+    async jwt({ token, user }: { token: ExtendedToken; user?: User }) {
       if (user) {
         // Add user data to token
         const dbUser = await prisma.users.findUnique({
@@ -34,7 +88,7 @@ export const authOptions = {
       }
       return token
     },
-    async session({ session, token }: { session: Record<string, unknown>; token: Record<string, unknown> }) {
+    async session({ session, token }: { session: Session; token: ExtendedToken }): Promise<ExtendedSession> {
       if (token) {
         session.user = {
           id: token.userId as string,
@@ -42,9 +96,9 @@ export const authOptions = {
           role_name: token.role_name as string,
         }
       }
-      return session
+      return session as ExtendedSession
     },
-    async signIn({ user }: { user: { email?: string } }) {
+    async signIn({ user }: SignInCallbackParams): Promise<boolean> {
       // Only allow sign-in for users that exist in our database
       if (user.email) {
         const existingUser = await prisma.users.findUnique({
@@ -63,10 +117,10 @@ export const authOptions = {
     },
   },
   events: {
-    async signIn(message: { user: { email?: string }; isNewUser?: boolean }) {
+    async signIn(message: EventMessage): Promise<void> {
       console.log(`User signed in: ${message.user.email} (new: ${message.isNewUser})`)
     },
-    async signOut(message: { session?: { user?: { email?: string } }; token?: { email?: string } }) {
+    async signOut(message: EventMessage): Promise<void> {
       const identifier = message.token?.email || message.session?.user?.email || 'unknown'
       console.log(`User signed out: ${identifier}`)
     },

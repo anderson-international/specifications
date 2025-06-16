@@ -20,21 +20,19 @@ Cross-references: best-practices.md (file limits), react-patterns.md (React-spec
 > - **Technical Strategy**: [Form Management](../concerns/form-management.md) | [API Design](../concerns/api-design.md)
 > - **Project Setup**: [Technical Stack](../project/technical-stack.md) | [Deployment Environment](../concerns/deployment-environment.md)
 
-This document outlines the code quality standards for the specifications project - a snuff specification builder and CRUD admin application.
+This document outlines code quality standards for the specifications project.
 
 ## Table of Contents
 
 1. [ESLint Configuration](#eslint-configuration)
 2. [Prettier Formatting](#prettier-formatting)
 3. [Naming Conventions](#naming-conventions)
-4. [Code Structure and Organization](#code-structure-and-organization)
+4. [Code Structure](#code-structure)
 5. [State Management](#state-management)
-6. [⚠️ **CRITICAL**: TypeScript Return Type Requirements](#typescript-return-type-requirements)
+6. [TypeScript Return Types](#typescript-return-type-requirements)
 7. [AI_VALIDATION](#ai-validation)
 
 ## 🔥 **HIGH**: ESLint Configuration
-
-We use ESLint to enforce code quality and consistency across the codebase.
 
 ### ⚠️ **CRITICAL**: Base Configuration
 
@@ -96,10 +94,6 @@ We use ESLint to enforce code quality and consistency across the codebase.
 
 ## ⚙️ **MEDIUM**: Prettier Formatting
 
-We use Prettier to ensure consistent code formatting across the codebase.
-
-### Base Configuration
-
 ```json
 {
   "singleQuote": true,
@@ -115,80 +109,57 @@ We use Prettier to ensure consistent code formatting across the codebase.
 }
 ```
 
-### Integration with ESLint
-
-To integrate Prettier with ESLint, we use:
-- `eslint-config-prettier`: Disables ESLint rules that might conflict with Prettier
-- `eslint-plugin-prettier`: Runs Prettier as an ESLint rule
-
 ## ⚙️ **MEDIUM**: Naming Conventions
 
 ### Files and Directories
 
-- **React Components**: PascalCase, either `.tsx` or `.jsx` extensions (e.g., `UserProfile.tsx`)
-- **Utility Files**: camelCase, `.ts` or `.js` extensions (e.g., `formatDate.ts`)
-- **Styles**: Match the component name with appropriate extension:
-  - CSS Modules: `[ComponentName].module.css`
-  - Styled Components: `[ComponentName].styles.ts`
-- **API Routes**: camelCase for file names (e.g., `getUserData.ts`)
-- **Test Files**: Same name as the file being tested with `.test` or `.spec` suffix (e.g., `UserProfile.test.tsx`)
-- **Config Files**: kebab-case (e.g., `next-config.js`)
+- **Components**: PascalCase (`.tsx` or `.jsx`) - `UserProfile.tsx`
+- **Utilities**: camelCase (`.ts` or `.js`) - `formatDate.ts`
+- **Styles**: Match component name - `UserProfile.module.css`
+- **Tests**: Add `.test` or `.spec` suffix - `UserProfile.test.tsx`
+- **Config**: kebab-case - `next-config.js`
 
 ### Variables and Functions
 
-- **Variables**: camelCase (e.g., `userData`, `isLoading`)
-- **Boolean Variables**: Prefix with "is", "has", "should", etc. (e.g., `isActive`, `hasPermission`)
-- **Constants**: UPPER_SNAKE_CASE (e.g., `API_URL`, `MAX_RETRY_COUNT`)
-- **Functions**: camelCase, use descriptive verbs (e.g., `fetchUserData`, `validateForm`)
-- **Private Functions/Variables**: Prefix with underscore (e.g., `_privateHelper`)
-- **React Hooks**: Prefix with "use" (e.g., `useFormState`, `useAuth`)
+- **Variables**: camelCase - `userData`, `isLoading`
+- **Booleans**: Prefix with "is/has/should" - `isActive`
+- **Constants**: UPPER_SNAKE_CASE - `API_URL`
+- **Functions**: camelCase, descriptive verbs - `fetchUserData`
+- **Private**: Prefix with underscore - `_privateHelper`
+- **Hooks**: Prefix with "use" - `useFormState`
 
-### Components and Interfaces
+### Components and Types
 
-- **React Components**: PascalCase (e.g., `UserProfile`, `NavigationBar`)
-- **TypeScript Interfaces**: PascalCase without prefix (e.g., `User`, `FormProps`) to match modern TypeScript best practices
-- **TypeScript Types**: PascalCase, descriptive (e.g., `UserRole`, `FormState`)
-- **Enums**: PascalCase, singular naming (e.g., `ButtonType`, `NotificationType`)
+- **React Components**: PascalCase - `NavigationBar`
+- **Interfaces/Types**: PascalCase - `User`, `FormProps`
+- **Enums**: PascalCase, singular - `ButtonType`
 
-## ⚙️ **MEDIUM**: Code Structure and Organization
+## ⚙️ **MEDIUM**: Code Structure
 
 ### Project Structure
 
 ```
 specifications/
-├── docs/                   # Project documentation
-├── .next/                  # Next.js build output
-├── app/                    # Next.js App Router pages and layouts
+├── app/                    # Next.js App Router
 │   ├── api/                # API routes
-│   └── [routes]/           # Application routes with page.tsx files
-├── components/             # Reusable UI components
-│   ├── common/             # Shared components across features
-│   ├── layout/             # Layout components
-│   └── [feature]/          # Feature-specific components
+│   └── [routes]/           # Application routes
+├── components/             # UI components
 ├── hooks/                  # Custom React hooks
-├── lib/                    # Core utilities and services
-│   ├── api/                # API utilities
-│   ├── utils/              # Helper functions
-│   └── validations/        # Zod schemas and validation
+├── lib/                    # Utilities and services
 ├── public/                 # Static assets
 ├── styles/                 # Global styles
-├── types/                  # TypeScript type definitions
-└── tests/                  # Test utilities and mocks
+└── types/                  # Type definitions
 ```
 
 ### Component Structure
 
-Components should follow this general structure:
-
 ```tsx
-// Imports - organized by groups with a blank line between
+// Imports - organized by groups
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 
 import { useAuth } from '@/hooks/useAuth';
 
 import { Button } from '@/components/common/Button';
-import { formatDate } from '@/lib/utils/formatDate';
 
 // Types
 interface Props {
@@ -198,12 +169,12 @@ interface Props {
 }
 
 // Component definition
-export const ExampleComponent: React.FC<Props> = ({ title, isActive = false, onSubmit }) => {
-  // Hook calls first
+export const ExampleComponent = ({ title, isActive = false, onSubmit }: Props): JSX.Element => {
+  // Hook calls
   const [data, setData] = useState(null);
   const { user } = useAuth();
   
-  // Effect hooks
+  // Effects
   useEffect(() => {
     // Effect logic
   }, [dependencies]);
@@ -213,131 +184,33 @@ export const ExampleComponent: React.FC<Props> = ({ title, isActive = false, onS
     // Handler logic
   };
   
-  // Helper functions
-  const formatTitle = (title: string): string => {
-    return title.toUpperCase();
-  };
-  
-  // Conditional rendering if needed
-  if (!user) {
-    return <div>Not authenticated</div>;
-  }
-  
-  // Main render
+  // Render
   return (
     <div className="example-component">
-      <h1>{formatTitle(title)}</h1>
-      {/* Rest of the component */}
+      <h1>{title}</h1>
+      {/* Component content */}
     </div>
   );
-};
-
-// PropTypes for non-TypeScript components
-ExampleComponent.propTypes = {
-  title: PropTypes.string.isRequired,
-  isActive: PropTypes.bool,
-  onSubmit: PropTypes.func.isRequired,
 };
 ```
 
 ## 🔥 **HIGH**: State Management
 
 ### Local State
-
-- Use React's `useState` and `useReducer` hooks for component-level state management
-- Extract complex state logic into custom hooks for reusability
-- Prefer multiple atomic state values over large state objects when appropriate
+- Use `useState` and `useReducer` for component state
+- Extract complex state logic into custom hooks
+- Prefer atomic state values when appropriate
 
 ### Global State
+- Use React Context API with SWR for data fetching
+- Organize state by feature/domain
+- Create custom hooks to access state
+- Use immutable update patterns
+- Handle async states explicitly (loading/error/success)
 
-For application-wide state management, we use [React Context API](https://reactjs.org/docs/context.html) with [SWR](https://swr.vercel.app/) for data fetching and caching.
+## ⚠️ **CRITICAL**: TypeScript Return Type Requirements
 
-### State Management Patterns
-
-1. **Feature-based State Organization**:
-   - State should be organized by feature or domain
-   - Each feature may have its own context provider
-
-2. **State Access Patterns**:
-   - Create custom hooks to access state (e.g., `useUserSettings`, `useSpecifications`)
-   - Never access context directly in components
-
-3. **State Update Patterns**:
-   - Use immutable update patterns with spread operators or libraries like Immer
-   - Document state mutations clearly, particularly for complex state structures
-
-4. **Asynchronous State Management**:
-   - Use SWR for remote data fetching and caching
-   - Handle loading, error, and success states explicitly for async operations
-   - Implement proper optimistic UI updates where appropriate
-
-### Example Context Structure
-
-```tsx
-// UserContext.tsx
-import React, { createContext, useContext, useState, useCallback } from 'react';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'admin' | 'expert' | 'public';
-}
-
-interface UserContext {
-  user: User | null;
-  loading: boolean;
-  error: Error | null;
-  login: (email: string) => Promise<void>;
-  logout: () => Promise<void>;
-}
-
-const UserContext = createContext<UserContext | undefined>(undefined);
-
-export const UserProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  const login = useCallback(async (email: string) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      // Login logic
-      const userData = await loginService(email);
-      setUser(userData);
-    } catch (err) {
-      setError(err as Error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const logout = useCallback(async () => {
-    // Logout logic
-    setUser(null);
-  }, []);
-
-  return (
-    <UserContext.Provider value={{ user, loading, error, login, logout }}>
-      {children}
-    </UserContext.Provider>
-  );
-};
-
-export const useUser = (): IUserContext => {
-  const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error('useUser must be used within a UserProvider');
-  }
-  return context;
-};
-```
-
-## ⚠️ **CRITICAL - MANDATORY COMPLIANCE**: TypeScript Return Type Requirements
-
-All functions must have explicit return types as enforced by ESLint configuration:
+All functions must have explicit return types:
 
 ```typescript
 // ❌ FORBIDDEN - No return type
@@ -363,26 +236,15 @@ function handleSubmit(data: FormData): void {
 
 ## AI_VALIDATION
 
-ESLint Rule Patterns:
-- Function return types: ": (void|Promise<\w+>|\w+)" required after function parameters
-- No explicit any: Reject patterns containing ": any" or "any[]"
-- Console usage: Only allow "console\.(warn|error)" not "console\.log"
+ESLint Validation Patterns:
+- Function return types: Must include `: (void|Promise<\w+>|\w+)`
+- No explicit any: Reject `: any` or `any[]`
+- Console usage: Allow only `console.warn|error` not `console.log`
 - Import organization: Require blank lines between import groups
 
-Validation Regex:
-- Missing return types: /^[\s]*const\s+\w+\s*=\s*\([^)]*\)\s*=>\s*{/ (without return type)
-- Explicit any usage: /:\s*any\b/
-- Console.log usage: /console\.log\(/
-- Import violations: /^import.*from.*\n^import/ (missing blank line)
-
-File Size Validation:
-- Component files: Line count <= 150
-- Page files: Line count <= 200  
-- Utility files: Line count <= 100
-
-Critical Patterns to Enforce:
-1. All functions have explicit return types
+Critical Enforcement Points:
+1. Explicit return types on all functions
 2. No usage of 'any' type
 3. No console.log in production code
-4. Proper import organization with blank lines
-5. File size limits strictly enforced
+4. Proper import organization
+5. File size limits

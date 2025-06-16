@@ -16,7 +16,18 @@ export interface EnumTableOperations {
   }) => Promise<EnumValue[]>
   
   findFirst: (args: {
-    where: { name: { equals: string; mode: 'insensitive' } | string }
+    where: { 
+      name?: { contains?: string; equals?: string; mode?: 'insensitive' } | string;
+      id?: { not?: number };
+      AND?: Array<{
+        name?: { contains?: string; equals?: string; mode?: 'insensitive' } | string;
+        id?: { not?: number };
+      }>;
+      OR?: Array<{
+        name?: { contains?: string; equals?: string; mode?: 'insensitive' } | string;
+        id?: { not?: number };
+      }>;
+    }
   }) => Promise<EnumValue | null>
   
   findUnique: (args: {
@@ -41,24 +52,24 @@ export interface EnumTableOperations {
   }) => Promise<number>
 }
 
-// Define the valid enum table names
+// Define the valid enum table names (matches actual database schema)
 export type EnumTableName = 
   | 'enum_product_types'
-  | 'enum_categories' 
-  | 'enum_materials'
-  | 'enum_colors'
-  | 'enum_sizes'
-  | 'enum_brands'
-  | 'enum_suppliers'
-  | 'enum_seasons'
-  | 'enum_collections'
-  | 'enum_price_ranges'
-  | 'enum_priorities'
-  | 'enum_statuses'
+  | 'enum_product_brands'
+  | 'enum_experience_levels'
+  | 'enum_tobacco_types'
+  | 'enum_cures'
+  | 'enum_grinds'
+  | 'enum_tasting_notes'
+  | 'enum_nicotine_levels'
+  | 'enum_moisture_levels'
+  | 'enum_specification_statuses'
   | 'enum_roles'
+  | 'enum_snuff_types'
+  | 'enum_statuses'
 
 // Create a type-safe interface for accessing enum tables
-export interface TypedPrismaEnumClient {
+export type TypedPrismaEnumClient = {
   [K in EnumTableName]: EnumTableOperations
 }
 
@@ -66,18 +77,18 @@ export interface TypedPrismaEnumClient {
 export function isValidEnumTableName(name: string): name is EnumTableName {
   const validTables: EnumTableName[] = [
     'enum_product_types',
-    'enum_categories', 
-    'enum_materials',
-    'enum_colors',
-    'enum_sizes',
-    'enum_brands',
-    'enum_suppliers',
-    'enum_seasons',
-    'enum_collections',
-    'enum_price_ranges',
-    'enum_priorities',
-    'enum_statuses',
-    'enum_roles'
+    'enum_product_brands',
+    'enum_experience_levels',
+    'enum_tobacco_types',
+    'enum_cures',
+    'enum_grinds',
+    'enum_tasting_notes',
+    'enum_nicotine_levels',
+    'enum_moisture_levels',
+    'enum_specification_statuses',
+    'enum_roles',
+    'enum_snuff_types',
+    'enum_statuses'
   ]
   return validTables.includes(name as EnumTableName)
 }
@@ -103,4 +114,18 @@ export interface EnumQueryResult {
   page: number
   limit: number
   totalPages: number
+}
+
+// Specification form enum data interface
+export interface SpecificationEnumData {
+  productTypes: EnumValue[]
+  productBrands: EnumValue[]
+  experienceLevels: EnumValue[]
+  tobaccoTypes: EnumValue[]
+  cures: EnumValue[]
+  grinds: EnumValue[]
+  tastingNotes: EnumValue[]
+  nicotineLevels: EnumValue[]
+  moistureLevels: EnumValue[]
+  specificationStatuses: EnumValue[]
 }

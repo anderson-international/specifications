@@ -1,48 +1,23 @@
-'use client'
-
-import React, { useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-
-import SpecificationWizard from '@/components/forms/SpecificationWizard'
-import { SpecificationFormData } from '@/lib/schemas/specification'
+import React, { Suspense } from 'react'
+import { getSpecificationEnumData } from '@/lib/data/enums'
+import { SpecificationEnumData } from '@/types/enum'
+import CreateSpecificationClient from './CreateSpecificationClient'
 import styles from './page.module.css'
 
-interface CreateSpecificationPageProps {
-  searchParams: { productId?: string }
-}
-
-export default function CreateSpecificationPage({ 
-  searchParams 
-}: CreateSpecificationPageProps): JSX.Element {
-  const router = useRouter()
-
-  const handleComplete = useCallback(async (data: SpecificationFormData): Promise<void> => {
-    try {
-      // TODO: Replace with actual API call
-      console.log('Specification data:', data)
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Navigate to success page or products list
-      router.push('/products')
-    } catch (error) {
-      console.error('Failed to create specification:', error)
-      // TODO: Show error message
-    }
-  }, [router])
-
-  const handleCancel = useCallback((): void => {
-    router.back()
-  }, [router])
+/**
+ * Server component that fetches enum data and renders the client component
+ */
+async function CreateSpecificationPage(): Promise<JSX.Element> {
+  // Fetch enum data on the server
+  const enumData: SpecificationEnumData = await getSpecificationEnumData()
 
   return (
     <div className={styles.container}>
-      <SpecificationWizard
-        productId={searchParams.productId}
-        onComplete={handleComplete}
-        onCancel={handleCancel}
-      />
+      <Suspense fallback={<div>Loading...</div>}>
+        <CreateSpecificationClient enumData={enumData} />
+      </Suspense>
     </div>
   )
 }
+
+export default CreateSpecificationPage

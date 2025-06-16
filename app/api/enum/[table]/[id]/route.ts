@@ -62,18 +62,18 @@ export async function DELETE(
 async function checkEnumReferences(tableName: ValidatedEnumTableName, enumId: number): Promise<{ isReferenced: boolean; count: number }> {
   try {
     // Map enum table names to their corresponding specification field names
-    const fieldMappings: Record<ValidatedEnumTableName, string> = {
+    const fieldMappings: Partial<Record<ValidatedEnumTableName, string>> = {
       'enum_product_types': 'product_type_id',
-      'enum_categories': 'category_id',
-      'enum_materials': 'material_id',
-      'enum_colors': 'color_id',
-      'enum_sizes': 'size_id',
-      'enum_brands': 'brand_id',
-      'enum_suppliers': 'supplier_id',
-      'enum_seasons': 'season_id',
-      'enum_collections': 'collection_id',
-      'enum_price_ranges': 'price_range_id',
-      'enum_priorities': 'priority_id',
+      'enum_product_brands': 'brand_id',
+      'enum_experience_levels': 'experience_level_id',
+      'enum_tobacco_types': 'tobacco_type_id',
+      'enum_cures': 'cure_id',
+      'enum_grinds': 'grind_id',
+      'enum_tasting_notes': 'tasting_note_id',
+      'enum_nicotine_levels': 'nicotine_level_id',
+      'enum_moisture_levels': 'moisture_level_id',
+      'enum_specification_statuses': 'specification_status_id',
+      'enum_snuff_types': 'snuff_type_id',
       'enum_statuses': 'status_id',
       'enum_roles': 'role_id'  // This one might be in users table instead
     }

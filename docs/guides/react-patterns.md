@@ -26,25 +26,22 @@ Anti-patterns: Object/array dependencies without memoization, dual data fetching
 
 ## ⚠️ **CRITICAL**: React Effect Loop Prevention
 
-### ⚠️ **CRITICAL**: Critical Safeguards
 React useEffect hooks can cause infinite loops if not properly managed. These patterns are mandatory:
 
-1. **⚠️ **CRITICAL**: Functions that update state must be wrapped in `useCallback`**
-2. **⚠️ **CRITICAL**: Derived state must use `useMemo`**  
-3. **🔥 **HIGH**: Context interactions must have clear ownership**
+1. **⚠️ CRITICAL: Functions that update state must be wrapped in `useCallback`**
+2. **⚠️ CRITICAL: Derived state must use `useMemo`**  
+3. **🔥 HIGH: Context interactions must have clear ownership**
 
 ### ⚠️ **CRITICAL**: useCallback Pattern (Required)
 ```typescript
 // ✅ Correct: Stable event handler
 const handleSubmit = useCallback((data: FormData): void => {
   setSubmitting(true);
-  // handle submission
 }, []);
 
-// ❌ **BLOCKS DEPLOYMENT**: Creates new function on every render
+// ❌ BLOCKS DEPLOYMENT: Creates new function on every render
 const handleSubmit = (data: FormData): void => {
   setSubmitting(true);
-  // handle submission
 };
 ```
 
@@ -56,15 +53,15 @@ const filteredProducts = useMemo(() =>
   [products, selectedBrand]
 );
 
-// ❌ **BLOCKS DEPLOYMENT**: Creates new array on every render
+// ❌ BLOCKS DEPLOYMENT: Creates new array on every render
 const filteredProducts = products.filter(product => product.brand === selectedBrand);
 ```
 
 ### 🔥 **HIGH**: Context Interaction Guidelines
-- **Single Source of Truth**: One context should own data fetching; others should only consume
+- **Single Source of Truth**: One context should own data fetching
 - **No Circular Dependencies**: Avoid circular dependencies between contexts
 - **Clear Ownership**: Define which context is responsible for loading specific data
-- **No Dual Fetching**: Never duplicate data fetching logic between component and context
+- **No Dual Fetching**: Never duplicate data fetching logic
 
 ## 🔥 **HIGH**: React Performance Optimization
 
@@ -75,7 +72,7 @@ const filteredProducts = products.filter(product => product.brand === selectedBr
 // ✅ Memoize components that receive stable props
 const ProductCard = React.memo(({ product, onSelect }: ProductCardProps): JSX.Element => {
   return (
-    <div className={styles.card}>
+    <div>
       {/* component content */}
     </div>
   );
@@ -98,14 +95,12 @@ const useFormWizard = (initialData: FormData) => {
 ```
 
 ### 🛠️ **REFACTOR**: File Size Integration
-When components approach the **⚠️ CRITICAL: 150-line limit**, apply these React patterns:
+When components approach the **⚠️ CRITICAL: 150-line limit**, apply these patterns:
 
-#### 🛠️ **REFACTOR**: Extract Custom Hooks
-- Move complex `useState` and `useEffect` logic to custom hooks
+- Extract complex `useState` and `useEffect` logic to custom hooks
 - Keep component focused on rendering and event handling
-- Reference: [Best Practices - Component Splitting Guidelines](best-practices.md#component-splitting-guidelines)
+- Use container/presentation pattern to separate concerns
 
-#### ✨ **ENHANCE**: Container/Presentation Pattern
 ```typescript
 // Container (manages state and data)
 const ProductsContainer = (): JSX.Element => {
@@ -130,15 +125,15 @@ const ProductsList = React.memo(({ products, loading, error }: ProductsListProps
 
 ### ⚠️ **CRITICAL**: Server vs Client Component Hook Usage
 
-**⚠️ **CRITICAL**: Server Components - Forbidden Patterns:**
+**⚠️ CRITICAL: Server Components - Forbidden Patterns:**
 ```typescript
-// ❌ **BLOCKS DEPLOYMENT**: NEVER in Server Components
+// ❌ BLOCKS DEPLOYMENT: NEVER in Server Components
 'use client'; // Don't add this to Server Components
 const [state, setState] = useState(); // Hooks not allowed
 useEffect(() => {}, []); // Browser APIs not available
 ```
 
-**✅ **REQUIRED**: Client Components - Required Patterns:**
+**✅ REQUIRED: Client Components - Required Patterns:**
 ```typescript
 'use client';
 // ✅ Required for any component using hooks
@@ -160,7 +155,6 @@ export default function InteractiveComponent(): JSX.Element {
 
 ### ⚙️ **MEDIUM**: Component Composition Patterns
 
-**Mixing Server and Client Components:**
 ```typescript
 // Server Component (default)
 export default async function ProductPage({ params }: { params: { id: string } }): Promise<JSX.Element> {
@@ -183,7 +177,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
 
 ### 🔥 **HIGH**: Form Patterns with App Router
 
-**✨ **PREFERRED**: Server Actions (Preferred for Forms):**
+**✨ PREFERRED: Server Actions (Preferred for Forms):**
 ```typescript
 // app/create-specification/actions.ts
 'use server';
@@ -208,7 +202,7 @@ export default function CreateForm(): JSX.Element {
 }
 ```
 
-**🔥 **HIGH**: Client-Side Forms (When Validation Needed):**
+**🔥 HIGH: Client-Side Forms (When Validation Needed):**
 ```typescript
 'use client';
 export default function ValidatedForm(): JSX.Element {
@@ -294,26 +288,16 @@ const useCustomHook = (): { value: string; setValue: (v: string) => void } => {
   return { value, setValue };
 };
 
-// ❌ **BLOCKS DEPLOYMENT**: Missing return types
+// ❌ BLOCKS DEPLOYMENT: Missing return types
 const MyComponent = (props: Props) => {
   return <div>{props.children}</div>;
 }
+```
 
-## 🔥 **HIGH**: React Performance Optimization
+## 🔥 **HIGH**: Mandatory Performance Requirements
 
-### 🔥 **HIGH**: Component Optimization Patterns
-
-#### 🔥 **CRITICAL - MANDATORY FOR ALL COMPONENTS**: React.memo
-**REQUIREMENT**: ALL functional components MUST be wrapped in React.memo
-**VIOLATION CONSEQUENCE**: Unnecessary re-renders, performance degradation, code review rejection
-
+### 🔥 **CRITICAL**: ALL components must use React.memo
 ```typescript
-// ❌ FORBIDDEN - No memoization
-const ProductCard = ({ product }: Props) => {
-  return <div>{product.name}</div>;
-};
-export default ProductCard;
-
 // ✅ MANDATORY - React.memo wrapper
 const ProductCard = ({ product }: Props): JSX.Element => {
   return <div>{product.name}</div>;
@@ -321,30 +305,16 @@ const ProductCard = ({ product }: Props): JSX.Element => {
 export default React.memo(ProductCard);
 ```
 
-#### 🔥 **CRITICAL - MANDATORY FOR ALL COMPONENTS**: useCallback for Event Handlers
-**REQUIREMENT**: ALL event handlers and functions passed as props MUST use useCallback
-**VIOLATION CONSEQUENCE**: Child component re-renders, performance issues
-
+### 🔥 **CRITICAL**: ALL event handlers must use useCallback
 ```typescript
-// ❌ FORBIDDEN - No useCallback
-const handleClick = () => {
-  setData(newData);
-};
-
 // ✅ MANDATORY - useCallback wrapper
 const handleClick = useCallback(() => {
   setData(newData);
 }, [newData]);
 ```
 
-#### 🔥 **CRITICAL - MANDATORY FOR ALL COMPONENTS**: useMemo for Derived State
-**REQUIREMENT**: ALL computed values, filtered data, and expensive calculations MUST use useMemo
-**VIOLATION CONSEQUENCE**: Unnecessary computations on every render
-
+### 🔥 **CRITICAL**: ALL derived state must use useMemo
 ```typescript
-// ❌ FORBIDDEN - Computation on every render
-const filteredProducts = products.filter(p => p.category === selectedCategory);
-
 // ✅ MANDATORY - useMemo wrapper
 const filteredProducts = useMemo(() => 
   products.filter(p => p.category === selectedCategory),
