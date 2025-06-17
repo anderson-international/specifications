@@ -1,0 +1,232 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "Document relationship graph for AI documentation ingestion",
+    "lastUpdated": "2025-06-17"
+  },
+  "nodes": [
+    {
+      "id": "ai-coding-handbook",
+      "path": "guides/ai-coding-handbook.md",
+      "type": "guide",
+      "priority": 1,
+      "title": "AI Coding Handbook",
+      "description": "Core coding standards and AI validation patterns"
+    },
+    {
+      "id": "ai-index",
+      "path": "ai-index.md",
+      "type": "index",
+      "priority": 1,
+      "title": "AI Documentation Index",
+      "description": "Primary entry point for AI documentation navigation"
+    },
+    {
+      "id": "ai-compliance-matrix",
+      "path": "ai-compliance-matrix.md",
+      "type": "reference",
+      "priority": 1,
+      "title": "AI Compliance Matrix",
+      "description": "Machine-readable compliance rules and validation patterns"
+    },
+    {
+      "id": "ai-validation-registry",
+      "path": "ai-validation-registry.md",
+      "type": "reference",
+      "priority": 1,
+      "title": "AI Validation Registry",
+      "description": "Centralized registry of all validation patterns"
+    },
+    {
+      "id": "best-practices",
+      "path": "guides/best-practices.md",
+      "type": "guide",
+      "priority": 1,
+      "title": "Best Practices",
+      "description": "Core development practices and standards"
+    },
+    {
+      "id": "code-quality-standards",
+      "path": "guides/code-quality-standards.md",
+      "type": "guide", 
+      "priority": 1,
+      "title": "Code Quality Standards",
+      "description": "ESLint, Prettier and TypeScript configuration standards"
+    },
+    {
+      "id": "react-patterns",
+      "path": "guides/react-patterns.md",
+      "type": "guide",
+      "priority": 1,
+      "title": "React Development Patterns",
+      "description": "React patterns, performance optimization, and infinite loop prevention"
+    },
+    {
+      "id": "prevent-react-effect-loops",
+      "path": "pitfalls/prevent-react-effect-loops.md",
+      "type": "pitfall",
+      "priority": 1,
+      "title": "Preventing React Effect Infinite Loops",
+      "description": "Patterns to prevent infinite loops in React effects"
+    },
+    {
+      "id": "architectural-guidelines",
+      "path": "guides/architectural-guidelines.md", 
+      "type": "guide",
+      "priority": 1,
+      "title": "Architectural Guidelines",
+      "description": "Patterns for scalable component architecture and system design"
+    },
+    {
+      "id": "form-management",
+      "path": "concerns/form-management.md",
+      "type": "concern",
+      "priority": 1,
+      "title": "Form Management",
+      "description": "Form management strategy and implementation patterns"
+    },
+    {
+      "id": "ui-ux-patterns",
+      "path": "concerns/ui-ux-patterns.md",
+      "type": "concern",
+      "priority": 2,
+      "title": "UI/UX Patterns",
+      "description": "Implementation patterns for UI/UX development"
+    },
+    {
+      "id": "api-design",
+      "path": "concerns/api-design.md",
+      "type": "concern",
+      "priority": 2,
+      "title": "API Design",
+      "description": "API design patterns and implementation guidelines"
+    },
+    {
+      "id": "authentication",
+      "path": "concerns/authentication.md",
+      "type": "concern",
+      "priority": 2,
+      "title": "Authentication",
+      "description": "Authentication strategies and implementation"
+    },
+    {
+      "id": "database",
+      "path": "concerns/database.md",
+      "type": "concern",
+      "priority": 2,
+      "title": "Database",
+      "description": "Database schema, ORM usage, and query patterns"
+    },
+    {
+      "id": "deployment-environment",
+      "path": "concerns/deployment-environment.md",
+      "type": "concern",
+      "priority": 3,
+      "title": "Deployment Environment",
+      "description": "Deployment strategy and environment configuration"
+    }
+  ],
+  "edges": [
+    {
+      "source": "ai-index",
+      "target": "ai-coding-handbook",
+      "relationship": "prerequisite",
+      "description": "Start with AI Coding Handbook before using the index"
+    },
+    {
+      "source": "ai-index",
+      "target": "ai-compliance-matrix",
+      "relationship": "related",
+      "description": "AI Compliance Matrix contains machine-readable rules referenced in the index"
+    },
+    {
+      "source": "ai-index",
+      "target": "ai-validation-registry",
+      "relationship": "related",
+      "description": "Validation registry centralizes all validation patterns referenced in the index"
+    },
+    {
+      "source": "ai-coding-handbook",
+      "target": "code-quality-standards",
+      "relationship": "related",
+      "description": "Code quality standards implement rules from the handbook"
+    },
+    {
+      "source": "code-quality-standards",
+      "target": "react-patterns",
+      "relationship": "related",
+      "description": "React patterns build on general code quality standards"
+    },
+    {
+      "source": "react-patterns",
+      "target": "prevent-react-effect-loops",
+      "relationship": "details",
+      "description": "Detailed guidance on preventing React effect loops"
+    },
+    {
+      "source": "best-practices",
+      "target": "architectural-guidelines",
+      "relationship": "implements",
+      "description": "Architectural guidelines implement best practices"
+    },
+    {
+      "source": "architectural-guidelines",
+      "target": "api-design",
+      "relationship": "details",
+      "description": "Detailed API design patterns referenced in architectural guidelines"
+    },
+    {
+      "source": "architectural-guidelines",
+      "target": "ui-ux-patterns",
+      "relationship": "details",
+      "description": "UI/UX patterns implement architectural guidelines"
+    },
+    {
+      "source": "form-management",
+      "target": "ui-ux-patterns",
+      "relationship": "related",
+      "description": "Form management is related to UI/UX patterns"
+    },
+    {
+      "source": "api-design",
+      "target": "authentication",
+      "relationship": "related",
+      "description": "Authentication strategies for API endpoints"
+    },
+    {
+      "source": "api-design",
+      "target": "database",
+      "relationship": "related",
+      "description": "Database access patterns for API implementation"
+    },
+    {
+      "source": "form-management",
+      "target": "database",
+      "relationship": "related",
+      "description": "Database interactions for form submissions"
+    },
+    {
+      "source": "authentication",
+      "target": "deployment-environment",
+      "relationship": "related",
+      "description": "Environment configuration for authentication services"
+    }
+  ],
+  "suggestedReadingPaths": [
+    {
+      "name": "core-standards",
+      "description": "Core coding standards and architecture",
+      "path": ["ai-coding-handbook", "ai-index", "best-practices", "architectural-guidelines", "code-quality-standards"]
+    },
+    {
+      "name": "react-development",
+      "description": "React development workflow",
+      "path": ["ai-coding-handbook", "react-patterns", "prevent-react-effect-loops", "form-management", "ui-ux-patterns"]
+    },
+    {
+      "name": "backend-development", 
+      "description": "Backend development workflow",
+      "path": ["architectural-guidelines", "api-design", "authentication", "database", "deployment-environment"]
+    }
+  ]
+}

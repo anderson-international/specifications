@@ -1,6 +1,6 @@
 # Testing Strategy Documentation
 
-*Centralized testing approach and implementation patterns for the Specification Builder project.*
+*Testing approach and implementation patterns for the Specification Builder project.*
 
 ## Overview
 

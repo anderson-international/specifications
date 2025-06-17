@@ -1,29 +1,76 @@
+---
+title: AI Documentation Index
+description: Entry point for AI code review navigation and document prioritization
+version: 1.1.0
+status: active
+lastUpdated: 2025-06-15
+author: Development Team
+complianceLevel: critical
+readingTime: 15 minutes
+tags: [ai, documentation, navigation, compliance, review, index]
+---
+
 # AI DOCUMENTATION INDEX
 *Entry point for AI code review navigation and document prioritization*
+
+<!-- AI_NAVIGATION
+Reading Priority: 1 (Critical - First document to read)
+Primary Focus: Navigation structure for all AI documentation and review workflows
+Key Compliance Points:
+- Document prioritization framework (lines 5-33)
+- Context-dependent document selection (lines 35-73)
+- AI review workflow steps (lines 97-135)
+- Terminology standardization (lines 146-152)
+Critical Cross-references:
+- AI Compliance Matrix (ai-compliance-matrix.md): Master compliance rules document
+- AI Coding Handbook (guides/ai-coding-handbook.md): Detailed coding practices
+- Document Relationship Graph (document-graph.json): Visual mapping of document relationships
+- AI Validation Registry (ai-validation-registry.md): Central validation patterns registry
+Anti-patterns:
+- Bypassing the document priority order
+- Ignoring file type detection workflow
+- Missing cross-references between related documents
+- Inconsistent terminology usage
+Additional Context: This is the central hub for AI navigation through all documentation
+Decision Framework: How to determine which documents to reference based on file type and context
+-->
+
+<!-- AI_SUMMARY
+This document serves as the central navigation hub for AI-based code review with these key elements:
+
+• Document Priority Framework: Stratified system of documentation by importance (CRITICAL, CONTEXT_DEPENDENT, REFERENCE_ONLY)
+• Context-Sensitive Navigation: File type detection workflow with specific document loading paths for components, pages, utilities, and API files
+• Review Workflow: Three-step process for file analysis (file type detection, priority document loading, violation detection)
+• Compliance Checklist: Definitive list of required patterns (file size limits, TypeScript typing, React optimization patterns)
+• Terminology Standardization: Consistent naming conventions for technical concepts across all documentation
+• Severity Classification: Standardized markers for violation severity and required actions
+
+This index document is the first entry point for all AI interaction with the codebase documentation system and defines the pathways to access all other relevant documents based on context.
+-->
 
 ## CRITICAL_FOR_CODE_REVIEW (Always check these first)
 
 ### 🔥 **Primary Compliance Documents** (Check every review)
-1. **`ai-compliance-matrix.md`** - Master compliance rules with validation patterns
-2. **`best-practices.md`** - File size limits (150/200/100 lines), coding principles
-3. **`code-quality-standards.md`** - ESLint rules, TypeScript requirements
-4. **`react-patterns.md`** - Performance patterns, hook usage, memo patterns
-5. **`prevent-react-effect-loops.md`** - Critical anti-patterns to avoid
+1. **[`ai-compliance-matrix.md`](ai-compliance-matrix.md "Priority: CRITICAL - Master compliance rule set")** - Master compliance rules with validation patterns
+2. **[`best-practices.md`](guides/best-practices.md "Priority: CRITICAL - File size, code organization")** - File size limits (150/200/100 lines), coding principles
+3. **[`code-quality-standards.md`](guides/code-quality-standards.md "Priority: HIGH - ESLint, TypeScript standards")** - ESLint rules, TypeScript requirements
+4. **[`react-patterns.md`](guides/react-patterns.md "Priority: HIGH - Hook patterns, performance")** - Performance patterns, hook usage, memo patterns
+5. **[`prevent-react-effect-loops.md`](guides/prevent-react-effect-loops.md "Priority: CRITICAL - Infinite loop prevention")** - Critical anti-patterns to avoid
 
 ### ⚠️ **Essential Standards** (Check for violations)
-6. **`architectural-guidelines.md`** - Component structure, single responsibility
-7. **`form-management.md`** - React Hook Form + Zod validation patterns
-8. **`ui-ux-patterns.md`** - CSS Modules, accessibility, mobile-first design
+6. **[`architectural-guidelines.md`](guides/architectural-guidelines.md "Priority: HIGH - Component architecture")** - Component structure, single responsibility
+7. **[`form-management.md`](concerns/form-management.md "Priority: HIGH - Form validation")** - React Hook Form + Zod validation patterns
+8. **[`ui-ux-patterns.md`](concerns/ui-ux-patterns.md "Priority: HIGH - CSS & accessibility")** - CSS Modules, accessibility, mobile-first design
 
 ## CONTEXT_DEPENDENT (Check based on file type being reviewed)
 
 ### For Component Files (.tsx)
 **Priority Order:**
-1. `ai-compliance-matrix.md` → File size + TypeScript rules
-2. `react-patterns.md` → React.memo, useCallback, useMemo patterns
-3. `ui-ux-patterns.md` → CSS Modules, accessibility patterns
-4. `form-management.md` → If form-related components
-5. `performance-optimization.md` → Image optimization, lazy loading
+1. [`ai-compliance-matrix.md`](ai-compliance-matrix.md "Priority: CRITICAL - Master compliance rules") → File size + TypeScript rules
+2. [`react-patterns.md`](guides/react-patterns.md "Priority: HIGH - Optimization patterns") → React.memo, useCallback, useMemo patterns
+3. [`ui-ux-patterns.md`](concerns/ui-ux-patterns.md "Priority: HIGH - CSS & accessibility") → CSS Modules, accessibility patterns
+4. [`form-management.md`](concerns/form-management.md "Context: Form components only") → If form-related components
+5. [`performance-optimization.md`](guides/performance-optimization.md "Priority: MEDIUM - Asset optimization") → Image optimization, lazy loading
 
 **Common Violations:**
 - File size > 150 lines
@@ -33,11 +80,11 @@
 
 ### For Page Files (page.tsx, layout.tsx)
 **Priority Order:**
-1. `ai-compliance-matrix.md` → File size + TypeScript rules
-2. `architectural-guidelines.md` → Component hierarchy, organization
-3. `performance-optimization.md` → Image optimization, bundle splitting
-4. `api-design.md` → If API integration present
-5. `authentication.md` → If auth-related pages
+1. [`ai-compliance-matrix.md`](ai-compliance-matrix.md "Priority: CRITICAL - Master compliance rules") → File size + TypeScript rules
+2. [`architectural-guidelines.md`](guides/architectural-guidelines.md "Priority: HIGH - Component organization") → Component hierarchy, organization
+3. [`performance-optimization.md`](guides/performance-optimization.md "Priority: HIGH - Bundle optimization") → Image optimization, bundle splitting
+4. [`api-design.md`](concerns/api-design.md "Context: Pages with API calls") → If API integration present
+5. [`authentication.md`](guides/authentication.md "Context: Auth-related pages") → If auth-related pages
 
 **Common Violations:**
 - File size > 200 lines

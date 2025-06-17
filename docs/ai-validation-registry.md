@@ -1,0 +1,142 @@
+---
+title: AI Validation Registry
+description: Centralized registry of all validation patterns for AI compliance checking
+version: 1.0.0
+status: active
+lastUpdated: 2025-06-17
+author: Development Team
+complianceLevel: critical
+readingTime: 8 minutes
+tags: [ai, validation, patterns, compliance, registry, automated-review]
+---
+
+# AI Validation Registry
+
+*Centralized registry of all validation patterns for AI compliance checking.*
+
+<!-- AI_NAVIGATION
+Reading Priority: 1 (Essential document for code validation)
+Primary Focus: Consolidated validation patterns for TypeScript, React, API design, form management
+Key Compliance Points:
+- React performance patterns validation (line 45-75)
+- TypeScript typing requirements (line 80-100)
+- Form validation patterns (line 105-125)
+- API design validation (line 130-145)
+Critical Cross-references:
+- React Development Patterns (guides/react-patterns.md): Source of React validation patterns
+- Code Quality Standards (guides/code-quality-standards.md): Source of TypeScript validation patterns
+- Form Management (concerns/form-management.md): Source of form validation patterns
+- API Design (concerns/api-design.md): Source of API validation patterns
+Additional Context: This registry is the single source of truth for all machine-readable validation patterns to ensure code compliance
+-->
+
+<!-- AI_SUMMARY
+This document serves as the centralized registry for all validation patterns used in automated compliance checking across the entire codebase. Key components include:
+
+• React Validation Patterns - Essential patterns for React components including useCallback, useMemo, React.memo usage, effect dependencies, and component size limits
+• TypeScript Validation Patterns - Critical type safety rules covering explicit return types, avoiding 'any' type, and code organization standards
+• Form Management Validation Patterns - Standards for React Hook Form implementation with Zod schema validation
+• API Design Validation Patterns - Requirements for API route structure, status codes, error handling, and input validation
+
+Each validation pattern includes a unique identifier, the pattern definition, priority level, and concise description. This registry must be kept synchronized with source documents when rules are updated.
+-->
+
+## Overview
+
+This document serves as a centralized registry of all validation patterns used for automated compliance checking. Each pattern includes:
+- A unique identifier
+- The validation regex or rule
+- Source document reference
+- Priority level
+- Description of what it validates
+
+## Table of Contents
+
+1. [React Validation Patterns](#react-validation-patterns)
+2. [TypeScript Validation Patterns](#typescript-validation-patterns) 
+3. [Form Management Validation Patterns](#form-management-validation-patterns)
+4. [API Design Validation Patterns](#api-design-validation-patterns)
+
+## React Validation Patterns
+
+Source: [React Development Patterns](guides/react-patterns.md "Priority: HIGH - Core React performance and component patterns")
+
+### Performance Patterns
+
+| ID | Pattern | Priority | Description |
+|----|---------|----------|-------------|
+| REACT_CALLBACK_001 | `/const\s+\w+\s*=\s*useCallback\(/` | ⚠️ CRITICAL | Validates that event handlers are wrapped in useCallback |
+| REACT_MEMO_001 | `/const\s+\w+\s*=\s*useMemo\(/` | ⚠️ CRITICAL | Validates that derived state is computed with useMemo |
+| REACT_MEMO_002 | `/export.*React\.memo\(/` | 🔥 HIGH | Validates that components with props are wrapped in React.memo |
+| REACT_EFFECT_001 | Check for stable references in dependency arrays | 🔥 HIGH | No functions in dependency arrays without useCallback |
+| REACT_EFFECT_002 | No object/array literals in dependencies | 🔥 HIGH | Objects should be memoized before being used in dependencies |
+
+### Component Patterns
+
+| ID | Pattern | Priority | Description |
+|----|---------|----------|-------------|
+| REACT_COMP_001 | Component line count < 150 | ⚠️ CRITICAL | Ensures components don't exceed the maximum line count |
+| REACT_CLIENT_001 | `/'use client';/` presence in client components | ⚠️ CRITICAL | Validates correct client component declaration |
+| REACT_SERVER_001 | No hooks in server components | ⚠️ CRITICAL | Prevents use of React hooks in server components |
+
+## TypeScript Validation Patterns
+
+Source: [Code Quality Standards](guides/code-quality-standards.md "Priority: CRITICAL - TypeScript standards and ESLint rules")
+
+### Type Safety
+
+| ID | Pattern | Priority | Description |
+|----|---------|----------|-------------|
+| TS_RETURN_001 | `/: (void\|Promise<\w+>\|\w+)/` | ⚠️ CRITICAL | Validates explicit function return types |
+| TS_ANY_001 | Reject `/: any\|any\[\]/` | ⚠️ CRITICAL | Prevents usage of the 'any' type |
+| TS_CONSOLE_001 | Allow only `/console\.(warn\|error)/` | 🔥 HIGH | Restricts console usage to warn/error only |
+
+### Code Organization
+
+| ID | Pattern | Priority | Description |
+|----|---------|----------|-------------|
+| TS_IMPORT_001 | Require blank lines between import groups | 🔥 HIGH | Ensures proper import organization |
+| TS_NAME_001 | Component files use PascalCase | ⚙️ MEDIUM | Validates naming conventions for components |
+| TS_NAME_002 | Utility files use camelCase | ⚙️ MEDIUM | Validates naming conventions for utilities |
+
+## Form Management Validation Patterns
+
+Source: [Form Management](guides/form-management.md "Priority: HIGH - Form validation and state management")
+
+### React Hook Form
+
+| ID | Pattern | Priority | Description |
+|----|---------|----------|-------------|
+| FORM_HOOK_001 | `/const.*=.*useForm</` | ⚠️ CRITICAL | Validates React Hook Form usage |
+| FORM_SUBMIT_001 | `/handleSubmit\(/` | ⚠️ CRITICAL | Ensures form submission is wrapped in handleSubmit |
+| FORM_REG_001 | `/\{\.\.\.register\(/` | 🔥 HIGH | Validates field registration with register |
+| FORM_ERROR_001 | `/formState\.errors/` | 🔥 HIGH | Ensures error handling with formState.errors |
+
+### Schema Validation
+
+| ID | Pattern | Priority | Description |
+|----|---------|----------|-------------|
+| FORM_ZOD_001 | `*.schema.ts` files exist | ⚠️ CRITICAL | Ensures schema files are separate from components |
+| FORM_ZOD_002 | `/zodResolver\(/` | ⚠️ CRITICAL | Validates schema integration with resolver |
+| FORM_ZOD_003 | `/z\.infer<typeof.*Schema>/` | 🔥 HIGH | Ensures type inference from schema |
+| FORM_ZOD_004 | `/export.*=.*z\.object\(/` | 🔥 HIGH | Validates schema export pattern |
+
+## API Design Validation Patterns
+
+Source: [API Design](concerns/api-design.md "Priority: HIGH - API structure and error handling")
+
+### API Route Structure
+
+| ID | Pattern | Priority | Description |
+|----|---------|----------|-------------|
+| API_ROUTE_001 | Next.js route handler files organized by resource | ⚠️ CRITICAL | Validates API route structure |
+| API_STATUS_001 | All responses include appropriate status codes | ⚠️ CRITICAL | Ensures proper HTTP status codes |
+| API_ERR_001 | Error responses include error code and message | 🔥 HIGH | Validates error response format |
+| API_VALID_001 | Input validation before processing | ⚠️ CRITICAL | Ensures all inputs are validated |
+
+## Usage Guidelines
+
+1. **For AI Tools**: Reference validation patterns by their unique ID when checking code compliance
+2. **For Documentation Updates**: When adding new validation rules to individual documents, also add them to this registry
+3. **For Rule Changes**: Update both this registry and the source document when modifying validation rules
+4. **For Priority Changes**: Any changes to priority levels must be reflected in both this registry and the source document

@@ -1,6 +1,6 @@
 # Deployment & Environment Documentation
 
-*Centralized deployment strategy and environment configuration for the Specification Builder project.*
+*Deployment strategy and environment configuration for the Specification Builder project.*
 
 ## Overview
 

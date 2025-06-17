@@ -1,6 +1,6 @@
 # API Design Documentation
 
-*Centralized API strategy and implementation patterns for the Specification Builder project.*
+*Centralized API strategy for the Specification Builder project.*
 
 <!-- AI_NAVIGATION
 Primary Focus: Next.js API routes, RESTful patterns, error handling, Shopify integration
@@ -230,7 +230,6 @@ Critical API Anti-Patterns:
 - **Database Efficiency**: Use efficient database queries and connection patterns
 - **Caching Strategy**: Implement caching where appropriate for read-heavy operations
 - **Response Size**: Return only necessary data in API responses
-- **Documentation**: Minimal API documentation for complex endpoints
 
 ## Shopify Integration
 

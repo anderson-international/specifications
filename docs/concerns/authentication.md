@@ -1,6 +1,6 @@
 # Authentication Documentation
 
-*Centralized authentication strategy and implementation planning for the Specification Builder project.*
+*Authentication strategy for the Specification Builder project.*
 
 <!-- AI_NAVIGATION
 Primary Focus: Magic link authentication, role-based access, development vs production patterns

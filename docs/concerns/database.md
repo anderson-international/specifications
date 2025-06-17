@@ -1,6 +1,6 @@
 # Database Documentation
 
-*Centralized database strategy and implementation planning for the Specification Builder project.*
+*Database strategy for the Specification Builder project.*
 
 ## Overview
 

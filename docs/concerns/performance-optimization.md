@@ -1,6 +1,6 @@
 # Performance Optimization Documentation
 
-*Centralized performance strategy and optimization patterns for the Specification Builder project.*
+*Performance strategy and optimization patterns for the Specification Builder project.*
 
 ## Overview
 

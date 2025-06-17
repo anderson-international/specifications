@@ -1,36 +1,118 @@
+---
+title: Code Quality Standards
+description: ESLint, Prettier, and TypeScript configuration standards for consistent code quality
+version: 2.0.0
+status: stable
+lastUpdated: 2025-06-17
+author: Development Team
+complianceLevel: required
+readingTime: 15 minutes
+tags: [eslint, typescript, prettier, code-quality, standards, linting]  
+---
+
 # Code Quality Standards
 
 *ESLint, Prettier, and TypeScript configuration standards for consistent code quality.*
 
 <!-- AI_NAVIGATION
-Primary Focus: TypeScript ESLint rules, return type requirements, import organization
+Reading Priority: 1 (Essential document for all TypeScript development)
+Primary Focus: TypeScript ESLint rules, return type requirements, import organization, code structure
 Key Compliance Points:
-- @typescript-eslint/explicit-function-return-type: error (line 49)
-- @typescript-eslint/no-explicit-any: error (line 50) 
-- import/order configuration (line 62-72)
-- File size limits referenced from best-practices.md
-Critical for: All .ts/.tsx files, function definitions, import statements
-Cross-references: best-practices.md (file limits), react-patterns.md (React-specific rules)
+- @typescript-eslint/explicit-function-return-type: error (line 69)
+- @typescript-eslint/no-explicit-any: error (line 70)
+- import/order configuration (line 82-90)
+- TypeScript return type requirements (line 211-235)
+- Naming conventions (line 112-136)
+Critical Cross-references:
+- Best Practices (best-practices.md): File size limits and component organization
+- React Development Patterns (react-patterns.md): React-specific coding standards
+- Architectural Guidelines (architectural-guidelines.md): Project structure context
+Anti-patterns:
+- Missing function return types
+- Using 'any' type
+- Inconsistent import organization
+- console.log in production code
+- File size exceeding limits
+Additional Context: This document defines the ESLint and Prettier configurations for maintaining code quality in TypeScript files
+-->
+
+<!-- AI_SUMMARY
+This document establishes mandatory code quality standards for TypeScript development. Key points:
+
+• TypeScript function return types are REQUIRED for all functions and methods
+• Using the 'any' type is strictly prohibited; use proper type definitions
+• Import statements must follow a specific organization pattern
+• ESLint rules are enforced for consistent code style
+• Prettier automatically formats code according to project standards
+• Variable and function naming conventions follow strict patterns
+• Console statements are prohibited in production code
+• All arrow functions must have parentheses even for single parameters
+• Property sorting is enforced in interfaces and type declarations
+• Maximum file size limits are strictly enforced for maintainability
+
+Critical anti-patterns to avoid:
+• Missing return types in functions or methods
+• Using 'any' as a type for quick implementation
+• Unorganized or inconsistent imports
+• Leaving console.log statements in production code
+• Excessively large files that violate size limits
 -->
 
 > **📋 Quick Navigation:**
-> - **Development Guidelines**: [Best Practices](best-practices.md) | [Architectural Guidelines](architectural-guidelines.md)
-> - **React Implementation**: [React Development Patterns](react-patterns.md) | [Database-Form Integration](database-form-integration.md)
-> - **UI/UX Standards**: [UI/UX Design Decisions](../project/ui-ux-design.md) | [Component Patterns](../concerns/ui-ux-patterns.md)
-> - **Technical Strategy**: [Form Management](../concerns/form-management.md) | [API Design](../concerns/api-design.md)
-> - **Project Setup**: [Technical Stack](../project/technical-stack.md) | [Deployment Environment](../concerns/deployment-environment.md)
+> - **Development Guidelines**: 
+>   - [🔥 Best Practices](best-practices.md "Context: File size limits and code organization standards") 
+>   - [⚠️ Architectural Guidelines](architectural-guidelines.md "Context: Project structure and module organization")
+> - **React Implementation**: 
+>   - [🔥 React Development Patterns](react-patterns.md "Context: React-specific TypeScript patterns") 
+>   - [Database-Form Integration](database-form-integration.md "Context: Type-safe data handling")
+> - **UI/UX Standards**: 
+>   - [UI/UX Design Decisions](../project/ui-ux-design.md "Context: Component styling guidelines") 
+>   - [Component Patterns](../concerns/ui-ux-patterns.md "Context: Reusable UI component structures")
+> - **Project Context**: 
+>   - [Technical Stack](../project/technical-stack.md "Context: TypeScript and ESLint versions") 
+>   - [Feature Requirements](../project/feature-requirements.md "Context: Technical compliance for features")
+>   - [⚠️ API Design](../concerns/api-design.md "Context: Type definitions for API contracts")
+> - **Implementation**: 
+>   - [Form Management](../concerns/form-management.md "Context: Type-safe form handling")
+>   - [Deployment Environment](../concerns/deployment-environment.md "Context: Build-time linting configuration")
 
-This document outlines code quality standards for the specifications project.
+## Executive Summary
+
+This document establishes mandatory code quality standards for all TypeScript development in the project. It defines strict ESLint and Prettier configurations that are enforced at both development time and build time. The standards focus on type safety, consistent code formatting, organized imports, clear naming conventions, and maintainable code structure. All functions must have explicit return types, use of 'any' type is prohibited, and specific patterns must be followed for imports, error handling, and file organization. These standards are non-negotiable and ensure consistent, maintainable, and bug-resistant code across the codebase.
+
+## Key Principles
+
+1. **Type Safety First**: All code must be properly typed with explicit return types and no use of 'any'.
+
+2. **Consistent Formatting**: Prettier enforces standardized code formatting across the project.
+
+3. **Organized Imports**: Imports must follow a specific organization pattern for consistency and readability.
+
+4. **Explicit Error Handling**: Error conditions must be handled explicitly and consistently.
+
+5. **Clear Naming Conventions**: All variables, functions, and types must follow established naming patterns.
+
+6. **Maintainable Structure**: Files must adhere to size limits and code organization patterns.
+
+7. **No Debug Artifacts**: Console statements and commented code are prohibited in production.
 
 ## Table of Contents
 
-1. [ESLint Configuration](#eslint-configuration)
-2. [Prettier Formatting](#prettier-formatting)
-3. [Naming Conventions](#naming-conventions)
-4. [Code Structure](#code-structure)
-5. [State Management](#state-management)
-6. [TypeScript Return Types](#typescript-return-type-requirements)
-7. [AI_VALIDATION](#ai-validation)
+1. [Executive Summary](#executive-summary)
+2. [Key Principles](#key-principles)
+3. [Detailed Guidance](#detailed-guidance)
+   - [ESLint Configuration](#-high-eslint-configuration)
+   - [Prettier Formatting](#️-medium-prettier-formatting)
+   - [Naming Conventions](#-medium-naming-conventions)
+   - [Code Structure](#️-medium-code-structure)
+   - [State Management](#️-medium-state-management)
+   - [TypeScript Return Types](#️-critical-typescript-return-type-requirements) 
+4. [Examples](#examples)
+   - [TypeScript Return Type Examples](#typescript-return-type-examples)
+   - [Import Organization Examples](#import-organization-examples)
+   - [Type Safety Examples](#type-safety-examples)
+   - [Naming Convention Examples](#naming-convention-examples)
+5. [AI_VALIDATION](#ai_validation)
 
 ## 🔥 **HIGH**: ESLint Configuration
 
@@ -248,3 +330,257 @@ Critical Enforcement Points:
 3. No console.log in production code
 4. Proper import organization
 5. File size limits
+
+## EXAMPLES
+
+### TypeScript Return Type Examples
+
+#### ✅ Correct: Explicit Return Types
+
+```typescript
+// Function declaration with explicit return type
+function calculateTotal(items: CartItem[]): number {
+  return items.reduce((sum, item) => sum + item.price, 0);
+}
+
+// Arrow function with explicit return type
+const getFullName = (user: User): string => {
+  return `${user.firstName} ${user.lastName}`;
+};
+
+// Async function with explicit Promise return type
+async function fetchUserData(userId: string): Promise<UserData> {
+  const response = await fetch(`/api/users/${userId}`);
+  return response.json();
+}
+
+// React component with explicit JSX.Element return type
+const UserProfile = ({ user }: UserProfileProps): JSX.Element => {
+  return (
+    <div className="profile">
+      <h2>{user.name}</h2>
+      <p>{user.email}</p>
+    </div>
+  );
+};
+
+// Function that doesn't return a value
+function logError(message: string): void {
+  console.error(`Error: ${message}`);
+}
+
+// Generic function with explicit return type
+function getFirstItem<T>(items: T[]): T | undefined {
+  return items.length > 0 ? items[0] : undefined;
+}
+```
+
+#### ❌ Incorrect: Missing Return Types
+
+```typescript
+// ❌ Missing return type on function declaration
+function calculateTotal(items) {
+  return items.reduce((sum, item) => sum + item.price, 0);
+}
+
+// ❌ Missing return type on arrow function
+const getFullName = (user) => {
+  return `${user.firstName} ${user.lastName}`;
+};
+
+// ❌ Missing Promise return type on async function
+async function fetchUserData(userId) {
+  const response = await fetch(`/api/users/${userId}`);
+  return response.json();
+}
+
+// ❌ Missing JSX.Element return type on React component
+const UserProfile = ({ user }) => {
+  return (
+    <div className="profile">
+      <h2>{user.name}</h2>
+      <p>{user.email}</p>
+    </div>
+  );
+};
+```
+
+### Import Organization Examples
+
+#### ✅ Correct: Properly Organized Imports
+
+```typescript
+// External dependencies - first group
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { Typography, Button, Box } from '@mui/material';
+
+// Internal modules - second group
+import { UserContext } from '@/context/UserContext';
+import { fetchUserData } from '@/api/userService';
+
+// Local imports - third group
+import UserAvatar from './UserAvatar';
+import styles from './UserProfile.module.css';
+import { formatUserName } from '../utils/formatting';
+
+// Types - fourth group
+import type { User, UserPreferences } from '@/types';
+```
+
+#### ❌ Incorrect: Disorganized Imports
+
+```typescript
+// ❌ All imports mixed together with no logical grouping
+import styles from './UserProfile.module.css';
+import { useRouter } from 'next/router';
+import UserAvatar from './UserAvatar';
+import React, { useState, useEffect } from 'react';
+import { fetchUserData } from '@/api/userService';
+import type { User, UserPreferences } from '@/types';
+import { formatUserName } from '../utils/formatting';
+import { Typography, Button, Box } from '@mui/material';
+import { UserContext } from '@/context/UserContext';
+
+// ❌ Missing separating line between import groups
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { Typography, Button, Box } from '@mui/material';
+import { UserContext } from '@/context/UserContext';
+import { fetchUserData } from '@/api/userService';
+```
+
+### Type Safety Examples
+
+#### ✅ Correct: Proper Type Definitions
+
+```typescript
+// Specific type instead of 'any'
+function processUserData(user: User): ProcessedUser {
+  return {
+    id: user.id,
+    name: user.name,
+    formattedEmail: formatEmail(user.email)
+  };
+}
+
+// Union types instead of 'any'
+function handleResponse(data: SuccessResponse | ErrorResponse): void {
+  if ('error' in data) {
+    console.error(`Error: ${data.error.message}`);
+  } else {
+    processData(data.result);
+  }
+}
+
+// Unknown with type guards instead of 'any'
+function parseApiResponse(response: unknown): ParsedData {
+  if (typeof response !== 'object' || response === null) {
+    throw new Error('Invalid response format');
+  }
+  
+  const data = response as Record<string, unknown>;
+  
+  if (!('id' in data) || typeof data.id !== 'string') {
+    throw new Error('Missing or invalid ID');
+  }
+  
+  // Additional validation...
+  
+  return {
+    id: data.id,
+    // Other properties after validation
+  };
+}
+```
+
+#### ❌ Incorrect: Using 'any' Type
+
+```typescript
+// ❌ Using 'any' instead of proper typing
+function processUserData(user: any): any {
+  return {
+    id: user.id,
+    name: user.name,
+    formattedEmail: formatEmail(user.email)
+  };
+}
+
+// ❌ Using 'any[]' instead of typed arrays
+function sortItems(items: any[]): any[] {
+  return [...items].sort((a, b) => a.name.localeCompare(b.name));
+}
+
+// ❌ Using any for convenience with third-party libraries
+function parseApiResponse(response: any): ParsedData {
+  return {
+    id: response.id,
+    // Other properties without validation
+  };
+}
+```
+
+### Naming Convention Examples
+
+#### ✅ Correct: Consistent Naming
+
+```typescript
+// PascalCase for interfaces, types, classes, and components
+interface UserProfileProps {
+  user: User;
+  isEditable?: boolean;
+}
+
+type FilterOptions = 'active' | 'archived' | 'all';
+
+class UserRepository {
+  // Implementation
+}
+
+function UserProfileCard({ user }: UserProfileProps): JSX.Element {
+  // Implementation
+}
+
+// camelCase for variables, functions, and methods
+const userSettings = getUserSettings();
+
+function calculateTotalPrice(items: CartItem[]): number {
+  // Implementation
+}
+
+// UPPER_SNAKE_CASE for constants
+const MAX_RETRY_ATTEMPTS = 3;
+const API_ENDPOINTS = {
+  USERS: '/api/users',
+  PRODUCTS: '/api/products',
+} as const;
+```
+
+#### ❌ Incorrect: Inconsistent Naming
+
+```typescript
+// ❌ lowercase for interfaces
+interface userProfileProps {
+  user: User;
+  isEditable?: boolean;
+}
+
+// ❌ camelCase for types
+type filterOptions = 'active' | 'archived' | 'all';
+
+// ❌ camelCase for classes
+class userRepository {
+  // Implementation
+}
+
+// ❌ lowercase for component functions 
+function userProfileCard({ user }: userProfileProps): JSX.Element {
+  // Implementation
+}
+
+// ❌ PascalCase for regular variables
+const UserSettings = getUserSettings();
+
+// ❌ lowercase for constants
+const max_retry_attempts = 3;
+```
