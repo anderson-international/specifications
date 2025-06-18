@@ -152,15 +152,21 @@ class CogLoadGraphAnalytics {
     console.log('⚙️  Workflow Analysis');
     console.log('====================');
     
-    const workflows = this.graph.workflowIntegration;
-    console.log(`Total Workflows: ${workflows.length}`);
+    // Dynamically discover docs-* workflows
+    const workflowsDir = path.join(process.cwd(), '.windsurf', 'workflows');
+    const docsWorkflows = this.discoverDocsWorkflows(workflowsDir);
     
-    // Workflow coverage
+    console.log(`Total Workflows: ${docsWorkflows.length}`);
+    
+    // Analyze each workflow for document coverage
     const totalDocuments = this.graph.nodes.length;
     const documentsInWorkflows = new Set();
+    const workflowCoverage = {};
     
-    workflows.forEach(workflow => {
-      workflow.documents.forEach(docId => {
+    docsWorkflows.forEach(workflow => {
+      const documents = this.getWorkflowDocuments(workflow.path);
+      workflowCoverage[workflow.name] = documents.length;
+      documents.forEach(docId => {
         documentsInWorkflows.add(docId);
       });
     });
@@ -170,8 +176,8 @@ class CogLoadGraphAnalytics {
     
     // Workflow sizes
     console.log('\nWorkflow Document Counts:');
-    workflows.forEach(workflow => {
-      console.log(`  ${workflow.workflow}: ${workflow.documents.length} documents`);
+    Object.entries(workflowCoverage).forEach(([workflow, count]) => {
+      console.log(`  ${workflow}: ${count} documents`);
     });
     
     // Documents not in any workflow
@@ -186,6 +192,141 @@ class CogLoadGraphAnalytics {
     }
     
     console.log('\n');
+  }
+
+  /**
+   * Dynamically discover docs-* workflows from .windsurf/workflows directory
+   */
+  discoverDocsWorkflows(workflowsDir) {
+    const workflows = [];
+    
+    if (!fs.existsSync(workflowsDir)) {
+      console.log('⚠️  Workflows directory not found:', workflowsDir);
+      return workflows;
+    }
+    
+    const files = fs.readdirSync(workflowsDir);
+    const docsWorkflowFiles = files.filter(file => 
+      file.startsWith('docs-') && file.endsWith('.md')
+    );
+    
+    docsWorkflowFiles.forEach(file => {
+      const workflowPath = path.join(workflowsDir, file);
+      const workflowName = path.basename(file, '.md');
+      
+      workflows.push({
+        name: workflowName,
+        path: workflowPath,
+        file: file
+      });
+    });
+    
+    return workflows.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  /**
+   * Extract documents referenced in a workflow file
+   */
+  getWorkflowDocuments(workflowPath) {
+    const documents = new Set();
+    
+    try {
+      const content = fs.readFileSync(workflowPath, 'utf8');
+      
+      // Pattern 1: Direct document references (Load: docs/path/file.md)
+      const directLoadPattern = /Load:\s+docs\/[^.\s]+\.md/g;
+      const directMatches = content.matchAll(directLoadPattern);
+      for (const match of directMatches) {
+        const docPath = match[0].replace('Load: ', '');
+        const docId = this.pathToDocId(docPath);
+        if (docId && this.graph.nodes.find(n => n.id === docId)) {
+          documents.add(docId);
+        }
+      }
+      
+      // Pattern 2: Smart context loader workflows - lookup from document graph
+      const workflowMatch = content.match(/--workflow=([\w-]+)/);
+      if (workflowMatch) {
+        const workflowType = workflowMatch[1]; // e.g., 'docs-forms', 'core-standards', etc.
+        // Remove 'docs-' prefix if present
+        const cleanWorkflowType = workflowType.replace(/^docs-/, '');
+        const workflowDocs = this.getWorkflowFromGraph(cleanWorkflowType);
+        workflowDocs.forEach(docId => documents.add(docId));
+      }
+      
+      // Pattern 3: Traditional markdown links and tool calls (fallback)
+      const documentPatterns = [
+        /docs\/[^)]+\.md/g,  // Markdown links to docs
+        /AbsolutePath['"]\s*:\s*['"](.*?docs\/[^'"]+\.md)['"]/g, // view_line_range tool calls
+        /TargetFile['"]\s*:\s*['"](.*?docs\/[^'"]+\.md)['"]/g // edit_file tool calls
+      ];
+      
+      documentPatterns.forEach(pattern => {
+        const matches = content.matchAll(pattern);
+        for (const match of matches) {
+          const docPath = match[1] || match[0];
+          const docId = this.pathToDocId(docPath);
+          if (docId && this.graph.nodes.find(n => n.id === docId)) {
+            documents.add(docId);
+          }
+        }
+      });
+      
+    } catch (error) {
+      console.log(`⚠️  Error reading workflow ${workflowPath}:`, error.message);
+    }
+    
+    return Array.from(documents);
+  }
+
+  /**
+   * Get documents associated with a workflow type from the document graph
+   */
+  getWorkflowFromGraph(workflowType) {
+    const documents = [];
+    
+    // Map workflow types to document graph suggested reading paths
+    const workflowMapping = {
+      'forms': 'form-development',
+      'api': 'api-development', 
+      'ui': 'ui-development',
+      'debug': 'debug-development',
+      'core-context': 'core-context'
+    };
+    
+    const graphWorkflowName = workflowMapping[workflowType];
+    if (!graphWorkflowName) {
+      return documents;
+    }
+    
+    // Look for the workflow in suggestedReadingPaths
+    const suggestedPaths = this.graph.suggestedReadingPaths || [];
+    const workflowPath = suggestedPaths.find(path => path.name === graphWorkflowName);
+    
+    if (workflowPath && workflowPath.path) {
+      // Convert document IDs from the path
+      return workflowPath.path.filter(docId => 
+        this.graph.nodes.find(node => node.id === docId)
+      );
+    }
+    
+    return documents;
+  }
+
+  /**
+   * Convert file path to document ID format used in graph
+   */
+  pathToDocId(filePath) {
+    // Remove leading paths and file extension, convert to kebab-case
+    const relativePath = filePath.replace(/^.*docs\//, '').replace(/\.md$/, '');
+    const parts = relativePath.split('/');
+    const filename = parts[parts.length - 1];
+    
+    // Convert filename to ID format (kebab-case)
+    return filename
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
   }
 
   /**
@@ -407,7 +548,7 @@ class CogLoadGraphAnalytics {
         relationships: {}
       },
       workflows: {
-        total: this.graph.workflowIntegration.length,
+        total: 0,
         coverage: {}
       }
     };
@@ -441,8 +582,15 @@ class CogLoadGraphAnalytics {
       analytics.edges.relationships[relationship] = (analytics.edges.relationships[relationship] || 0) + 1;
     });
 
-    this.graph.workflowIntegration.forEach(workflow => {
-      analytics.workflows.coverage[workflow.workflow] = workflow.documents.length;
+    // Dynamic workflow analysis
+    const workflowsDir = path.join(process.cwd(), '.windsurf', 'workflows');
+    const docsWorkflows = this.discoverDocsWorkflows(workflowsDir);
+    
+    analytics.workflows.total = docsWorkflows.length;
+    
+    docsWorkflows.forEach(workflow => {
+      const documents = this.getWorkflowDocuments(workflow.path);
+      analytics.workflows.coverage[workflow.name] = documents.length;
     });
 
     const outputPath = path.join(process.cwd(), 'docs', 'cog-load-graph-analytics.json');

@@ -3,7 +3,7 @@
     "version": "2.0",
     "description": "Document relationship graph for AI documentation ingestion",
     "lastUpdated": "2025-06-18",
-    "lastCogLoadUpdate": "2025-06-18T20:50:25.360Z"
+    "lastCogLoadUpdate": "2025-06-18T15:21:56.076Z"
   },
   "nodes": [
     {
@@ -130,7 +130,7 @@
       "priority": 2,
       "title": "Form Management",
       "description": "Form management strategy and implementation patterns",
-      "cogLoad": 61.56
+      "cogLoad": 69.7
     },
     {
       "id": "api-design",
@@ -166,7 +166,7 @@
       "priority": 3,
       "title": "UI/UX Patterns",
       "description": "Implementation patterns for UI/UX development",
-      "cogLoad": 65.08
+      "cogLoad": 65.61
     }
   ],
   "edges": [
@@ -324,8 +324,8 @@
   ],
   "suggestedReadingPaths": [
     {
-      "name": "core-context",
-      "description": "Essential AI context for initialization",
+      "name": "core-standards",
+      "description": "Essential AI coding standards",
       "path": [
         "ai-coding-handbook",
         "business-context",
@@ -365,7 +365,7 @@
       ]
     },
     {
-      "name": "debug-development",
+      "name": "debugging-workflow",
       "description": "Debugging and issue resolution",
       "path": [
         "prevent-react-effect-loops",
