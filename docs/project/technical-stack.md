@@ -12,25 +12,9 @@ tags: [technical-stack, nextjs, prisma, css-modules, deployment, architecture]
 
 # Technical Stack Decisions
 
-<!-- AI_NAVIGATION
-Reading Priority: 1 (Critical - Essential technology choices for all development)
-Primary Focus: Framework selection rationale, implementation strategies, and deployment decisions for Next.js 15, Prisma ORM, CSS Modules, and Netlify deployment
-Key Compliance Points:
-- Next.js 15 App Router architecture and component boundaries (line 8-47)
-- CSS Modules implementation with mobile-first design (line 49-60)
-- Prisma ORM type-safe database patterns (line 62-69)
-- React Hook Form with Zod validation strategy (line 77-85)
-Critical Cross-references:
-- UI/UX Design (ui-ux-design.md): Styling philosophy and design system that complements technical choices
-- React Development Patterns (../guides/react-patterns.md): React 18 patterns and performance optimization
-- Database-Form Integration (../guides/database-form-integration.md): Prisma and form integration patterns
-- Deployment Environment (../concerns/deployment-environment.md): Netlify deployment configuration and environment setup
-Anti-patterns:
-- Mixing App Router and Pages Router patterns
-- Using client components when server components would suffice
-- Ignoring the mobile-first CSS implementation strategy
-- Missing type safety with Prisma generated types
-Additional Context: This document establishes the foundational technology decisions that all implementation must follow for consistency and maintainability
+<!-- AI_QUICK_REF
+Key Rules: Next.js App Router architecture (line 8), CSS Modules mobile-first (line 49), Prisma type-safe patterns (line 62)
+Avoid: Mixing App/Pages Router, Using client when server suffices, Ignoring mobile-first strategy
 -->
 
 <!-- AI_SUMMARY

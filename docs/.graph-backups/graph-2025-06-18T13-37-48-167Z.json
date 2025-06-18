@@ -2,8 +2,7 @@
   "metadata": {
     "version": "2.0",
     "description": "Document relationship graph for AI documentation ingestion",
-    "lastUpdated": "2025-06-18",
-    "lastCogLoadUpdate": "2025-06-18T15:21:56.076Z"
+    "lastUpdated": "2025-06-18"
   },
   "nodes": [
     {
@@ -12,8 +11,7 @@
       "type": "guide",
       "priority": 1,
       "title": "AI Coding Handbook",
-      "description": "Core coding standards and AI validation patterns",
-      "cogLoad": 64.59
+      "description": "Core coding standards and AI validation patterns"
     },
     {
       "id": "ai-index",
@@ -21,8 +19,7 @@
       "type": "index",
       "priority": 1,
       "title": "AI Documentation Index",
-      "description": "Primary entry point for AI documentation navigation",
-      "cogLoad": 62.83
+      "description": "Primary entry point for AI documentation navigation"
     },
     {
       "id": "ai-validation-registry",
@@ -30,8 +27,7 @@
       "type": "reference",
       "priority": 1,
       "title": "AI Validation Registry",
-      "description": "Centralized registry of all validation patterns",
-      "cogLoad": 63.4
+      "description": "Centralized registry of all validation patterns"
     },
     {
       "id": "ai-navigation-template",
@@ -39,8 +35,7 @@
       "type": "template",
       "priority": 3,
       "title": "AI Navigation Template",
-      "description": "Template for AI_NAVIGATION blocks",
-      "cogLoad": 45.95
+      "description": "Template for AI_NAVIGATION blocks"
     },
     {
       "id": "business-context",
@@ -48,8 +43,7 @@
       "type": "project",
       "priority": 1,
       "title": "Business Context",
-      "description": "Business context and problem statement for the project",
-      "cogLoad": 61.65
+      "description": "Business context and problem statement for the project"
     },
     {
       "id": "feature-requirements",
@@ -57,8 +51,7 @@
       "type": "project",
       "priority": 1,
       "title": "Feature Requirements",
-      "description": "Detailed feature specifications and requirements",
-      "cogLoad": 61.16
+      "description": "Detailed feature specifications and requirements"
     },
     {
       "id": "technical-stack",
@@ -66,8 +59,7 @@
       "type": "project",
       "priority": 1,
       "title": "Technical Stack",
-      "description": "Technical stack decisions and architecture",
-      "cogLoad": 61.63
+      "description": "Technical stack decisions and architecture"
     },
     {
       "id": "ui-ux-design",
@@ -75,17 +67,15 @@
       "type": "project",
       "priority": 2,
       "title": "UI/UX Design Decisions",
-      "description": "UI/UX design strategy and component patterns",
-      "cogLoad": 59.81
+      "description": "UI/UX design strategy and component patterns"
     },
     {
       "id": "code-quality-standards",
       "path": "docs/guides/code-quality-standards.md",
-      "type": "guide",
+      "type": "guide", 
       "priority": 1,
       "title": "Code Quality Standards",
-      "description": "ESLint, Prettier and TypeScript configuration standards",
-      "cogLoad": 63.42
+      "description": "ESLint, Prettier and TypeScript configuration standards"
     },
     {
       "id": "react-patterns",
@@ -93,8 +83,7 @@
       "type": "guide",
       "priority": 1,
       "title": "React Development Patterns",
-      "description": "React patterns, performance optimization, and infinite loop prevention",
-      "cogLoad": 64.26
+      "description": "React patterns, performance optimization, and infinite loop prevention"
     },
     {
       "id": "database-form-integration",
@@ -102,8 +91,7 @@
       "type": "guide",
       "priority": 2,
       "title": "Database-Form Integration Guide",
-      "description": "Schema-driven form development using database annotations",
-      "cogLoad": 63
+      "description": "Schema-driven form development using database annotations"
     },
     {
       "id": "prevent-react-effect-loops",
@@ -111,8 +99,7 @@
       "type": "pitfall",
       "priority": 2,
       "title": "Preventing React Effect Infinite Loops",
-      "description": "Patterns to prevent infinite loops in React effects",
-      "cogLoad": 63.45
+      "description": "Patterns to prevent infinite loops in React effects"
     },
     {
       "id": "prevent-lint-issues",
@@ -120,8 +107,7 @@
       "type": "pitfall",
       "priority": 2,
       "title": "Preventing Common Lint Issues",
-      "description": "Guide to preventing and fixing common linting errors",
-      "cogLoad": 59.21
+      "description": "Guide to preventing and fixing common linting errors"
     },
     {
       "id": "form-management",
@@ -129,8 +115,7 @@
       "type": "concern",
       "priority": 2,
       "title": "Form Management",
-      "description": "Form management strategy and implementation patterns",
-      "cogLoad": 69.7
+      "description": "Form management strategy and implementation patterns"
     },
     {
       "id": "api-design",
@@ -138,8 +123,7 @@
       "type": "concern",
       "priority": 2,
       "title": "API Design",
-      "description": "API design patterns and implementation guidelines",
-      "cogLoad": 64.1
+      "description": "API design patterns and implementation guidelines"
     },
     {
       "id": "authentication",
@@ -147,8 +131,7 @@
       "type": "concern",
       "priority": 2,
       "title": "Authentication",
-      "description": "Authentication strategies and implementation",
-      "cogLoad": 60.27
+      "description": "Authentication strategies and implementation"
     },
     {
       "id": "database",
@@ -156,8 +139,7 @@
       "type": "concern",
       "priority": 2,
       "title": "Database",
-      "description": "Database schema, ORM usage, and query patterns",
-      "cogLoad": 60.45
+      "description": "Database schema, ORM usage, and query patterns"
     },
     {
       "id": "ui-ux-patterns",
@@ -165,8 +147,7 @@
       "type": "concern",
       "priority": 3,
       "title": "UI/UX Patterns",
-      "description": "Implementation patterns for UI/UX development",
-      "cogLoad": 65.61
+      "description": "Implementation patterns for UI/UX development"
     }
   ],
   "edges": [
@@ -276,49 +257,27 @@
   "workflowIntegration": [
     {
       "workflow": "docs-ai-reboot",
-      "documents": [
-        "ai-coding-handbook",
-        "business-context"
-      ],
+      "documents": ["ai-coding-handbook", "business-context"],
       "description": "Essential context restoration after session continuation"
     },
     {
       "workflow": "docs-forms",
-      "documents": [
-        "form-management",
-        "database-form-integration",
-        "feature-requirements",
-        "ai-validation-registry"
-      ],
+      "documents": ["form-management", "database-form-integration", "feature-requirements", "ai-validation-registry"],
       "description": "Form development with business requirements and validation"
     },
     {
       "workflow": "docs-api",
-      "documents": [
-        "business-context",
-        "api-design",
-        "authentication",
-        "database"
-      ],
+      "documents": ["business-context", "api-design", "authentication", "database"],
       "description": "API development with business context and technical patterns"
     },
     {
       "workflow": "docs-ui",
-      "documents": [
-        "technical-stack",
-        "ui-ux-design",
-        "ui-ux-patterns",
-        "react-patterns"
-      ],
+      "documents": ["technical-stack", "ui-ux-design", "ui-ux-patterns", "react-patterns"],
       "description": "UI development with design specifications and technical implementation"
     },
     {
       "workflow": "docs-debug",
-      "documents": [
-        "prevent-react-effect-loops",
-        "prevent-lint-issues",
-        "code-quality-standards"
-      ],
+      "documents": ["prevent-react-effect-loops", "prevent-lint-issues", "code-quality-standards"],
       "description": "Debugging and troubleshooting with specific error solutions"
     }
   ],
@@ -326,52 +285,27 @@
     {
       "name": "core-standards",
       "description": "Essential AI coding standards",
-      "path": [
-        "ai-coding-handbook",
-        "business-context",
-        "code-quality-standards",
-        "react-patterns"
-      ]
+      "path": ["ai-coding-handbook", "business-context", "code-quality-standards", "react-patterns"]
     },
     {
       "name": "form-development",
       "description": "Complete form development workflow",
-      "path": [
-        "business-context",
-        "feature-requirements",
-        "form-management",
-        "database-form-integration",
-        "ai-validation-registry"
-      ]
+      "path": ["business-context", "feature-requirements", "form-management", "database-form-integration", "ai-validation-registry"]
     },
     {
-      "name": "api-development",
+      "name": "api-development", 
       "description": "Backend development workflow",
-      "path": [
-        "business-context",
-        "api-design",
-        "authentication",
-        "database"
-      ]
+      "path": ["business-context", "api-design", "authentication", "database"]
     },
     {
       "name": "ui-development",
-      "description": "Frontend UI development workflow",
-      "path": [
-        "technical-stack",
-        "ui-ux-design",
-        "ui-ux-patterns",
-        "react-patterns"
-      ]
+      "description": "Frontend UI development workflow", 
+      "path": ["technical-stack", "ui-ux-design", "ui-ux-patterns", "react-patterns"]
     },
     {
       "name": "debugging-workflow",
       "description": "Debugging and issue resolution",
-      "path": [
-        "prevent-react-effect-loops",
-        "prevent-lint-issues",
-        "code-quality-standards"
-      ]
+      "path": ["prevent-react-effect-loops", "prevent-lint-issues", "code-quality-standards"]
     }
   ]
 }

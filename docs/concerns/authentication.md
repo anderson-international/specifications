@@ -14,17 +14,9 @@ tags: [authentication, magic-link, role-based-access, nextauth, security]
 
 *Authentication strategy for the Specification Builder project.*
 
-<!-- AI_NAVIGATION
-Primary Focus: Magic link authentication, role-based access, development vs production patterns
-Key Compliance Points:
-- Magic link email authentication (line 22, 25)
-- Role-based access control (line 65-85)
-- Development DevAuth component (line 40-55)
-- Fail-fast authentication failures (line 87-95)
-- JWT token management (line 97-110)
-Critical for: Authentication implementation, user management, access control
-Cross-references: feature-requirements.md (user roles), api-design.md (auth endpoints), technical-stack.md (auth libraries)
-Strategy: Development simplicity with DevAuth, production security with magic links
+<!-- AI_QUICK_REF
+Key Rules: Magic link auth (line 22), Role-based access (line 65), DevAuth for dev only (line 40), Fail-fast auth failures (line 87)
+Avoid: Password storage, Complex permission matrices, Development shortcuts in production, Silent auth failures
 -->
 
 <!-- AI_SUMMARY

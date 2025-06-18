@@ -14,26 +14,9 @@ tags: [eslint, typescript, react, code-quality, debugging, best-practices]
 
 This guide helps prevent common linting errors when writing code for this project.
 
-<!-- AI_NAVIGATION
-Reading Priority: 2 (High - Essential for maintaining code quality and preventing common development issues)
-Primary Focus: TypeScript lint errors, React hooks issues, Next.js component patterns, and preventive coding strategies
-Key Compliance Points:
-- Unused variable handling with underscore prefix convention (line 26-27)
-- React hooks dependency array requirements (line 104-115)
-- Next.js Image component usage instead of HTML img (line 127-142)
-- TypeScript return type specifications for all functions (line 183-185)
-- Component props validation and proper usage patterns (line 147-167)
-Critical Cross-references:
-- Best Practices (../guides/best-practices.md): Component size limits and single responsibility patterns
-- Code Quality Standards (../guides/code-quality-standards.md): ESLint configuration and TypeScript rules
-- React Patterns (../guides/react-patterns.md): Hook usage and component design patterns
-- AI Coding Handbook (../ai/ingestion/ai-coding-handbook.md): Mandatory coding standards and validation patterns
-Anti-patterns:
-- Using 'any' type instead of proper TypeScript interfaces (line 58-72)
-- Missing dependencies in React hook arrays causing stale closures (line 104-115)
-- Using HTML img elements instead of Next.js Image component (line 127-142)
-- Empty destructuring patterns without underscore prefix (line 74-86)
-Additional Context: This document is essential for maintaining code quality and should be referenced when encountering lint errors during development
+<!-- AI_QUICK_REF
+Key Rules: Underscore prefix for unused vars (line 26), Hook dependencies complete (line 104), Next/Image not img (line 127), TypeScript return types (line 183)
+Avoid: 'any' type usage, Missing hook dependencies, HTML img elements, Empty destructuring without underscore
 -->
 
 <!-- AI_SUMMARY

@@ -14,27 +14,9 @@ tags: [react, useeffect, performance, hooks, debugging, infinite-loops]
 
 This guide helps prevent infinite loops and performance issues caused by improper React effect hook implementation.
 
-<!-- AI_NAVIGATION
-Reading Priority: 2 (High - Critical for preventing performance issues and infinite loops in React components)
-Primary Focus: React effect hook dependencies, useCallback/useMemo patterns, context interactions, and loop prevention strategies
-Key Compliance Points:
-- Function dependencies must be wrapped in useCallback when used in effect arrays (line 28-56)
-- Derived state must use useMemo to prevent new references (line 58-77)
-- Context interactions require clear ownership hierarchies to avoid circular dependencies (line 79-115)
-- All dependencies used inside effects must be included in dependency arrays (line 117-138)
-- Object/array literals in dependency arrays cause infinite loops (line 178-205)
-Critical Cross-references:
-- React Patterns (../guides/react-patterns.md): Hook usage patterns and component design
-- Best Practices (../guides/best-practices.md): Component performance and optimization strategies
-- Code Quality Standards (../guides/code-quality-standards.md): ESLint react-hooks/exhaustive-deps rule
-- AI Coding Handbook (../ai/ingestion/ai-coding-handbook.md): React performance patterns and validation rules
-Anti-patterns:
-- Functions not wrapped in useCallback when used in dependency arrays (line 16-37)
-- Derived state calculated in useEffect instead of useMemo (line 58-77)
-- Circular context dependencies causing infinite update loops (line 79-96)
-- Missing dependencies in useEffect arrays (line 117-138)
-- Object/array literals directly in dependency arrays (line 178-205)
-Additional Context: This document is essential for React performance optimization and should be referenced when debugging infinite loops or excessive re-renders
+<!-- AI_QUICK_REF
+Key Rules: useCallback for functions in dependencies (line 28), useMemo for derived state (line 58), Include all dependencies (line 117)
+Avoid: Functions not wrapped in useCallback, Missing dependencies, Object/array literals in dependency arrays, Circular context dependencies
 -->
 
 <!-- AI_SUMMARY

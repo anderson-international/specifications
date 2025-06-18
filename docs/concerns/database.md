@@ -14,25 +14,9 @@ tags: [database, prisma, orm, shopify-sync, schema, performance]
 
 *Database strategy for the Specification Builder project.*
 
-<!-- AI_NAVIGATION
-Reading Priority: 3 (Important reference for database implementation)
-Primary Focus: Database architecture strategy, Prisma ORM patterns, Shopify product sync implementation, and development workflow for data layer
-Key Compliance Points:
-- Prisma ORM singleton pattern and type safety (line 46-48)
-- Product sync fail-fast error handling approach (line 29-31)
-- Schema change workflow with forward-fix strategy (line 57-60)
-- Database transaction usage for atomic operations (line 53)
-Critical Cross-references:
-- Database Schema (../db-schema.txt): Complete table structures and relationships reference
-- Form Management (form-management.md): Database integration patterns for forms
-- API Design (api-design.md): Database interaction patterns for API endpoints
-- Database-Form Integration (../guides/database-form-integration.md): Type-safe data handling patterns
-Anti-patterns:
-- Using fallback data when sync operations fail
-- Complex database rollback procedures instead of fix-forward approach
-- Multiple Prisma client instances across application
-- Hard deleting products instead of soft deletes
-Additional Context: This document focuses on practical database patterns for solo development, emphasizing simplicity and reliability over complex architectures
+<!-- AI_QUICK_REF
+Key Rules: Prisma ORM singleton (line 46), Fail-fast sync errors (line 29), Forward-fix schema (line 57), Database transactions (line 53)
+Avoid: Fallback data on sync failures, Complex rollback procedures, Multiple Prisma instances, Hard deleting products
 -->
 
 <!-- AI_SUMMARY

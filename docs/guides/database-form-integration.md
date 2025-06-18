@@ -14,17 +14,9 @@ tags: [database, forms, schema, react-hook-form, validation, annotations]
 
 *Comprehensive guide for implementing forms using database schema annotations and patterns.*
 
-<!-- AI_NAVIGATION
-Primary Focus: Schema-driven form development, AI table annotations, React Hook Form patterns
-Key Compliance Points:
-- AI_TABLE_PURPOSE annotations (line 16-23)
-- Schema validation patterns (line 71-89)
-- Database transaction usage (line 91-108)
-- Junction table handling (line 110-135)
-- Enum caching patterns (line 137-155)
-Critical for: Form components, database operations, specification wizard
-Cross-references: db-schema.txt (schema), form-management.md (strategy), react-patterns.md (hooks)
-Implementation Strategy: Schema annotations drive component generation
+<!-- AI_QUICK_REF
+Key Rules: AI_TABLE_PURPOSE annotations (line 16), Schema validation patterns (line 71), Database transactions (line 91), Enum caching (line 137)
+Avoid: Missing junction table transformation, Bypassing schema validation, Redundant enum fetches, Non-atomic database operations
 -->
 
 <!-- AI_SUMMARY

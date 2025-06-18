@@ -14,25 +14,9 @@ tags: [ui-ux, design-system, mobile-first, dark-theme, wizard-forms, css-modules
 
 *Comprehensive UI/UX strategy, design system, and component patterns for the Specification Builder.*
 
-<!-- AI_NAVIGATION
-Reading Priority: 1 (Critical - Essential design system for all UI implementation)
-Primary Focus: Mobile-first design philosophy, dark theme design system, multi-step wizard patterns, and CSS Modules implementation strategy
-Key Compliance Points:
-- Mobile-first design principles and touch-friendly requirements (line 25-31)
-- Dark theme color palette specifications (line 152-159)
-- Multi-step wizard form structure and validation patterns (line 95-130)
-- CSS Modules component organization strategy (line 32-44)
-Critical Cross-references:
-- Technical Stack (technical-stack.md): CSS Modules and Next.js implementation details
-- Form Management (../concerns/form-management.md): React Hook Form integration with wizard patterns
-- Feature Requirements (feature-requirements.md): Multi-step wizard requirements and field specifications
-- UI/UX Patterns (../concerns/ui-ux-patterns.md): Detailed component implementation patterns
-Anti-patterns:
-- Desktop-first design decisions that compromise mobile experience
-- Deviating from dark theme color palette specifications
-- Breaking wizard navigation patterns or step validation requirements
-- Using styling approaches other than CSS Modules
-Additional Context: This document serves as the authoritative source for all visual design decisions and must be followed consistently across all UI components
+<!-- AI_QUICK_REF
+Key Rules: Mobile-first design principles (line 25), Dark theme color palette (line 152), Multi-step wizard patterns (line 95)
+Avoid: Desktop-first decisions, Deviating from dark theme, Breaking wizard navigation, Non-CSS Modules styling
 -->
 
 <!-- AI_SUMMARY

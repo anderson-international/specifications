@@ -14,25 +14,9 @@ tags: [ui, ux, components, accessibility, styling, css, patterns]
 
 *Implementation patterns and technical guidance for UI/UX development.*
 
-<!-- AI_NAVIGATION
-Reading Priority: 2 (Important for UI implementation)
-Primary Focus: Component structure, styling strategy, accessibility requirements
-Key Compliance Points:
-- Component-scoped CSS philosophy (line 22-25)
-- Single responsibility components (line 30-33)
-- Accessibility guidelines (line 70-80)
-- Performance considerations (line 60-65)
-Critical Cross-references:
-- UI/UX Design Decisions (../project/ui-ux-design.md): Primary design strategy document
-- React Development Patterns (../guides/react-patterns.md): React-specific implementation details
-- Form Management (form-management.md): Form-specific UI patterns
-Anti-patterns:
-- Global CSS styles and large shared stylesheets
-- Complex, large components with multiple responsibilities
-- Inaccessible UI elements lacking keyboard navigation or screen reader support
-- Performance-heavy implementations with unnecessary dependencies
-Additional Context: This document focuses on technical implementation details for UI/UX development as a solo developer
-Decision Framework: How to implement UI components with optimal structure, performance, and accessibility
+<!-- AI_QUICK_REF
+Key Rules: Component-scoped CSS (line 22), Single responsibility components (line 30), Accessibility guidelines (line 70), Performance optimization (line 60)
+Avoid: Global CSS styles, Complex multi-responsibility components, Inaccessible UI elements, Performance-heavy implementations
 -->
 
 <!-- AI_SUMMARY

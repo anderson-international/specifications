@@ -14,26 +14,9 @@ tags: [ai, standards, compliance, typescript, react, performance, critical]
 
 ⚠️ **CRITICAL**: This document contains **MANDATORY** coding standards that must be followed during ALL code generation. These are not suggestions - they are requirements.
 
-<!-- AI_NAVIGATION
-Reading Priority: 1 (Critical - Must read first)
-Primary Focus: Enforcing mandatory coding standards for all code generation
-Key Compliance Points:
-- File Size Limits (line 7-15)
-- TypeScript Return Types (line 17-27)
-- React Performance Patterns (line 29-45)
-- Code Generation Checklist (line 51-57)
-Critical Cross-references:
-- Code Quality Standards (../../guides/code-quality-standards.md): TypeScript typing rules
-- React Patterns (../../guides/react-patterns.md): React optimization patterns
-- Effect Loop Prevention (../../pitfalls/prevent-react-effect-loops.md): Preventing infinite render loops
-Anti-patterns:
-- Files exceeding size limits
-- Missing TypeScript return types
-- Components without React.memo
-- Event handlers without useCallback
-- Derived values without useMemo
-Additional Context: These are non-negotiable requirements, not guidelines or suggestions
-Decision Framework: All code generation must adhere to these standards without exception
+<!-- AI_QUICK_REF
+Key Rules: File size limits (line 47), TypeScript return types (line 65), React performance patterns (line 88)
+Avoid: Files exceeding size limits, Missing return types, Components without React.memo
 -->
 
 <!-- AI_SUMMARY

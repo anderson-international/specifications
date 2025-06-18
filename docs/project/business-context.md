@@ -12,25 +12,9 @@ tags: [business-context, requirements, user-types, workflow, authentication]
 
 # Business Context & Requirements
 
-<!-- AI_NAVIGATION
-Reading Priority: 1 (Critical - Essential business context for all development)
-Primary Focus: Business problem definition, user role requirements, and core workflow specifications for specification builder application
-Key Compliance Points:
-- User role definitions and access levels (line 20-35)
-- Authentication strategy requirements (line 77-82)
-- Core workflow specifications (line 45-75)
-- Scale and migration context (line 13-16)
-Critical Cross-references:
-- Feature Requirements (feature-requirements.md): Detailed feature specifications and acceptance criteria
-- Authentication (../concerns/authentication.md): Authentication implementation strategy and patterns
-- UI/UX Design (ui-ux-design.md): User interface requirements and design decisions
-- Technical Stack (technical-stack.md): Technology choices supporting business requirements
-Anti-patterns:
-- Ignoring user role access level requirements
-- Misunderstanding the reviewer vs admin distinction
-- Overlooking the JotForm migration context
-- Missing the scale requirements (20 reviewers, 600 products, 1200+ specifications)
-Additional Context: This document establishes the foundational business requirements that drive all technical decisions and feature prioritization
+<!-- AI_QUICK_REF
+Key Rules: User role definitions (line 20), Authentication strategy (line 77), Core workflows (line 45)
+Avoid: Ignoring role access levels, Misunderstanding reviewer vs admin distinction, Missing scale requirements
 -->
 
 <!-- AI_SUMMARY

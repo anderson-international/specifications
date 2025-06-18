@@ -14,27 +14,9 @@ tags: [react, hooks, optimization, performance, app-router, next.js]
 
 *Comprehensive React patterns, performance optimization, and infinite loop prevention for the Specification Builder.*
 
-<!-- AI_NAVIGATION
-Reading Priority: 1 (Essential document for all React development)
-Primary Focus: React infinite loop prevention, performance patterns, Next.js App Router implementation, component optimization strategies
-Key Compliance Points:
-- useCallback for state updates (line 31-46)
-- useMemo for derived state (line 48-58)
-- Effect dependency arrays (line 60-65)
-- Next.js Server vs Client component patterns (line 126-153)
-- React.memo optimization (line 69-79)
-- ALL event handlers must use useCallback (line 308-314)
-- ALL derived state must use useMemo (line 316-322)
-Critical Cross-references:
-- Prevent React Effect Loops (../pitfalls/prevent-react-effect-loops.md): Comprehensive anti-patterns for infinite loops
-- Form Management (../concerns/form-management.md): Form-specific React patterns and wizard implementation
-- Code Quality Standards (code-quality-standards.md): TypeScript requirements for React components
-Anti-patterns:
-- Object/array dependencies without memoization in useEffect
-- Dual data fetching in both component and context
-- Missing React.memo on pure components
-- Functions defined inside render without useCallback
-Additional Context: This document serves as the source of truth for React performance optimization and App Router architecture decisions
+<!-- AI_QUICK_REF
+Key Rules: useCallback for event handlers (line 31), useMemo for derived state (line 48), React.memo for components (line 69), Server vs Client patterns (line 126)
+Avoid: Object/array in dependency arrays, Dual data fetching, Functions in render without useCallback, Missing React.memo
 -->
 
 <!-- AI_SUMMARY

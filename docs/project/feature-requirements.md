@@ -12,25 +12,9 @@ tags: [features, requirements, specifications, validation, admin-interface]
 
 # Feature Requirements
 
-<!-- AI_NAVIGATION
-Reading Priority: 1 (Critical - Essential feature definitions for all development)
-Primary Focus: Detailed feature specifications for MVP and post-MVP development, specification field requirements, validation rules, and admin interface needs
-Key Compliance Points:
-- Required field specifications and validation rules (line 52-78)
-- Multi-step wizard form requirements (line 17-22)
-- Role-based access control feature requirements (line 6-9)
-- Admin interface specifications (line 84-98)
-Critical Cross-references:
-- Business Context (business-context.md): User roles and workflow context that drive feature requirements
-- UI/UX Design (ui-ux-design.md): Interface design specifications that implement these features
-- Form Management (../concerns/form-management.md): Technical implementation of form validation and field requirements
-- Authentication (../concerns/authentication.md): Authentication features and role-based access implementation
-Anti-patterns:
-- Implementing features without understanding validation requirements
-- Missing required field validation in forms
-- Ignoring the multi-step wizard structure requirements
-- Overlooking admin interface feature specifications
-Additional Context: This document provides the detailed specifications that translate business context into actionable development requirements
+<!-- AI_QUICK_REF
+Key Rules: Required field specifications (line 52), Multi-step wizard requirements (line 17), Role-based access (line 6)
+Avoid: Missing required field validation, Ignoring wizard structure, Overlooking admin interface specs
 -->
 
 <!-- AI_SUMMARY

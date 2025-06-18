@@ -14,26 +14,9 @@ tags: [forms, validation, react, next.js, zod, react-hook-form]
 
 *Strategic guidance for form management decisions and patterns.*
 
-<!-- AI_NAVIGATION
-Reading Priority: 1 (Essential document for all form implementations)
-Primary Focus: React Hook Form strategy, multi-step wizard patterns, schema validation, form state management
-Key Compliance Points:
-- React Hook Form for all form handling (line 55-70)
-- Schema-based validation with Zod (line 72-85)
-- Multi-step wizard implementation (line 120-145)
-- Draft management patterns (line 150-165)
-- Next.js Server Actions for simple forms (line 90-105)
-Critical Cross-references:
-- Database-Form Integration (../guides/database-form-integration.md): Implementation patterns for form-database interactions
-- React Development Patterns (../guides/react-patterns.md): React hook patterns for form state management
-- UI/UX Patterns (ui-ux-patterns.md): Component patterns for form UI elements
-Anti-patterns:
-- Uncontrolled form inputs without React Hook Form
-- Missing schema validation
-- Direct form submission without handleSubmit wrapper
-- Hard-coded validation logic outside of schemas
-Additional Context: Forms are a critical part of the application with specific validation and state management requirements
-Decision Framework: Simple vs Complex forms (line 28-47)
+<!-- AI_QUICK_REF
+Key Rules: React Hook Form for all forms (line 55), Schema validation with Zod (line 72), Multi-step wizard patterns (line 120)
+Avoid: Uncontrolled inputs, Missing schema validation, Direct submission without handleSubmit, Hard-coded validation
 -->
 
 <!-- AI_SUMMARY

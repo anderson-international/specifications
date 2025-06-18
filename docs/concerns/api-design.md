@@ -14,18 +14,9 @@ tags: [api-design, nextjs, restful, shopify, error-handling, validation]
 
 *Centralized API strategy for the Specification Builder project.*
 
-<!-- AI_NAVIGATION
-Primary Focus: Next.js API routes, RESTful patterns, error handling, Shopify integration
-Key Compliance Points:
-- Next.js API routes for backend (line 14)
-- RESTful CRUD patterns (line 15)
-- Fail-fast error handling (line 25-45)
-- Standard HTTP status codes (line 46-68)
-- Shopify GraphQL integration (line 120-145)
-- Product sync strategy (line 147-170)
-Critical for: API route implementation, error handling, external integrations
-Cross-references: database.md (data patterns), authentication.md (auth patterns), deployment-environment.md (config)
-Error Strategy: Explicit error responses, consistent structure, fail-fast approach
+<!-- AI_QUICK_REF
+Key Rules: Next.js API routes (line 14), RESTful CRUD (line 15), Fail-fast errors (line 25), Shopify GraphQL only (line 120)
+Avoid: Shopify REST API, Silent error handling, Missing HTTP status codes, Retrying 4xx errors
 -->
 
 <!-- AI_SUMMARY

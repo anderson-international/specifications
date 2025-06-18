@@ -13,26 +13,9 @@ tags: [ai, documentation, navigation, compliance, review, index]
 # AI DOCUMENTATION INDEX
 *Entry point for AI code review navigation and document prioritization*
 
-<!-- AI_NAVIGATION
-Reading Priority: 1 (Critical - First document to read)
-Primary Focus: Navigation structure for all AI documentation and review workflows
-Key Compliance Points:
-- Document prioritization framework (lines 35-55)
-- Context-dependent document selection (lines 57-75)
-- AI review workflow steps (lines 77-95)
-Critical Cross-references:
-- AI Coding Handbook (ai-coding-handbook.md): Core coding standards and AI validation patterns
-- AI Validation Registry (ai-validation-registry.md): Centralized validation patterns for all document types
-- Business Context (../../project/business-context.md): User roles, authentication strategy, and business workflows
-- Technical Stack (../../project/technical-stack.md): Next.js 15, React Hook Form, Prisma, CSS Modules
-- Code Quality Standards (../../guides/code-quality-standards.md): ESLint, TypeScript, and Prettier configuration
-- React Development Patterns (../../guides/react-patterns.md): Performance optimization and component patterns
-Anti-patterns:
-- Bypassing the document priority order
-- Ignoring file type detection workflow
-- Missing cross-references between related documents
-Additional Context: This is the central hub for AI navigation through all documentation
-Decision Framework: How to determine which documents to reference based on file type and context
+<!-- AI_QUICK_REF
+Key Rules: Document prioritization framework (line 35), Context-dependent selection (line 57), AI review workflow steps (line 77)
+Avoid: Bypassing document priority order, Ignoring file type detection workflow, Missing cross-references
 -->
 
 <!-- AI_SUMMARY

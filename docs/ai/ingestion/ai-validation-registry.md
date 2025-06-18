@@ -14,20 +14,9 @@ tags: [ai, validation, patterns, compliance, registry, automated-review]
 
 *Centralized registry of all validation patterns for AI compliance checking.*
 
-<!-- AI_NAVIGATION
-Reading Priority: 1 (Essential document for code validation)
-Primary Focus: Consolidated validation patterns for TypeScript, React, API design, form management
-Key Compliance Points:
-- React performance patterns validation (line 45-75)
-- TypeScript typing requirements (line 80-100)
-- Form validation patterns (line 105-125)
-- API design validation (line 130-145)
-Critical Cross-references:
-- React Development Patterns (guides/react-patterns.md): Source of React validation patterns
-- Code Quality Standards (guides/code-quality-standards.md): Source of TypeScript validation patterns
-- Form Management (../../concerns/form-management.md): Source of form validation patterns
-- API Design (../../concerns/api-design.md): Source of API validation patterns
-Additional Context: This registry is the single source of truth for all machine-readable validation patterns to ensure code compliance
+<!-- AI_QUICK_REF
+Key Rules: React performance patterns (line 45), TypeScript typing requirements (line 80), Form validation patterns (line 105), API design validation (line 130)
+Avoid: Missing useCallback/useMemo, 'any' type usage, Unvalidated form inputs, Missing error response formats
 -->
 
 <!-- AI_SUMMARY

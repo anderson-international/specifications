@@ -14,25 +14,9 @@ tags: [eslint, typescript, prettier, code-quality, standards, linting]
 
 *ESLint, Prettier, and TypeScript configuration standards for consistent code quality.*
 
-<!-- AI_NAVIGATION
-Reading Priority: 1 (Essential document for all TypeScript development)
-Primary Focus: TypeScript ESLint rules, return type requirements, import organization, code structure
-Key Compliance Points:
-- @typescript-eslint/explicit-function-return-type: error (line 69)
-- @typescript-eslint/no-explicit-any: error (line 70)
-- import/order configuration (line 82-90)
-- TypeScript return type requirements (line 211-235)
-- Naming conventions (line 112-136)
-Critical Cross-references:
-- React Development Patterns (react-patterns.md): React-specific coding standards
-- API Design (../concerns/api-design.md): Type definitions for API contracts
-Anti-patterns:
-- Missing function return types
-- Using 'any' type
-- Inconsistent import organization
-- console.log in production code
-- File size exceeding limits
-Additional Context: This document defines the ESLint and Prettier configurations for maintaining code quality in TypeScript files
+<!-- AI_QUICK_REF
+Key Rules: Explicit function return types (line 69), No 'any' type (line 70), Import organization (line 82)
+Avoid: Missing return types, Using 'any' type, Inconsistent imports, console.log in production
 -->
 
 <!-- AI_SUMMARY
