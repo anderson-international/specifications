@@ -1,19 +1,65 @@
+---
+title: UI/UX Design Decisions
+description: Comprehensive UI/UX strategy, design system, and mobile-first component patterns
+version: 1.0.0
+status: active
+lastUpdated: 2025-06-17
+author: Development Team
+complianceLevel: critical
+readingTime: 15 minutes
+tags: [ui-ux, design-system, mobile-first, dark-theme, wizard-forms, css-modules]
+---
+
 # UI/UX Design Decisions
 
 *Comprehensive UI/UX strategy, design system, and component patterns for the Specification Builder.*
 
+<!-- AI_NAVIGATION
+Reading Priority: 1 (Critical - Essential design system for all UI implementation)
+Primary Focus: Mobile-first design philosophy, dark theme design system, multi-step wizard patterns, and CSS Modules implementation strategy
+Key Compliance Points:
+- Mobile-first design principles and touch-friendly requirements (line 25-31)
+- Dark theme color palette specifications (line 152-159)
+- Multi-step wizard form structure and validation patterns (line 95-130)
+- CSS Modules component organization strategy (line 32-44)
+Critical Cross-references:
+- Technical Stack (technical-stack.md): CSS Modules and Next.js implementation details
+- Form Management (../concerns/form-management.md): React Hook Form integration with wizard patterns
+- Feature Requirements (feature-requirements.md): Multi-step wizard requirements and field specifications
+- UI/UX Patterns (../concerns/ui-ux-patterns.md): Detailed component implementation patterns
+Anti-patterns:
+- Desktop-first design decisions that compromise mobile experience
+- Deviating from dark theme color palette specifications
+- Breaking wizard navigation patterns or step validation requirements
+- Using styling approaches other than CSS Modules
+Additional Context: This document serves as the authoritative source for all visual design decisions and must be followed consistently across all UI components
+-->
+
+<!-- AI_SUMMARY
+This document establishes the comprehensive UI/UX design strategy for the Specification Builder project with these key components:
+
+• Mobile-First Design Philosophy - Primary target is mobile devices with touch-friendly UI, progressive enhancement for desktop, and performance optimization
+• Dark Theme Design System - Comprehensive color palette with card-based layout, 8px grid spacing, and consistent visual hierarchy
+• Multi-Step Wizard Form Design - Five-step specification wizard with swipe navigation, step validation, progress indicators, and mobile-optimized components
+• CSS Modules Styling Strategy - Component-scoped styling with global theme variables, zero runtime overhead, and feature-based organization
+• Navigation Structure - Left-hand collapsible panel with role-based visibility, progress stats, and mobile-friendly interactions
+• Component Patterns - Segmented controls for enums, toggle switches for booleans, multi-select with search+chips, and 48px minimum touch targets
+
+The design system prioritizes simplicity, consistency, and accessibility while maintaining excellent mobile user experience through careful component selection and interaction patterns.
+-->
+
 > **📋 Quick Navigation:**
 > - **Implementation Guides**: [Database-Form Integration](../guides/database-form-integration.md) | [React Development Patterns](../guides/react-patterns.md)
-> - **Development Standards**: [Best Practices](../guides/best-practices.md) | [Architectural Guidelines](../guides/architectural-guidelines.md)
-> - **Form Strategy**: [Form Management](../concerns/form-management.md) | [Component Patterns](../concerns/ui-ux-patterns.md)
-> - **Technical Context**: [Technical Stack](technical-stack.md) | [Code Quality Standards](../guides/code-quality-standards.md)
-> - **Project Context**: [Feature Requirements](feature-requirements.md) | [Business Context](business-context.md)
+> - **Design Context**: [Form Management](../concerns/form-management.md) | [UI/UX Patterns](../concerns/ui-ux-patterns.md)
+> - **Project Setup**: [Technical Stack](technical-stack.md) | [Code Quality Standards](../guides/code-quality-standards.md)
+> - **Requirements**: [Feature Requirements](feature-requirements.md) | [Business Context](business-context.md)
+> - **Project Status**: [Implementation Plan](../../plans/plan-project.md)
 
 ## Strategic Overview
 
 This document serves as the **authoritative source** for all UI/UX design decisions, component patterns, and implementation strategies for the Specification Builder project.
 
-> **🔄 Implementation Status:** See [our-plan.md](../our-plan.md) → Phase 2.1 Product Discovery UI and Phase 2.2 Specification Form Wizard for current UI implementation progress.
+> **🔄 Implementation Status:** See [../../plans/plan-project.md](../../plans/plan-project.md) → Phase 2.1 Product Discovery UI and Phase 2.2 Specification Form Wizard for current UI implementation progress.
 
 ## Core UI/UX Philosophy
 

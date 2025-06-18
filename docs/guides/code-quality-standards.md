@@ -24,9 +24,8 @@ Key Compliance Points:
 - TypeScript return type requirements (line 211-235)
 - Naming conventions (line 112-136)
 Critical Cross-references:
-- Best Practices (best-practices.md): File size limits and component organization
 - React Development Patterns (react-patterns.md): React-specific coding standards
-- Architectural Guidelines (architectural-guidelines.md): Project structure context
+- API Design (../concerns/api-design.md): Type definitions for API contracts
 Anti-patterns:
 - Missing function return types
 - Using 'any' type
@@ -59,22 +58,19 @@ Critical anti-patterns to avoid:
 -->
 
 > **📋 Quick Navigation:**
-> - **Development Guidelines**: 
->   - [🔥 Best Practices](best-practices.md "Context: File size limits and code organization standards") 
->   - [⚠️ Architectural Guidelines](architectural-guidelines.md "Context: Project structure and module organization")
-> - **React Implementation**: 
+> - **Core Standards**: 
 >   - [🔥 React Development Patterns](react-patterns.md "Context: React-specific TypeScript patterns") 
 >   - [Database-Form Integration](database-form-integration.md "Context: Type-safe data handling")
 > - **UI/UX Standards**: 
 >   - [UI/UX Design Decisions](../project/ui-ux-design.md "Context: Component styling guidelines") 
->   - [Component Patterns](../concerns/ui-ux-patterns.md "Context: Reusable UI component structures")
+>   - [UI/UX Patterns](../concerns/ui-ux-patterns.md "Context: Component implementation patterns")
 > - **Project Context**: 
->   - [Technical Stack](../project/technical-stack.md "Context: TypeScript and ESLint versions") 
+>   - [Technical Stack](../project/technical-stack.md "Context: Technology choices and constraints") 
 >   - [Feature Requirements](../project/feature-requirements.md "Context: Technical compliance for features")
 >   - [⚠️ API Design](../concerns/api-design.md "Context: Type definitions for API contracts")
 > - **Implementation**: 
 >   - [Form Management](../concerns/form-management.md "Context: Type-safe form handling")
->   - [Deployment Environment](../concerns/deployment-environment.md "Context: Build-time linting configuration")
+>   - [⚠️ API Design](../concerns/api-design.md "Context: API implementation guidelines")
 
 ## Executive Summary
 
@@ -100,19 +96,11 @@ This document establishes mandatory code quality standards for all TypeScript de
 
 1. [Executive Summary](#executive-summary)
 2. [Key Principles](#key-principles)
-3. [Detailed Guidance](#detailed-guidance)
-   - [ESLint Configuration](#-high-eslint-configuration)
-   - [Prettier Formatting](#️-medium-prettier-formatting)
-   - [Naming Conventions](#-medium-naming-conventions)
-   - [Code Structure](#️-medium-code-structure)
-   - [State Management](#️-medium-state-management)
-   - [TypeScript Return Types](#️-critical-typescript-return-type-requirements) 
-4. [Examples](#examples)
+3. [Examples](#examples)
    - [TypeScript Return Type Examples](#typescript-return-type-examples)
    - [Import Organization Examples](#import-organization-examples)
    - [Type Safety Examples](#type-safety-examples)
    - [Naming Convention Examples](#naming-convention-examples)
-5. [AI_VALIDATION](#ai_validation)
 
 ## 🔥 **HIGH**: ESLint Configuration
 
@@ -315,21 +303,6 @@ function handleSubmit(data: FormData): void {
   console.log(data);
 }
 ```
-
-## AI_VALIDATION
-
-ESLint Validation Patterns:
-- Function return types: Must include `: (void|Promise<\w+>|\w+)`
-- No explicit any: Reject `: any` or `any[]`
-- Console usage: Allow only `console.warn|error` not `console.log`
-- Import organization: Require blank lines between import groups
-
-Critical Enforcement Points:
-1. Explicit return types on all functions
-2. No usage of 'any' type
-3. No console.log in production code
-4. Proper import organization
-5. File size limits
 
 ## EXAMPLES
 
@@ -583,4 +556,5 @@ const UserSettings = getUserSettings();
 
 // ❌ lowercase for constants
 const max_retry_attempts = 3;
+
 ```

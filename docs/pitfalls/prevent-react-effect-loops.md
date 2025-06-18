@@ -1,6 +1,54 @@
+---
+title: Preventing React Effect Infinite Loops
+description: Comprehensive guide to preventing infinite loops and performance issues in React effect hooks
+version: 1.0.0
+status: active
+lastUpdated: 2025-06-17
+author: Development Team
+complianceLevel: critical
+readingTime: 15 minutes
+tags: [react, useeffect, performance, hooks, debugging, infinite-loops]
+---
+
 # Preventing React Effect Infinite Loops
 
 This guide helps prevent infinite loops and performance issues caused by improper React effect hook implementation.
+
+<!-- AI_NAVIGATION
+Reading Priority: 2 (High - Critical for preventing performance issues and infinite loops in React components)
+Primary Focus: React effect hook dependencies, useCallback/useMemo patterns, context interactions, and loop prevention strategies
+Key Compliance Points:
+- Function dependencies must be wrapped in useCallback when used in effect arrays (line 28-56)
+- Derived state must use useMemo to prevent new references (line 58-77)
+- Context interactions require clear ownership hierarchies to avoid circular dependencies (line 79-115)
+- All dependencies used inside effects must be included in dependency arrays (line 117-138)
+- Object/array literals in dependency arrays cause infinite loops (line 178-205)
+Critical Cross-references:
+- React Patterns (../guides/react-patterns.md): Hook usage patterns and component design
+- Best Practices (../guides/best-practices.md): Component performance and optimization strategies
+- Code Quality Standards (../guides/code-quality-standards.md): ESLint react-hooks/exhaustive-deps rule
+- AI Coding Handbook (../ai/ingestion/ai-coding-handbook.md): React performance patterns and validation rules
+Anti-patterns:
+- Functions not wrapped in useCallback when used in dependency arrays (line 16-37)
+- Derived state calculated in useEffect instead of useMemo (line 58-77)
+- Circular context dependencies causing infinite update loops (line 79-96)
+- Missing dependencies in useEffect arrays (line 117-138)
+- Object/array literals directly in dependency arrays (line 178-205)
+Additional Context: This document is essential for React performance optimization and should be referenced when debugging infinite loops or excessive re-renders
+-->
+
+<!-- AI_SUMMARY
+This document provides comprehensive guidance for preventing infinite loops and performance issues in React effect hooks:
+
+• Function Management - Critical importance of wrapping functions in useCallback when used in dependency arrays to maintain stable references across renders
+• Derived State Handling - Using useMemo for calculated values to prevent new object/array references that trigger unnecessary effects
+• Context Interaction Patterns - Establishing clear ownership hierarchies between contexts to avoid circular dependencies and update loops
+• Dependency Array Management - Including all dependencies used inside effects and avoiding object/array literals that change on every render
+• Anti-Pattern Detection - Specific patterns to avoid including dual fetching, unstable references, and circular context updates
+• Testing Strategies - Methods for detecting infinite loops including network monitoring, console logging, React DevTools profiler, and error boundaries
+
+The guide emphasizes prevention through proper hook usage, memoization strategies, and clear data ownership patterns to maintain optimal React application performance.
+-->
 
 ## Common Causes of React Effect Loops
 

@@ -60,17 +60,17 @@ Critical anti-patterns to avoid:
 
 > **📋 Quick Navigation:**
 > - **Implementation Guides**: 
->   - [🔥 Database-Form Integration](../guides/database-form-integration.md "Context: Database interactions for form submission and storage")
->   - [⚠️ React Development Patterns](../guides/react-patterns.md "Context: Critical React hooks and performance patterns for forms") 
-> - **UI/UX Design**: 
->   - [UI/UX Design Decisions](../project/ui-ux-design.md "Context: Visual design standards for form elements") 
->   - [🔥 Component Patterns](ui-ux-patterns.md "Context: Form component structure and styling")
-> - **Development Standards**: 
->   - [Best Practices](../guides/best-practices.md "Context: Code organization for forms") 
->   - [⚠️ Architectural Guidelines](../guides/architectural-guidelines.md "Context: Form placement in application architecture")
-> - **Technical Context**: 
->   - [Database Schema](../db-schema.txt "Context: Data models related to form submissions") 
->   - [🔥 API Design](api-design.md "Context: API endpoints for form processing")
+>   - [Database-Form Integration](../guides/database-form-integration.md "Context: Schema-driven form development") 
+>   - [React Development Patterns](../guides/react-patterns.md "Context: Form component optimization") 
+> - **UI Design**: 
+>   - [UI/UX Design Decisions](../project/ui-ux-design.md "Context: Form styling and responsive design") 
+>   - [Component Patterns](ui-ux-patterns.md "Context: Form layout and interaction patterns")
+>   - [Database Schema](../db-schema.txt "Context: Field types and validation rules") 
+> - **Technical Integration**: 
+>   - [API Design](api-design.md "Context: Form submission endpoints") 
+>   - [Technical Stack](../project/technical-stack.md "Context: React Hook Form and Zod configuration") 
+>   - [Feature Requirements](../project/feature-requirements.md "Context: Multi-step validation requirements")
+>   - [Implementation Plan](../../plans/plan-project.md "Context: Form development roadmap")
 > - **Project Setup**: 
 >   - [Technical Stack](../project/technical-stack.md "Context: Libraries used for form implementation") 
 >   - [Feature Requirements](../project/feature-requirements.md "Context: User stories for form functionality")
@@ -79,7 +79,7 @@ Critical anti-patterns to avoid:
 
 This document defines the strategic approach for all form implementations in the application. We use **React Hook Form** with **Zod schema validation** as our standardized stack. Simple forms leverage Next.js Server Actions while complex multi-step forms require client components with wizard patterns. All forms must implement field-level validation, explicit error handling, and follow consistent submission patterns.
 
-> **🔄 Implementation Status:** See [our-plan.md](../our-plan.md) → Phase 2.2 Specification Management Core for current form wizard implementation progress.
+> **🔄 Implementation Status:** See [../../plans/plan-project.md](../../plans/plan-project.md) → Phase 2.2 Specification Management Core for current form wizard implementation progress.
 
 ## Key Principles
 

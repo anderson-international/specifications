@@ -1,3 +1,15 @@
+---
+title: Authentication Documentation
+description: Authentication strategy with magic link email auth and role-based access control
+version: 1.0.0
+status: active
+lastUpdated: 2025-06-17
+author: Development Team
+complianceLevel: required
+readingTime: 8 minutes
+tags: [authentication, magic-link, role-based-access, nextauth, security]
+---
+
 # Authentication Documentation
 
 *Authentication strategy for the Specification Builder project.*
@@ -15,20 +27,33 @@ Cross-references: feature-requirements.md (user roles), api-design.md (auth endp
 Strategy: Development simplicity with DevAuth, production security with magic links
 -->
 
+<!-- AI_SUMMARY
+This document defines the authentication strategy for the Specification Builder project with these key components:
+
+• Magic Link Authentication - Email-based authentication with no password storage, secure session management, and database integration
+• Role-Based Access Control - Simple database-driven role system with route protection, component access control, and admin override capabilities
+• Development vs Production Strategy - User selection dropdown for development testing, magic link authentication for production deployment
+• Error Handling Philosophy - Fail-fast approach with explicit error messages, no silent failures, and appropriate redirect strategies
+• Integration Patterns - React Context global state, custom hooks, middleware protection, and type-safe authentication objects
+• Security Considerations - Secure token generation, session timeout management, and database security patterns
+
+The strategy emphasizes simplicity for solo development while maintaining production-ready security through email-based authentication and clear role-based access control.
+-->
+
 > **📋 Quick Navigation:**
 > - **Implementation Context**: [Technical Stack](../project/technical-stack.md) | [Feature Requirements](../project/feature-requirements.md)
-> - **Development Standards**: [Best Practices](../guides/best-practices.md) | [Code Quality Standards](../guides/code-quality-standards.md)
+> - **Development Standards**: [Code Quality Standards](../guides/code-quality-standards.md)
+> - **Technical Guides**: [React Development Patterns](../guides/react-patterns.md)
+> - **Project Status**: [Implementation Plan](../../plans/plan-project.md)
 > - **Related Patterns**: [API Design](api-design.md) | [Form Management](form-management.md)
-> - **Technical Guides**: [React Development Patterns](../guides/react-patterns.md) | [Architectural Guidelines](../guides/architectural-guidelines.md)
-> - **Project Status**: [Implementation Plan](../our-plan.md) | [Deployment Environment](deployment-environment.md)
 
-> **📋 This is the authoritative source for authentication strategy. For implementation status, see [our-plan.md](../our-plan.md). For requirements, see [feature-requirements.md](../project/feature-requirements.md).**
+> **📋 This is the authoritative source for authentication strategy. For implementation status, see [plan-project.md](../../plans/plan-project.md). For requirements, see [feature-requirements.md](../project/feature-requirements.md).**
 
 ## Overview
 
 This document provides strategic guidance for authentication decisions and patterns. Focus is on simplicity and security for a solo hobbyist project with role-based access control.
 
-> **🔄 Implementation Status:** See [our-plan.md](../our-plan.md) → Phase 1.2 Authentication System for current progress and completed tasks.
+> **🔄 Implementation Status:** See [plan-project.md](../../plans/plan-project.md) → Phase 1.2 Authentication System for current progress and completed tasks.
 
 ## Authentication Strategy
 

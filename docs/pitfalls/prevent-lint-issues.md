@@ -1,6 +1,53 @@
+---
+title: Preventing Common Lint Issues
+description: Comprehensive guide to preventing and fixing common ESLint, TypeScript, and React linting errors
+version: 1.0.0
+status: active
+lastUpdated: 2025-06-17
+author: Development Team
+complianceLevel: critical
+readingTime: 12 minutes
+tags: [eslint, typescript, react, code-quality, debugging, best-practices]
+---
+
 # Preventing Common Lint Issues
 
 This guide helps prevent common linting errors when writing code for this project.
+
+<!-- AI_NAVIGATION
+Reading Priority: 2 (High - Essential for maintaining code quality and preventing common development issues)
+Primary Focus: TypeScript lint errors, React hooks issues, Next.js component patterns, and preventive coding strategies
+Key Compliance Points:
+- Unused variable handling with underscore prefix convention (line 26-27)
+- React hooks dependency array requirements (line 104-115)
+- Next.js Image component usage instead of HTML img (line 127-142)
+- TypeScript return type specifications for all functions (line 183-185)
+- Component props validation and proper usage patterns (line 147-167)
+Critical Cross-references:
+- Best Practices (../guides/best-practices.md): Component size limits and single responsibility patterns
+- Code Quality Standards (../guides/code-quality-standards.md): ESLint configuration and TypeScript rules
+- React Patterns (../guides/react-patterns.md): Hook usage and component design patterns
+- AI Coding Handbook (../ai/ingestion/ai-coding-handbook.md): Mandatory coding standards and validation patterns
+Anti-patterns:
+- Using 'any' type instead of proper TypeScript interfaces (line 58-72)
+- Missing dependencies in React hook arrays causing stale closures (line 104-115)
+- Using HTML img elements instead of Next.js Image component (line 127-142)
+- Empty destructuring patterns without underscore prefix (line 74-86)
+Additional Context: This document is essential for maintaining code quality and should be referenced when encountering lint errors during development
+-->
+
+<!-- AI_SUMMARY
+This document provides comprehensive guidance for preventing and fixing the most common linting errors in the project:
+
+• TypeScript Issues - Unused variables/imports handling, avoiding 'any' type, empty object patterns, and promise misuse in synchronous contexts
+• React Issues - Hook dependency arrays, Next.js Image component usage, component props validation, and proper key usage in lists
+• Prevention Strategies - IDE configuration, typing practices, component best practices, and pre-commit tools setup
+• Error Frequency Ranking - Prioritized list from most common (unused variables) to least common (misused promises) for targeted prevention
+• Code Examples - Before/after examples for each issue type with specific solutions and best practices
+• Tool Integration - ESLint configuration, TypeScript plugins, and automated checking with Husky pre-commit hooks
+
+The guide emphasizes proactive prevention through proper typing, component design, and tooling configuration to maintain consistent code quality across the project.
+-->
 
 ## Lint Issues by Frequency
 

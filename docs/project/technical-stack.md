@@ -1,4 +1,50 @@
+---
+title: Technical Stack Decisions
+description: Framework choices, implementation strategies, and deployment technology decisions
+version: 1.0.0
+status: active
+lastUpdated: 2025-06-17
+author: Development Team
+complianceLevel: critical
+readingTime: 10 minutes
+tags: [technical-stack, nextjs, prisma, css-modules, deployment, architecture]
+---
+
 # Technical Stack Decisions
+
+<!-- AI_NAVIGATION
+Reading Priority: 1 (Critical - Essential technology choices for all development)
+Primary Focus: Framework selection rationale, implementation strategies, and deployment decisions for Next.js 15, Prisma ORM, CSS Modules, and Netlify deployment
+Key Compliance Points:
+- Next.js 15 App Router architecture and component boundaries (line 8-47)
+- CSS Modules implementation with mobile-first design (line 49-60)
+- Prisma ORM type-safe database patterns (line 62-69)
+- React Hook Form with Zod validation strategy (line 77-85)
+Critical Cross-references:
+- UI/UX Design (ui-ux-design.md): Styling philosophy and design system that complements technical choices
+- React Development Patterns (../guides/react-patterns.md): React 18 patterns and performance optimization
+- Database-Form Integration (../guides/database-form-integration.md): Prisma and form integration patterns
+- Deployment Environment (../concerns/deployment-environment.md): Netlify deployment configuration and environment setup
+Anti-patterns:
+- Mixing App Router and Pages Router patterns
+- Using client components when server components would suffice
+- Ignoring the mobile-first CSS implementation strategy
+- Missing type safety with Prisma generated types
+Additional Context: This document establishes the foundational technology decisions that all implementation must follow for consistency and maintainability
+-->
+
+<!-- AI_SUMMARY
+This document establishes the technical stack decisions for the Specification Builder project with these key components:
+
+• Next.js 15 App Router Framework - React-based with server-side rendering, mobile optimization, built-in API routes, and clear server/client component boundaries
+• CSS Modules Styling - Built-in Next.js support with automatic scoping, global theme variables, and mobile-first responsive design patterns
+• Prisma Database ORM - Type-safe database access with auto-generated types, migration system, and excellent developer experience
+• React Hook Form + Zod Validation - Multi-step wizard forms with controlled progression, schema validation, and draft saving capabilities
+• RESTful API Design - Next.js App Router endpoints for specifications, enum management, authentication, and admin operations
+• Netlify Deployment - Platform-as-a-service with Windsurf IDE integration, environment variables, and preview environments
+
+The stack prioritizes type safety, developer experience, and mobile performance while maintaining simplicity suitable for solo hobbyist development.
+-->
 
 > **📋 For comprehensive UI/UX strategy and styling philosophy, see [UI/UX Design Decisions](ui-ux-design.md).**
 
@@ -111,7 +157,7 @@ app/
 
 ### Database-Driven Sync Strategy
 - **Approach**: Database-driven with scheduled and manual refresh
-- **Implementation**: See [Architectural Guidelines](../guides/architectural-guidelines.md#database-driven-product-sync)
+- **Implementation**: For technical implementation details, see the [Technical Stack](technical-stack.md) document
 
 ## Deployment
 

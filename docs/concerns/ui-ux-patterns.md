@@ -49,10 +49,15 @@ This document complements the UI/UX Design Decisions document which contains str
 -->
 
 > **📋 Quick Navigation:**
-> - **Authoritative Strategy**: [UI/UX Design Decisions](../project/ui-ux-design.md "Priority: CRITICAL - Primary design guidance document") ← **Primary UI/UX resource**
-> - **Implementation Guides**: [React Development Patterns](../guides/react-patterns.md "Priority: HIGH - React component implementation") | [Database-Form Integration](../guides/database-form-integration.md "Context: Data binding for UI elements")
-> - **Development Standards**: [Best Practices](../guides/best-practices.md "Priority: HIGH - File organization guidelines") | [Architectural Guidelines](../guides/architectural-guidelines.md "Priority: HIGH - Component architecture")
-> - **Form Strategy**: [Form Management](form-management.md "Priority: HIGH - Form implementation patterns") | [Code Quality Standards](../guides/code-quality-standards.md "Context: Code formatting rules")
+> - **Design Guidelines**: 
+>   - [UI/UX Design Decisions](../project/ui-ux-design.md "Priority: HIGH - Visual design specifications and decisions") 
+>   - [React Development Patterns](../guides/react-patterns.md "Priority: HIGH - React component patterns and optimization")
+>   - [Database-Form Integration](../guides/database-form-integration.md "Priority: MEDIUM - Form component database integration")
+> - **Implementation Standards**: 
+>   - [Form Management](form-management.md "Priority: HIGH - Form component patterns and validation")
+>   - [Code Quality Standards](../guides/code-quality-standards.md "Priority: HIGH - TypeScript and component standards")
+>   - [Technical Stack](../project/technical-stack.md "Priority: MEDIUM - CSS Modules and component architecture")
+>   - [API Design](api-design.md "Priority: MEDIUM - API integration patterns for components")
 > - **Technical Context**: [Technical Stack](../project/technical-stack.md "Context: Libraries and tools") | [API Design](api-design.md "Priority: MEDIUM - API integration with UI")
 
 > **📋 For comprehensive UI/UX strategy and design decisions, see the authoritative [UI/UX Design Decisions](../project/ui-ux-design.md "Priority: CRITICAL - Primary design guidance document") document.**

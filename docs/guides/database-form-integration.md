@@ -1,3 +1,15 @@
+---
+title: Database-Form Integration Guide
+description: Comprehensive guide for schema-driven form development using database annotations and React Hook Form patterns
+version: 1.0.0
+status: active
+lastUpdated: 2025-06-17
+author: Development Team
+complianceLevel: critical
+readingTime: 22 minutes
+tags: [database, forms, schema, react-hook-form, validation, annotations]
+---
+
 # Database-Form Integration Guide
 
 *Comprehensive guide for implementing forms using database schema annotations and patterns.*
@@ -15,12 +27,24 @@ Cross-references: db-schema.txt (schema), form-management.md (strategy), react-p
 Implementation Strategy: Schema annotations drive component generation
 -->
 
+<!-- AI_SUMMARY
+This guide establishes schema-driven form development patterns for the Specification Builder project with these key components:
+
+• Schema Annotation System - AI_TABLE_PURPOSE, AI_FORM_TYPE, and AI_WORKFLOW annotations in db-schema.txt that guide form component implementation
+• Enum Table Integration - Single-select dropdown components with caching strategies and efficient data fetching patterns for database enum tables
+• Junction Table Handling - Multi-select checkbox/tag components for many-to-many relationships with proper data transformation patterns
+• Multi-Step Form Implementation - Step-based schema validation, database transaction handling, and atomic operations for complex form workflows
+• Field Component Patterns - Boolean toggles, star ratings, and other specialized input components following schema annotation guidance
+• Performance Optimization - Enum data caching, React Query integration, and efficient data fetching to prevent repeated database calls
+
+The approach uses database schema annotations as the single source of truth for form implementation, ensuring consistency between data structure and UI components.
+-->
+
 > **📋 Quick Navigation:**
-> - **Core Strategy**: [Form Management](../concerns/form-management.md) | [UI/UX Design Decisions](../project/ui-ux-design.md)
-> - **React Implementation**: [React Development Patterns](react-patterns.md) | [Best Practices](best-practices.md)
-> - **Code Standards**: [Architectural Guidelines](architectural-guidelines.md) | [Code Quality Standards](code-quality-standards.md)
-> - **Database Context**: [Database Schema](../db-schema.txt) | [API Design](../concerns/api-design.md)
-> - **Technical Setup**: [Technical Stack](../project/technical-stack.md) | [Feature Requirements](../project/feature-requirements.md)
+> - **Form Implementation**: [Form Management](../concerns/form-management.md) | [UI/UX Design](../project/ui-ux-design.md)
+> - **React Implementation**: [React Development Patterns](react-patterns.md) | [Code Quality Standards](code-quality-standards.md)
+> - **Data Context**: [Database Schema](../db-schema.txt) | [API Design](../concerns/api-design.md)
+> - **Project Setup**: [Technical Stack](../project/technical-stack.md) | [Feature Requirements](../project/feature-requirements.md)
 
 > **📋 This guide explains how to use `docs/db-schema.txt` AI annotations for React Hook Form implementation. For form management strategy, see [Form Management Documentation](../concerns/form-management.md).**
 

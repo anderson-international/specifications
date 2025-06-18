@@ -1,6 +1,51 @@
+---
+title: Database Documentation  
+description: Database strategy, Prisma ORM patterns, and product sync implementation
+version: 1.0.0
+status: active
+lastUpdated: 2025-06-17
+author: Development Team
+complianceLevel: required
+readingTime: 12 minutes
+tags: [database, prisma, orm, shopify-sync, schema, performance]
+---
+
 # Database Documentation
 
 *Database strategy for the Specification Builder project.*
+
+<!-- AI_NAVIGATION
+Reading Priority: 3 (Important reference for database implementation)
+Primary Focus: Database architecture strategy, Prisma ORM patterns, Shopify product sync implementation, and development workflow for data layer
+Key Compliance Points:
+- Prisma ORM singleton pattern and type safety (line 46-48)
+- Product sync fail-fast error handling approach (line 29-31)
+- Schema change workflow with forward-fix strategy (line 57-60)
+- Database transaction usage for atomic operations (line 53)
+Critical Cross-references:
+- Database Schema (../db-schema.txt): Complete table structures and relationships reference
+- Form Management (form-management.md): Database integration patterns for forms
+- API Design (api-design.md): Database interaction patterns for API endpoints
+- Database-Form Integration (../guides/database-form-integration.md): Type-safe data handling patterns
+Anti-patterns:
+- Using fallback data when sync operations fail
+- Complex database rollback procedures instead of fix-forward approach
+- Multiple Prisma client instances across application
+- Hard deleting products instead of soft deletes
+Additional Context: This document focuses on practical database patterns for solo development, emphasizing simplicity and reliability over complex architectures
+-->
+
+<!-- AI_SUMMARY
+This document establishes the database architecture strategy for the Specification Builder project with these key components:
+
+• Prisma ORM Strategy - Single client instance, type-safe operations, generated types throughout application
+• Shopify Product Sync - Database-driven incremental sync with fail-fast error handling and scheduled refresh patterns
+• Schema Management - Simple SQL-based changes with fix-forward approach rather than complex rollbacks
+• Performance Guidelines - Query-based indexing, connection pooling, and monitoring strategies for solo development
+• Development Workflow - Separate test environments, clean slate testing, and basic seeding approaches
+
+The strategy prioritizes simplicity and reliability for hobbyist development while maintaining data integrity and performance.
+-->
 
 ## Overview
 

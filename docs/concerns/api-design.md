@@ -1,3 +1,15 @@
+---
+title: API Design Documentation
+description: Centralized API strategy for Next.js routes, RESTful patterns, and Shopify integration
+version: 1.0.0
+status: active
+lastUpdated: 2025-06-17
+author: Development Team
+complianceLevel: critical
+readingTime: 18 minutes
+tags: [api-design, nextjs, restful, shopify, error-handling, validation]
+---
+
 # API Design Documentation
 
 *Centralized API strategy for the Specification Builder project.*
@@ -14,6 +26,19 @@ Key Compliance Points:
 Critical for: API route implementation, error handling, external integrations
 Cross-references: database.md (data patterns), authentication.md (auth patterns), deployment-environment.md (config)
 Error Strategy: Explicit error responses, consistent structure, fail-fast approach
+-->
+
+<!-- AI_SUMMARY
+This document defines the API design strategy for the Specification Builder project with these key components:
+
+• Next.js API Route Strategy - RESTful patterns with resource-based URLs, consistent naming, and TypeScript integration for type safety
+• Dual Error Handling Approach - Thoughtful retry mechanisms for transient errors (5xx, timeouts, rate limits) combined with fail-fast principles for client errors (4xx, validation failures)
+• Shopify GraphQL Integration - Direct GraphQL API usage with rate limiting respect, exponential backoff retry logic, and webhook processing
+• Validation Strategy - Schema-based input validation, consistent response structures, and explicit error messages with early validation
+• Performance Guidelines - Lightweight route handlers, efficient database queries, appropriate caching, and optimized response sizes
+• External API Integration Patterns - Service layer separation, error mapping, timeout handling, and environment-based configuration
+
+The strategy emphasizes simplicity and consistency for solo development while maintaining comprehensive error resilience and external API integration capabilities.
 -->
 
 ## Overview

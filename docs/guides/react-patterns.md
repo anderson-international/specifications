@@ -61,24 +61,20 @@ Critical anti-patterns to avoid:
 
 
 > **📋 Quick Navigation:**
-> - **Development Standards**: 
->   - [⚠️ Best Practices](best-practices.md "Context: Essential style and organization standards") 
->   - [Architectural Guidelines](architectural-guidelines.md "Context: Component hierarchy and composition")
->   - [🔥 Code Quality Standards](code-quality-standards.md "Context: TypeScript rules for React components")
-> - **Form Implementation**: 
->   - [Database-Form Integration](database-form-integration.md "Context: API calls from React forms") 
->   - [🔥 Form Management](../concerns/form-management.md "Context: Form state and validation patterns")
-> - **UI/UX Design**: 
->   - [UI/UX Design Decisions](../project/ui-ux-design.md "Context: Component styling guidelines") 
->   - [Component Patterns](../concerns/ui-ux-patterns.md "Context: Reusable UI element patterns")
+> - **Essential Context**: 
+>   - [🔥 Code Quality Standards](code-quality-standards.md "Context: TypeScript return types and ESLint rules") 
+>   - [Database-Form Integration](database-form-integration.md "Context: React Hook Form patterns and database integration")
+> - **UI Implementation**: 
+>   - [Form Management](../concerns/form-management.md "Context: Form state management and validation patterns")
+>   - [UI/UX Design Decisions](../project/ui-ux-design.md "Context: Component styling and responsive design")
+>   - [UI/UX Patterns](../concerns/ui-ux-patterns.md "Context: Component architecture and interaction patterns")
 > - **Technical Context**: 
->   - [Technical Stack](../project/technical-stack.md "Context: React version and key libraries") 
->   - [API Design](../concerns/api-design.md "Context: Data fetching patterns")
-> - **Pitfall Prevention**: 
->   - [⚠️ React Effect Loops](../pitfalls/prevent-react-effect-loops.md "Context: Critical infinite loop prevention") 
->   - [Authentication](../concerns/authentication.md "Context: User session management in React")
+>   - [Technical Stack](../project/technical-stack.md "Context: Next.js 15, React 18, and CSS Modules configuration")
+>   - [API Design](../concerns/api-design.md "Context: API integration patterns for React components")
+>   - [Prevent React Effect Loops](../pitfalls/prevent-react-effect-loops.md "Context: Debugging infinite loops in useEffect")
+>   - [Authentication](../concerns/authentication.md "Context: User authentication in React components")
 
-> **📋 This document consolidates React-specific guidance from multiple sources. For component organization and file size standards, see [Best Practices](best-practices.md).**
+> **📋 This document consolidates React-specific guidance from multiple sources. For component organization and TypeScript standards, see [Code Quality Standards](code-quality-standards.md).**
 
 ## Executive Summary
 
@@ -644,4 +640,3 @@ export const ThemeProvider = ({ children }) => {
     </ThemeContext.Provider>
   );
 };
-```

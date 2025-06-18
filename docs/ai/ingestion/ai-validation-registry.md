@@ -25,8 +25,8 @@ Key Compliance Points:
 Critical Cross-references:
 - React Development Patterns (guides/react-patterns.md): Source of React validation patterns
 - Code Quality Standards (guides/code-quality-standards.md): Source of TypeScript validation patterns
-- Form Management (concerns/form-management.md): Source of form validation patterns
-- API Design (concerns/api-design.md): Source of API validation patterns
+- Form Management (../../concerns/form-management.md): Source of form validation patterns
+- API Design (../../concerns/api-design.md): Source of API validation patterns
 Additional Context: This registry is the single source of truth for all machine-readable validation patterns to ensure code compliance
 -->
 
@@ -59,7 +59,7 @@ This document serves as a centralized registry of all validation patterns used f
 
 ## React Validation Patterns
 
-Source: [React Development Patterns](guides/react-patterns.md "Priority: HIGH - Core React performance and component patterns")
+Source: [React Development Patterns](../../guides/react-patterns.md "Priority: HIGH - Core React performance and component patterns")
 
 ### Performance Patterns
 
@@ -81,7 +81,7 @@ Source: [React Development Patterns](guides/react-patterns.md "Priority: HIGH - 
 
 ## TypeScript Validation Patterns
 
-Source: [Code Quality Standards](guides/code-quality-standards.md "Priority: CRITICAL - TypeScript standards and ESLint rules")
+Source: [Code Quality Standards](../../guides/code-quality-standards.md "Priority: CRITICAL - TypeScript standards and ESLint rules")
 
 ### Type Safety
 
@@ -101,7 +101,7 @@ Source: [Code Quality Standards](guides/code-quality-standards.md "Priority: CRI
 
 ## Form Management Validation Patterns
 
-Source: [Form Management](guides/form-management.md "Priority: HIGH - Form validation and state management")
+Source: [Form Management](../../concerns/form-management.md "Priority: HIGH - Form validation and state management")
 
 ### React Hook Form
 
@@ -123,7 +123,7 @@ Source: [Form Management](guides/form-management.md "Priority: HIGH - Form valid
 
 ## API Design Validation Patterns
 
-Source: [API Design](concerns/api-design.md "Priority: HIGH - API structure and error handling")
+Source: [API Design](../../concerns/api-design.md "Priority: HIGH - API structure and error handling")
 
 ### API Route Structure
 
