@@ -2,7 +2,7 @@
 
 ## What Are Cognitive Load Scripts?
 
-These scripts measure and optimize document readability using cognitive science research. They help keep documentation easy to understand by preventing "cognitive load creep" - when documents gradually become harder to read over time.
+These scripts measure and optimize document readability. They use cognitive science research to keep documentation easy to understand. They prevent "cognitive load creep" - when documents gradually become harder to read over time.
 
 ## Understanding Cognitive Load Score (CLS)
 
@@ -16,10 +16,10 @@ The Cognitive Load Score measures mental effort needed to process a document. It
 
 Research shows optimal ranges:
 
-- **55-60 CLS**: Optimal range for 8th-9th grade level reading that's easy to understand
-- **Under 55**: Too simple and may lose important information
-- **Over 60**: Getting harder to understand
-- **Over 65**: High cognitive burden that's much harder to process
+- **55-60 CLS**: Optimal range. 8th-9th grade level. Easy to understand.
+- **Under 55**: Too simple. May lose important information.
+- **Over 60**: Getting harder to understand.
+- **Over 65**: High cognitive burden. Much harder to process.
 
 ## Core Scripts
 
@@ -49,7 +49,7 @@ cmd /c node docs/ai/maintenance/scripts/cog-load-improve.js --file docs/example.
 cmd /c node docs/ai/maintenance/scripts/cog-load-improve.js --high-load
 ```
 
-Gives actionable recommendations that target the biggest cognitive load problems.
+Gives actionable recommendations. Targets the biggest cognitive load problems.
 
 ### Automated Optimization
 
@@ -59,7 +59,7 @@ Gives actionable recommendations that target the biggest cognitive load problems
 cmd /c node docs/ai/maintenance/scripts/cog-load-optimize.js --file docs/example.md
 ```
 
-This script follows a comprehensive process:
+This script:
 1. Measures current cognitive load
 2. Suggests improvements step by step  
 3. Asks for approval before making changes
@@ -135,4 +135,3 @@ if %ERRORLEVEL% NEQ 0 (
     echo "❌ Documents became too complex"
     exit /b 1
 )
-```
