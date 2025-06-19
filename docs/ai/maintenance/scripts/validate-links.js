@@ -25,7 +25,7 @@ function findMarkdownFiles(dir) {
 function validateGraphConsistency() {
   console.log('🔗 Validating document graph consistency...\n');
   
-  const graphPath = path.join(__dirname, '..', 'docs', 'document-graph.json');
+  const graphPath = path.join(process.cwd(), 'docs', 'document-graph.json');
   
   if (!fs.existsSync(graphPath)) {
     console.log('❌ Graph file not found: docs/document-graph.json');
@@ -38,7 +38,11 @@ function validateGraphConsistency() {
   // Validate all node paths exist
   console.log('📄 Validating node file paths...');
   for (const node of graph.nodes) {
-    const fullPath = path.join(__dirname, '..', 'docs', node.path);
+    let fullPath = node.path;
+    if (!fullPath.startsWith('docs/')) {
+      fullPath = path.join('docs', fullPath);
+    }
+    fullPath = path.join(process.cwd(), fullPath);
     if (!fs.existsSync(fullPath)) {
       console.log(`❌ Graph node references missing file: ${node.path}`);
       hasErrors = true;
@@ -91,7 +95,7 @@ function validateGraphConsistency() {
 function validateLinks() {
   console.log('🔍 Finding markdown files in docs directory...');
   
-  const docsDir = path.join(__dirname, '..', 'docs');
+  const docsDir = path.join(process.cwd(), 'docs');
   const markdownFiles = findMarkdownFiles(docsDir);
   
   console.log(`📄 Found ${markdownFiles.length} markdown files`);

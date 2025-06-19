@@ -11,11 +11,11 @@ const path = require('path');
 class WorkflowEnhancer {
   constructor() {
     this.workflowDir = path.join(process.cwd(), '.windsurf', 'workflows');
-    this.smartContextLoader = path.join(process.cwd(), 'scripts', 'smart-context-loader.js');
+    this.smartContextLoader = path.join(process.cwd(), 'docs', 'ai', 'maintenance', 'scripts', 'smart-context-loader.js');
     
     // Verify smart context loader exists
     if (!fs.existsSync(this.smartContextLoader)) {
-      throw new Error('Smart Context Loader not found. Please ensure scripts/smart-context-loader.js exists.');
+      throw new Error('Smart Context Loader not found. Please ensure docs/ai/maintenance/scripts/smart-context-loader.js exists.');
     }
   }
 
@@ -76,7 +76,7 @@ class WorkflowEnhancer {
       '',
       '// turbo',
       '```bash',
-      `node scripts/smart-context-loader.js --workflow=${workflowName}`,
+      `node docs/ai/maintenance/scripts/smart-context-loader.js --workflow=${workflowName}`,
       '```',
       '',
       'This step loads relevant documents based on the document graph for this workflow.',
