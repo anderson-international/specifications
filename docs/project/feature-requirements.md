@@ -1,33 +1,16 @@
 ---
-title: Feature Requirements
-description: Detailed feature specifications, field requirements, and acceptance criteria
-version: 1.0.0
-status: active
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: critical
-readingTime: 8 minutes
+status: active
 tags: [features, requirements, specifications, validation, admin-interface]
+id: 1017
 ---
 
 # Feature Requirements
 
 <!-- AI_QUICK_REF
+Overview: This document serves as the definitive specification guide that translates business requirements into specific develo...
 Key Rules: Required field specifications (line 52), Multi-step wizard requirements (line 17), Role-based access (line 6)
 Avoid: Missing required field validation, Ignoring wizard structure, Overlooking admin interface specs
--->
-
-<!-- AI_SUMMARY
-This document defines the detailed feature specifications for the Specification Builder application with these key components:
-
-• Core MVP Features - Authentication with magic links, product discovery with visual indicators, multi-step specification wizard, and status workflow management
-• Post-MVP Features - Snuff request builder, quality control system, public reviewer access, and advanced analytics capabilities
-• Specification Field Requirements - Required fields (product selection, ratings, reviews, tasting notes), optional fields (tobacco types, boolean flags), and validation rules
-• Form Validation Rules - Minimum tasting note requirements, quality indicators, and user guidance messaging for form completion
-• Admin Interface Requirements - Enum table management, user management with role assignment, and manual data refresh capabilities
-• Quality Control System - AI-assisted scoring, completeness metrics, reviewer leaderboards, and improvement suggestions
-
-This document serves as the definitive specification guide that translates business requirements into specific development tasks and acceptance criteria.
 -->
 
 ## Core MVP Features

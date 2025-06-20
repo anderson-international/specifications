@@ -1,13 +1,8 @@
 ---
-title: Preventing React Effect Infinite Loops
-description: Comprehensive guide to preventing infinite loops and performance issues in React effect hooks
-version: 1.0.0
-status: active
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: critical
-readingTime: 15 minutes
+status: active
 tags: [react, useeffect, performance, hooks, debugging, infinite-loops]
+id: 1015
 ---
 
 # Preventing React Effect Infinite Loops
@@ -15,21 +10,9 @@ tags: [react, useeffect, performance, hooks, debugging, infinite-loops]
 This guide helps prevent infinite loops and performance issues caused by improper React effect hook implementation.
 
 <!-- AI_QUICK_REF
+Overview: This document provides comprehensive guidance for preventing infinite loops and performance issues in React effect hooks
 Key Rules: useCallback for functions in dependencies (line 28), useMemo for derived state (line 58), Include all dependencies (line 117)
 Avoid: Functions not wrapped in useCallback, Missing dependencies, Object/array literals in dependency arrays, Circular context dependencies
--->
-
-<!-- AI_SUMMARY
-This document provides comprehensive guidance for preventing infinite loops and performance issues in React effect hooks:
-
-• Function Management - Critical importance of wrapping functions in useCallback when used in dependency arrays to maintain stable references across renders
-• Derived State Handling - Using useMemo for calculated values to prevent new object/array references that trigger unnecessary effects
-• Context Interaction Patterns - Establishing clear ownership hierarchies between contexts to avoid circular dependencies and update loops
-• Dependency Array Management - Including all dependencies used inside effects and avoiding object/array literals that change on every render
-• Anti-Pattern Detection - Specific patterns to avoid including dual fetching, unstable references, and circular context updates
-• Testing Strategies - Methods for detecting infinite loops including network monitoring, console logging, React DevTools profiler, and error boundaries
-
-The guide emphasizes prevention through proper hook usage, memoization strategies, and clear data ownership patterns to maintain optimal React application performance.
 -->
 
 ## Common Causes of React Effect Loops

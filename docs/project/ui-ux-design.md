@@ -1,13 +1,8 @@
 ---
-title: UI/UX Design Decisions
-description: Comprehensive UI/UX strategy, design system, and mobile-first component patterns
-version: 1.0.0
-status: active
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: critical
-readingTime: 15 minutes
+status: active
 tags: [ui-ux, design-system, mobile-first, dark-theme, wizard-forms, css-modules]
+id: 1019
 ---
 
 # UI/UX Design Decisions
@@ -15,27 +10,15 @@ tags: [ui-ux, design-system, mobile-first, dark-theme, wizard-forms, css-modules
 *Comprehensive UI/UX strategy, design system, and component patterns for the Specification Builder.*
 
 <!-- AI_QUICK_REF
+Overview: This document establishes the comprehensive UI/UX design strategy for the Specification Builder project with these ke...
 Key Rules: Mobile-first design principles (line 25), Dark theme color palette (line 152), Multi-step wizard patterns (line 95)
 Avoid: Desktop-first decisions, Deviating from dark theme, Breaking wizard navigation, Non-CSS Modules styling
--->
-
-<!-- AI_SUMMARY
-This document establishes the comprehensive UI/UX design strategy for the Specification Builder project with these key components:
-
-• Mobile-First Design Philosophy - Primary target is mobile devices with touch-friendly UI, progressive enhancement for desktop, and performance optimization
-• Dark Theme Design System - Comprehensive color palette with card-based layout, 8px grid spacing, and consistent visual hierarchy
-• Multi-Step Wizard Form Design - Five-step specification wizard with swipe navigation, step validation, progress indicators, and mobile-optimized components
-• CSS Modules Styling Strategy - Component-scoped styling with global theme variables, zero runtime overhead, and feature-based organization
-• Navigation Structure - Left-hand collapsible panel with role-based visibility, progress stats, and mobile-friendly interactions
-• Component Patterns - Segmented controls for enums, toggle switches for booleans, multi-select with search+chips, and 48px minimum touch targets
-
-The design system prioritizes simplicity, consistency, and accessibility while maintaining excellent mobile user experience through careful component selection and interaction patterns.
 -->
 
 > **📋 Quick Navigation:**
 > - **Implementation Guides**: [Database-Form Integration](../guides/database-form-integration.md) | [React Development Patterns](../guides/react-patterns.md)
 > - **Design Context**: [Form Management](../concerns/form-management.md) | [UI/UX Patterns](../concerns/ui-ux-patterns.md)
-> - **Project Setup**: [Technical Stack](technical-stack.md) | [Code Quality Standards](../guides/code-quality-standards.md)
+> - **Project Setup**: [Technical Stack](technical-stack.md) | [Code Quality Standards](../guides/code-rules-quality.md)
 > - **Requirements**: [Feature Requirements](feature-requirements.md) | [Business Context](business-context.md)
 > - **Project Status**: [Implementation Plan](../../plans/plan-project.md)
 

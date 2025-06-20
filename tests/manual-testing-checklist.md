@@ -60,9 +60,9 @@ This checklist validates the complete user experience and ensures all document g
 ## Phase 4: Advanced Features Testing
 
 ### 4.1 Context Pre-loading
-- [ ] **Test 4.1.1:** Execute `cmd /c node scripts/context-preloader.js --analyze src/components/ProductCard.tsx`
+- [ ] **Test 4.1.1:** Execute `cmd /c node docs/ai/ingestion/scripts/context-preloader.js --analyze src/components/ProductCard.tsx`
   - Expected: Shows context analysis with file types and suggested documents
-- [ ] **Test 4.1.2:** Execute `cmd /c node scripts/context-preloader.js --batch "src/pages/*.tsx"`
+- [ ] **Test 4.1.2:** Execute `cmd /c node docs/ai/ingestion/scripts/context-preloader.js --batch "src/pages/*.tsx"`
   - Expected: Batch analyzes multiple files
 
 ### 4.2 Graph Analytics

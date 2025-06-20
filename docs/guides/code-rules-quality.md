@@ -1,13 +1,8 @@
 ---
-title: Code Quality Standards
-description: ESLint, Prettier, and TypeScript configuration standards for consistent code quality
-version: 2.0.0
-status: stable
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: required
-readingTime: 15 minutes
-tags: [eslint, typescript, prettier, code-quality, standards, linting]  
+status: stable
+tags: [eslint, typescript, prettier, code-quality, standards, linting]
+id: 1011
 ---
 
 # Code Quality Standards
@@ -15,30 +10,9 @@ tags: [eslint, typescript, prettier, code-quality, standards, linting]
 *ESLint, Prettier, and TypeScript configuration standards for consistent code quality.*
 
 <!-- AI_QUICK_REF
+Overview: This document establishes mandatory code quality standards for TypeScript development. Key points
 Key Rules: Explicit function return types (line 69), No 'any' type (line 70), Import organization (line 82)
 Avoid: Missing return types, Using 'any' type, Inconsistent imports, console.log in production
--->
-
-<!-- AI_SUMMARY
-This document establishes mandatory code quality standards for TypeScript development. Key points:
-
-• TypeScript function return types are REQUIRED for all functions and methods
-• Using the 'any' type is strictly prohibited; use proper type definitions
-• Import statements must follow a specific organization pattern
-• ESLint rules are enforced for consistent code style
-• Prettier automatically formats code according to project standards
-• Variable and function naming conventions follow strict patterns
-• Console statements are prohibited in production code
-• All arrow functions must have parentheses even for single parameters
-• Property sorting is enforced in interfaces and type declarations
-• Maximum file size limits are strictly enforced for maintainability
-
-Critical anti-patterns to avoid:
-• Missing return types in functions or methods
-• Using 'any' as a type for quick implementation
-• Unorganized or inconsistent imports
-• Leaving console.log statements in production code
-• Excessively large files that violate size limits
 -->
 
 > **📋 Quick Navigation:**
@@ -76,6 +50,8 @@ This document establishes mandatory code quality standards for all TypeScript de
 
 7. **No Debug Artifacts**: Console statements and commented code are prohibited in production.
 
+These seven principles work together to create a consistent, maintainable codebase. Each principle supports the others to ensure high code quality throughout the project.
+
 ## Table of Contents
 
 1. [Executive Summary](#executive-summary)
@@ -86,7 +62,11 @@ This document establishes mandatory code quality standards for all TypeScript de
    - [Type Safety Examples](#type-safety-examples)
    - [Naming Convention Examples](#naming-convention-examples)
 
+The sections that follow provide detailed configuration and implementation guidance for these principles.
+
 ## 🔥 **HIGH**: ESLint Configuration
+
+ESLint enforces our code quality standards automatically during development. The configuration consists of base rules and project-specific customizations.
 
 ### ⚠️ **CRITICAL**: Base Configuration
 
@@ -146,6 +126,8 @@ This document establishes mandatory code quality standards for all TypeScript de
 }
 ```
 
+While ESLint ensures code quality through linting rules, Prettier handles consistent code formatting across the entire project.
+
 ## ⚙️ **MEDIUM**: Prettier Formatting
 
 ```json
@@ -163,7 +145,11 @@ This document establishes mandatory code quality standards for all TypeScript de
 }
 ```
 
+Beyond automated formatting, consistent naming conventions provide human-readable code organization.
+
 ## ⚙️ **MEDIUM**: Naming Conventions
+
+Our naming conventions create predictable patterns that make the codebase easier to navigate. The conventions vary by file type and purpose:
 
 ### Files and Directories
 
@@ -250,10 +236,10 @@ export const ExampleComponent = ({ title, isActive = false, onSubmit }: Props): 
 
 ## 🔥 **HIGH**: State Management
 
-### Local State
-- Use `useState` and `useReducer` for component state
-- Extract complex state logic into custom hooks
-- Prefer atomic state values when appropriate
+### Local State.
+- Use `useState` and `useReducer` for component state.
+- Extract complex state logic into custom hooks.
+- Prefer atomic state values when appropriate.
 
 ### Global State
 - Use React Context API with SWR for data fetching
@@ -539,6 +525,6 @@ function userProfileCard({ user }: userProfileProps): JSX.Element {
 const UserSettings = getUserSettings();
 
 // ❌ lowercase for constants
-const max_retry_attempts = 3;
+const max_retry_attempts = 3
 
 ```

@@ -1,13 +1,8 @@
 ---
-title: Database Documentation  
-description: Database strategy, Prisma ORM patterns, and product sync implementation
-version: 1.0.0
-status: active
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: required
-readingTime: 12 minutes
+status: active
 tags: [database, prisma, orm, shopify-sync, schema, performance]
+id: 1007
 ---
 
 # Database Documentation
@@ -15,20 +10,9 @@ tags: [database, prisma, orm, shopify-sync, schema, performance]
 *Database strategy for the Specification Builder project.*
 
 <!-- AI_QUICK_REF
+Overview: This document establishes the database architecture strategy for the Specification Builder project with these key com...
 Key Rules: Prisma ORM singleton (line 46), Fail-fast sync errors (line 29), Forward-fix schema (line 57), Database transactions (line 53)
 Avoid: Fallback data on sync failures, Complex rollback procedures, Multiple Prisma instances, Hard deleting products
--->
-
-<!-- AI_SUMMARY
-This document establishes the database architecture strategy for the Specification Builder project with these key components:
-
-• Prisma ORM Strategy - Single client instance, type-safe operations, generated types throughout application
-• Shopify Product Sync - Database-driven incremental sync with fail-fast error handling and scheduled refresh patterns
-• Schema Management - Simple SQL-based changes with fix-forward approach rather than complex rollbacks
-• Performance Guidelines - Query-based indexing, connection pooling, and monitoring strategies for solo development
-• Development Workflow - Separate test environments, clean slate testing, and basic seeding approaches
-
-The strategy prioritizes simplicity and reliability for hobbyist development while maintaining data integrity and performance.
 -->
 
 ## Overview

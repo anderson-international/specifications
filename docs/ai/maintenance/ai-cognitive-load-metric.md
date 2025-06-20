@@ -1,3 +1,7 @@
+---
+id: 1003
+---
+
 ## Cognitive Load Metric for Document Sets in AI Ingestion
 
 To quantitatively measure the cognitive load of a set of documents intended for AI ingestion, use a composite metric that reflects the mental effort required to process, understand, and retain the information. This enables before-and-after comparisons when optimizing for context retention and utility.

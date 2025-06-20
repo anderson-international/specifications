@@ -1,13 +1,8 @@
 ---
-title: AI Validation Registry
-description: Centralized registry of all validation patterns for AI compliance checking
-version: 1.0.0
-status: active
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: critical
-readingTime: 8 minutes
+status: active
 tags: [ai, validation, patterns, compliance, registry, automated-review]
+id: 1002
 ---
 
 # AI Validation Registry
@@ -15,24 +10,14 @@ tags: [ai, validation, patterns, compliance, registry, automated-review]
 *Centralized registry of all validation patterns for AI compliance checking.*
 
 <!-- AI_QUICK_REF
+Overview: This document serves as the centralized registry for all validation patterns. We use these for automated compliance c...
 Key Rules: React performance patterns (line 45), TypeScript typing requirements (line 80), Form validation patterns (line 105), API design validation (line 130)
 Avoid: Missing useCallback/useMemo, 'any' type usage, Unvalidated form inputs, Missing error response formats
 -->
 
-<!-- AI_SUMMARY
-This document serves as the centralized registry for all validation patterns used in automated compliance checking across the entire codebase. Key components include:
-
-• React Validation Patterns - Essential patterns for React components including useCallback, useMemo, React.memo usage, effect dependencies, and component size limits
-• TypeScript Validation Patterns - Critical type safety rules covering explicit return types, avoiding 'any' type, and code organization standards
-• Form Management Validation Patterns - Standards for React Hook Form implementation with Zod schema validation
-• API Design Validation Patterns - Requirements for API route structure, status codes, error handling, and input validation
-
-Each validation pattern includes a unique identifier, the pattern definition, priority level, and concise description. This registry must be kept synchronized with source documents when rules are updated.
--->
-
 ## Overview
 
-This document serves as a centralized registry of all validation patterns used for automated compliance checking. Each pattern includes:
+This document serves as a centralized registry of all validation patterns. We use these for automated compliance checking. Each pattern includes:
 - A unique identifier
 - The validation regex or rule
 - Source document reference
@@ -46,9 +31,13 @@ This document serves as a centralized registry of all validation patterns used f
 3. [Form Management Validation Patterns](#form-management-validation-patterns)
 4. [API Design Validation Patterns](#api-design-validation-patterns)
 
+The validation patterns are organized by domain, starting with React-specific patterns and progressing through TypeScript, forms, and API design. Each domain builds upon the previous one to create comprehensive validation coverage.
+
 ## React Validation Patterns
 
-Source: [React Development Patterns](../../guides/react-patterns.md "Priority: HIGH - Core React performance and component patterns")
+Source: [React Development Patterns](react-patterns.md "Priority: HIGH - Core React performance and component patterns")
+
+React validation patterns focus on performance optimization and component structure. These patterns ensure our React components follow best practices for performance and maintainability.
 
 ### Performance Patterns
 
@@ -68,9 +57,13 @@ Source: [React Development Patterns](../../guides/react-patterns.md "Priority: H
 | REACT_CLIENT_001 | `/'use client';/` presence in client components | ⚠️ CRITICAL | Validates correct client component declaration |
 | REACT_SERVER_001 | No hooks in server components | ⚠️ CRITICAL | Prevents use of React hooks in server components |
 
+Building on React component patterns, we need equally robust TypeScript validation to ensure type safety throughout our application.
+
 ## TypeScript Validation Patterns
 
-Source: [Code Quality Standards](../../guides/code-quality-standards.md "Priority: CRITICAL - TypeScript standards and ESLint rules")
+Source: [Code Quality Standards](code-rules-quality.md "Priority: CRITICAL - TypeScript standards and ESLint rules")
+
+TypeScript validation patterns enforce type safety and code organization standards. These patterns work together with React patterns to create a comprehensive validation system.
 
 ### Type Safety
 
@@ -90,7 +83,7 @@ Source: [Code Quality Standards](../../guides/code-quality-standards.md "Priorit
 
 ## Form Management Validation Patterns
 
-Source: [Form Management](../../concerns/form-management.md "Priority: HIGH - Form validation and state management")
+Source: [Form Management](../concerns/form-management.md "Priority: HIGH - Form validation and state management")
 
 ### React Hook Form
 
@@ -112,7 +105,7 @@ Source: [Form Management](../../concerns/form-management.md "Priority: HIGH - Fo
 
 ## API Design Validation Patterns
 
-Source: [API Design](../../concerns/api-design.md "Priority: HIGH - API structure and error handling")
+Source: [API Design](../concerns/api-design.md "Priority: HIGH - API structure and error handling")
 
 ### API Route Structure
 
@@ -125,7 +118,7 @@ Source: [API Design](../../concerns/api-design.md "Priority: HIGH - API structur
 
 ## Usage Guidelines
 
-1. **For AI Tools**: Reference validation patterns by their unique ID when checking code compliance
-2. **For Documentation Updates**: When adding new validation rules to individual documents, also add them to this registry
-3. **For Rule Changes**: Update both this registry and the source document when modifying validation rules
-4. **For Priority Changes**: Any changes to priority levels must be reflected in both this registry and the source document
+1. **For AI Tools**: Reference validation patterns by their unique ID. Use this when checking code compliance.
+2. **For Documentation Updates**: Add new validation rules to individual documents. Also add them to this registry.
+3. **For Rule Changes**: Update both this registry and the source document. Do this when modifying validation rules.
+4. **For Priority Changes**: Any changes to priority levels must be reflected in both locations. Update this registry and the source document.

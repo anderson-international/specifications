@@ -58,12 +58,15 @@ class CognitiveLoadImprover {
         return nodePath === normalizedPath || nodePath.endsWith(normalizedPath);
       });
 
+      // Use primary analysis (with smart code exclusion) for recommendations
+      const cogLoad = result.primary.cogLoad;
+      const components = result.primary.components;
+      
       // Identify primary driver of cognitive load
-      const components = result.components;
       const primaryDriver = this.identifyPrimaryDriver(components);
       
       // Generate specific recommendations
-      const recommendations = this.generateRecommendations(components, primaryDriver, result.cogLoad);
+      const recommendations = this.generateRecommendations(components, primaryDriver, cogLoad);
       
       // Generate improvement strategies
       const strategies = this.generateImprovementStrategies(primaryDriver, components);
@@ -78,8 +81,8 @@ class CognitiveLoadImprover {
           priority: document.priority
         } : null,
         analysis: {
-          cogLoad: result.cogLoad,
-          components: components,
+          cogLoad: result.primary.cogLoad,
+          components: result.primary.components,
           primaryDriver: primaryDriver
         },
         recommendations: recommendations,
@@ -205,7 +208,7 @@ class CognitiveLoadImprover {
         specifics: [
           'Target 15-20 words per sentence maximum',
           'Use active voice instead of passive voice',
-          'Replace complex conjunctions with periods',
+          'Replace complex phrases and idioms with simpler, direct alternatives',
           'Eliminate nested clauses where possible'
         ]
       });
@@ -253,26 +256,50 @@ class CognitiveLoadImprover {
     // Coherence recommendations
     if (coherence >= 30) {
       recommendations.push({
-        priority: 'high',
+        priority: 'critical',
         category: 'coherence',
-        issue: `Poor topic coherence (${coherence}/100)`,
-        action: 'Improve document structure and topic flow',
+        issue: `Extremely poor topic coherence (${coherence}/100)`,
+        action: 'Complete structural reorganization required to improve logical flow and thematic consistency',
         specifics: [
-          'Group related concepts together',
-          'Use clear section headings',
-          'Add transition sentences between topics',
-          'Consider splitting unrelated topics into separate documents'
+          'Create a clear outline to organize ideas in logical sequence',
+          'Use predictable paragraph organization with topic sentences at the beginning',
+          'Ensure each paragraph focuses on a single main idea or theme',
+          'Add transition words and phrases to show relationships between sections',
+          'Repeat key terms throughout to reinforce main threads',
+          'Maintain consistent tone and style throughout the document',
+          'Use headings and subheadings to organize content visually',
+          'Review the entire document focusing on logical connections and flow'
         ]
       });
     } else if (coherence >= 20) {
       recommendations.push({
+        priority: 'high',
+        category: 'coherence',
+        issue: `Very poor topic coherence (${coherence}/100)`,
+        action: 'Major structural improvements needed to enhance document flow and organization',
+        specifics: [
+          'Establish clear structure with logical paragraph sequence',
+          'Add effective transition words (however, therefore, furthermore, in addition)',
+          'Start paragraphs with clear, concise topic sentences',
+          'Repeat important concepts and terms to reinforce main threads',
+          'Use synonyms thoughtfully to maintain connection between ideas',
+          'Break text into smaller paragraphs with clear headings',
+          'Avoid abrupt topic shifts by adding bridging sentences'
+        ]
+      });
+    } else if (coherence >= 15) {
+      recommendations.push({
         priority: 'medium',
         category: 'coherence',
-        issue: `Moderate topic drift (${coherence}/100)`,
-        action: 'Strengthen topic consistency and flow',
+        issue: `Poor topic coherence (${coherence}/100)`,
+        action: 'Strengthen topic consistency and improve paragraph flow',
         specifics: [
-          'Review section organization',
-          'Add connecting sentences between paragraphs'
+          'Use clear topic sentences at paragraph starts',
+          'Add transitional phrases between sections (e.g., "for example," "therefore")',
+          'Group related concepts together more effectively',
+          'Use consistent terminology to reduce reader confusion',
+          'Place modifiers close to words they modify to avoid confusion',
+          'Review for logical connections between ideas'
         ]
       });
     }
@@ -296,11 +323,12 @@ class CognitiveLoadImprover {
           strategy: 'Sentence Simplification',
           description: 'Focus on reducing sentence complexity as the primary driver',
           steps: [
-            '1. Identify sentences longer than 25 words',
-            '2. Break compound sentences at conjunctions (and, but, or)',
-            '3. Convert passive voice to active voice',
-            '4. Replace complex phrases with simpler alternatives',
-            '5. Use bullet points for complex lists'
+            '1. Identify sentences longer than 20 words (reduced threshold for greater impact)',
+            '2. Break compound and complex sentences at conjunctions and relative clauses',
+            '3. Convert passive voice to active voice consistently',
+            '4. Replace complex phrases and idioms with simpler, direct alternatives',
+            '5. Use bullet points or numbered lists for enumerations and complex sequences',
+            '6. Limit use of nested clauses and parentheses to reduce parsing difficulty'
           ],
           expectedImpact: 'High - Primary driver of current cognitive load'
         });
@@ -308,14 +336,19 @@ class CognitiveLoadImprover {
 
       case 'lexical':
         strategies.push({
-          strategy: 'Vocabulary Simplification',
-          description: 'Focus on reducing technical terminology density',
+          strategy: 'Comprehensive Lexical Complexity Reduction',
+          description: 'Focus on systematically reducing vocabulary difficulty and complexity',
           steps: [
-            '1. Identify technical terms and jargon',
-            '2. Replace with everyday language where possible',
-            '3. Create definitions for necessary technical terms',
-            '4. Use consistent terminology throughout',
-            '5. Add a glossary section'
+            '1. Replace advanced, rare, or technical words with common, everyday alternatives',
+            '2. Prefer high-frequency words familiar to a broad audience (e.g., "utilize" → "use")',
+            '3. Avoid jargon, idioms, and specialized terminology unless absolutely necessary',
+            '4. Use consistent, familiar terms throughout - avoid unnecessary synonyms',
+            '5. Prefer concrete nouns and verbs over abstract or nominalized forms',
+            '6. Use base or root forms rather than complex morphological variants',
+            '7. Avoid complex collocations and phrasal verbs - use straightforward combinations',
+            '8. Maintain uniform terms for concepts to reduce confusion and cognitive effort',
+            '9. Test vocabulary using readability tools and replace complex words systematically',
+            '10. Conduct user testing focused on lexical simplicity and clarity'
           ],
           expectedImpact: 'High - Primary driver of current cognitive load'
         });
@@ -323,33 +356,108 @@ class CognitiveLoadImprover {
 
       case 'coherence':
         strategies.push({
-          strategy: 'Structure Optimization',
-          description: 'Focus on improving topic flow and organization',
+          strategy: 'Coherence Enhancement',
+          description: 'Complete structural reorganization to improve logical flow and thematic consistency',
           steps: [
-            '1. Group related concepts together',
-            '2. Create clear section hierarchies',
-            '3. Add transition sentences',
-            '4. Remove or relocate off-topic content',
-            '5. Use consistent formatting and headings'
+            '• Create a clear outline to organize ideas in logical sequence',
+            '• Use predictable paragraph organization with topic sentences at the beginning',
+            '• Ensure each paragraph focuses on a single main idea or theme',
+            '• Add effective transition words (however, therefore, furthermore, in addition)',
+            '• Repeat important concepts and terms to reinforce main threads',
+            '• Use synonyms thoughtfully to maintain connection between ideas',
+            '• Build lexical chains by grouping related words for semantic cohesion',
+            '• Avoid abrupt topic shifts by adding bridging sentences between paragraphs',
+            '• Place modifiers close to words they modify to avoid confusion',
+            '• Maintain consistent tone and style throughout the document',
+            '• Use headings and subheadings to organize content visually',
+            '• Break text into smaller paragraphs for better readability',
+            '• Review entire document focusing on logical connections and flow'
           ],
-          expectedImpact: 'High - Primary driver of current cognitive load'
+          expectedImpact: 'Critical - Essential for extremely low coherence scores (<20)'
         });
         break;
     }
 
-    // Quick wins strategy
+    // Enhanced Quick Wins strategy
     strategies.push({
       strategy: 'Quick Wins',
-      description: 'Immediate improvements with minimal effort',
+      description: 'Immediate, low-effort improvements with measurable impact',
       steps: [
-        '• Replace "which" with "that" where appropriate',
-        '• Break up paragraphs longer than 4 sentences',
-        '• Add more white space and formatting',
-        '• Use active voice: "We recommend" vs "It is recommended"',
-        '• Replace nominalizations: "make a decision" vs "decide"'
+        '• Replace "which" with "that" where restrictive clauses apply',
+        '• Break paragraphs longer than 3 sentences to improve visual clarity',
+        '• Increase white space and use formatting (bold, italics) to emphasize key points',
+        '• Use active voice consistently ("We recommend" vs. "It is recommended")',
+        '• Replace nominalizations with verbs ("make a decision" → "decide")',
+        '• Avoid double negatives and ambiguous phrasing',
+        '• Use consistent terminology to reduce reader confusion'
       ],
       expectedImpact: 'Medium - Easy to implement improvements'
     });
+
+    // Add vocabulary simplification if not primary driver but still high
+    if (primaryDriver.primary.name !== 'lexical' && components.lexical >= 60) {
+      strategies.push({
+        strategy: 'Lexical Complexity Reduction',
+        description: 'Decrease lexical complexity to make text simpler and more accessible',
+        steps: [
+          '• Replace advanced, rare, or technical words with common, everyday alternatives',
+          '• Prefer high-frequency words that are familiar to a broad audience',
+          '• Avoid jargon, idioms, and specialized terminology unless absolutely necessary',
+          '• Use consistent, familiar terms throughout (avoid unnecessary synonyms)',
+          '• Prefer concrete nouns and verbs over abstract or nominalized forms',
+          '• Use base or root forms of words rather than complex morphological variants',
+          '• Use straightforward word combinations rather than idiomatic collocations',
+          '• Maintain uniform terms for concepts to reduce confusion and cognitive effort',
+          '• Test vocabulary using readability tools and replace complex words with simpler alternatives'
+        ],
+        expectedImpact: 'Medium to High - Supporting strategy for cognitive load reduction'
+      });
+    }
+
+    // Add structural improvements if coherence is problematic but not primary
+    if (primaryDriver.primary.name !== 'coherence' && components.coherence >= 25) {
+      strategies.push({
+        strategy: 'Structural Enhancement',
+        description: 'Improve document organization and flow',
+        steps: [
+          '• Use clear topic sentences at paragraph starts',
+          '• Add transitional phrases between sections',
+          '• Group related concepts together',
+          '• Create consistent heading hierarchy'
+        ],
+        expectedImpact: 'Medium - Supporting strategy'
+      });
+    }
+
+    // Visual and Formatting Enhancements
+    strategies.push({
+      strategy: 'Visual and Formatting Enhancements',
+      description: 'Support text comprehension through design and layout',
+      steps: [
+        '• Use headings and subheadings to break content into manageable sections',
+        '• Employ bullet points, numbered lists, and tables for clarity',
+        '• Highlight key terms or concepts with consistent formatting',
+        '• Avoid dense blocks of text; use spacing to reduce visual fatigue',
+        '• Use consistent formatting patterns throughout the document'
+      ],
+      expectedImpact: 'Medium - Supports comprehension and reduces visual fatigue'
+    });
+
+    // Readability Testing and Iteration
+    if (components.readability > 60 || components.lexical > 60 || components.coherence > 25) {
+      strategies.push({
+        strategy: 'Readability Testing and Iteration',
+        description: 'Continuous improvement based on measurable feedback',
+        steps: [
+          '• Regularly measure cognitive load metrics after revisions',
+          '• Focus revisions on sections with highest cognitive load scores',
+          '• Track changes over iterations to monitor progress',
+          '• Test one strategy at a time to measure effectiveness',
+          '• Stop optimization when reaching 55-60 CLS target range'
+        ],
+        expectedImpact: 'High - Ensures systematic and effective optimization'
+      });
+    }
 
     return strategies;
   }
@@ -444,16 +552,13 @@ Usage:
   cmd /c node docs/ai/maintenance/scripts/cog-load-improve.js [options]
 
 Options:
-  --file <path>        Analyze specific file and provide improvement recommendations
-  --high-load         Analyze all documents with high cognitive load (>60)
-  --help, -h          Show this help message
+  --file <path>           Generate improvement recommendations for a specific file
+  --batch-high-cls        Analyze all documents >58 CLS and generate recommendations
+  --help, -h             Show this help message
 
 Examples:
-  cmd /c node docs/ai/maintenance/scripts/cog-load-improve.js --file docs/concerns/form-management.md
-  cmd /c node docs/ai/maintenance/scripts/cog-load-improve.js --high-load
-
-The tool identifies the primary driver of cognitive load (readability, lexical complexity, 
-or topic coherence) and provides specific, actionable recommendations for improvement.`);
+  cmd /c node docs/ai/maintenance/scripts/cog-load-improve.js --file docs/concerns/ui-ux-patterns.md
+  cmd /c node docs/ai/maintenance/scripts/cog-load-improve.js --batch-high-cls`);
       return;
     }
 
@@ -462,26 +567,114 @@ or topic coherence) and provides specific, actionable recommendations for improv
     
     if (fileArg && fileIndex !== -1 && args[fileIndex + 1]) {
       const filePath = args[fileIndex + 1];
-      const result = this.analyzeFileForImprovement(filePath);
-      
-      if (result.error) {
-        console.error(`❌ Analysis Error: ${result.error}`);
-        process.exit(1);
-      }
-
-      this.displayDetailedRecommendations(result);
+      this.analyzeFile(filePath);
       return;
     }
 
-    if (args.includes('--high-load')) {
-      this.analyzeHighCogLoadDocuments();
+    if (args.includes('--batch-high-cls')) {
+      this.batchAnalyzeHighCLS();
       return;
     }
 
     // Default: show help
-    console.log('❌ Please specify a file to analyze or use --high-load flag.');
+    console.log('❌ Please specify a file to analyze or use --batch-high-cls flag.');
     console.log('Run with --help for usage information.');
-    process.exit(1);
+  }
+
+  /**
+   * Batch analyze all documents that exceed 58 CLS threshold
+   */
+  batchAnalyzeHighCLS() {
+    try {
+      // Read document graph
+      const graphPath = 'docs/document-graph.json';
+      if (!fs.existsSync(graphPath)) {
+        throw new Error(`Document graph not found: ${graphPath}`);
+      }
+
+      const graph = JSON.parse(fs.readFileSync(graphPath, 'utf8'));
+      const documents = graph.nodes || [];
+
+      if (documents.length === 0) {
+        throw new Error('No documents found in document graph');
+      }
+
+      console.log(`🔍 Scanning ${documents.length} documents for high cognitive load (>58 CLS)...`);
+      console.log('');
+
+      // First pass: measure all documents and identify high CLS ones
+      const highClsDocuments = [];
+      
+      documents.forEach((doc, index) => {
+        process.stdout.write(`\r📊 Scanning: ${index + 1}/${documents.length} - ${doc.title || doc.path}`);
+        
+        try {
+          if (fs.existsSync(doc.path)) {
+            const content = fs.readFileSync(doc.path, 'utf8');
+            const result = this.analyzer.calculateCogLoadWithSmartExclusion(content, doc.path);
+            
+            if (result.primary.cogLoad > 58) {
+              highClsDocuments.push({
+                ...doc,
+                cogLoad: result.primary.cogLoad,
+                components: result.primary.components,
+                codeExcluded: result.codeExcluded
+              });
+            }
+          }
+        } catch (error) {
+          // Silently skip files with errors during scanning
+        }
+      });
+
+      console.log('\n'); // New line after progress
+
+      if (highClsDocuments.length === 0) {
+        console.log('🎉 Excellent! No documents exceed 58 CLS threshold');
+        console.log('📊 All documents are within the optimal cognitive load range');
+        return;
+      }
+
+      // Sort by highest CLS first
+      highClsDocuments.sort((a, b) => b.cogLoad - a.cogLoad);
+
+      console.log(`🔴 Found ${highClsDocuments.length} documents exceeding 58 CLS threshold:`);
+      console.log('');
+
+      // Second pass: generate improvement recommendations for each high CLS document
+      highClsDocuments.forEach((doc, index) => {
+        console.log(`\n${'='.repeat(80)}`);
+        console.log(`📄 Document ${index + 1}/${highClsDocuments.length}: ${doc.title || path.basename(doc.path)}`);
+        console.log(`🏷️  Path: ${doc.path}`);
+        console.log(`🧠 Current CLS: ${doc.cogLoad}/100 ${doc.codeExcluded ? '(code excluded)' : ''}`);
+        console.log(`${'='.repeat(80)}`);
+
+        // Generate detailed recommendations for this document
+        const result = this.analyzeFileForImprovement(doc.path);
+        if (result.success) {
+          this.displayDetailedRecommendations(result);
+        } else {
+          console.log(`❌ Failed to analyze ${doc.path}: ${result.error}`);
+        }
+      });
+
+      // Summary
+      console.log(`\n${'='.repeat(80)}`);
+      console.log(`📊 BATCH ANALYSIS SUMMARY`);
+      console.log(`${'='.repeat(80)}`);
+      console.log(`🔴 High CLS Documents: ${highClsDocuments.length}`);
+      console.log(`📈 Average CLS: ${Math.round(highClsDocuments.reduce((sum, doc) => sum + doc.cogLoad, 0) / highClsDocuments.length * 100) / 100}/100`);
+      console.log(`🎯 Target: Reduce all documents to ≤58 CLS`);
+      
+      const criticalDocs = highClsDocuments.filter(doc => doc.cogLoad > 65).length;
+      if (criticalDocs > 0) {
+        console.log(`⚠️  Critical Priority: ${criticalDocs} documents >65 CLS need immediate attention`);
+      }
+
+    } catch (error) {
+      console.error(`❌ Error during batch analysis: ${error.message}`);
+      process.exit(1);
+    }
   }
 
   /**

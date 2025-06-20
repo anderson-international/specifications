@@ -1,33 +1,16 @@
 ---
-title: Business Context & Requirements
-description: Business problem statement, user types, and core workflow requirements
-version: 1.0.0
-status: active
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: critical
-readingTime: 6 minutes
+status: active
 tags: [business-context, requirements, user-types, workflow, authentication]
+id: 1016
 ---
 
 # Business Context & Requirements
 
 <!-- AI_QUICK_REF
+Overview: This document establishes the foundational business context for the Specification Builder application with these key ...
 Key Rules: User role definitions (line 20), Authentication strategy (line 77), Core workflows (line 45)
 Avoid: Ignoring role access levels, Misunderstanding reviewer vs admin distinction, Missing scale requirements
--->
-
-<!-- AI_SUMMARY
-This document establishes the foundational business context for the Specification Builder application with these key components:
-
-• Business Problem - Online snuff retailer needs reliable product information system to replace inefficient JotForm process with 20 trusted reviewers
-• User Role Definitions - Phase 1 MVP supports Reviewers (create/edit own specs, view others) and Admin (full CRUD access, workflow management, system configuration)
-• Current Scale Context - 1,200+ specifications migrated from JotForm, ~600 products in Shopify store, targeting comprehensive coverage by 20 reviewers
-• Core Workflow Requirements - Product discovery with visual indicators, multi-step specification wizard, draft/publish workflow, and database-driven sync
-• Authentication Strategy - Magic link email authentication for production, user selection dropdown for development, with role-based access control
-• Future Vision - AI/LLM training dataset with eventual public reviewer expansion for "wisdom of crowds" data collection
-
-This document serves as the single source of truth for business requirements that drive all technical implementation decisions.
 -->
 
 ## Overview

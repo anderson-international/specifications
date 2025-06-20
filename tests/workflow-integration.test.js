@@ -125,7 +125,7 @@ function runIntegrationTests() {
     console.log('🔄 Testing context pre-loading analysis...');
     
     // Test analyzing a typical React component file
-    const analysisOutput = executeCommand('cmd /c node scripts/context-preloader.js --analyze src/components/ProductCard.tsx');
+    const analysisOutput = executeCommand('cmd /c node docs/ai/ingestion/scripts/context-preloader.js --analyze src/components/ProductCard.tsx');
     assertContains(analysisOutput, 'Context Analysis', 'Should show context analysis');
     assertContains(analysisOutput, 'File Types:', 'Should identify file types');
     

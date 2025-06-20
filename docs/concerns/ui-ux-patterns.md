@@ -1,98 +1,129 @@
 ---
-title: UI/UX Patterns Guide
-description: Simple patterns for component structure and styling
-version: 1.2.0
-status: stable
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: high
-readingTime: 8 minutes
+status: stable
 tags: [ui, components, accessibility, css, patterns]
+id: 1009
 ---
 
 # UI/UX Patterns Guide
 
-*Simple patterns and guidance for UI/UX development.*
+*Technical patterns for UI/UX component development.*
 
 <!-- AI_QUICK_REF
+Overview: This guide defines technical patterns for UI/UX development
 Key Rules: Component-scoped CSS, Single responsibility components, Accessibility guidelines, Performance optimization
 Avoid: Global CSS styles, Complex components, Inaccessible UI elements, Heavy implementations
 -->
 
-<!-- AI_SUMMARY
-This guide defines technical patterns for UI/UX development:
-
-• Component-scoped CSS: Styles tied to individual components
-• Single responsibility components: Each component handles one purpose
-• Mobile-first design: Start with mobile then add desktop features 
-• Accessibility compliance: Keyboard navigation and screen reader support
-• Performance optimization: Minimal dependencies and efficient rendering
-• Consistent behaviors: Similar components behave predictably
-
-This guide focuses on technical implementation for solo development.
--->
-
-## Summary
-
-This guide defines technical patterns for UI components. Focus is on simplicity. Focus is on maintainability. Built for solo development.
-
-For strategic UI/UX guidance and design philosophy, see [UI/UX Design Decisions](../project/ui-ux-design.md).
-
-Key requirements include component-scoped CSS. Also small single-purpose components. Also accessibility-first development. The guidance prioritizes practical approaches. These maximize productivity. They ensure quality user experience.
-
-## Key Rules
-
-1. **Component-Scoped Styling**: All styles tied to individual components
-2. **Single Responsibility**: Each component has one clear purpose
-3. **Mobile-First**: Follow mobile-first principles defined in [UI/UX Design Decisions](../project/ui-ux-design.md)
-4. **Accessibility**: Implement accessibility patterns defined in [UI/UX Design Decisions](../project/ui-ux-design.md)
-5. **Performance**: Use minimal dependencies. Use efficient rendering.
-6. **Consistent Behavior**: Similar components behave predictably
-7. **Practical Simplicity**: Choose straightforward implementations
-
 ## Overview
 
-### CSS Strategy
-- **Component-Scoped**: CSS Modules for isolated styling
-- **Minimal Global Styles**: Avoid large shared stylesheets
-- **Simple Patterns**: Use easy styling approaches
+This guide provides technical patterns for UI components. These patterns focus on simplicity and maintainability. They work best for solo development projects.
 
-### Responsive Design
-For comprehensive responsive design strategy, see [UI/UX Design Decisions](../project/ui-ux-design.md).
+The guide covers three main areas:
 
-Implementation patterns:
-- **CSS Modules**: Use responsive patterns defined in design system
-- **Performance Focus**: Optimize for mobile speed
-- **Progressive Enhancement**: Follow design system guidelines
+- **Component Architecture**: Structure UI components.
+- **CSS Strategy**: Organize styles effectively.
+- **Implementation Standards**: Build accessible, performant components.
 
-## Component Organization
+For strategic UI/UX guidance, see [UI/UX Design Decisions](../project/ui-ux-design.md).
 
-### Implementation Patterns
-- **Consistent Behaviors**: Similar components behave the same
-- **Reusable Elements**: Common patterns like buttons and forms and cards
-- **State Variations**: Clear visual states like disabled and loading and error and success
-- **Flexible Sizing**: Components adapt to different content
+## Core Requirements
 
-## Design System Implementation
+Before building components, follow these requirements:
 
-### Color and Typography
-Follow the design system defined in [UI/UX Design Decisions](../project/ui-ux-design.md):
-- **Limited Palette**: Use defined color scheme
-- **Readable Typography**: Use approved fonts
-- **Consistent Spacing**: Follow 8px grid system
+- **Component-scoped CSS**: Keep styles within component boundaries.
+- **Single-purpose components**: Each component handles one task.
+- **Accessibility-first development**: Build for all users from the start.
 
-### Accessibility Implementation
-For accessibility strategy and requirements, see [UI/UX Design Decisions](../project/ui-ux-design.md).
+These requirements ensure components remain maintainable and scalable.
 
-Technical implementation patterns:
-- **Semantic HTML**: Use proper HTML elements
-- **ARIA Labels**: Follow accessibility code patterns
-- **Keyboard Navigation**: Implement proper focus management
-- **Error Messages**: Use accessible error patterns
+## Key Development Rules
 
-## EXAMPLES
+Follow these essential rules for component development:
 
-### Component CSS Example
+1. **Component-Scoped Styling**: Keep styles tied to individual components.
+2. **Single Responsibility**: Give each component one purpose.
+3. **Mobile-First**: Start with mobile layouts. Enhance for desktop.
+4. **Accessibility**: Build keyboard navigation and screen reader support.
+5. **Performance**: Use minimal dependencies and efficient rendering.
+6. **Consistent Behavior**: Make similar components behave predictably.
+7. **Practical Simplicity**: Choose simple implementations over complex ones.
+
+These rules create a cohesive development approach.
+
+## CSS Implementation Strategy
+
+The CSS strategy builds on the component-scoped approach. This strategy keeps styles organized and maintainable.
+
+### Component-Scoped CSS Approach
+
+Use these CSS approaches for component styling:
+
+- **CSS Modules**: Isolate styles to individual components.
+- **Minimal Global Styles**: Avoid large shared stylesheets.
+- **Simple Patterns**: Use straightforward styling approaches.
+
+This approach prevents style conflicts between components.
+
+### Responsive Design Implementation
+
+For responsive design strategy, see [UI/UX Design Decisions](../project/ui-ux-design.md).
+
+Use these responsive patterns in your components:
+
+- **CSS Modules**: Apply responsive patterns from the design system.
+- **Performance Focus**: Optimize for mobile speed first.
+- **Progressive Enhancement**: Follow established design system guidelines.
+
+Responsive design ensures components work across all devices.
+
+## Component Architecture Patterns
+
+Component architecture determines how you organize and structure UI elements. Good architecture makes components easier to maintain and reuse.
+
+### Core Component Patterns
+
+Use these patterns when building components:
+
+- **Consistent Behaviors**: Similar components behave the same way.
+- **Reusable Elements**: Create common patterns for buttons, forms, and cards.
+- **State Variations**: Define clear visual states for disabled, loading, error, and success.
+- **Flexible Sizing**: Make components adapt to different content sizes.
+
+These patterns create a predictable component system.
+
+## Design System Integration
+
+Design system integration ensures visual consistency. All components must follow the established design system patterns.
+
+### Colors and Typography Standards
+
+Follow the design system from [UI/UX Design Decisions](../project/ui-ux-design.md):
+
+- **Limited Color Palette**: Use the defined color scheme only.
+- **Readable Typography**: Apply approved fonts and font sizes.
+- **Consistent Spacing**: Follow the 8px grid system throughout.
+
+Consistent colors and typography create visual harmony.
+
+### Accessibility Implementation Standards
+
+For accessibility strategy, see [UI/UX Design Decisions](../project/ui-ux-design.md).
+
+Use these accessibility patterns in all components:
+
+- **Semantic HTML**: Use proper HTML elements for their intended purpose.
+- **ARIA Labels**: Apply accessibility code patterns correctly.
+- **Keyboard Navigation**: Implement proper focus management.
+- **Error Messages**: Use accessible error patterns consistently.
+
+Accessibility ensures all users can interact with your components.
+
+## Code Examples
+
+These examples demonstrate how to apply these patterns in practice. Use these examples as templates for your own components.
+
+### Component CSS Implementation
 
 ```tsx
 // ProductCard.tsx
@@ -109,6 +140,8 @@ export function ProductCard({ product }) {
   );
 }
 ```
+
+Here is the corresponding CSS module:
 
 ```css
 /* ProductCard.module.css */
@@ -135,7 +168,9 @@ export function ProductCard({ product }) {
 }
 ```
 
-### Form Example
+### Accessible Form Component
+
+Here is an accessible form implementation:
 
 ```tsx
 import React, { useState } from 'react';
@@ -184,3 +219,6 @@ export function ContactForm() {
     </form>
   );
 }
+```
+
+These examples show how to implement component-scoped CSS, accessibility patterns, and maintainable component structure.

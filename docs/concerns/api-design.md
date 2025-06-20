@@ -1,13 +1,8 @@
 ---
-title: API Design Documentation
-description: Centralized API strategy for Next.js routes, RESTful patterns, and Shopify integration
-version: 1.0.0
-status: active
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: critical
-readingTime: 18 minutes
+status: active
 tags: [api-design, nextjs, restful, shopify, error-handling, validation]
+id: 1005
 ---
 
 # API Design Documentation
@@ -15,30 +10,22 @@ tags: [api-design, nextjs, restful, shopify, error-handling, validation]
 *Centralized API strategy for the Specification Builder project.*
 
 <!-- AI_QUICK_REF
+Overview: API design strategy - Next.js routes, dual error handling (retry/fail-fast), Shopify GraphQL integration, schema validation
 Key Rules: Next.js API routes (line 14), RESTful CRUD (line 15), Fail-fast errors (line 25), Shopify GraphQL only (line 120)
 Avoid: Shopify REST API, Silent error handling, Missing HTTP status codes, Retrying 4xx errors
 -->
 
-<!-- AI_SUMMARY
-This document defines the API design strategy for the Specification Builder project with these key components:
-
-• Next.js API Route Strategy - RESTful patterns with resource-based URLs, consistent naming, and TypeScript integration for type safety
-• Dual Error Handling Approach - Thoughtful retry mechanisms for transient errors (5xx, timeouts, rate limits) combined with fail-fast principles for client errors (4xx, validation failures)
-• Shopify GraphQL Integration - Direct GraphQL API usage with rate limiting respect, exponential backoff retry logic, and webhook processing
-• Validation Strategy - Schema-based input validation, consistent response structures, and explicit error messages with early validation
-• Performance Guidelines - Lightweight route handlers, efficient database queries, appropriate caching, and optimized response sizes
-• External API Integration Patterns - Service layer separation, error mapping, timeout handling, and environment-based configuration
-
-The strategy emphasizes simplicity and consistency for solo development while maintaining comprehensive error resilience and external API integration capabilities.
--->
-
 ## Overview
 
-This document provides strategic guidance for API design decisions and patterns. Focus is on simplicity and consistency for a solo hobbyist project with RESTful principles.
+This document provides strategic guidance for API design decisions and patterns. Focus is on simplicity and consistency. Designed for a solo hobbyist project with RESTful principles.
+
+The following sections establish our core approach, then detail specific strategies for error handling and external integrations.
 
 ## API Strategy
 
 **Core Approach**: Next.js API routes with RESTful patterns and consistent error handling.
+
+Our API strategy builds on four foundational principles that work together to create a maintainable system:
 
 ### Route Philosophy
 - **Next.js API Routes**: Leverage built-in API routing for backend functionality
@@ -46,15 +33,21 @@ This document provides strategic guidance for API design decisions and patterns.
 - **Simple Structure**: Avoid complex API architectures for solo development
 - **Type Safety**: Integrate with TypeScript for request/response validation
 
+These principles guide how we structure our URLs and organize our endpoints:
+
 ### URL Patterns
 - **Resource-Based**: Structure URLs around data resources (specifications, users, etc.)
 - **Nested Resources**: Use logical nesting for related data relationships
 - **Admin Routes**: Separate admin functionality with dedicated route prefixes
 - **Consistent Naming**: Use clear, descriptive resource names
 
+With our foundational approach established, we turn to one of the most critical aspects of API design: how we handle errors and failures.
+
 ## 🔥 **HIGH**: Error Handling Strategy
 
-**Philosophy**: Comprehensive error resilience combining thoughtful retry mechanisms with fail-fast principles - surface errors appropriately based on error type and context.
+**Philosophy**: Comprehensive error resilience. This combines thoughtful retry mechanisms with fail-fast principles. We surface errors appropriately based on error type and context.
+
+Our error handling strategy operates on two complementary approaches. First, we identify when retries make sense:
 
 ### ⚠️ **CRITICAL**: Thoughtful Retry Mechanisms
 
@@ -67,11 +60,11 @@ This document provides strategic guidance for API design decisions and patterns.
 - **External API Transient Failures**: Shopify API temporary unavailability
 
 #### Retry Implementation Requirements:
-- **Reasonable Limits**: Maximum 3-5 retry attempts to avoid unnecessary load
-- **Exponential Backoff**: Increasing delays between retries (1s, 2s, 4s, 8s)
-- **Jitter**: Add random variation to prevent thundering herd effects
-- **Idempotency**: Ensure operations can be safely repeated without unintended side effects
-- **Circuit Breaker**: Stop retrying after consecutive failures to prevent cascade failures
+- **Reasonable Limits**: Maximum 3-5 retry attempts. This avoids unnecessary load.
+- **Exponential Backoff**: Increasing delays between retries (1s, 2s, 4s, 8s).
+- **Jitter**: Add random variation. This prevents thundering herd effects.
+- **Idempotency**: Ensure operations can be safely repeated. No unintended side effects.
+- **Circuit Breaker**: Stop retrying after consecutive failures. This prevents cascade failures.
 
 ```typescript
 interface RetryConfig {
@@ -82,6 +75,8 @@ interface RetryConfig {
   jitter: boolean;           // Add randomization
 }
 ```
+
+However, not all errors should be retried. We must also know when to fail-fast:
 
 ### 🔥 **HIGH**: Fail-Fast Principles
 
@@ -95,10 +90,12 @@ interface RetryConfig {
 - **Business Logic Violations**: Data consistency errors, constraint violations
 
 #### Fail-Fast Implementation:
-- **Immediate Response**: Surface errors immediately without delay
-- **Clear Error Messages**: Provide actionable feedback to users
-- **No Retry Attempts**: Do not waste resources on unrecoverable errors
-- **Error Context**: Include sufficient details for debugging and user guidance
+- **Immediate Response**: Surface errors immediately without delay.
+- **Clear Error Messages**: Provide actionable feedback to users.
+- **No Retry Attempts**: Do not waste resources on unrecoverable errors.
+- **Error Context**: Include sufficient details for debugging and user guidance.
+
+By combining these two approaches, we achieve comprehensive error handling:
 
 ### 🔥 **HIGH**: Combined Strategy Implementation
 
@@ -138,6 +135,8 @@ interface ApiError {
 }
 ```
 
+With error handling in place, we can ensure our API is resilient and provides a good user experience.
+
 ### Standard HTTP Status Codes
 - **200**: Successful operation with data
 - **201**: Resource created successfully
@@ -161,12 +160,6 @@ Next.js API Route Structure:
 - Request/response typing: TypeScript interfaces for req/res
 - Error handling: try/catch blocks with proper error responses
 
-Error Response Validation:
-- Standard HTTP status codes: 200, 201, 400, 401, 403, 404, 422, 429, 500, 502, 503, 504
-- Consistent error format: { error: string, code?: string, details?: unknown, retryable: boolean }
-- Retry/fail-fast classification: Client errors (4xx) fail-fast, server errors (5xx) retry with backoff
-- No silent failures: All errors returned to client with appropriate status
-
 Retry Mechanism Validation:
 - Exponential backoff implementation: baseDelay * (exponentialBase ^ attempt)
 - Maximum retry attempts: 3-5 attempts only
@@ -174,29 +167,10 @@ Retry Mechanism Validation:
 - Circuit breaker pattern: Stop retrying after consecutive failures
 - Jitter implementation: Random variation in retry delays
 
-Fail-Fast Pattern Validation:
-- Client errors (400-499): Immediate response, no retry attempts
-- Validation failures: Surface immediately with actionable messages
-- Authentication/authorization: Fail immediately on credentials/permissions
-- Business logic violations: No retry for constraint/consistency errors
-
-Request Validation Patterns:
-- Zod schema validation: Input validation with zodResolver
-- Method validation: Check for unsupported HTTP methods
-- Authentication checks: Verify user permissions before processing
-- Data sanitization: Clean and validate all input data
-
 Shopify Integration Compliance:
 - GraphQL usage: Must use GraphQL API, not REST
 - Rate limiting: Respect 40 calls/second limit with 429 retry handling
-- Error handling: Exponential backoff retry logic for 5xx errors
 - Webhook validation: Signature verification for webhook endpoints
-
-API Endpoint Validation:
-- RESTful patterns: /api/[resource]/[id] structure
-- Proper HTTP methods: GET for reads, POST for creates, etc.
-- Response consistency: Same response format across endpoints
-- Authentication middleware: Protect sensitive endpoints
 
 Critical API Anti-Patterns:
 1. Silent error handling (no error response to client)
@@ -217,15 +191,21 @@ Critical API Anti-Patterns:
 - **Error Handling**: Handle Shopify API errors with fail-fast approach. All errors must be surfaced, never swallowed.
 - **Rate Limiting**: Respect Shopify API limits with appropriate retry logic
 
+Our Shopify integration is critical to the success of our project. We must ensure we are using the correct API and handling errors properly.
+
 ### Integration Patterns
 - **Service Layer**: Separate external API logic from route handlers
 - **Error Mapping**: Convert external API errors to consistent internal format
 - **Timeout Handling**: Implement reasonable timeouts for external calls
 - **Environment Config**: Use environment variables for API credentials
 
+By following these integration patterns, we can ensure our external API integrations are robust and maintainable.
+
 ## Validation Strategy
 
 **Approach**: Schema-based validation with explicit error messages.
+
+Our validation strategy is designed to ensure data consistency and prevent errors.
 
 ### Input Validation
 - **Schema Validation**: Use validation libraries for request body validation
@@ -239,6 +219,8 @@ Critical API Anti-Patterns:
 - **Data Transformation**: Convert database results to API response format
 - **Null Handling**: Explicit handling of missing or null data
 
+By validating both input and output data, we can ensure our API is robust and provides accurate results.
+
 ## Performance Guidelines
 
 ### Route Optimization
@@ -246,6 +228,8 @@ Critical API Anti-Patterns:
 - **Database Efficiency**: Use efficient database queries and connection patterns
 - **Caching Strategy**: Implement caching where appropriate for read-heavy operations
 - **Response Size**: Return only necessary data in API responses
+
+Our performance guidelines are designed to ensure our API is fast and efficient.
 
 ## Shopify Integration
 
@@ -267,3 +251,5 @@ Critical API Anti-Patterns:
 - **Webhook Processing**: Real-time product updates via webhook endpoints
 - **Fallback Procedures**: Do not use fallbacks. Report errors to user.
 - **Data Validation**: Verify webhook signatures and sanitize incoming data
+
+By following these guidelines and patterns, we can ensure our Shopify integration is robust and maintainable.

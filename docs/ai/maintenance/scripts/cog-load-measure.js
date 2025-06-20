@@ -134,6 +134,169 @@ class CognitiveLoadAnalyzer {
     };
   }
 
+  /**
+   * Extract code blocks from markdown text
+   */
+  extractCodeBlocks(text) {
+    const codeBlockRegex = /```[\s\S]*?```/g;
+    const codeBlocks = text.match(codeBlockRegex) || [];
+    
+    return codeBlocks.map(block => {
+      const lines = block.split('\n');
+      const firstLine = lines[0];
+      const language = firstLine.replace('```', '').trim();
+      const content = lines.slice(1, -1).join('\n');
+      
+      return {
+        fullBlock: block,
+        language: language,
+        content: content,
+        length: block.length
+      };
+    });
+  }
+
+  /**
+   * Analyze code block quality for exclusion eligibility
+   */
+  analyzeCodeBlockQuality(codeBlocks, fullText) {
+    let qualifyingCodeLength = 0;
+    let totalCodeLength = 0;
+    
+    codeBlocks.forEach(block => {
+      totalCodeLength += block.length;
+      
+      // Quality criteria for code exclusion
+      const hasLanguageSpec = block.language.length > 0;
+      const isNotOrphaned = this.hasExplanatoryContext(block.fullBlock, fullText);
+      const isRelevantSize = block.content.trim().length > 20; // Minimum meaningful code
+      
+      if (hasLanguageSpec && isNotOrphaned && isRelevantSize) {
+        qualifyingCodeLength += block.length;
+      }
+    });
+    
+    return {
+      totalCodeLength,
+      qualifyingCodeLength,
+      qualifyingBlocks: codeBlocks.filter(block => 
+        block.language.length > 0 && 
+        this.hasExplanatoryContext(block.fullBlock, fullText) &&
+        block.content.trim().length > 20
+      )
+    };
+  }
+
+  /**
+   * Check if code block has explanatory context (not orphaned)
+   */
+  hasExplanatoryContext(codeBlock, fullText) {
+    const blockIndex = fullText.indexOf(codeBlock);
+    if (blockIndex === -1) return false;
+    
+    // Check for explanatory text before and after the code block
+    const beforeText = fullText.substring(Math.max(0, blockIndex - 200), blockIndex).trim();
+    const afterText = fullText.substring(blockIndex + codeBlock.length, 
+      Math.min(fullText.length, blockIndex + codeBlock.length + 200)).trim();
+    
+    // Look for explanatory indicators
+    const explanatoryWords = /\b(example|implementation|shows?|demonstrates?|following|above|below|here|this)\b/i;
+    
+    return explanatoryWords.test(beforeText) || explanatoryWords.test(afterText);
+  }
+
+  /**
+   * Determine if document qualifies for smart code exclusion
+   */
+  qualifiesForCodeExclusion(filePath, fullText, codeAnalysis) {
+    // Check if it's a technical document
+    const isTechnicalDoc = this.isTechnicalDocument(filePath, fullText);
+    if (!isTechnicalDoc) return false;
+    
+    // Check code proportion (≤40% of content)
+    const codeRatio = codeAnalysis.qualifyingCodeLength / fullText.length;
+    if (codeRatio > 0.4) return false;
+    
+    // Must have some qualifying code blocks
+    if (codeAnalysis.qualifyingCodeLength === 0) return false;
+    
+    return true;
+  }
+
+  /**
+   * Check if document is technical documentation
+   */
+  isTechnicalDocument(filePath, text) {
+    // Check file path patterns
+    const technicalPaths = ['/docs/concerns/', '/docs/technical/', '/docs/api/', '/docs/components/'];
+    const pathMatches = technicalPaths.some(pattern => filePath.includes(pattern));
+    
+    // Check for technical tags in frontmatter
+    const frontmatterMatch = text.match(/^---\s*\n([\s\S]*?)\n---/);
+    if (frontmatterMatch) {
+      const frontmatter = frontmatterMatch[1];
+      const technicalTags = /tags:\s*\[.*?\b(components?|patterns?|api|technical|css|javascript|react|vue|angular)\b.*?\]/i;
+      if (technicalTags.test(frontmatter)) return true;
+    }
+    
+    return pathMatches;
+  }
+
+  /**
+   * Calculate cognitive load with smart code exclusion
+   */
+  calculateCogLoadWithSmartExclusion(text, filePath) {
+    // Extract and analyze code blocks
+    const codeBlocks = this.extractCodeBlocks(text);
+    const codeAnalysis = this.analyzeCodeBlockQuality(codeBlocks, text);
+    
+    // Calculate full score (includes all content)
+    const fullScore = this.calculateCogLoad(text);
+    
+    // Check if document qualifies for code exclusion
+    const qualifiesForExclusion = this.qualifiesForCodeExclusion(filePath, text, codeAnalysis);
+    
+    if (!qualifiesForExclusion) {
+      // Use full score as primary
+      return {
+        primary: fullScore,
+        full: fullScore,
+        codeExcluded: false,
+        codeStats: {
+          totalBlocks: codeBlocks.length,
+          totalCodeLength: codeAnalysis.totalCodeLength,
+          qualifyingCodeLength: codeAnalysis.qualifyingCodeLength,
+          codeRatio: codeAnalysis.totalCodeLength / text.length
+        }
+      };
+    }
+    
+    // Remove qualifying code blocks for text-only score
+    let textOnlyContent = text;
+    codeAnalysis.qualifyingBlocks.forEach(block => {
+      textOnlyContent = textOnlyContent.replace(block.fullBlock, '');
+    });
+    
+    // Clean up extra whitespace
+    textOnlyContent = textOnlyContent.replace(/\n\s*\n\s*\n/g, '\n\n').trim();
+    
+    // Calculate text-only score
+    const textOnlyScore = this.calculateCogLoad(textOnlyContent);
+    
+    return {
+      primary: textOnlyScore,
+      full: fullScore,
+      codeExcluded: true,
+      codeStats: {
+        totalBlocks: codeBlocks.length,
+        totalCodeLength: codeAnalysis.totalCodeLength,
+        qualifyingCodeLength: codeAnalysis.qualifyingCodeLength,
+        codeRatio: codeAnalysis.totalCodeLength / text.length,
+        excludedBlocks: codeAnalysis.qualifyingBlocks.length
+      }
+    };
+  }
+
   // Helper methods for text analysis
   countSentences(text) {
     // Count sentences by periods, exclamation marks, and question marks
@@ -304,7 +467,7 @@ class CognitiveLoadAnalyzer {
       }
 
       const content = fs.readFileSync(filePath, 'utf8');
-      const result = this.calculateCogLoad(content);
+      const result = this.calculateCogLoadWithSmartExclusion(content, filePath);
       
       return {
         file: filePath,
@@ -351,18 +514,19 @@ class CognitiveLoadAnalyzer {
 
       // Analyze each document
       documents.forEach((doc, index) => {
-        process.stdout.write(`\r📊 Progress: ${index + 1}/${documents.length} - ${doc.title}`);
+        const displayTitle = (doc.title || doc.id || 'Unknown').substring(0, 30);
+        console.log(`📊 [${index + 1}/${documents.length}] Analyzing: ${displayTitle}...`);
         
         const result = this.analyzeFile(doc.path);
         results.push(result);
 
         if (!result.error) {
-          totalCogLoad += result.cogLoad;
+          totalCogLoad += result.primary.cogLoad;
           successCount++;
         }
       });
 
-      console.log('\n'); // New line after progress
+      console.log(''); // New line after progress
 
       // Generate summary report
       this.generateSummaryReport(results, totalCogLoad, successCount);
@@ -392,19 +556,19 @@ class CognitiveLoadAnalyzer {
     console.log('');
 
     // Sort results by cognitive load (highest first)
-    const validResults = results.filter(r => !r.error).sort((a, b) => b.cogLoad - a.cogLoad);
+    const validResults = results.filter(r => !r.error).sort((a, b) => b.primary.cogLoad - a.primary.cogLoad);
 
     console.log(`🔴 Highest Cognitive Load Documents:`);
     validResults.slice(0, 5).forEach((result, index) => {
       const filename = path.basename(result.file);
-      console.log(`   ${index + 1}. ${filename}: ${result.cogLoad}/100`);
+      console.log(`   ${index + 1}. ${filename}: ${result.primary.cogLoad}/100`);
     });
     console.log('');
 
     console.log(`🟢 Lowest Cognitive Load Documents:`);
     validResults.slice(-5).reverse().forEach((result, index) => {
       const filename = path.basename(result.file);
-      console.log(`   ${index + 1}. ${filename}: ${result.cogLoad}/100`);
+      console.log(`   ${index + 1}. ${filename}: ${result.primary.cogLoad}/100`);
     });
     console.log('');
 
@@ -420,14 +584,97 @@ class CognitiveLoadAnalyzer {
 
     // Component breakdown summary
     if (successCount > 0) {
-      const avgReadability = validResults.reduce((sum, r) => sum + r.components.readability, 0) / successCount;
-      const avgLexical = validResults.reduce((sum, r) => sum + r.components.lexical, 0) / successCount;
-      const avgCoherence = validResults.reduce((sum, r) => sum + r.components.coherence, 0) / successCount;
+      const avgReadability = validResults.reduce((sum, r) => sum + r.primary.components.readability, 0) / successCount;
+      const avgLexical = validResults.reduce((sum, r) => sum + r.primary.components.lexical, 0) / successCount;
+      const avgCoherence = validResults.reduce((sum, r) => sum + r.primary.components.coherence, 0) / successCount;
 
       console.log(`📚 Average Component Breakdown:`);
       console.log(`   Readability:  ${Math.round(avgReadability * 100) / 100}/100`);
       console.log(`   Lexical:      ${Math.round(avgLexical * 100) / 100}/100`);
       console.log(`   Coherence:    ${Math.round(avgCoherence * 100) / 100}/100`);
+    }
+  }
+
+  /**
+   * Update document graph with current CLS values
+   */
+  updateDocumentGraphCLS() {
+    try {
+      const graphPath = 'docs/document-graph.json';
+      
+      if (!fs.existsSync(graphPath)) {
+        throw new Error(`Document graph not found: ${graphPath}`);
+      }
+
+      console.log('🔄 Updating document graph with current CLS values...');
+      
+      const graph = JSON.parse(fs.readFileSync(graphPath, 'utf8'));
+      const documents = graph.nodes || [];
+      
+      if (documents.length === 0) {
+        throw new Error('No documents found in document graph');
+      }
+
+      let updatedCount = 0;
+      let errorCount = 0;
+
+      // Process each document
+      documents.forEach((doc, index) => {
+        process.stdout.write(`\r📊 Processing: ${index + 1}/${documents.length} - ${doc.title || doc.path}`);
+        
+        try {
+          if (fs.existsSync(doc.path)) {
+            const content = fs.readFileSync(doc.path, 'utf8');
+            const result = this.calculateCogLoadWithSmartExclusion(content, doc.path);
+            
+            // Update the document node with current CLS values
+            const oldCLS = doc.cognitiveLoadScore || null;
+            doc.cognitiveLoadScore = result.primary.cogLoad;
+            doc.cognitiveLoadComponents = result.primary.components;
+            doc.cognitiveLoadFull = result.full.cogLoad;
+            doc.codeExcluded = result.codeExcluded;
+            doc.lastCLSUpdate = new Date().toISOString();
+            
+            updatedCount++;
+            
+            // Log significant changes
+            if (oldCLS && Math.abs(oldCLS - result.primary.cogLoad) > 2) {
+              console.log(`\n   📈 ${doc.title}: ${oldCLS} → ${result.primary.cogLoad} CLS (${result.primary.cogLoad > oldCLS ? '+' : ''}${Math.round((result.primary.cogLoad - oldCLS) * 100) / 100})`);
+            }
+          } else {
+            console.log(`\n   ⚠️  File not found: ${doc.path}`);
+            errorCount++;
+          }
+        } catch (error) {
+          console.log(`\n   ❌ Error processing ${doc.path}: ${error.message}`);
+          errorCount++;
+        }
+      });
+
+      console.log('\n'); // New line after progress
+
+      // Write updated graph back to file
+      fs.writeFileSync(graphPath, JSON.stringify(graph, null, 2), 'utf8');
+
+      // Summary
+      console.log(`✅ Document graph updated successfully!`);
+      console.log(`📊 Updated: ${updatedCount} documents`);
+      if (errorCount > 0) {
+        console.log(`⚠️  Errors: ${errorCount} documents`);
+      }
+      console.log(`📁 Graph saved: ${graphPath}`);
+      
+      // Show high CLS count
+      const highClsCount = documents.filter(doc => doc.cognitiveLoadScore > 58).length;
+      if (highClsCount > 0) {
+        console.log(`🔴 High CLS (>58): ${highClsCount} documents need optimization`);
+      } else {
+        console.log(`🎉 All documents are within optimal CLS range (≤58)`);
+      }
+
+    } catch (error) {
+      console.error(`❌ Error updating document graph: ${error.message}`);
+      process.exit(1);
     }
   }
 
@@ -446,11 +693,13 @@ Usage:
 Options:
   --file <path>        Measure cognitive load for a specific file
   --all               Measure cognitive load for all documents in the graph
+  --update-graph      Update document graph with current CLS values
   --help, -h          Show this help message
 
 Examples:
   cmd /c node docs/ai/maintenance/scripts/cog-load-measure.js --file docs/concerns/form-management.md
-  cmd /c node docs/ai/maintenance/scripts/cog-load-measure.js --all`);
+  cmd /c node docs/ai/maintenance/scripts/cog-load-measure.js --all
+  cmd /c node docs/ai/maintenance/scripts/cog-load-measure.js --update-graph`);
       return;
     }
 
@@ -468,23 +717,62 @@ Examples:
 
       console.log(`📊 Cognitive Load Analysis: ${result.file}`);
       console.log(`==========================================`);
-      console.log(`🧠 Overall cog-load: ${result.cogLoad}/100`);
+      
+      // Display primary score
+      console.log(`🧠 Overall cog-load: ${result.primary.cogLoad}/100`);
+      
+      // Display code exclusion info if applicable
+      if (result.codeExcluded) {
+        console.log(`📋 Code exclusion applied - excluded ${result.codeStats.excludedBlocks} code blocks (${Math.round(result.codeStats.codeRatio * 100)}% of content)`);
+        console.log(`🔍 Full score (including code): ${result.full.cogLoad}/100`);
+      }
+      
       console.log(``);
       console.log(`📚 Component Breakdown:`);
-      console.log(`   Readability:     ${result.components.readability}/100 (weight: 40%)`);
-      console.log(`   Lexical:         ${result.components.lexical}/100 (weight: 30%)`);
-      console.log(`   Coherence:       ${result.components.coherence}/100 (weight: 30%)`);
+      console.log(`   Readability:     ${result.primary.components.readability}/100 (weight: 40%)`);
+      console.log(`   Lexical:         ${result.primary.components.lexical}/100 (weight: 30%)`);
+      console.log(`   Coherence:       ${result.primary.components.coherence}/100 (weight: 30%)`);
+      
+      // Show full component breakdown if code was excluded
+      if (result.codeExcluded) {
+        console.log(``);
+        console.log(`📚 Full Component Breakdown (including code):`);
+        console.log(`   Readability:     ${result.full.components.readability}/100 (weight: 40%)`);
+        console.log(`   Lexical:         ${result.full.components.lexical}/100 (weight: 30%)`);
+        console.log(`   Coherence:       ${result.full.components.coherence}/100 (weight: 30%)`);
+      }
+      
       console.log(``);
       console.log(`📈 Metadata:`);
       console.log(`   Word count:      ${result.metadata.wordCount}`);
       console.log(`   Sentence count:  ${result.metadata.sentenceCount}`);
       console.log(`   File size:       ${result.metadata.fileSize} characters`);
+      
+      // Display code statistics if present
+      if (result.codeStats && result.codeStats.totalBlocks > 0) {
+        console.log(``);
+        console.log(`💻 Code Analysis:`);
+        console.log(`   Total code blocks: ${result.codeStats.totalBlocks}`);
+        console.log(`   Code ratio:        ${Math.round(result.codeStats.codeRatio * 100)}% of document`);
+        if (result.codeExcluded) {
+          console.log(`   Excluded blocks:   ${result.codeStats.excludedBlocks} (qualified for exclusion)`);
+        } else if (result.codeStats.totalBlocks > 0) {
+          console.log(`   Exclusion status:  Not qualified (${result.codeStats.codeRatio > 0.4 ? 'code >40% of content' : 'other criteria not met'})`);
+        }
+      }
+      
       return;
     }
 
     if (args.includes('--all')) {
       console.log('🔄 Analyzing all documents in graph...');
       this.analyzeAllDocuments();
+      return;
+    }
+
+    if (args.includes('--update-graph')) {
+      console.log('🔄 Updating document graph with current CLS values...');
+      this.updateDocumentGraphCLS();
       return;
     }
 

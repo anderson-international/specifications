@@ -1,13 +1,8 @@
 ---
-title: Preventing Common Lint Issues
-description: Comprehensive guide to preventing and fixing common ESLint, TypeScript, and React linting errors
-version: 1.0.0
-status: active
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: critical
-readingTime: 12 minutes
+status: active
 tags: [eslint, typescript, react, code-quality, debugging, best-practices]
+id: 1014
 ---
 
 # Preventing Common Lint Issues
@@ -15,21 +10,9 @@ tags: [eslint, typescript, react, code-quality, debugging, best-practices]
 This guide helps prevent common linting errors when writing code for this project.
 
 <!-- AI_QUICK_REF
+Overview: This document provides comprehensive guidance for preventing and fixing the most common linting errors in the project
 Key Rules: Underscore prefix for unused vars (line 26), Hook dependencies complete (line 104), Next/Image not img (line 127), TypeScript return types (line 183)
 Avoid: 'any' type usage, Missing hook dependencies, HTML img elements, Empty destructuring without underscore
--->
-
-<!-- AI_SUMMARY
-This document provides comprehensive guidance for preventing and fixing the most common linting errors in the project:
-
-• TypeScript Issues - Unused variables/imports handling, avoiding 'any' type, empty object patterns, and promise misuse in synchronous contexts
-• React Issues - Hook dependency arrays, Next.js Image component usage, component props validation, and proper key usage in lists
-• Prevention Strategies - IDE configuration, typing practices, component best practices, and pre-commit tools setup
-• Error Frequency Ranking - Prioritized list from most common (unused variables) to least common (misused promises) for targeted prevention
-• Code Examples - Before/after examples for each issue type with specific solutions and best practices
-• Tool Integration - ESLint configuration, TypeScript plugins, and automated checking with Husky pre-commit hooks
-
-The guide emphasizes proactive prevention through proper typing, component design, and tooling configuration to maintain consistent code quality across the project.
 -->
 
 ## Lint Issues by Frequency

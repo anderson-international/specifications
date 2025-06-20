@@ -1,13 +1,8 @@
 ---
-title: Authentication Documentation
-description: Authentication strategy with magic link email auth and role-based access control
-version: 1.0.0
-status: active
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: required
-readingTime: 8 minutes
+status: active
 tags: [authentication, magic-link, role-based-access, nextauth, security]
+id: 1006
 ---
 
 # Authentication Documentation
@@ -15,26 +10,14 @@ tags: [authentication, magic-link, role-based-access, nextauth, security]
 *Authentication strategy for the Specification Builder project.*
 
 <!-- AI_QUICK_REF
+Overview: The strategy emphasizes simplicity for solo development while maintaining production-ready security through email-bas...
 Key Rules: Magic link auth (line 22), Role-based access (line 65), DevAuth for dev only (line 40), Fail-fast auth failures (line 87)
 Avoid: Password storage, Complex permission matrices, Development shortcuts in production, Silent auth failures
 -->
 
-<!-- AI_SUMMARY
-This document defines the authentication strategy for the Specification Builder project with these key components:
-
-• Magic Link Authentication - Email-based authentication with no password storage, secure session management, and database integration
-• Role-Based Access Control - Simple database-driven role system with route protection, component access control, and admin override capabilities
-• Development vs Production Strategy - User selection dropdown for development testing, magic link authentication for production deployment
-• Error Handling Philosophy - Fail-fast approach with explicit error messages, no silent failures, and appropriate redirect strategies
-• Integration Patterns - React Context global state, custom hooks, middleware protection, and type-safe authentication objects
-• Security Considerations - Secure token generation, session timeout management, and database security patterns
-
-The strategy emphasizes simplicity for solo development while maintaining production-ready security through email-based authentication and clear role-based access control.
--->
-
 > **📋 Quick Navigation:**
 > - **Implementation Context**: [Technical Stack](../project/technical-stack.md) | [Feature Requirements](../project/feature-requirements.md)
-> - **Development Standards**: [Code Quality Standards](../guides/code-quality-standards.md)
+> - **Development Standards**: [Code Quality Standards](../guides/code-rules-quality.md)
 > - **Technical Guides**: [React Development Patterns](../guides/react-patterns.md)
 > - **Project Status**: [Implementation Plan](../../plans/plan-project.md)
 > - **Related Patterns**: [API Design](api-design.md) | [Form Management](form-management.md)

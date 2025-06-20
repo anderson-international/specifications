@@ -1,33 +1,16 @@
 ---
-title: Technical Stack Decisions
-description: Framework choices, implementation strategies, and deployment technology decisions
-version: 1.0.0
-status: active
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: critical
-readingTime: 10 minutes
+status: active
 tags: [technical-stack, nextjs, prisma, css-modules, deployment, architecture]
+id: 1018
 ---
 
 # Technical Stack Decisions
 
 <!-- AI_QUICK_REF
+Overview: This document establishes the technical stack decisions for the Specification Builder project with these key components
 Key Rules: Next.js App Router architecture (line 8), CSS Modules mobile-first (line 49), Prisma type-safe patterns (line 62)
 Avoid: Mixing App/Pages Router, Using client when server suffices, Ignoring mobile-first strategy
--->
-
-<!-- AI_SUMMARY
-This document establishes the technical stack decisions for the Specification Builder project with these key components:
-
-• Next.js 15 App Router Framework - React-based with server-side rendering, mobile optimization, built-in API routes, and clear server/client component boundaries
-• CSS Modules Styling - Built-in Next.js support with automatic scoping, global theme variables, and mobile-first responsive design patterns
-• Prisma Database ORM - Type-safe database access with auto-generated types, migration system, and excellent developer experience
-• React Hook Form + Zod Validation - Multi-step wizard forms with controlled progression, schema validation, and draft saving capabilities
-• RESTful API Design - Next.js App Router endpoints for specifications, enum management, authentication, and admin operations
-• Netlify Deployment - Platform-as-a-service with Windsurf IDE integration, environment variables, and preview environments
-
-The stack prioritizes type safety, developer experience, and mobile performance while maintaining simplicity suitable for solo hobbyist development.
 -->
 
 > **📋 For comprehensive UI/UX strategy and styling philosophy, see [UI/UX Design Decisions](ui-ux-design.md).**

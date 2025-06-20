@@ -1,13 +1,8 @@
 ---
-title: React Development Patterns
-description: Comprehensive React patterns, performance optimization, and infinite loop prevention
-version: 2.1.0
-status: stable
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: required
-readingTime: 20 minutes
-tags: [react, hooks, optimization, performance, app-router, next.js]  
+status: stable
+tags: [react, hooks, optimization, performance, app-router, next.js]
+id: 1013
 ---
 
 # React Development Patterns
@@ -15,36 +10,15 @@ tags: [react, hooks, optimization, performance, app-router, next.js]
 *Comprehensive React patterns, performance optimization, and infinite loop prevention for the Specification Builder.*
 
 <!-- AI_QUICK_REF
+Overview: Critical anti-patterns to avoid
 Key Rules: useCallback for event handlers (line 31), useMemo for derived state (line 48), React.memo for components (line 69), Server vs Client patterns (line 126)
 Avoid: Object/array in dependency arrays, Dual data fetching, Functions in render without useCallback, Missing React.memo
--->
-
-<!-- AI_SUMMARY
-This document defines critical React development patterns required for performance and stability. Key points:
-
-• ALL event handlers must use useCallback with properly defined dependencies
-• ALL derived state must use useMemo with appropriate dependency arrays
-• React.memo must be applied to pure components that render frequently
-• useEffect dependency arrays must never contain unstable references
-• Next.js 15 App Router uses 'use client' directive for client components
-• Server Components cannot use hooks, interactive features, or browser APIs
-• Client Components should be leaf nodes in the component tree when possible
-• Form components must follow React Hook Form patterns with proper memoization
-• Context providers should be designed to prevent unnecessary re-renders
-• State management should favor local state unless widely shared
-
-Critical anti-patterns to avoid:
-• Creating objects/arrays directly in dependency arrays or JSX props
-• Defining functions inside render without useCallback
-• Fetching the same data in both a component and its context
-• Using async functions directly in useEffect without cleanup
-• Nested conditional hooks that can change between renders
 -->
 
 
 > **📋 Quick Navigation:**
 > - **Essential Context**: 
->   - [🔥 Code Quality Standards](code-quality-standards.md "Context: TypeScript return types and ESLint rules") 
+>   - [🔥 Code Quality Standards](code-rules-quality.md "Context: TypeScript return types and ESLint rules") 
 >   - [Database-Form Integration](database-form-integration.md "Context: React Hook Form patterns and database integration")
 > - **UI Implementation**: 
 >   - [Form Management](../concerns/form-management.md "Context: Form state management and validation patterns")
@@ -56,7 +30,7 @@ Critical anti-patterns to avoid:
 >   - [Prevent React Effect Loops](../pitfalls/prevent-react-effect-loops.md "Context: Debugging infinite loops in useEffect")
 >   - [Authentication](../concerns/authentication.md "Context: User authentication in React components")
 
-> **📋 This document consolidates React-specific guidance from multiple sources. For component organization and TypeScript standards, see [Code Quality Standards](code-quality-standards.md).**
+> **📋 This document consolidates React-specific guidance from multiple sources. For component organization and TypeScript standards, see [Code Quality Standards](code-rules-quality.md).**
 
 ## Executive Summary
 
@@ -278,39 +252,28 @@ export default function ValidatedForm(): JSX.Element {
 ### 🔥 **HIGH**: AI Validation for Performance Patterns
 
 <!-- AI_VALIDATION
-React Performance Patterns to Validate:
+React Performance Patterns:
 
-useCallback Usage:
-- All event handlers wrapped in useCallback: /const\s+\w+\s*=\s*useCallback\(/
-- Functions passed as props memoized: Check for function props without useCallback
-- State setters in dependencies: useCallback dependencies include only primitives/memoized functions
+useCallback Requirements:
+- Event handlers: /const\s+handle\w+\s*=\s*useCallback\(/
+- Function props: Check for function props without useCallback
+- Stable dependencies: Only primitives/memoized functions in deps
 
-useMemo Usage:
-- Derived state computed with useMemo: /const\s+\w+\s*=\s*useMemo\(/
-- Complex computations memoized: Object/array computations wrapped in useMemo
-- Filter/map operations on large datasets use useMemo
+useMemo Requirements:
+- Derived state: /const\s+\w+\s*=\s*useMemo\(/
+- Complex computations: Object/array operations memoized
+- Large dataset operations: filter/map use useMemo
 
-React.memo Usage:
-- Components with props wrapped in React.memo: /export.*React\.memo\(/
-- Prop comparison functions for complex props: memo with second parameter
+React.memo Requirements:
+- Component exports: /export.*React\.memo\(/
+- Props comparison: Custom comparator for complex props
 
-useEffect Dependency Validation:
-- No functions in dependency arrays without useCallback: Check dependencies are stable
-- No object/array literals in dependencies: Objects should be memoized
-- Empty dependency arrays only for mount/unmount effects
-
-Anti-Patterns to Detect:
-- Functions defined inside render without useCallback
-- Object/array literals in JSX props: {items: []} or {config: {}}
-- Missing dependencies in useEffect/useMemo/useCallback
-- useEffect for derived state instead of useMemo
-
-Critical Performance Violations:
+Critical Performance Anti-Patterns:
 1. Functions passed as props without useCallback
 2. Derived state not using useMemo  
 3. Components receiving new objects every render
-4. Missing React.memo on components with stable props
-5. useEffect dependency arrays with unstable references
+4. useEffect dependency arrays with unstable references
+5. Missing React.memo on components with stable props
 -->
 
 ## ⚠️ **CRITICAL**: Specific Anti-Patterns to Avoid

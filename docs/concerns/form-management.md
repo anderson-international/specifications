@@ -1,13 +1,8 @@
 ---
-title: Form Management Guide
-description: Simple guide for form patterns and decisions
-version: 1.2.0
-status: stable
-lastUpdated: 2025-06-17
-author: Development Team
 complianceLevel: required
-readingTime: 10 minutes
-tags: [forms, validation, react, zod]  
+status: stable
+tags: [forms, validation, react, zod]
+id: 1008
 ---
 
 # Form Management Guide
@@ -15,6 +10,7 @@ tags: [forms, validation, react, zod]
 *Simple guide for form patterns and decisions.*
 
 <!-- AI_QUICK_REF
+Overview: This guide defines our form approach
 Key Rules: React Hook Form, Zod validation, Multi-step wizard patterns
 Avoid: Uncontrolled inputs, Missing validation, Direct submission
 -->
@@ -281,23 +277,22 @@ export default function ProductForm(): JSX.Element {
 - Consider field-level registration for large forms
 
 ## AI_VALIDATION
-Form patterns to check:
+Essential form patterns:
 
 **React Hook Form:**
-- Use useForm hook: `/const.*=.*useForm</`
-- Use handleSubmit: `/handleSubmit\(/`
-- Register fields: `/\{\.\.\.register\(/`
-- Handle errors: `/formState\.errors/`
+- Hook usage: /const.*=.*useForm</
+- Submit handling: /handleSubmit\(/
+- Field registration: /\{\.\.\.register\(/
+- Error handling: /formState\.errors/
 
 **Zod Schema:**
-- Separate schema files: `*.schema.ts`
-- Use resolver: `/zodResolver\(/`
-- Type inference: `/z\.infer<typeof.*Schema>/`
-- Export pattern: `/export.*=.*z\.object\(/`
+- Schema files: *.schema.ts
+- Resolver: /zodResolver\(/
+- Type inference: /z\.infer<typeof.*Schema>/
 
-**Avoid These:**
+**Critical Anti-Patterns:**
 1. Forms without schema validation
-2. Client-only validation
+2. Client-only validation  
 3. Missing error handling
 4. External state management
 5. Missing loading states
