@@ -34,6 +34,8 @@ class DocsIngestionEngine {
 
     console.log(`📄 Loading workflow: ${workflowName}`);
     
+    const loadedFiles = [];
+    
     for (const docId of workflowConfig.documents) {
       const node = this.graph.nodes.find(n => n.id === docId);
       
@@ -45,16 +47,22 @@ class DocsIngestionEngine {
       const filePath = path.resolve(node.path);
       
       try {
-        console.log(`📄 Loading: ${node.title} (${node.path})`);
+        console.log(`📄 Loading: ${node.path}`);
         
         const content = fs.readFileSync(filePath, 'utf8');
         
-        console.log(`✅ Loaded: ${node.title} (${content.length} chars)`);
+        console.log(`✅ Loaded: ${node.path} (${content.length} chars)`);
+        
+        // Track loaded file
+        loadedFiles.push({
+          path: node.path,
+          size: content.length
+        });
         
         // Output content for AI ingestion
-        console.log(`\n=== DOCUMENT CONTENT: ${node.title} ===`);
+        console.log(`\n=== DOCUMENT CONTENT: ${node.path} ===`);
         console.log(content);
-        console.log(`=== END DOCUMENT: ${node.title} ===\n`);
+        console.log(`=== END DOCUMENT: ${node.path} ===\n`);
         
       } catch (error) {
         console.error(`❌ Failed to load ${filePath}: ${error.message}`);
@@ -62,7 +70,12 @@ class DocsIngestionEngine {
       }
     }
 
+    // Enhanced success message with file enumeration
     console.log(`\n🎉 Workflow '${workflowName}' completed successfully.`);
+    console.log(`📊 Loaded ${loadedFiles.length} document${loadedFiles.length !== 1 ? 's' : ''}:`);
+    loadedFiles.forEach((file, index) => {
+      console.log(`   ${index + 1}. ${file.path} (${file.size} chars)`);
+    });
   }
 
   /**

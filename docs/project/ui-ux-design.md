@@ -16,9 +16,9 @@ Avoid: Desktop-first decisions, Deviating from dark theme, Breaking wizard navig
 -->
 
 > **📋 Quick Navigation:**
-> - **Implementation Guides**: [Database-Form Integration](../guides/database-form-integration.md) | [React Development Patterns](../guides/react-patterns.md)
+> - **Implementation Guides**: [Database-Form Integration](../guides/database-form-integration.md) | [React Patterns](../guides/react-patterns.md)
 > - **Design Context**: [Form Management](../concerns/form-management.md) | [UI/UX Patterns](../concerns/ui-ux-patterns.md)
-> - **Project Setup**: [Technical Stack](technical-stack.md) | [Code Quality Standards](../guides/code-rules-quality.md)
+> - **Project Setup**: [Technical Stack](technical-stack.md) | [Code Rules Quality](../guides/code-rules-quality.md)
 > - **Requirements**: [Feature Requirements](feature-requirements.md) | [Business Context](business-context.md)
 > - **Project Status**: [Implementation Plan](../../plans/plan-project.md)
 

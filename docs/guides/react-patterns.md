@@ -5,7 +5,7 @@ tags: [react, hooks, optimization, performance, app-router, next.js]
 id: 1013
 ---
 
-# React Development Patterns
+# React Patterns
 
 *Comprehensive React patterns, performance optimization, and infinite loop prevention for the Specification Builder.*
 
@@ -18,7 +18,7 @@ Avoid: Object/array in dependency arrays, Dual data fetching, Functions in rende
 
 > **📋 Quick Navigation:**
 > - **Essential Context**: 
->   - [🔥 Code Quality Standards](code-rules-quality.md "Context: TypeScript return types and ESLint rules") 
+>   - [🔥 Code Rules Quality](code-rules-quality.md "Context: TypeScript return types and ESLint rules") 
 >   - [Database-Form Integration](database-form-integration.md "Context: React Hook Form patterns and database integration")
 > - **UI Implementation**: 
 >   - [Form Management](../concerns/form-management.md "Context: Form state management and validation patterns")
@@ -30,7 +30,7 @@ Avoid: Object/array in dependency arrays, Dual data fetching, Functions in rende
 >   - [Prevent React Effect Loops](../pitfalls/prevent-react-effect-loops.md "Context: Debugging infinite loops in useEffect")
 >   - [Authentication](../concerns/authentication.md "Context: User authentication in React components")
 
-> **📋 This document consolidates React-specific guidance from multiple sources. For component organization and TypeScript standards, see [Code Quality Standards](code-rules-quality.md).**
+> **📋 This document consolidates React-specific guidance from multiple sources. For component organization and TypeScript standards, see [Code Rules Quality](code-rules-quality.md).**
 
 ## Executive Summary
 

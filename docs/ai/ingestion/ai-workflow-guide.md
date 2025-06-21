@@ -20,8 +20,8 @@ Avoid: Skipping priority order, ignoring file type detection, and missing cross-
 
 *Essential documents for all code reviews*
 
-1. **[AI Coding Handbook](../../guides/code-rules-critical.md)** - Core coding standards and validation patterns
-2. **[AI Validation Registry](../../guides/code-validation-patterns.md)** - Validation patterns for all document types
+1. **[Code Rules Critical](../../guides/code-rules-critical.md)** - Core coding standards and validation patterns
+2. **[Code Validation Patterns](../../guides/code-validation-patterns.md)** - Validation patterns for all document types
 3. **[Business Context](../../project/business-context.md)** - User roles, auth strategy, business workflows
 4. **[Technical Stack](../../project/technical-stack.md)** - Next.js 15, React Hook Form, Prisma, CSS Modules
 
@@ -31,8 +31,8 @@ Avoid: Skipping priority order, ignoring file type detection, and missing cross-
 
 *Key implementation patterns*
 
-5. **[Code Quality Standards](../../guides/code-rules-quality.md)** - ESLint, TypeScript, Prettier config
-6. **[React Development Patterns](../../guides/react-patterns.md)** - Performance optimization and component patterns
+5. **[Code Rules Quality](../../guides/code-rules-quality.md)** - ESLint, TypeScript, Prettier config
+6. **[React Patterns](../../guides/react-patterns.md)** - Performance optimization and component patterns
 7. **[API Design](../../concerns/api-design.md)** - RESTful patterns, error handling, Shopify integration
 8. **[Form Management](../../concerns/form-management.md)** - React Hook Form + Zod validation
 9. **[Authentication](../../concerns/authentication.md)** - Magic link auth, role-based access

@@ -2,8 +2,9 @@
   "metadata": {
     "version": "2.0",
     "description": "Document relationship graph for AI documentation ingestion",
-    "lastUpdated": "2025-06-20T23:06:41.671Z",
-    "lastCogLoadUpdate": "2025-06-18T20:50:25.360Z"
+    "lastUpdated": "2025-06-21T10:32:19.705Z",
+    "lastOptimized": "2025-06-21T11:06:28.951Z",
+    "optimizedBy": "graph-optimizer.js"
   },
   "nodes": [
     {
@@ -12,19 +13,9 @@
       "type": "guide",
       "priority": 1,
       "description": "Core coding standards and AI validation patterns",
-      "cogLoad": 64.59,
       "workflows": [
         "docs-ai-context"
-      ],
-      "cognitiveLoadScore": 59.96,
-      "cognitiveLoadComponents": {
-        "readability": 89.3,
-        "lexical": 69.94,
-        "coherence": 10.87
-      },
-      "cognitiveLoadFull": 59.96,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.958Z"
+      ]
     },
     {
       "id": 1001,
@@ -32,19 +23,9 @@
       "type": "index",
       "priority": 1,
       "description": "Primary entry point for AI documentation navigation",
-      "cogLoad": 62.83,
       "workflows": [
         "docs-ai-context"
-      ],
-      "cognitiveLoadScore": 61.78,
-      "cognitiveLoadComponents": {
-        "readability": 96.75,
-        "lexical": 66.67,
-        "coherence": 10.27
-      },
-      "cognitiveLoadFull": 61.78,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.961Z"
+      ]
     },
     {
       "id": 1002,
@@ -52,20 +33,10 @@
       "type": "reference",
       "priority": 1,
       "description": "Centralized registry of all validation patterns",
-      "cogLoad": 63.4,
       "workflows": [
         "docs-forms",
         "docs-ai-health-check"
-      ],
-      "cognitiveLoadScore": 63.02,
-      "cognitiveLoadComponents": {
-        "readability": 100,
-        "lexical": 66.62,
-        "coherence": 10.12
-      },
-      "cognitiveLoadFull": 63.02,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.962Z"
+      ]
     },
     {
       "id": 1004,
@@ -73,17 +44,7 @@
       "type": "template",
       "priority": 3,
       "description": "Template for AI_NAVIGATION blocks",
-      "cogLoad": 45.95,
-      "workflows": [],
-      "cognitiveLoadScore": 51.86,
-      "cognitiveLoadComponents": {
-        "readability": 75.19,
-        "lexical": 63.12,
-        "coherence": 9.51
-      },
-      "cognitiveLoadFull": 51.86,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.963Z"
+      "workflows": []
     },
     {
       "id": 1016,
@@ -91,20 +52,10 @@
       "type": "project",
       "priority": 1,
       "description": "Business context and problem statement for the project",
-      "cogLoad": 61.65,
       "workflows": [
         "docs-ai-context",
         "docs-api"
-      ],
-      "cognitiveLoadScore": 59.54,
-      "cognitiveLoadComponents": {
-        "readability": 94.26,
-        "lexical": 62.49,
-        "coherence": 10.31
-      },
-      "cognitiveLoadFull": 59.54,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.964Z"
+      ]
     },
     {
       "id": 1017,
@@ -112,19 +63,9 @@
       "type": "project",
       "priority": 1,
       "description": "Detailed feature specifications and requirements",
-      "cogLoad": 61.16,
       "workflows": [
         "docs-forms"
-      ],
-      "cognitiveLoadScore": 61.25,
-      "cognitiveLoadComponents": {
-        "readability": 100,
-        "lexical": 60.84,
-        "coherence": 9.98
-      },
-      "cognitiveLoadFull": 61.25,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.965Z"
+      ]
     },
     {
       "id": 1018,
@@ -132,19 +73,9 @@
       "type": "project",
       "priority": 1,
       "description": "Technical stack decisions and architecture",
-      "cogLoad": 61.63,
       "workflows": [
         "docs-ui"
-      ],
-      "cognitiveLoadScore": 21.77,
-      "cognitiveLoadComponents": {
-        "readability": 0,
-        "lexical": 59.1,
-        "coherence": 13.48
-      },
-      "cognitiveLoadFull": 21.77,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.966Z"
+      ]
     },
     {
       "id": 1019,
@@ -152,19 +83,9 @@
       "type": "project",
       "priority": 2,
       "description": "UI/UX design strategy and component patterns",
-      "cogLoad": 59.81,
       "workflows": [
         "docs-ui"
-      ],
-      "cognitiveLoadScore": 59.74,
-      "cognitiveLoadComponents": {
-        "readability": 100,
-        "lexical": 55.5,
-        "coherence": 10.29
-      },
-      "cognitiveLoadFull": 59.74,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.967Z"
+      ]
     },
     {
       "id": 1011,
@@ -172,20 +93,10 @@
       "type": "guide",
       "priority": 1,
       "description": "ESLint, Prettier and TypeScript configuration standards",
-      "cogLoad": 63.42,
       "workflows": [
         "docs-debug",
         "docs-ai-health-check"
-      ],
-      "cognitiveLoadScore": 63.12,
-      "cognitiveLoadComponents": {
-        "readability": 100,
-        "lexical": 58.07,
-        "coherence": 18.99
-      },
-      "cognitiveLoadFull": 63.12,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.968Z"
+      ]
     },
     {
       "id": 1013,
@@ -193,19 +104,9 @@
       "type": "guide",
       "priority": 1,
       "description": "React patterns, performance optimization, and infinite loop prevention",
-      "cogLoad": 64.26,
       "workflows": [
         "docs-ui"
-      ],
-      "cognitiveLoadScore": 62.96,
-      "cognitiveLoadComponents": {
-        "readability": 100,
-        "lexical": 61.37,
-        "coherence": 15.17
-      },
-      "cognitiveLoadFull": 64.33,
-      "codeExcluded": true,
-      "lastCLSUpdate": "2025-06-20T21:48:18.971Z"
+      ]
     },
     {
       "id": 1012,
@@ -213,19 +114,9 @@
       "type": "guide",
       "priority": 2,
       "description": "Schema-driven form development using database annotations",
-      "cogLoad": 63,
       "workflows": [
         "docs-forms"
-      ],
-      "cognitiveLoadScore": 63.79,
-      "cognitiveLoadComponents": {
-        "readability": 100,
-        "lexical": 63.44,
-        "coherence": 15.85
-      },
-      "cognitiveLoadFull": 63.67,
-      "codeExcluded": true,
-      "lastCLSUpdate": "2025-06-20T21:48:18.972Z"
+      ]
     },
     {
       "id": 1015,
@@ -233,19 +124,9 @@
       "type": "pitfall",
       "priority": 2,
       "description": "Patterns to prevent infinite loops in React effects",
-      "cogLoad": 63.45,
       "workflows": [
         "docs-debug"
-      ],
-      "cognitiveLoadScore": 62.23,
-      "cognitiveLoadComponents": {
-        "readability": 95.18,
-        "lexical": 63.5,
-        "coherence": 17.02
-      },
-      "cognitiveLoadFull": 62.23,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.973Z"
+      ]
     },
     {
       "id": 1014,
@@ -253,19 +134,9 @@
       "type": "pitfall",
       "priority": 2,
       "description": "Guide to preventing and fixing common linting errors",
-      "cogLoad": 59.21,
       "workflows": [
         "docs-debug"
-      ],
-      "cognitiveLoadScore": 55.74,
-      "cognitiveLoadComponents": {
-        "readability": 87.75,
-        "lexical": 56.5,
-        "coherence": 12.3
-      },
-      "cognitiveLoadFull": 55.74,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.974Z"
+      ]
     },
     {
       "id": 1008,
@@ -273,19 +144,9 @@
       "type": "concern",
       "priority": 2,
       "description": "Form management strategy and implementation patterns",
-      "cogLoad": 61.56,
       "workflows": [
         "docs-forms"
-      ],
-      "cognitiveLoadScore": 61.81,
-      "cognitiveLoadComponents": {
-        "readability": 97.34,
-        "lexical": 52.65,
-        "coherence": 23.58
-      },
-      "cognitiveLoadFull": 61.81,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.974Z"
+      ]
     },
     {
       "id": 1005,
@@ -293,19 +154,9 @@
       "type": "concern",
       "priority": 2,
       "description": "API design patterns and implementation guidelines",
-      "cogLoad": 64.1,
       "workflows": [
         "docs-api"
-      ],
-      "cognitiveLoadScore": 62.07,
-      "cognitiveLoadComponents": {
-        "readability": 100,
-        "lexical": 61.23,
-        "coherence": 12.34
-      },
-      "cognitiveLoadFull": 62.18,
-      "codeExcluded": true,
-      "lastCLSUpdate": "2025-06-20T21:48:18.977Z"
+      ]
     },
     {
       "id": 1006,
@@ -313,19 +164,9 @@
       "type": "concern",
       "priority": 2,
       "description": "Authentication strategies and implementation",
-      "cogLoad": 60.27,
       "workflows": [
         "docs-api"
-      ],
-      "cognitiveLoadScore": 60.18,
-      "cognitiveLoadComponents": {
-        "readability": 100,
-        "lexical": 56.75,
-        "coherence": 10.53
-      },
-      "cognitiveLoadFull": 60.18,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.977Z"
+      ]
     },
     {
       "id": 1007,
@@ -333,19 +174,9 @@
       "type": "concern",
       "priority": 2,
       "description": "Database schema, ORM usage, and query patterns",
-      "cogLoad": 60.45,
       "workflows": [
         "docs-api"
-      ],
-      "cognitiveLoadScore": 59.96,
-      "cognitiveLoadComponents": {
-        "readability": 100,
-        "lexical": 56.58,
-        "coherence": 9.94
-      },
-      "cognitiveLoadFull": 59.96,
-      "codeExcluded": false,
-      "lastCLSUpdate": "2025-06-20T21:48:18.978Z"
+      ]
     },
     {
       "id": 1009,
@@ -353,19 +184,9 @@
       "type": "concern",
       "priority": 3,
       "description": "Implementation patterns for UI/UX development",
-      "cogLoad": 65.08,
       "workflows": [
         "docs-ui"
-      ],
-      "cognitiveLoadScore": 59.99,
-      "cognitiveLoadComponents": {
-        "readability": 98.41,
-        "lexical": 58.38,
-        "coherence": 10.38
-      },
-      "cognitiveLoadFull": 62.71,
-      "codeExcluded": true,
-      "lastCLSUpdate": "2025-06-20T21:48:18.979Z"
+      ]
     }
   ],
   "edges": [
@@ -385,7 +206,7 @@
       "source": 1010,
       "target": 1011,
       "relationship": "related",
-      "description": "Code quality standards implement rules from the handbook"
+      "description": "Code Rules Quality implement rules from the handbook"
     },
     {
       "source": 1010,

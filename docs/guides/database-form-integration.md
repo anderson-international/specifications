@@ -17,7 +17,7 @@ Avoid: Missing junction table transformation, Bypassing schema validation, Redun
 
 > **📋 Quick Navigation:**
 > - **Form Implementation**: [Form Management](../concerns/form-management.md) | [UI/UX Design](../project/ui-ux-design.md)
-> - **React Implementation**: [React Development Patterns](react-patterns.md) | [Code Quality Standards](code-rules-quality.md)
+> - **React Implementation**: [React Patterns](react-patterns.md) | [Code Rules Quality](code-rules-quality.md)
 > - **Data Context**: [Database Schema](../db-schema.txt) | [API Design](../concerns/api-design.md)
 > - **Project Setup**: [Technical Stack](../project/technical-stack.md) | [Feature Requirements](../project/feature-requirements.md)
 

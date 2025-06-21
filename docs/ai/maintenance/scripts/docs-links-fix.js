@@ -395,6 +395,40 @@ class DocsLinkFixer {
   }
 
   /**
+   * Clean up deleted files from document graph
+   */
+  cleanupDeletedFiles(graph, deletedFiles) {
+    console.log(`🗑️ Cleaning up ${deletedFiles.length} deleted files from graph...\n`);
+    
+    const deletedIds = new Set(deletedFiles.map(f => f.id));
+    
+    // Report what's being cleaned up
+    for (const file of deletedFiles) {
+      console.log(`  🗑️ Removing: ${file.path} (ID: ${file.id})`);
+    }
+    
+    // Remove nodes
+    const originalNodeCount = graph.nodes.length;
+    graph.nodes = graph.nodes.filter(n => !deletedIds.has(n.id));
+    
+    // Remove edges
+    const originalEdgeCount = graph.edges.length;
+    graph.edges = graph.edges.filter(e => 
+      !deletedIds.has(e.source) && !deletedIds.has(e.target)
+    );
+    
+    // Clean workflow references
+    for (const workflow of graph.workflowIntegration) {
+      workflow.documents = workflow.documents.filter(id => !deletedIds.has(id));
+    }
+    
+    console.log(`\n🎉 Cleanup complete:`);
+    console.log(`  - Removed ${originalNodeCount - graph.nodes.length} nodes`);
+    console.log(`  - Removed ${originalEdgeCount - graph.edges.length} edges`);
+    console.log(`  - Updated workflow references\n`);
+  }
+
+  /**
    * Validate graph consistency and update paths when files are moved
    */
   validateAndUpdateGraphConsistency() {
@@ -410,6 +444,7 @@ class DocsLinkFixer {
     const graph = JSON.parse(fs.readFileSync(graphPath));
     let hasErrors = false;
     let hasUpdates = false;
+    const deletedFiles = [];
     
     // Build reverse lookup: ID -> actual current file path
     const currentPaths = new Map(); // ID -> current actual path
@@ -440,8 +475,12 @@ class DocsLinkFixer {
           node.path = actualPath;
           hasUpdates = true;
         } else {
-          console.log(`❌ Graph node references missing file: ${expectedPath} (ID: ${node.id})`);
-          hasErrors = true;
+          // File was deleted, collect for cleanup instead of erroring
+          deletedFiles.push({
+            id: node.id,
+            path: expectedPath,
+            workflows: node.workflows || []
+          });
         }
       } else {
         // Verify the file has the expected ID
@@ -456,6 +495,12 @@ class DocsLinkFixer {
       }
     }
     
+    // Clean up deleted files automatically
+    if (deletedFiles.length > 0) {
+      this.cleanupDeletedFiles(graph, deletedFiles);
+      hasUpdates = true;
+    }
+    
     // Save updated graph if we made changes
     if (hasUpdates) {
       // Update the lastUpdated timestamp
@@ -464,7 +509,7 @@ class DocsLinkFixer {
       
       // Write the updated graph back to disk
       fs.writeFileSync(graphPath, JSON.stringify(graph, null, 2), 'utf8');
-      console.log(`\n🎉 Updated document graph with new file paths`);
+      console.log(`🎉 Updated document graph with new file paths`);
     }
     
     // Validate all edges reference valid node IDs
@@ -505,6 +550,9 @@ class DocsLinkFixer {
       console.log('\n✅ Graph consistency validation PASSED');
       if (hasUpdates) {
         console.log('✅ Graph has been updated to reflect current file locations');
+      }
+      if (deletedFiles.length > 0) {
+        console.log(`✅ All file deletions handled automatically!`);
       }
       return true;
     }

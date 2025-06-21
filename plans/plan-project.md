@@ -97,7 +97,7 @@ This document serves as the **single source of truth** for implementing the Snuf
 - Basic authentication working (production email pending)
 - All API endpoints respond with proper error handling
 - Project structure follows architectural guidelines
-- Code quality standards met (zero lint warnings/errors)
+- Code Rules Quality met (zero lint warnings/errors)
 - Modern dependency stack (Next.js 15, latest packages)
 
 ### **Remaining Phase 1 Tasks:**
@@ -183,7 +183,7 @@ This document serves as the **single source of truth** for implementing the Snuf
   - Update component pattern guidance and cross-references
   - Create clear navigation links between related documents
 
-- [x] **Code Quality Standards Enhancement**
+- [x] **Code Rules Quality Enhancement**
   - Enhance `guides/best-practices.md` with explicit file size limits
   - Add guidance on component splitting with real examples
   - Update TypeScript standards to require explicit return types

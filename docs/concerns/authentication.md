@@ -17,8 +17,8 @@ Avoid: Password storage, Complex permission matrices, Development shortcuts in p
 
 > **📋 Quick Navigation:**
 > - **Implementation Context**: [Technical Stack](../project/technical-stack.md) | [Feature Requirements](../project/feature-requirements.md)
-> - **Development Standards**: [Code Quality Standards](../guides/code-rules-quality.md)
-> - **Technical Guides**: [React Development Patterns](../guides/react-patterns.md)
+> - **Development Standards**: [Code Rules Quality](../guides/code-rules-quality.md)
+> - **Technical Guides**: [React Patterns](../guides/react-patterns.md)
 > - **Project Status**: [Implementation Plan](../../plans/plan-project.md)
 > - **Related Patterns**: [API Design](api-design.md) | [Form Management](form-management.md)
 

@@ -5,7 +5,7 @@ tags: [ai, standards, compliance, typescript, react, performance, critical]
 id: 1010
 ---
 
-# AI Coding Handbook - Non-Negotiable Standards
+# Code Rules Critical - Non-Negotiable Standards
 
 ⚠️ **CRITICAL**: This document contains **MANDATORY** coding standards. You must follow these during ALL code generation. These are not suggestions. They are requirements.
 

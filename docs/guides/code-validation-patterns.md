@@ -5,7 +5,7 @@ tags: [ai, validation, patterns, compliance, registry, automated-review]
 id: 1002
 ---
 
-# AI Validation Registry
+# Code Validation Patterns
 
 *Centralized registry of all validation patterns for AI compliance checking.*
 
@@ -35,7 +35,7 @@ The validation patterns are organized by domain, starting with React-specific pa
 
 ## React Validation Patterns
 
-Source: [React Development Patterns](react-patterns.md "Priority: HIGH - Core React performance and component patterns")
+Source: [React Patterns](react-patterns.md "Priority: HIGH - Core React performance and component patterns")
 
 React validation patterns focus on performance optimization and component structure. These patterns ensure our React components follow best practices for performance and maintainability.
 
@@ -61,7 +61,7 @@ Building on React component patterns, we need equally robust TypeScript validati
 
 ## TypeScript Validation Patterns
 
-Source: [Code Quality Standards](code-rules-quality.md "Priority: CRITICAL - TypeScript standards and ESLint rules")
+Source: [Code Rules Quality](code-rules-quality.md "Priority: CRITICAL - TypeScript standards and ESLint rules")
 
 TypeScript validation patterns enforce type safety and code organization standards. These patterns work together with React patterns to create a comprehensive validation system.
 
