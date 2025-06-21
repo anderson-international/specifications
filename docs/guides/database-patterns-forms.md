@@ -2,7 +2,7 @@
 complianceLevel: critical
 status: active
 tags: [database, forms, schema, react-hook-form, validation, annotations]
-id: 1012
+id: vmydbw09
 ---
 
 # Database-Form Integration Guide
@@ -16,12 +16,12 @@ Avoid: Missing junction table transformation, Bypassing schema validation, Redun
 -->
 
 > **📋 Quick Navigation:**
-> - **Form Implementation**: [Form Management](../concerns/form-management.md) | [UI/UX Design](../project/ui-ux-design.md)
-> - **React Implementation**: [React Patterns](react-patterns.md) | [Code Rules Quality](code-rules-quality.md)
-> - **Data Context**: [Database Schema](../db-schema.txt) | [API Design](../concerns/api-design.md)
+> - **Form Implementation**: [Form Patterns Validation](form-patterns-validation.md) | [Design Patterns Ui Ux](design-patterns-ui-ux.md)
+> - **React Implementation**: [React Patterns Performance](react-patterns-performance.md) | [Code Rules Quality](code-rules-quality.md)
+> - **Data Context**: [Db Schema](../project/db-schema.md) | [Api Patterns Design](api-patterns-design.md)
 > - **Project Setup**: [Technical Stack](../project/technical-stack.md) | [Feature Requirements](../project/feature-requirements.md)
 
-> **📋 This guide explains how to use `docs/db-schema.txt` AI annotations for React Hook Form implementation. For form management strategy, see [Form Management Documentation](../concerns/form-management.md).**
+> **📋 This guide explains how to use `docs/project/db-schema.md` AI annotations for React Hook Form implementation. For form management strategy, see [Form Patterns Validation](form-patterns-validation.md).**
 
 ## ⚠️ **CRITICAL**: Schema-Driven Form Development
 
@@ -322,4 +322,4 @@ const useEnumCache = () => {
 };
 ```
 
-*Database schema annotations are maintained in `docs/db-schema.txt`. Update annotations when schema changes to maintain form implementation guidance.*
+*Database schema annotations are maintained in `docs/project/db-schema.md`. Update annotations when schema changes to maintain form implementation guidance.*

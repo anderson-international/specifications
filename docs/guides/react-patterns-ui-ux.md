@@ -2,7 +2,7 @@
 complianceLevel: high
 status: stable
 tags: [ui, components, accessibility, css, patterns]
-id: 1009
+id: 56Oz23_w
 ---
 
 # UI/UX Patterns Guide
@@ -25,7 +25,7 @@ The guide covers three main areas:
 - **CSS Strategy**: Organize styles effectively.
 - **Implementation Standards**: Build accessible, performant components.
 
-For strategic UI/UX guidance, see [UI/UX Design Decisions](../project/ui-ux-design.md).
+For strategic UI/UX guidance, see [Design Patterns Ui Ux](design-patterns-ui-ux.md).
 
 ## Core Requirements
 
@@ -67,7 +67,7 @@ This approach prevents style conflicts between components.
 
 ### Responsive Design Implementation
 
-For responsive design strategy, see [UI/UX Design Decisions](../project/ui-ux-design.md).
+For responsive design strategy, see [Design Patterns Ui Ux](design-patterns-ui-ux.md).
 
 Use these responsive patterns in your components:
 
@@ -98,7 +98,7 @@ Design system integration ensures visual consistency. All components must follow
 
 ### Colors and Typography Standards
 
-Follow the design system from [UI/UX Design Decisions](../project/ui-ux-design.md):
+Follow the design system from [Design Patterns Ui Ux](design-patterns-ui-ux.md):
 
 - **Limited Color Palette**: Use the defined color scheme only.
 - **Readable Typography**: Apply approved fonts and font sizes.
@@ -108,7 +108,7 @@ Consistent colors and typography create visual harmony.
 
 ### Accessibility Implementation Standards
 
-For accessibility strategy, see [UI/UX Design Decisions](../project/ui-ux-design.md).
+For accessibility strategy, see [Design Patterns Ui Ux](design-patterns-ui-ux.md).
 
 Use these accessibility patterns in all components:
 

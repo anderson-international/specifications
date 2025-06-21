@@ -2,7 +2,7 @@
 complianceLevel: required
 status: active
 tags: [database, prisma, orm, shopify-sync, schema, performance]
-id: 1007
+id: AYkT71Xe
 ---
 
 # Database Documentation
@@ -17,11 +17,11 @@ Avoid: Fallback data on sync failures, Complex rollback procedures, Multiple Pri
 
 ## Overview
 
-This document provides strategic guidance for database-related decisions and patterns. For current schema structure and table definitions, always reference the auto-generated [schema documentation](../db-schema.txt).
+This document provides strategic guidance for database-related decisions and patterns. For current schema structure and table definitions, always reference the auto-generated [Db Schema](../project/db-schema.md).
 
 ## Schema Reference
 
-**Current Schema**: Read [docs/db-schema.txt](../db-schema.txt) for complete, up-to-date table structures, relationships, constraints, and enum values.
+**Current Schema**: Read [Db Schema](../project/db-schema.md) for complete, up-to-date table structures, relationships, constraints, and enum values.
 
 Auto-sync schema documentation after changes:
 ```bash
@@ -91,4 +91,4 @@ cmd /c npm run sync-schema
 
 ---
 
-*This document focuses on strategic guidance for database planning. All specific schema details are maintained in the auto-generated [docs/db-schema.txt](../db-schema.txt).*
+*This document focuses on strategic guidance for database planning. All specific schema details are maintained in the auto-generated [Db Schema](../project/db-schema.md).*

@@ -14,6 +14,23 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
+function getOrCreateDocumentId(outputPath) {
+  if (fs.existsSync(outputPath)) {
+    try {
+      const content = fs.readFileSync(outputPath, 'utf8');
+      const idMatch = content.match(/^id:\s*(.+)$/m);
+      if (idMatch) {
+        console.log(`🔄 Preserving existing document ID: ${idMatch[1].trim()}`);
+        return idMatch[1].trim();
+      }
+    } catch (error) { /* ignore parsing errors */ }
+  }
+  const { nanoid } = require('nanoid');
+  const newId = nanoid(8);
+  console.log(`🆕 Generated new document ID: ${newId}`);
+  return newId;
+}
+
 async function generateSchemaDocumentation() {
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
@@ -120,10 +137,11 @@ async function generateSchemaDocumentation() {
     }
 
     // Generate documentation
-    const documentation = generateDocumentation(tables, columns, constraints, indexes, enumValues);
+    const outputPath = path.join(__dirname, '..', 'project', 'db-schema.md');
+    const documentId = getOrCreateDocumentId(outputPath);
+    const documentation = generateDocumentation(tables, columns, constraints, indexes, enumValues, documentId);
     
-    // Write to file
-    const outputPath = path.join(__dirname, '..', 'docs', 'db-schema.txt');
+    // Write to file in new location and format
     fs.writeFileSync(outputPath, documentation);
     
     console.log(`✅ Schema documentation generated successfully at: ${outputPath}`);
@@ -137,14 +155,23 @@ async function generateSchemaDocumentation() {
   }
 }
 
-function generateDocumentation(tables, columns, constraints, indexes, enumValues) {
+function generateDocumentation(tables, columns, constraints, indexes, enumValues, documentId) {
   const timestamp = new Date().toISOString().split('T')[0];
   
-  let doc = `# AI-Optimized Database Schema Documentation
-# Generated: ${timestamp}
-# Purpose: Provide structured database information for AI models to plan interactions and generate CRUD forms
+  let doc = `---
+id: ${documentId}
+title: AI-Optimized Database Schema Documentation
+date: ${timestamp}
+description: Provide structured database information for AI models to plan interactions and generate CRUD forms
+---
+
+# AI-Optimized Database Schema Documentation
+
+*Generated: ${timestamp}*  
+*Purpose: Provide structured database information for AI models to plan interactions and generate CRUD forms*
 
 ## Overview
+
 This database supports a snuff specification management system with:
 - Multi-reviewer specifications for products
 - Enum-based categorization system
@@ -193,15 +220,23 @@ This database supports a snuff specification management system with:
     enumTables.forEach(([tableName, data]) => {
       const enumName = tableName.replace('enum_', '');
       doc += `### ${tableName}\n`;
-      doc += `// AI_FORM_HINT: Use as dropdown/select options\n`;
-      doc += `// AI_VALIDATION: Required field, foreign key constraint\n`;
+      doc += `**Form:** Dropdown/select options | **Validation:** Required field, foreign key constraint\n`;
       
       if (data.enumValues.length > 0) {
-        doc += `// AI_VALUES: {\n`;
-        data.enumValues.forEach(val => {
-          doc += `//   ${val.id}: "${val.name}"\n`;
-        });
-        doc += `// }\n`;
+        if (data.enumValues.length <= 10) {
+          // Short enums: show all values in compressed format
+          const values = data.enumValues.map(val => `${val.id}:"${val.name}"`).join(', ');
+          doc += `**Values:** {${values}}\n`;
+        } else if (data.enumValues.length <= 20) {
+          // Medium enums: show first 5 + count
+          const first5 = data.enumValues.slice(0, 5).map(val => `${val.id}:"${val.name}"`).join(', ');
+          const remaining = data.enumValues.length - 5;
+          doc += `**Values:** {${first5}, ...and ${remaining} more}\n`;
+        } else {
+          // Long enums: show sample + total count
+          const samples = data.enumValues.slice(0, 3).map(val => val.name).join(', ');
+          doc += `**Values:** ${data.enumValues.length} options including ${samples}...\n`;
+        }
       }
       
       doc += `\n`;
@@ -219,56 +254,48 @@ function generateTableDocumentation(tableName, data) {
   
   // Add AI hints based on table purpose
   if (tableName === 'specifications') {
-    doc += `// AI_TABLE_PURPOSE: Core specification data - main CRUD operations focus here\n`;
-    doc += `// AI_FORM_TYPE: Multi-step wizard form (product selection, ratings, text review, enum selections)\n`;
-    doc += `// AI_WORKFLOW: Draft → Published → Needs Revision → Under Review\n`;
+    doc += `**Purpose:** Core specification data - main CRUD operations focus here\n`;
+    doc += `**Form:** Multi-step wizard (product selection, ratings, text review, enum selections)\n`;
+    doc += `**Workflow:** Draft → Published → Needs Revision → Under Review\n`;
   } else if (tableName === 'users') {
-    doc += `// AI_TABLE_PURPOSE: User management - Admin vs Reviewer roles\n`;
-    doc += `// AI_FORM_TYPE: Simple user profile form\n`;
+    doc += `**Purpose:** User management - Admin vs Reviewer roles\n`;
+    doc += `**Form:** Simple user profile form\n`;
   } else if (tableName.startsWith('spec_')) {
-    doc += `// AI_TABLE_PURPOSE: Junction table - handle as multi-select in forms\n`;
-    doc += `// AI_FORM_TYPE: Multi-select checkboxes or tags\n`;
+    doc += `**Purpose:** Junction table - handle as multi-select in forms\n`;
+    doc += `**Form:** Multi-select checkboxes or tags\n`;
   }
 
-  doc += `\n\`\`\`sql\n`;
-  doc += `CREATE TABLE ${tableName} (\n`;
+  doc += `\n**Columns:**\n`;
   
-  // Generate column definitions with AI hints
-  data.columns.forEach((col, index) => {
-    const isLast = index === data.columns.length - 1;
-    let line = `    ${col.column_name.padEnd(20)} ${col.data_type.toUpperCase()}`;
+  // Generate streamlined column definitions with AI hints
+  data.columns.forEach((col) => {
+    let line = `- **${col.column_name}**: ${col.data_type.toUpperCase()}`;
     
     if (col.character_maximum_length) {
       line += `(${col.character_maximum_length})`;
     }
     
     if (col.is_nullable === 'NO') {
-      line += ' NOT NULL';
+      line += ' *required*';
     }
     
-    if (col.column_default) {
-      line += ` DEFAULT ${col.column_default}`;
-    }
-    
-    if (!isLast) line += ',';
-    
-    // Add AI hints as comments
+    // Add AI hints as inline description
     const aiHints = generateColumnAIHints(tableName, col, data.constraints);
     if (aiHints.length > 0) {
-      line += ` -- ${aiHints.join(', ')}`;
+      line += ` - ${aiHints.join(', ')}`;
     }
     
     doc += line + '\n';
   });
   
-  doc += `);\n\`\`\`\n\n`;
+  doc += `\n`;
   
   // Add constraint information
   const foreignKeys = data.constraints.filter(c => c.constraint_type === 'FOREIGN KEY');
   if (foreignKeys.length > 0) {
-    doc += `// AI_RELATIONSHIPS:\n`;
+    doc += `**Relationships:**\n`;
     foreignKeys.forEach(fk => {
-      doc += `//   ${fk.column_name} → ${fk.foreign_table_name}.${fk.foreign_column_name}\n`;
+      doc += `- ${fk.column_name} → ${fk.foreign_table_name}.${fk.foreign_column_name}\n`;
     });
     doc += `\n`;
   }
@@ -349,7 +376,7 @@ function generateAIGuidance(tableData) {
 - Junction tables - use batch operations for multi-select updates
 
 ---
-Generated by sync-schema.js - DO NOT EDIT MANUALLY
+Generated by scripts/sync-schema.js - DO NOT EDIT MANUALLY
 Run 'npm run sync-schema' to regenerate this file
 `;
 }

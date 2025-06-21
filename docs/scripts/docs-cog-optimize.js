@@ -376,7 +376,7 @@ class CognitiveLoadOptimizer {
       console.log(`Cognitive Load Optimization Tool
 
 Usage:
-  cmd /c node docs/ai/maintenance/scripts/cog-optimize.js
+  cmd /c node docs/scripts/cog-optimize.js
 
 This tool runs a complete optimization workflow:
 1. Scans all docs files for cognitive load scores

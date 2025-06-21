@@ -2,13 +2,11 @@
   "metadata": {
     "version": "2.0",
     "description": "Document relationship graph for AI documentation ingestion",
-    "lastUpdated": "2025-06-21T10:32:19.705Z",
-    "lastOptimized": "2025-06-21T11:06:28.951Z",
-    "optimizedBy": "graph-optimizer.js"
+    "lastUpdated": "2025-06-21T16:21:23.561Z"
   },
   "nodes": [
     {
-      "id": 1010,
+      "id": "QEbDzLsg",
       "path": "docs/guides/code-rules-critical.md",
       "type": "guide",
       "priority": 1,
@@ -18,36 +16,17 @@
       ]
     },
     {
-      "id": 1001,
-      "path": "docs/ai/ingestion/ai-workflow-guide.md",
-      "type": "index",
-      "priority": 1,
-      "description": "Primary entry point for AI documentation navigation",
-      "workflows": [
-        "docs-ai-context"
-      ]
-    },
-    {
-      "id": 1002,
+      "id": "7zurfspg",
       "path": "docs/guides/code-validation-patterns.md",
       "type": "reference",
       "priority": 1,
       "description": "Centralized registry of all validation patterns",
       "workflows": [
-        "docs-forms",
-        "docs-ai-health-check"
+        "docs-forms"
       ]
     },
     {
-      "id": 1004,
-      "path": "docs/ai/maintenance/ai-navigation-template.md",
-      "type": "template",
-      "priority": 3,
-      "description": "Template for AI_NAVIGATION blocks",
-      "workflows": []
-    },
-    {
-      "id": 1016,
+      "id": "H7cdM9hi",
       "path": "docs/project/business-context.md",
       "type": "project",
       "priority": 1,
@@ -58,7 +37,7 @@
       ]
     },
     {
-      "id": 1017,
+      "id": "2MeB6zxn",
       "path": "docs/project/feature-requirements.md",
       "type": "project",
       "priority": 1,
@@ -68,7 +47,7 @@
       ]
     },
     {
-      "id": 1018,
+      "id": "culNx_Ga",
       "path": "docs/project/technical-stack.md",
       "type": "project",
       "priority": 1,
@@ -78,8 +57,8 @@
       ]
     },
     {
-      "id": 1019,
-      "path": "docs/project/ui-ux-design.md",
+      "id": "h57bzPbS",
+      "path": "docs/guides/design-patterns-ui-ux.md",
       "type": "project",
       "priority": 2,
       "description": "UI/UX design strategy and component patterns",
@@ -88,19 +67,18 @@
       ]
     },
     {
-      "id": 1011,
+      "id": "QhvP4q6F",
       "path": "docs/guides/code-rules-quality.md",
       "type": "guide",
       "priority": 1,
       "description": "ESLint, Prettier and TypeScript configuration standards",
       "workflows": [
-        "docs-debug",
-        "docs-ai-health-check"
+        "docs-debug"
       ]
     },
     {
-      "id": 1013,
-      "path": "docs/guides/react-patterns.md",
+      "id": "NjQJhb5-",
+      "path": "docs/guides/react-patterns-performance.md",
       "type": "guide",
       "priority": 1,
       "description": "React patterns, performance optimization, and infinite loop prevention",
@@ -109,8 +87,8 @@
       ]
     },
     {
-      "id": 1012,
-      "path": "docs/guides/database-form-integration.md",
+      "id": "vmydbw09",
+      "path": "docs/guides/database-patterns-forms.md",
       "type": "guide",
       "priority": 2,
       "description": "Schema-driven form development using database annotations",
@@ -119,8 +97,8 @@
       ]
     },
     {
-      "id": 1015,
-      "path": "docs/pitfalls/prevent-react-effect-loops.md",
+      "id": "Vw_gIXfS",
+      "path": "docs/guides/react-prevent-effect-loops.md",
       "type": "pitfall",
       "priority": 2,
       "description": "Patterns to prevent infinite loops in React effects",
@@ -129,8 +107,8 @@
       ]
     },
     {
-      "id": 1014,
-      "path": "docs/pitfalls/prevent-lint-issues.md",
+      "id": "iixww-5M",
+      "path": "docs/guides/code-prevent-lint-errors.md",
       "type": "pitfall",
       "priority": 2,
       "description": "Guide to preventing and fixing common linting errors",
@@ -139,8 +117,8 @@
       ]
     },
     {
-      "id": 1008,
-      "path": "docs/concerns/form-management.md",
+      "id": "IJ1Ls6zf",
+      "path": "docs/guides/form-patterns-validation.md",
       "type": "concern",
       "priority": 2,
       "description": "Form management strategy and implementation patterns",
@@ -149,8 +127,8 @@
       ]
     },
     {
-      "id": 1005,
-      "path": "docs/concerns/api-design.md",
+      "id": "geUe6A1X",
+      "path": "docs/guides/api-patterns-design.md",
       "type": "concern",
       "priority": 2,
       "description": "API design patterns and implementation guidelines",
@@ -159,8 +137,8 @@
       ]
     },
     {
-      "id": 1006,
-      "path": "docs/concerns/authentication.md",
+      "id": "GUHe0ovO",
+      "path": "docs/guides/api-patterns-auth.md",
       "type": "concern",
       "priority": 2,
       "description": "Authentication strategies and implementation",
@@ -169,8 +147,8 @@
       ]
     },
     {
-      "id": 1007,
-      "path": "docs/concerns/database.md",
+      "id": "AYkT71Xe",
+      "path": "docs/guides/database-patterns-core.md",
       "type": "concern",
       "priority": 2,
       "description": "Database schema, ORM usage, and query patterns",
@@ -179,8 +157,8 @@
       ]
     },
     {
-      "id": 1009,
-      "path": "docs/concerns/ui-ux-patterns.md",
+      "id": "56Oz23_w",
+      "path": "docs/guides/react-patterns-ui-ux.md",
       "type": "concern",
       "priority": 3,
       "description": "Implementation patterns for UI/UX development",
@@ -191,104 +169,92 @@
   ],
   "edges": [
     {
-      "source": 1001,
-      "target": 1010,
-      "relationship": "prerequisite",
-      "description": "Start with Critical Coding Rules before using the index"
-    },
-    {
-      "source": 1001,
-      "target": 1002,
-      "relationship": "related",
-      "description": "Validation registry centralizes all validation patterns referenced in the index"
-    },
-    {
-      "source": 1010,
-      "target": 1011,
+      "source": "QEbDzLsg",
+      "target": "QhvP4q6F",
       "relationship": "related",
       "description": "Code Rules Quality implement rules from the handbook"
     },
     {
-      "source": 1010,
-      "target": 1013,
+      "source": "QEbDzLsg",
+      "target": "NjQJhb5-",
       "relationship": "related",
       "description": "React patterns implement performance requirements from handbook"
     },
     {
-      "source": 1010,
-      "target": 1015,
+      "source": "QEbDzLsg",
+      "target": "Vw_gIXfS",
       "relationship": "related",
       "description": "Effect loop prevention is critical requirement from handbook"
     },
     {
-      "source": 1011,
-      "target": 1014,
+      "source": "QhvP4q6F",
+      "target": "iixww-5M",
       "relationship": "details",
       "description": "Detailed guidance on fixing specific lint errors"
     },
     {
-      "source": 1013,
-      "target": 1015,
+      "source": "NjQJhb5-",
+      "target": "Vw_gIXfS",
       "relationship": "details",
       "description": "Detailed guidance on preventing React effect loops"
     },
     {
-      "source": 1016,
-      "target": 1017,
+      "source": "H7cdM9hi",
+      "target": "2MeB6zxn",
       "relationship": "details",
       "description": "Feature requirements implement business context needs"
     },
     {
-      "source": 1016,
-      "target": 1006,
+      "source": "H7cdM9hi",
+      "target": "GUHe0ovO",
       "relationship": "related",
       "description": "Authentication strategy driven by business user roles"
     },
     {
-      "source": 1017,
-      "target": 1008,
+      "source": "2MeB6zxn",
+      "target": "IJ1Ls6zf",
       "relationship": "implements",
       "description": "Form management implements field validation requirements"
     },
     {
-      "source": 1018,
-      "target": 1009,
+      "source": "culNx_Ga",
+      "target": "56Oz23_w",
       "relationship": "implements",
       "description": "UI patterns implement technical stack decisions (CSS Modules, Next.js)"
     },
     {
-      "source": 1018,
-      "target": 1005,
+      "source": "culNx_Ga",
+      "target": "geUe6A1X",
       "relationship": "implements",
       "description": "API design implements technical stack architecture"
     },
     {
-      "source": 1008,
-      "target": 1012,
+      "source": "IJ1Ls6zf",
+      "target": "vmydbw09",
       "relationship": "details",
       "description": "Database integration provides technical implementation of form patterns"
     },
     {
-      "source": 1005,
-      "target": 1006,
+      "source": "geUe6A1X",
+      "target": "GUHe0ovO",
       "relationship": "related",
       "description": "Authentication strategies for API endpoints"
     },
     {
-      "source": 1005,
-      "target": 1007,
+      "source": "geUe6A1X",
+      "target": "AYkT71Xe",
       "relationship": "related",
       "description": "Database access patterns for API implementation"
     },
     {
-      "source": 1008,
-      "target": 1007,
+      "source": "IJ1Ls6zf",
+      "target": "AYkT71Xe",
       "relationship": "related",
       "description": "Database interactions for form submissions"
     },
     {
-      "source": 1019,
-      "target": 1009,
+      "source": "h57bzPbS",
+      "target": "56Oz23_w",
       "relationship": "implements",
       "description": "UI patterns implement design specifications"
     }
@@ -297,110 +263,49 @@
     {
       "workflow": "docs-ai-context",
       "documents": [
-        1001,
-        1010,
-        1016
+        "QEbDzLsg",
+        "H7cdM9hi"
       ],
       "description": "Load core AI context and navigation framework"
     },
     {
       "workflow": "docs-forms",
       "documents": [
-        1008,
-        1012,
-        1017,
-        1002
+        "IJ1Ls6zf",
+        "vmydbw09",
+        "2MeB6zxn",
+        "7zurfspg"
       ],
       "description": "Form development with business requirements and validation"
     },
     {
       "workflow": "docs-api",
       "documents": [
-        1016,
-        1005,
-        1006,
-        1007
+        "H7cdM9hi",
+        "geUe6A1X",
+        "GUHe0ovO",
+        "AYkT71Xe"
       ],
       "description": "API development with business context and technical patterns"
     },
     {
       "workflow": "docs-ui",
       "documents": [
-        1018,
-        1019,
-        1009,
-        1013
+        "culNx_Ga",
+        "h57bzPbS",
+        "56Oz23_w",
+        "NjQJhb5-"
       ],
       "description": "UI development with design specifications and technical implementation"
     },
     {
       "workflow": "docs-debug",
       "documents": [
-        1015,
-        1014,
-        1011
+        "Vw_gIXfS",
+        "iixww-5M",
+        "QhvP4q6F"
       ],
       "description": "Debugging and troubleshooting with specific error solutions"
-    },
-    {
-      "workflow": "docs-ai-health-check",
-      "documents": [
-        1002,
-        1011
-      ],
-      "description": "System health validation"
-    }
-  ],
-  "suggestedReadingPaths": [
-    {
-      "name": "core-context",
-      "description": "Essential AI context for initialization",
-      "path": [
-        1010,
-        1016,
-        1011,
-        1013
-      ]
-    },
-    {
-      "name": "form-development",
-      "description": "Complete form development workflow",
-      "path": [
-        1016,
-        1017,
-        1008,
-        1012,
-        1002
-      ]
-    },
-    {
-      "name": "api-development",
-      "description": "Backend development workflow",
-      "path": [
-        1016,
-        1005,
-        1006,
-        1007
-      ]
-    },
-    {
-      "name": "ui-development",
-      "description": "Frontend UI development workflow",
-      "path": [
-        1018,
-        1019,
-        1009,
-        1013
-      ]
-    },
-    {
-      "name": "debug-development",
-      "description": "Debugging and issue resolution",
-      "path": [
-        1015,
-        1014,
-        1011
-      ]
     }
   ]
 }

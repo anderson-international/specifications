@@ -2,7 +2,7 @@
 complianceLevel: critical
 status: active
 tags: [react, useeffect, performance, hooks, debugging, infinite-loops]
-id: 1015
+id: Vw_gIXfS
 ---
 
 # Preventing React Effect Infinite Loops

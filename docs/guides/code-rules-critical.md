@@ -2,7 +2,7 @@
 complianceLevel: critical
 status: active
 tags: [ai, standards, compliance, typescript, react, performance, critical]
-id: 1010
+id: QEbDzLsg
 ---
 
 # Code Rules Critical - Non-Negotiable Standards
@@ -63,7 +63,7 @@ const computedValue = useMemo(() => {
 **FAILURE CONSEQUENCE**: We get performance degradation and unnecessary re-renders.
 **DETECTION**: Missing React.memo, useCallback, useMemo patterns.
 **SOLUTION**: Wrap components in React.memo, memoize handlers and computed values.
-**REFERENCE**: [`react-patterns.md`](react-patterns.md "Priority: HIGH - React optimization techniques")
+**REFERENCE**: [`react-patterns-performance.md`](react-patterns-performance.md "Priority: HIGH - React optimization techniques")
 
 ## 🎯 **CODE GENERATION CHECKLIST**
 
@@ -75,10 +75,10 @@ Before writing any component:
 - [ ] Use useMemo for all derived state and expensive calculations.
 
 ## 🔗 **Quick Reference Links**
-- TypeScript Standards: [`code-rules-quality.md#typescript-rules`](code-rules-quality.md#typescript-rules "Priority: HIGH - TypeScript typing requirements")
-- React Patterns: [`react-patterns.md#performance-optimization`](react-patterns.md#performance-optimization "Priority: HIGH - React.memo and hook usage")
-- Error Handling: [`../concerns/api-design.md#error-handling`](../concerns/api-design.md#error-handling "Priority: MEDIUM - API error handling patterns")
-- Effect Loop Prevention: [`../pitfalls/prevent-react-effect-loops.md`](../pitfalls/prevent-react-effect-loops.md "Priority: CRITICAL - Preventing infinite render loops")
+- TypeScript Standards: [Code Rules Quality](code-rules-quality.md#typescript-rules "Priority: HIGH - TypeScript typing requirements")
+- React Patterns: [React Patterns Performance](react-patterns-performance.md#performance-optimization "Priority: HIGH - React.memo and hook usage")
+- Error Handling: [Api Patterns Design](api-patterns-design.md#error-handling "Priority: MEDIUM - API error handling patterns")
+- Effect Loop Prevention: [`../pitfalls/prevent-react-effect-loops.md`](react-prevent-effect-loops.md "Priority: CRITICAL - Preventing infinite render loops")
 
 ## ⚡ **AI_VALIDATION**
 ```regex

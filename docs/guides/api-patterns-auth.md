@@ -2,7 +2,7 @@
 complianceLevel: required
 status: active
 tags: [authentication, magic-link, role-based-access, nextauth, security]
-id: 1006
+id: GUHe0ovO
 ---
 
 # Authentication Documentation
@@ -17,18 +17,18 @@ Avoid: Password storage, Complex permission matrices, Development shortcuts in p
 
 > **📋 Quick Navigation:**
 > - **Implementation Context**: [Technical Stack](../project/technical-stack.md) | [Feature Requirements](../project/feature-requirements.md)
-> - **Development Standards**: [Code Rules Quality](../guides/code-rules-quality.md)
-> - **Technical Guides**: [React Patterns](../guides/react-patterns.md)
-> - **Project Status**: [Implementation Plan](../../plans/plan-project.md)
-> - **Related Patterns**: [API Design](api-design.md) | [Form Management](form-management.md)
+> - **Development Standards**: [Code Rules Quality](code-rules-quality.md)
+> - **Technical Guides**: [React Patterns Performance](react-patterns-performance.md)
+> - **Project Status**: [Plan Project](../../plans/plan-project.md)
+> - **Related Patterns**: [Api Patterns Design](api-patterns-design.md) | [Form Patterns Validation](form-patterns-validation.md)
 
-> **📋 This is the authoritative source for authentication strategy. For implementation status, see [plan-project.md](../../plans/plan-project.md). For requirements, see [feature-requirements.md](../project/feature-requirements.md).**
+> **📋 This is the authoritative source for authentication strategy. For implementation status, see [Plan Project](../../plans/plan-project.md). For requirements, see [Feature Requirements](../project/feature-requirements.md).**
 
 ## Overview
 
 This document provides strategic guidance for authentication decisions and patterns. Focus is on simplicity and security for a solo hobbyist project with role-based access control.
 
-> **🔄 Implementation Status:** See [plan-project.md](../../plans/plan-project.md) → Phase 1.2 Authentication System for current progress and completed tasks.
+> **🔄 Implementation Status:** See [Plan Project](../../plans/plan-project.md) → Phase 1.2 Authentication System for current progress and completed tasks.
 
 ## Authentication Strategy
 

@@ -2,7 +2,7 @@
 complianceLevel: critical
 status: active
 tags: [ai, validation, patterns, compliance, registry, automated-review]
-id: 1002
+id: 7zurfspg
 ---
 
 # Code Validation Patterns
@@ -35,7 +35,7 @@ The validation patterns are organized by domain, starting with React-specific pa
 
 ## React Validation Patterns
 
-Source: [React Patterns](react-patterns.md "Priority: HIGH - Core React performance and component patterns")
+Source: [React Patterns](react-patterns-performance.md "Priority: HIGH - Core React performance and component patterns")
 
 React validation patterns focus on performance optimization and component structure. These patterns ensure our React components follow best practices for performance and maintainability.
 
@@ -83,7 +83,7 @@ TypeScript validation patterns enforce type safety and code organization standar
 
 ## Form Management Validation Patterns
 
-Source: [Form Management](../concerns/form-management.md "Priority: HIGH - Form validation and state management")
+Source: [Form Management](form-patterns-validation.md "Priority: HIGH - Form validation and state management")
 
 ### React Hook Form
 
@@ -105,7 +105,7 @@ Source: [Form Management](../concerns/form-management.md "Priority: HIGH - Form 
 
 ## API Design Validation Patterns
 
-Source: [API Design](../concerns/api-design.md "Priority: HIGH - API structure and error handling")
+Source: [API Design](api-patterns-design.md "Priority: HIGH - API structure and error handling")
 
 ### API Route Structure
 

@@ -2,7 +2,7 @@
 complianceLevel: critical
 status: active
 tags: [ui-ux, design-system, mobile-first, dark-theme, wizard-forms, css-modules]
-id: 1019
+id: h57bzPbS
 ---
 
 # UI/UX Design Decisions
@@ -16,17 +16,17 @@ Avoid: Desktop-first decisions, Deviating from dark theme, Breaking wizard navig
 -->
 
 > **📋 Quick Navigation:**
-> - **Implementation Guides**: [Database-Form Integration](../guides/database-form-integration.md) | [React Patterns](../guides/react-patterns.md)
-> - **Design Context**: [Form Management](../concerns/form-management.md) | [UI/UX Patterns](../concerns/ui-ux-patterns.md)
-> - **Project Setup**: [Technical Stack](technical-stack.md) | [Code Rules Quality](../guides/code-rules-quality.md)
-> - **Requirements**: [Feature Requirements](feature-requirements.md) | [Business Context](business-context.md)
-> - **Project Status**: [Implementation Plan](../../plans/plan-project.md)
+> - **Implementation Guides**: [Database Patterns Forms](../guides/database-patterns-forms.md) | [React Patterns Performance](../guides/react-patterns-performance.md)
+> - **Design Context**: [Form Patterns Validation](../guides/form-patterns-validation.md) | [React Patterns Ui Ux](../guides/react-patterns-ui-ux.md)
+> - **Project Setup**: [Technical Stack](../project/technical-stack.md) | [Code Rules Quality](../guides/code-rules-quality.md)
+> - **Requirements**: [Feature Requirements](../project/feature-requirements.md) | [Business Context](../project/business-context.md)
+> - **Project Status**: [Plan Project](../../plans/plan-project.md)
 
 ## Strategic Overview
 
 This document serves as the **authoritative source** for all UI/UX design decisions, component patterns, and implementation strategies for the Specification Builder project.
 
-> **🔄 Implementation Status:** See [../../plans/plan-project.md](../../plans/plan-project.md) → Phase 2.1 Product Discovery UI and Phase 2.2 Specification Form Wizard for current UI implementation progress.
+> **🔄 Implementation Status:** See [Plan Project](../../plans/plan-project.md) → Phase 2.1 Product Discovery UI and Phase 2.2 Specification Form Wizard for current UI implementation progress.
 
 ## Core UI/UX Philosophy
 
@@ -209,4 +209,4 @@ This document serves as the **authoritative source** for all UI/UX design decisi
 - Clear path to fix validation errors
 - Positive feedback for completed sections
 
-**Technical Implementation**: See [Form Management Documentation](../concerns/form-management.md) for React Hook Form integration, validation patterns, and state management strategies.
+**Technical Implementation**: See [Form Patterns Validation](../guides/form-patterns-validation.md) for React Hook Form integration, validation patterns, and state management strategies.

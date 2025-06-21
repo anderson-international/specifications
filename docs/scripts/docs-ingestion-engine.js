@@ -7,7 +7,7 @@ const path = require('path');
  */
 class DocsIngestionEngine {
   constructor() {
-    this.graphPath = 'docs/document-graph.json';
+    this.graphPath = path.join(__dirname, 'docs-graph.json');
     this.loadDocumentGraph();
   }
 
@@ -100,14 +100,14 @@ class DocsIngestionEngine {
       console.log(`Simplified Document Ingestion Engine
 
 Usage:
-  cmd /c node docs/ai/ingestion/scripts/docs-ingestion-engine.js <workflow-name>
+  cmd /c node docs/scripts/docs-ingestion-engine.js <workflow-name>
 
 Available workflows: ${this.graph.workflowIntegration.map(w => w.workflow).join(', ')}
 
 Examples:
-  cmd /c node docs/ai/ingestion/scripts/docs-ingestion-engine.js docs-ai-context
-  cmd /c node docs/ai/ingestion/scripts/docs-ingestion-engine.js docs-forms
-  cmd /c node docs/ai/ingestion/scripts/docs-ingestion-engine.js docs-api`);
+  cmd /c node docs/scripts/docs-ingestion-engine.js docs-ai-context
+  cmd /c node docs/scripts/docs-ingestion-engine.js docs-forms
+  cmd /c node docs/scripts/docs-ingestion-engine.js docs-api`);
       return;
     }
 

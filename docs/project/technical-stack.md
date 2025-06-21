@@ -2,7 +2,7 @@
 complianceLevel: critical
 status: active
 tags: [technical-stack, nextjs, prisma, css-modules, deployment, architecture]
-id: 1018
+id: culNx_Ga
 ---
 
 # Technical Stack Decisions
@@ -13,7 +13,7 @@ Key Rules: Next.js App Router architecture (line 8), CSS Modules mobile-first (l
 Avoid: Mixing App/Pages Router, Using client when server suffices, Ignoring mobile-first strategy
 -->
 
-> **📋 For comprehensive UI/UX strategy and styling philosophy, see [UI/UX Design Decisions](ui-ux-design.md).**
+> **📋 For comprehensive UI/UX strategy and styling philosophy, see [Design Patterns Ui Ux](../guides/design-patterns-ui-ux.md).**
 
 ## Frontend Framework
 

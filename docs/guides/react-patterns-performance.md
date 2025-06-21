@@ -2,7 +2,7 @@
 complianceLevel: required
 status: stable
 tags: [react, hooks, optimization, performance, app-router, next.js]
-id: 1013
+id: NjQJhb5-
 ---
 
 # React Patterns
@@ -19,16 +19,16 @@ Avoid: Object/array in dependency arrays, Dual data fetching, Functions in rende
 > **📋 Quick Navigation:**
 > - **Essential Context**: 
 >   - [🔥 Code Rules Quality](code-rules-quality.md "Context: TypeScript return types and ESLint rules") 
->   - [Database-Form Integration](database-form-integration.md "Context: React Hook Form patterns and database integration")
+>   - [Database-Form Integration](database-patterns-forms.md "Context: React Hook Form patterns and database integration")
 > - **UI Implementation**: 
->   - [Form Management](../concerns/form-management.md "Context: Form state management and validation patterns")
->   - [UI/UX Design Decisions](../project/ui-ux-design.md "Context: Component styling and responsive design")
->   - [UI/UX Patterns](../concerns/ui-ux-patterns.md "Context: Component architecture and interaction patterns")
+>   - [Form Management](form-patterns-validation.md "Context: Form state management and validation patterns")
+>   - [UI/UX Design Decisions](design-patterns-ui-ux.md "Context: Component styling and responsive design")
+>   - [UI/UX Patterns](react-patterns-ui-ux.md "Context: Component architecture and interaction patterns")
 > - **Technical Context**: 
 >   - [Technical Stack](../project/technical-stack.md "Context: Next.js 15, React 18, and CSS Modules configuration")
->   - [API Design](../concerns/api-design.md "Context: API integration patterns for React components")
->   - [Prevent React Effect Loops](../pitfalls/prevent-react-effect-loops.md "Context: Debugging infinite loops in useEffect")
->   - [Authentication](../concerns/authentication.md "Context: User authentication in React components")
+>   - [API Design](api-patterns-design.md "Context: API integration patterns for React components")
+>   - [Prevent React Effect Loops](react-prevent-effect-loops.md "Context: Debugging infinite loops in useEffect")
+>   - [Authentication](api-patterns-auth.md "Context: User authentication in React components")
 
 > **📋 This document consolidates React-specific guidance from multiple sources. For component organization and TypeScript standards, see [Code Rules Quality](code-rules-quality.md).**
 

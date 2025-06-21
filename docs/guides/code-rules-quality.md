@@ -2,7 +2,7 @@
 complianceLevel: required
 status: stable
 tags: [eslint, typescript, prettier, code-quality, standards, linting]
-id: 1011
+id: QhvP4q6F
 ---
 
 # Code Rules Quality
@@ -17,18 +17,18 @@ Avoid: Missing return types, Using 'any' type, Inconsistent imports, console.log
 
 > **📋 Quick Navigation:**
 > - **Core Standards**: 
->   - [🔥 React Patterns](react-patterns.md "Context: React-specific TypeScript patterns") 
->   - [Database-Form Integration](database-form-integration.md "Context: Type-safe data handling")
+>   - [🔥 React Patterns](react-patterns-performance.md "Context: React-specific TypeScript patterns") 
+>   - [Database-Form Integration](database-patterns-forms.md "Context: Type-safe data handling")
 > - **UI/UX Standards**: 
->   - [UI/UX Design Decisions](../project/ui-ux-design.md "Context: Component styling guidelines") 
->   - [UI/UX Patterns](../concerns/ui-ux-patterns.md "Context: Component implementation patterns")
+>   - [UI/UX Design Decisions](design-patterns-ui-ux.md "Context: Component styling guidelines") 
+>   - [UI/UX Patterns](react-patterns-ui-ux.md "Context: Component implementation patterns")
 > - **Project Context**: 
 >   - [Technical Stack](../project/technical-stack.md "Context: Technology choices and constraints") 
 >   - [Feature Requirements](../project/feature-requirements.md "Context: Technical compliance for features")
->   - [⚠️ API Design](../concerns/api-design.md "Context: Type definitions for API contracts")
+>   - [⚠️ API Design](api-patterns-design.md "Context: Type definitions for API contracts")
 > - **Implementation**: 
->   - [Form Management](../concerns/form-management.md "Context: Type-safe form handling")
->   - [⚠️ API Design](../concerns/api-design.md "Context: API implementation guidelines")
+>   - [Form Management](form-patterns-validation.md "Context: Type-safe form handling")
+>   - [⚠️ API Design](api-patterns-design.md "Context: API implementation guidelines")
 
 ## Executive Summary
 
