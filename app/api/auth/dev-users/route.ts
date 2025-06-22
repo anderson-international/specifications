@@ -22,10 +22,13 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
 
     const formattedUsers = users.map(user => ({
       id: user.id,
-      name: user.name || user.email || 'Unknown User',
+      name: user.name,
       email: user.email || '',
       role_id: user.role_id,
-      role_name: user.enum_roles?.name || 'Unknown Role'
+      role_name: user.enum_roles?.name || 'Unknown Role',
+      created_at: user.created_at?.toISOString(),
+      slack_userid: user.slack_userid,
+      jotform_name: user.jotform_name
     }))
 
     return NextResponse.json(formattedUsers)

@@ -1,15 +1,15 @@
-import { SpecificationFormData } from '@/lib/schemas/specification'
+import { WizardFormData } from '@/components/wizard/types/wizard.types'
 
 const DRAFT_STORAGE_KEY = 'specification-draft'
 const DRAFT_EXPIRY_HOURS = 24
 
 interface DraftData {
-  data: Partial<SpecificationFormData>
+  data: Partial<WizardFormData>
   timestamp: number
   productId?: string
 }
 
-export function saveDraft(data: Partial<SpecificationFormData>, productId?: string): void {
+export function saveDraft(data: Partial<WizardFormData>, productId?: string): void {
   try {
     const draftData: DraftData = {
       data,
@@ -23,7 +23,7 @@ export function saveDraft(data: Partial<SpecificationFormData>, productId?: stri
   }
 }
 
-export function loadDraft(productId?: string): Partial<SpecificationFormData> | null {
+export function loadDraft(productId?: string): Partial<WizardFormData> | null {
   try {
     const stored = localStorage.getItem(DRAFT_STORAGE_KEY)
     if (!stored) return null

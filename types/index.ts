@@ -65,11 +65,14 @@ export interface PaginationInfo {
 
 // Authentication types
 export interface AuthUser {
-  id: string
-  name: string
-  email: string
-  role_id: number
-  role_name: string
+  id: string                    // UUID from database
+  name: string | null          // TEXT, nullable
+  email: string               // TEXT, required (NOT NULL)
+  role_id: number             // INTEGER, required FK to enum_roles.id
+  role_name: string           // Computed from enum_roles.name via relationship
+  created_at?: string         // TIMESTAMP WITH TIME ZONE
+  slack_userid?: string | null // CHARACTER VARYING(30), nullable  
+  jotform_name?: string | null // CHARACTER VARYING(100), nullable
 }
 
 export interface AuthContextType {

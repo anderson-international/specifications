@@ -55,12 +55,7 @@ export default function DevAuth({ onUserSelect, currentUser }: DevAuthProps): JS
   }
 
   return (
-    <div className={styles.devAuth}>
-      <div className={styles.header}>
-        <h3>Development Authentication</h3>
-        <span className={styles.badge}>DEV ONLY</span>
-      </div>
-      
+    <>
       {currentUser ? (
         <div className={styles.userInfo}>
           <div className={styles.currentUser}>
@@ -77,8 +72,7 @@ export default function DevAuth({ onUserSelect, currentUser }: DevAuthProps): JS
           </button>
         </div>
       ) : (
-        <div className={styles.userSelect}>
-          <label htmlFor="user-select">Select Development User:</label>
+        <div className={styles.selectContainer}>
           <select 
             id="user-select"
             onChange={handleUserChange}
@@ -94,6 +88,6 @@ export default function DevAuth({ onUserSelect, currentUser }: DevAuthProps): JS
           </select>
         </div>
       )}
-    </div>
+    </>
   )
 }

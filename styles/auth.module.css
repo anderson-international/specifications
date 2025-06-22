@@ -2,9 +2,9 @@
   max-width: 400px;
   margin: 2rem auto;
   padding: 1.5rem;
-  border: 2px solid #e5e7eb;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: #f9fafb;
+  background-color: var(--bg-card);
 }
 
 .header {
@@ -16,7 +16,7 @@
 
 .header h3 {
   margin: 0;
-  color: #374151;
+  color: var(--text);
 }
 
 .badge {
@@ -31,7 +31,7 @@
 .loading {
   text-align: center;
   padding: 2rem;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .userInfo {
@@ -39,9 +39,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background: #ffffff;
+  background-color: var(--bg-card);
   border-radius: 6px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
 }
 
 .currentUser {
@@ -51,21 +51,21 @@
 }
 
 .currentUser strong {
-  color: #111827;
+  color: var(--text);
 }
 
 .role {
   font-size: 0.875rem;
-  color: #6b7280;
-  background: #e5e7eb;
+  color: var(--text-secondary);
+  background-color: var(--border);
   padding: 0.125rem 0.5rem;
   border-radius: 12px;
   width: fit-content;
 }
 
 .logoutBtn {
-  background: #ef4444;
-  color: white;
+  background-color: #ef4444;
+  color: var(--text);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -74,7 +74,7 @@
 }
 
 .logoutBtn:hover {
-  background: #dc2626;
+  background-color: #dc2626;
 }
 
 .userSelect {
@@ -83,24 +83,40 @@
   gap: 0.5rem;
 }
 
+.selectContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .userSelect label {
   font-weight: 500;
-  color: #374151;
+  color: var(--text);
 }
 
 .select {
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
-  font-size: 1rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background: white !important;
+  color: black !important;
+  font-size: 0.875rem;
+  font-family: inherit;
   cursor: pointer;
+  transition: border-color 0.15s ease-in-out;
 }
 
 .select:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--accent-primary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.select:disabled {
+  background: #f3f4f6 !important;
+  color: #6b7280 !important;
+  cursor: not-allowed;
 }
 
 .authPage {
@@ -108,15 +124,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f3f4f6;
+  background-color: var(--bg-content);
 }
 
 .authCard {
-  background: white;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
   max-width: 500px;
   width: 100%;
-  margin: 1rem;
 }

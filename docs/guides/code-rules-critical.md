@@ -28,6 +28,32 @@ Utility Files: MAX 100 lines
 **SOLUTION**: Split components. Extract custom hooks.
 **REFERENCE**: [`../../guides/../../guides/code-rules-quality.md`](code-rules-quality.md "Priority: HIGH - TypeScript standards and ESLint rules")
 
+#### **🔧 MANDATORY IMPLEMENTATION PROCESS (AI ENFORCEMENT)**
+
+**BEFORE WRITING ANY COMPONENT:**
+- [ ] **Estimate component size** - Will this design exceed 150 lines?
+- [ ] **Plan extraction strategy** - Identify hooks, sub-components, utilities to extract
+- [ ] **Design architecture first** - Split concerns before writing code
+
+**DURING CODING (Every 20-30 lines):**
+- [ ] **Count current lines** - Stop and check progress toward limit
+- [ ] **Evaluate extraction points** - Identify code that can be moved out
+- [ ] **Refactor immediately** - Don't defer extraction to end
+
+**AI VALIDATION CHECKLIST:**
+```
+Line 30: STOP - Am I approaching 50% of limit? Plan extractions now.
+Line 60: STOP - Am I approaching 80% of limit? Extract immediately.
+Line 100: STOP - CRITICAL - Must extract before continuing.
+Line 120: STOP - EMERGENCY - Component is approaching limit.
+```
+
+**EXTRACTION PRIORITIES:**
+1. **Custom hooks** - State management, API calls, complex calculations
+2. **Sub-components** - Repeated JSX patterns, form sections, display components  
+3. **Utility functions** - Pure functions, formatters, validators
+4. **Constants** - Large option arrays, configuration objects
+
 ### **2. TypeScript Return Types (⚠️ CRITICAL)**
 ```typescript
 // ❌ WRONG
@@ -65,6 +91,26 @@ const computedValue = useMemo(() => {
 **SOLUTION**: Wrap components in React.memo, memoize handlers and computed values.
 **REFERENCE**: [`react-patterns-performance.md`](react-patterns-performance.md "Priority: HIGH - React optimization techniques")
 
+### **4. Readonly Array Type Mismatches (⚠️ CRITICAL)**
+```typescript
+// ❌ COMMON ERROR: readonly arrays from `as const` don't match mutable parameters
+const OPTIONS = [
+  { id: 1, label: 'Option 1', value: 1 },
+  { id: 2, label: 'Option 2', value: 2 }
+] as const; // This creates readonly types
+
+// This fails: Cannot assign readonly type to mutable parameter
+<MyComponent options={OPTIONS} /> // Error!
+
+// ✅ SOLUTION:
+// Use type assertion via unknown (works reliably with strict TypeScript)
+<MyComponent options={OPTIONS as unknown as MyOption[]} />
+```
+**FAILURE CONSEQUENCE**: Build failures with "readonly cannot be assigned to mutable" errors.
+**DETECTION**: TypeScript compiler errors when passing `as const` arrays to components expecting mutable arrays.
+**SOLUTION**: Use type assertion via unknown `as unknown as MyType[]`.
+**REFERENCE**: This prevents the common `as const` readonly type mismatch issue.
+
 ## 🎯 **CODE GENERATION CHECKLIST**
 
 Before writing any component:
@@ -73,6 +119,7 @@ Before writing any component:
 - [ ] Wrap component in React.memo.
 - [ ] Use useCallback for all event handlers.
 - [ ] Use useMemo for all derived state and expensive calculations.
+- [ ] Check for readonly array type mismatches with `as const` arrays.
 
 ## 🔗 **Quick Reference Links**
 - TypeScript Standards: [Code Rules Quality](code-rules-quality.md#typescript-rules "Priority: HIGH - TypeScript typing requirements")

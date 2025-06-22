@@ -3,9 +3,9 @@ import {
   characteristics1Schema, 
   characteristics2Schema, 
   sensoryProfileSchema, 
-  reviewRatingSchema, 
-  SpecificationFormData
+  reviewRatingSchema
 } from '@/lib/schemas/specification'
+import { WizardFormData } from '@/components/wizard/types/wizard.types'
 import { ZodError } from 'zod'
 
 export interface ValidationResult {
@@ -13,7 +13,7 @@ export interface ValidationResult {
   errors: string[]
 }
 
-export function validateStep(stepNumber: number, data: Partial<SpecificationFormData>): ValidationResult {
+export function validateStep(stepNumber: number, data: Partial<WizardFormData>): ValidationResult {
   try {
     switch (stepNumber) {
       case 1:
@@ -66,7 +66,7 @@ export function getStepRequiredFields(stepNumber: number): string[] {
   }
 }
 
-export function getStepProgress(stepNumber: number, data: Partial<SpecificationFormData>): number {
+export function getStepProgress(stepNumber: number, data: Partial<WizardFormData>): number {
   const requiredFields = getStepRequiredFields(stepNumber)
   if (requiredFields.length === 0) return 100
   

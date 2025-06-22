@@ -62,7 +62,7 @@ export async function getSpecificationEnumData(): Promise<SpecificationEnumData>
 export async function getEnumData(tableName: string): Promise<EnumValue[]> {
   try {
     // Use PrismaClient with dynamic table name access
-    const data = await (prisma as Record<string, { findMany: Function }>)[tableName].findMany({ 
+    const data = await (prisma as unknown as Record<string, { findMany: Function }>)[tableName].findMany({ 
       orderBy: { name: 'asc' } 
     })
     return data.map((item: { id: number; name: string }): EnumValue => ({ id: item.id, name: item.name }))

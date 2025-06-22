@@ -1,192 +1,148 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
+import ValidationSummary, { ValidationError } from '../controls/ValidationSummary'
+import ProductBrandFilter from './ProductBrandFilter'
 import ProductSearch from './ProductSearch'
 import ProductGrid from './ProductGrid'
-import SelectedProductSummary from './SelectedProductSummary'
-import ValidationSummary, { ValidationError } from '../controls/ValidationSummary'
-import { Product, Brand, ProductSelectionFormData } from './types'
+import { useProductSelection } from '../hooks/useProductSelection'
+import { type MockProduct } from '@/constants/wizardOptions'
 import styles from './ProductSelection.module.css'
 
 interface ProductSelectionProps {
   stepNumber: number
   totalSteps: number
   disabled?: boolean
+  onProductSelect?: () => void
+}
+
+interface ProductSelectionFormData {
+  shopify_handle: string | null
+  product_brand_id: number | null
 }
 
 /**
- * First step of the specification wizard for selecting a product
+ * Step 1: Product selection with brand filtering and search
  */
 const ProductSelection = ({
   stepNumber,
   totalSteps,
-  disabled = false
+  disabled = false,
+  onProductSelect
 }: ProductSelectionProps): JSX.Element => {
-  // Form context
-  const { watch, setValue, formState: { errors } } = useFormContext<ProductSelectionFormData>()
+  const { 
+    watch, 
+    setValue, 
+    formState: { errors } 
+  } = useFormContext<ProductSelectionFormData>()
   
-  // Watch for form value changes
-  const productId = watch('product_id')
   const shopifyHandle = watch('shopify_handle')
-  const brandId = watch('brand_id')
   
-  // Local state
-  const [searchTerm, setSearchTerm] = useState<string>('')
-  const [products, setProducts] = useState<Product[]>([])
-  const [brands, setBrands] = useState<Brand[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
-  const [selectedBrandId, setSelectedBrandId] = useState<number | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  // Handle product selection from hook
+  const handleProductSelect = useCallback((product: MockProduct): void => {
+    try {
+      setValue('shopify_handle', product.shopify_handle, { shouldValidate: true })
+      setValue('product_brand_id', product.brand_id, { shouldValidate: true })
+      
+      // Add a small delay to ensure form is updated before advancing
+      setTimeout(() => {
+        onProductSelect?.()
+      }, 100)
+    } catch (error) {
+      console.error('Error selecting product:', error)
+    }
+  }, [setValue, onProductSelect])
   
-  // Selected product from the current products list
-  const selectedProduct = useMemo(() => {
-    return products.find(p => p.id === productId) || null
-  }, [products, productId])
-
-  // Filtered products based on search term and brand filter
-  const filteredProducts = useMemo(() => {
-    let filtered = [...products]
-    
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase()
-      filtered = filtered.filter(p => 
-        p.title.toLowerCase().includes(searchLower) || 
-        p.brand_name.toLowerCase().includes(searchLower)
-      )
-    }
-    
-    if (selectedBrandId) {
-      filtered = filtered.filter(p => p.brand_id === selectedBrandId)
-    }
-    
-    return filtered
-  }, [products, searchTerm, selectedBrandId])
-
-  // Validation errors
+  // Use extracted hook for state management
+  const {
+    searchTerm,
+    selectedBrandId,
+    filteredProducts,
+    handleBrandFilter,
+    handleSearchChange,
+    handleProductSelect: hookProductSelect
+  } = useProductSelection({
+    shopifyHandle,
+    onProductSelect: handleProductSelect
+  })
+  
+  // Validation errors - Simplified to rely on central Zod schema
   const validationErrors = useMemo((): ValidationError[] => {
     const errorList: ValidationError[] = []
-    if (errors.product_id) {
+    
+    if (errors.shopify_handle) {
       errorList.push({
-        fieldName: 'product_id',
-        message: errors.product_id.message || 'Please select a product'
+        fieldName: 'shopify_handle',
+        message: errors.shopify_handle.message || 'Please select a product to review'
       })
     }
-    return errorList
-  }, [errors])
-
-  // Fetch products and brands from API
-  useEffect(() => {
-    const fetchData = async (): Promise<void> => {
-      setLoading(true)
-      setError(null)
-      try {
-        // Fetch products from API
-        const productsResponse = await fetch('/api/products')
-        if (!productsResponse.ok) throw new Error('Failed to load products')
-        const productsData = await productsResponse.json()
-        setProducts(productsData.products || [])
-        
-        // Fetch brands from API
-        const brandsResponse = await fetch('/api/enum/enum_brands')
-        if (!brandsResponse.ok) throw new Error('Failed to load brands')
-        const brandsData = await brandsResponse.json()
-        setBrands(brandsData || [])
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred')
-        console.error('Error fetching data:', err)
-      } finally {
-        setLoading(false)
-      }
+    
+    if (errors.product_brand_id) {
+      errorList.push({
+        fieldName: 'product_brand_id',
+        message: errors.product_brand_id.message || 'Please select a product brand'
+      })
     }
     
-    fetchData()
-  }, [])
-
-  // Handle product selection
-  const handleProductSelect = useCallback((product: Product): void => {
-    setValue('product_id', Number(product.id), { shouldValidate: true })
-    setValue('shopify_handle', product.handle, { shouldValidate: true })
-    setValue('brand_id', product.brand_id, { shouldValidate: true })
-  }, [setValue])
+    return errorList
+  }, [errors.shopify_handle, errors.product_brand_id])
   
-  // Handle search change
-  const handleSearchChange = useCallback((value: string): void => {
-    setSearchTerm(value)
-  }, [])
-  
-  // Handle brand filter change
-  const handleBrandChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>): void => {
-    const value = e.target.value
-    setSelectedBrandId(value ? Number(value) : null)
-  }, [])
-  
-  // Check if the step is valid
+  // Check if step is valid - Rely on form validation state
   const isValid = useMemo((): boolean => {
-    return !errors.product_id
-  }, [errors.product_id])
+    return Boolean(shopifyHandle && !errors.shopify_handle && !errors.product_brand_id)
+  }, [shopifyHandle, errors.shopify_handle, errors.product_brand_id])
 
   return (
     <WizardStepCard
-      title="Product Selection"
+      title="Select Product"
       stepNumber={stepNumber}
       totalSteps={totalSteps}
       isValid={isValid}
     >
       <ValidationSummary errors={validationErrors} />
       
-      <div className={styles.filterBar}>
-        <ProductSearch
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-          disabled={disabled || loading}
-        />
+      <div className={styles.filterSearchContainer}>
+        <div 
+          role="group" 
+          aria-labelledby="brand-filter-label"
+          aria-describedby="brand-filter-description"
+        >
+          <ProductBrandFilter
+            selectedBrandId={selectedBrandId}
+            onBrandFilter={handleBrandFilter}
+            disabled={disabled}
+          />
+        </div>
         
-        <div className={styles.brandFilter}>
-          <select
-            value={selectedBrandId?.toString() || ''}
-            onChange={handleBrandChange}
-            className={styles.brandSelect}
-            disabled={disabled || loading}
-            aria-label="Filter by brand"
-          >
-            <option value="">All Brands</option>
-            {brands.map(brand => (
-              <option key={brand.id} value={brand.id}>{brand.name}</option>
-            ))}
-          </select>
+        <div 
+          role="group" 
+          aria-labelledby="product-search-label"
+          aria-describedby="product-search-description"
+        >
+          <ProductSearch
+            searchTerm={searchTerm}
+            onSearchChange={handleSearchChange}
+            disabled={disabled}
+          />
         </div>
       </div>
       
-      <SelectedProductSummary
-        product={selectedProduct}
-        shopifyHandle={shopifyHandle}
-        brandId={brandId}
-      />
-      
-      {error && (
-        <div className={styles.error} role="alert">
-          {error}
-        </div>
-      )}
-      
-      {loading ? (
-        <div className={styles.loading}>
-          <div className={styles.spinner} />
-          <p>Loading products...</p>
-        </div>
-      ) : (
+      <div 
+        role="group" 
+        aria-labelledby="product-grid-label"
+        aria-describedby="product-grid-description"
+      >
         <ProductGrid
           products={filteredProducts}
-          selectedProduct={selectedProduct}
-          onProductSelect={handleProductSelect}
+          selectedHandle={shopifyHandle}
+          onProductSelect={hookProductSelect}
           disabled={disabled}
         />
-      )}
+      </div>
     </WizardStepCard>
   )
 }
 
-// Export with React.memo for performance optimization
 export default React.memo(ProductSelection)

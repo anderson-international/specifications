@@ -2,7 +2,7 @@
   "metadata": {
     "version": "2.0",
     "description": "Document relationship graph for AI documentation ingestion",
-    "lastUpdated": "2025-06-21T16:21:23.561Z"
+    "lastUpdated": "2025-06-22T16:34:01.000Z"
   },
   "nodes": [
     {
@@ -165,6 +165,17 @@
       "workflows": [
         "docs-ui"
       ]
+    },
+    {
+      "id": "SfA_v5_k",
+      "path": "docs/project/db-schema.md",
+      "type": "project",
+      "priority": 1,
+      "description": "AI-optimized database schema documentation for CRUD forms and API development",
+      "workflows": [
+        "docs-forms",
+        "docs-api"
+      ]
     }
   ],
   "edges": [
@@ -274,7 +285,8 @@
         "IJ1Ls6zf",
         "vmydbw09",
         "2MeB6zxn",
-        "7zurfspg"
+        "7zurfspg",
+        "SfA_v5_k"
       ],
       "description": "Form development with business requirements and validation"
     },
@@ -284,7 +296,8 @@
         "H7cdM9hi",
         "geUe6A1X",
         "GUHe0ovO",
-        "AYkT71Xe"
+        "AYkT71Xe",
+        "SfA_v5_k"
       ],
       "description": "API development with business context and technical patterns"
     },

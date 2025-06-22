@@ -1,6 +1,8 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import '@/styles/globals.css'
+import { AuthProvider } from '@/lib/auth-context'
+import DevAuthWrapper from '@/components/auth/DevAuthWrapper'
 import AppLayout from '@/components/layout/AppLayout'
 
 export const metadata: Metadata = {
@@ -17,9 +19,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppLayout>
-          {children}
-        </AppLayout>
+        <AuthProvider>
+          <DevAuthWrapper>
+            <AppLayout>
+              {children}
+            </AppLayout>
+          </DevAuthWrapper>
+        </AuthProvider>  
       </body>
     </html>
   )

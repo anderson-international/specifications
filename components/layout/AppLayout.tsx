@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from 'react'
 import Link from 'next/link'
-
+import { useAuth } from '@/lib/auth-context'
 import { useDashboardStats } from '../../hooks/useDashboardStats'
 import ErrorBoundary from '../common/ErrorBoundary'
 import styles from './AppLayout.module.css'
@@ -14,6 +14,7 @@ interface AppLayoutProps {
 const AppLayout = ({ children }: AppLayoutProps): JSX.Element => {
   const [isNavCollapsed, setIsNavCollapsed] = useState<boolean>(false)
   const { stats, isLoading } = useDashboardStats()
+  const { isAdmin } = useAuth()
 
   const toggleNav = useCallback((): void => {
     setIsNavCollapsed(!isNavCollapsed)
@@ -79,11 +80,13 @@ const AppLayout = ({ children }: AppLayoutProps): JSX.Element => {
                     ➕ New Specification
                   </Link>
                 </li>
-                <li>
-                  <Link href="/admin" className={styles.navLink}>
-                    ⚙️ Admin
-                  </Link>
-                </li>
+                {isAdmin && (
+                  <li>
+                    <Link href="/admin" className={styles.navLink}>
+                      ⚙️ Admin
+                    </Link>
+                  </li>
+                )}
               </ul>
             </>
           )}
