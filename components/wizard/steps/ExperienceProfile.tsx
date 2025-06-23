@@ -4,8 +4,6 @@ import React, { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
 import SegmentedControl, { SegmentedOption } from '../controls/SegmentedControl'
-import ValidationSummary from '../controls/ValidationSummary'
-import { useExperienceProfileValidation } from '../hooks/useExperienceProfileValidation'
 import { EXPERIENCE_LEVELS, NICOTINE_LEVELS, MOISTURE_LEVELS } from '@/constants/wizardOptions'
 import styles from './ExperienceProfile.module.css'
 
@@ -31,8 +29,7 @@ const ExperienceProfile = ({
 }: ExperienceProfileProps): JSX.Element => {
   const { 
     watch, 
-    setValue, 
-    formState: { errors } 
+    setValue
   } = useFormContext<ExperienceProfileFormData>()
   
   // Watch form values - Optimized with single watch call
@@ -41,14 +38,6 @@ const ExperienceProfile = ({
     nicotine_level_id: nicotineLevelId,
     moisture_level_id: moistureLevelId
   } = watch()
-  
-  // Use extracted validation hook
-  const { validationErrors, isValid } = useExperienceProfileValidation({
-    experienceLevelId,
-    nicotineLevelId,
-    moistureLevelId,
-    errors
-  })
   
   // Handle experience level change
   const handleExperienceChange = useCallback((value: string | number): void => {
@@ -70,10 +59,7 @@ const ExperienceProfile = ({
       title="Experience Profile"
       stepNumber={stepNumber}
       totalSteps={totalSteps}
-      isValid={isValid}
     >
-      <ValidationSummary errors={validationErrors} />
-      
       <div 
         className={styles.formGroup}
         role="group"

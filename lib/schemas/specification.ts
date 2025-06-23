@@ -54,3 +54,6 @@ export type Characteristics2 = z.infer<typeof characteristics2Schema>
 export type SensoryProfile = z.infer<typeof sensoryProfileSchema>
 export type ReviewRating = z.infer<typeof reviewRatingSchema>
 export type Specification = z.infer<typeof specificationSchema>
+
+// Complete form data type for the wizard
+export type SpecificationFormData = z.infer<typeof specificationSchema>

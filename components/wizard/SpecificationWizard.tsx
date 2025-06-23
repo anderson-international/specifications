@@ -6,6 +6,7 @@ import { Specification } from '@/lib/schemas/specification'
 import WizardProgress from './controls/WizardProgress'
 import ProductSelection from './steps/ProductSelection'
 import { useSpecificationWizard } from './hooks/useSpecificationWizard'
+import { useStepValidation } from './hooks/useStepValidation'
 import { createWizardSteps } from './constants/wizardSteps'
 import styles from './SpecificationWizard.module.css'
 
@@ -37,19 +38,10 @@ const SpecificationWizard = ({
   const currentStep = steps[activeStep]
   const totalSteps = steps.length
 
-  // Step validation for progress indicator
-  const stepValidation = useMemo(() => {
-    const formState = methods.formState
-    return {
-      product: !formState.errors.shopify_handle && !formState.errors.product_brand_id,
-      characteristics: !formState.errors.product_type_id && !formState.errors.grind_id && !formState.errors.experience_level_id,
-      experience: !formState.errors.nicotine_level_id && !formState.errors.moisture_level_id,
-      tasting: !formState.errors.tasting_notes && !formState.errors.cures && !formState.errors.tobacco_types,
-      review: !formState.errors.review && !formState.errors.star_rating
-    }
-  }, [methods.formState])
-
-  const isCurrentStepValid = stepValidation[currentStep.id as keyof typeof stepValidation]
+  const isCurrentStepValid = useStepValidation({
+    currentStepId: currentStep.id,
+    methods
+  })
 
   return (
     <FormProvider {...methods}>
@@ -57,11 +49,10 @@ const SpecificationWizard = ({
         <div className={styles.progress}>
           <WizardProgress
             steps={steps.map((step, index) => ({
-              id: index,
-              title: step.title,
-              isValid: stepValidation[step.id as keyof typeof stepValidation]
+              id: index + 1,
+              title: step.title
             }))}
-            currentStepId={activeStep}
+            currentStepId={activeStep + 1}
             onStepClick={handleStepClick}
             allowNavigation={true}
           />
@@ -87,7 +78,6 @@ const SpecificationWizard = ({
             )}
           </div>
 
-          {/* Only show footer buttons after product selection (Step 1+) */}
           {activeStep > 0 && (
             <div className={styles.wizardFooter}>
               <button
@@ -123,7 +113,7 @@ const SpecificationWizard = ({
                   <button
                     type="submit"
                     className={styles.submitButton}
-                    disabled={isSubmitting || isSavingDraft || !isCurrentStepValid}
+                    disabled={isSubmitting || isSavingDraft}
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit'}
                   </button>

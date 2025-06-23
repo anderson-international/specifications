@@ -27,8 +27,6 @@ const ProductAttributeToggles = ({
   disabled = false
 }: ProductAttributeTogglesProps): JSX.Element => (
   <div className={styles.toggleSection}>
-    <h4 className={styles.sectionTitle}>Product Attributes</h4>
-    
     <ToggleSwitch
       checked={isFermented}
       onChange={onFermentedChange}

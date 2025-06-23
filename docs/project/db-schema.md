@@ -1,13 +1,13 @@
 ---
 id: SfA_v5_k
 title: AI-Optimized Database Schema Documentation
-date: 2025-06-21
+date: 2025-06-23
 description: Provide structured database information for AI models to plan interactions and generate CRUD forms
 ---
 
 # AI-Optimized Database Schema Documentation
 
-*Generated: 2025-06-21*  
+*Generated: 2025-06-23*  
 *Purpose: Provide structured database information for AI models to plan interactions and generate CRUD forms*
 
 ## Overview
@@ -177,7 +177,7 @@ All enum tables follow the standard structure with id, name, created_at, updated
 
 ### enum_product_types
 **Form:** Dropdown/select options | **Validation:** Required field, foreign key constraint
-**Values:** {1:"Tobacco Snuff", 2:"Chew Bag", 3:"Oral Tobacco", 4:"Glucose Snuff", 5:"Accessory", 6:"Nicotine Pouch", 7:"Herbal Snuff", 8:"Nasal Snuff"}
+**Values:** {1:"Tobacco Snuff", 2:"Chew Bag", 3:"Oral Tobacco", 4:"Glucose Snuff", 5:"Accessory", 6:"Nicotine Pouch", 7:"Herbal Snuff"}
 
 ### enum_roles
 **Form:** Dropdown/select options | **Validation:** Required field, foreign key constraint

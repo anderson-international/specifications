@@ -319,6 +319,15 @@
         "QhvP4q6F"
       ],
       "description": "Debugging and troubleshooting with specific error solutions"
+    },
+    {
+      "workflow": "docs-db",
+      "documents": [
+        "AYkT71Xe",
+        "vmydbw09",
+        "SfA_v5_k"
+      ],
+      "description": "Database development with schema, ORM patterns, and form integration"
     }
   ]
 }

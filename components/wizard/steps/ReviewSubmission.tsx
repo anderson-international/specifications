@@ -1,10 +1,9 @@
 'use client'
 
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
 import StarRating from './StarRating'
-import ValidationSummary, { ValidationError } from '../controls/ValidationSummary'
 import styles from './ReviewSubmission.module.css'
 
 interface ReviewSubmissionProps {
@@ -29,8 +28,7 @@ const ReviewSubmission = ({
   const { 
     watch, 
     setValue, 
-    register,
-    formState: { errors } 
+    register
   } = useFormContext<ReviewSubmissionFormData>()
   
   // Watch form values - Optimized with single watch call
@@ -39,50 +37,16 @@ const ReviewSubmission = ({
     star_rating: starRating = 0
   } = watch()
   
-  // Validation errors - Use schema error messages when available
-  const validationErrors = useMemo((): ValidationError[] => {
-    const errorList: ValidationError[] = []
-    
-    if (errors.review) {
-      errorList.push({
-        fieldName: 'review',
-        message: errors.review.message || 'Please write a review (minimum 10 characters)'
-      })
-    }
-    
-    if (errors.star_rating) {
-      errorList.push({
-        fieldName: 'star_rating',
-        message: errors.star_rating.message || 'Please provide a star rating'
-      })
-    }
-    
-    return errorList
-  }, [errors.review, errors.star_rating])
-  
   const handleStarRatingChange = useCallback((rating: number): void => {
     setValue('star_rating', rating, { shouldValidate: true })
   }, [setValue])
   
-  // Check if step is valid - Rely on form validation state
-  const isValid = useMemo((): boolean => {
-    return Boolean(
-      review.trim().length >= 10 && 
-      starRating > 0 &&
-      !errors.review && 
-      !errors.star_rating
-    )
-  }, [review, starRating, errors.review, errors.star_rating])
-
   return (
     <WizardStepCard
       title="Write Your Review"
       stepNumber={stepNumber}
       totalSteps={totalSteps}
-      isValid={isValid}
     >
-      <ValidationSummary errors={validationErrors} />
-      
       <div className={styles.formGroup}>
         <label className={styles.label} htmlFor="star-rating">
           Overall Rating

@@ -4,18 +4,18 @@ import { EnumTableName } from '@/types/enum'
 // Valid enum table names (matches database schema)
 const ENUM_TABLE_NAMES: EnumTableName[] = [
   'enum_product_types',
-  'enum_categories', 
-  'enum_materials',
-  'enum_colors',
-  'enum_sizes',
-  'enum_brands',
-  'enum_suppliers',
-  'enum_seasons',
-  'enum_collections',
-  'enum_price_ranges',
-  'enum_priorities',
+  'enum_product_brands',
+  'enum_grinds',
+  'enum_experience_levels',
+  'enum_nicotine_levels',
+  'enum_moisture_levels',
+  'enum_cures',
+  'enum_tasting_notes',
+  'enum_tobacco_types',
+  'enum_specification_statuses',
   'enum_statuses',
-  'enum_roles'
+  'enum_roles',
+  'enum_snuff_types'
 ]
 
 // Schema for validating enum table names

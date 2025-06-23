@@ -38,7 +38,7 @@ const ProductGrid = ({
           className={`${styles.productCard} ${
             product.shopify_handle === selectedHandle ? styles.selected : ''
           } ${product.reviewed ? styles.reviewed : ''}`}
-          disabled={disabled || !product.in_stock}
+          disabled={disabled}
           aria-pressed={product.shopify_handle === selectedHandle}
           aria-describedby={`product-${product.id}-details`}
         >
@@ -50,13 +50,6 @@ const ProductGrid = ({
           <div className={styles.productInfo}>
             <span className={styles.productName}>{product.name}</span>
             <span className={styles.brandName}>{product.brand_name}</span>
-          </div>
-          <div className={styles.productStatus}>
-            {!product.in_stock && <span className={styles.outOfStock}>Out of Stock</span>}
-            {product.reviewed && <span className={styles.reviewedBadge}>✓ Reviewed</span>}
-            {product.shopify_handle === selectedHandle && (
-              <span className={styles.selectedIndicator}>✓ Selected</span>
-            )}
           </div>
         </button>
       ))}

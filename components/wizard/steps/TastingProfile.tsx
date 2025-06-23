@@ -4,8 +4,6 @@ import React, { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
 import MultiSelectChips, { Option } from '../controls/MultiSelectChips'
-import ValidationSummary from '../controls/ValidationSummary'
-import { useTastingProfileValidation } from '../hooks/useTastingProfileValidation'
 import { TASTING_NOTES, CURES, TOBACCO_TYPES } from '@/constants/wizardOptions'
 import styles from './TastingProfile.module.css'
 
@@ -32,8 +30,7 @@ const TastingProfile = ({
 }: TastingProfileProps): JSX.Element => {
   const { 
     watch, 
-    setValue, 
-    formState: { errors } 
+    setValue
   } = useFormContext<TastingProfileFormData>()
   
   // Watch form values - Optimized with single watch call
@@ -42,14 +39,6 @@ const TastingProfile = ({
     cures = [],
     tobacco_types: tobaccoTypes = []
   } = watch()
-  
-  // Use extracted validation hook
-  const { validationErrors, isValid } = useTastingProfileValidation({
-    tastingNotes,
-    cures,
-    tobaccoTypes,
-    errors
-  })
   
   const handleTastingNotesChange = useCallback((values: (number | string)[]): void => {
     setValue('tasting_notes', values as number[], { shouldValidate: true })
@@ -68,9 +57,7 @@ const TastingProfile = ({
       title="Tasting Profile"
       stepNumber={stepNumber}
       totalSteps={totalSteps}
-      isValid={isValid}
     >
-      <ValidationSummary errors={validationErrors} />
       
       <div 
         className={styles.formGroup}

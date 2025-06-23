@@ -3,7 +3,6 @@
 import React from 'react'
 import ProductSelection from '../steps/ProductSelection'
 import ProductCharacteristics from '../steps/ProductCharacteristics'
-import ExperienceProfile from '../steps/ExperienceProfile'
 import TastingProfile from '../steps/TastingProfile'
 import ReviewSubmission from '../steps/ReviewSubmission'
 
@@ -30,17 +29,6 @@ export const createWizardSteps = (): WizardStep[] => [
     title: 'Characteristics',
     component: (stepNumber, totalSteps, disabled) => (
       <ProductCharacteristics 
-        stepNumber={stepNumber} 
-        totalSteps={totalSteps} 
-        disabled={disabled} 
-      />
-    )
-  },
-  {
-    id: 'experience',
-    title: 'Experience',
-    component: (stepNumber, totalSteps, disabled) => (
-      <ExperienceProfile 
         stepNumber={stepNumber} 
         totalSteps={totalSteps} 
         disabled={disabled} 

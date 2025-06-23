@@ -2,29 +2,8 @@
 
 import { useState, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { useSpecificationSubmission } from './useSpecificationSubmission'
 import { WizardFormData, UseSpecificationWizardReturn, UseSpecificationWizardProps } from '../types/wizard.types'
-
-// Streamlined form schema
-const wizardSchema = z.object({
-  shopify_handle: z.string().nullable(),
-  product_brand_id: z.number().nullable().refine(val => val !== null, { message: 'Please select a product brand' }),
-  product_type_id: z.number().nullable().refine(val => val !== null, { message: 'Please select a product type' }),
-  grind_id: z.number().nullable().refine(val => val !== null, { message: 'Please select a grind type' }),
-  experience_level_id: z.number().nullable().refine(val => val !== null, { message: 'Please select your experience level' }),
-  is_fermented: z.boolean(),
-  is_oral_tobacco: z.boolean(),
-  is_artisan: z.boolean(),
-  nicotine_level_id: z.number().nullable().refine(val => val !== null, { message: 'Please select nicotine level' }),
-  moisture_level_id: z.number().nullable().refine(val => val !== null, { message: 'Please select moisture level' }),
-  tasting_notes: z.array(z.number()).min(1, { message: 'Please select at least one tasting note' }),
-  cures: z.array(z.number()).min(1, { message: 'Please select at least one cure type' }),
-  tobacco_types: z.array(z.number()).min(1, { message: 'Please select at least one tobacco type' }),
-  review: z.string().min(10, { message: 'Review must be at least 10 characters' }),
-  star_rating: z.number().min(1, { message: 'Please provide a rating' })
-})
 
 const defaultValues: Partial<WizardFormData> = {
   shopify_handle: null,
@@ -44,12 +23,15 @@ const defaultValues: Partial<WizardFormData> = {
   star_rating: 0
 }
 
+/**
+ * Main wizard hook for managing multi-step specification creation
+ * Simplified to use React Hook Form without Zod validation
+ */
 export const useSpecificationWizard = ({ onSubmit, initialData = {} }: UseSpecificationWizardProps): UseSpecificationWizardReturn => {
   const [activeStep, setActiveStep] = useState<number>(0)
 
   const methods = useForm<WizardFormData>({
-    defaultValues: { ...defaultValues, ...initialData } as WizardFormData,
-    resolver: zodResolver(wizardSchema)
+    defaultValues: { ...defaultValues, ...initialData } as WizardFormData
   })
 
   const { isSubmitting, isSavingDraft, handleFormSubmit, saveDraft } = useSpecificationSubmission({
@@ -66,7 +48,7 @@ export const useSpecificationWizard = ({ onSubmit, initialData = {} }: UseSpecif
   }, [])
 
   const handleStepClick = useCallback((stepIndex: number) => {
-    setActiveStep(stepIndex)
+    setActiveStep(stepIndex - 1)
   }, [])
 
   return {

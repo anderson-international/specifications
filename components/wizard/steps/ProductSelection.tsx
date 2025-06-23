@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
-import ValidationSummary, { ValidationError } from '../controls/ValidationSummary'
 import ProductBrandFilter from './ProductBrandFilter'
+import ProductTypeFilter from './ProductTypeFilter'
 import ProductSearch from './ProductSearch'
 import ProductGrid from './ProductGrid'
 import { useProductSelection } from '../hooks/useProductSelection'
@@ -34,98 +34,92 @@ const ProductSelection = ({
 }: ProductSelectionProps): JSX.Element => {
   const { 
     watch, 
-    setValue, 
-    formState: { errors } 
+    setValue
   } = useFormContext<ProductSelectionFormData>()
   
   const shopifyHandle = watch('shopify_handle')
   
-  // Handle product selection from hook
-  const handleProductSelect = useCallback((product: MockProduct): void => {
-    try {
-      setValue('shopify_handle', product.shopify_handle, { shouldValidate: true })
-      setValue('product_brand_id', product.brand_id, { shouldValidate: true })
-      
-      // Add a small delay to ensure form is updated before advancing
-      setTimeout(() => {
-        onProductSelect?.()
-      }, 100)
-    } catch (error) {
-      console.error('Error selecting product:', error)
-    }
-  }, [setValue, onProductSelect])
-  
-  // Use extracted hook for state management
   const {
-    searchTerm,
     selectedBrandId,
+    selectedTypeId,
+    searchTerm,
     filteredProducts,
     handleBrandFilter,
+    handleTypeFilter,
     handleSearchChange,
-    handleProductSelect: hookProductSelect
+    handleProductSelect,
+    handleClearFilters
   } = useProductSelection({
     shopifyHandle,
-    onProductSelect: handleProductSelect
+    onProductSelect: useCallback((product: MockProduct): void => {
+      try {
+        setValue('shopify_handle', product.shopify_handle, { shouldValidate: true })
+        setValue('product_brand_id', product.brand_id, { shouldValidate: true })
+        
+        // Auto-advance to next step for mobile-first UX
+        if (onProductSelect) {
+          onProductSelect()
+        }
+      } catch (error) {
+        console.error('Error selecting product:', error)
+      }
+    }, [setValue, onProductSelect])
   })
   
-  // Validation errors - Simplified to rely on central Zod schema
-  const validationErrors = useMemo((): ValidationError[] => {
-    const errorList: ValidationError[] = []
-    
-    if (errors.shopify_handle) {
-      errorList.push({
-        fieldName: 'shopify_handle',
-        message: errors.shopify_handle.message || 'Please select a product to review'
-      })
-    }
-    
-    if (errors.product_brand_id) {
-      errorList.push({
-        fieldName: 'product_brand_id',
-        message: errors.product_brand_id.message || 'Please select a product brand'
-      })
-    }
-    
-    return errorList
-  }, [errors.shopify_handle, errors.product_brand_id])
-  
-  // Check if step is valid - Rely on form validation state
-  const isValid = useMemo((): boolean => {
-    return Boolean(shopifyHandle && !errors.shopify_handle && !errors.product_brand_id)
-  }, [shopifyHandle, errors.shopify_handle, errors.product_brand_id])
-
   return (
     <WizardStepCard
       title="Select Product"
       stepNumber={stepNumber}
       totalSteps={totalSteps}
-      isValid={isValid}
     >
-      <ValidationSummary errors={validationErrors} />
-      
-      <div className={styles.filterSearchContainer}>
-        <div 
-          role="group" 
-          aria-labelledby="brand-filter-label"
-          aria-describedby="brand-filter-description"
-        >
-          <ProductBrandFilter
-            selectedBrandId={selectedBrandId}
-            onBrandFilter={handleBrandFilter}
-            disabled={disabled}
-          />
+      <div className={styles.filtersContainer}>
+        <div className={styles.filterRow}>
+          <div 
+            role="group" 
+            aria-labelledby="brand-filter-label"
+            aria-describedby="brand-filter-description"
+          >
+            <ProductBrandFilter
+              selectedBrandId={selectedBrandId}
+              onBrandFilter={handleBrandFilter}
+              disabled={disabled}
+            />
+          </div>
+          <div 
+            role="group" 
+            aria-labelledby="product-type-filter-label"
+            aria-describedby="product-type-filter-description"
+          >
+            <ProductTypeFilter
+              selectedTypeId={selectedTypeId}
+              onTypeFilter={handleTypeFilter}
+              disabled={disabled}
+            />
+          </div>
         </div>
         
-        <div 
-          role="group" 
-          aria-labelledby="product-search-label"
-          aria-describedby="product-search-description"
-        >
-          <ProductSearch
-            searchTerm={searchTerm}
-            onSearchChange={handleSearchChange}
+        <div className={styles.searchRow}>
+          <div 
+            role="group" 
+            aria-labelledby="product-search-label"
+            aria-describedby="product-search-description"
+          >
+            <ProductSearch
+              searchTerm={searchTerm}
+              onSearchChange={handleSearchChange}
+              disabled={disabled}
+            />
+          </div>
+          
+          <button 
+            type="button" 
+            onClick={handleClearFilters}
             disabled={disabled}
-          />
+            className={styles.clearButton}
+            aria-label="Clear all filters"
+          >
+            ✕
+          </button>
         </div>
       </div>
       
@@ -137,7 +131,7 @@ const ProductSelection = ({
         <ProductGrid
           products={filteredProducts}
           selectedHandle={shopifyHandle}
-          onProductSelect={hookProductSelect}
+          onProductSelect={handleProductSelect}
           disabled={disabled}
         />
       </div>

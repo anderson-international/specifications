@@ -3,7 +3,7 @@
  * All values match the exact database enum tables from db-schema.md
  */
 
-// enum_product_types (8 options)
+// enum_product_types (7 options)
 export const PRODUCT_TYPES = [
   { id: 1, value: 1, label: 'Tobacco Snuff' },
   { id: 2, value: 2, label: 'Chew Bag' },
@@ -11,8 +11,7 @@ export const PRODUCT_TYPES = [
   { id: 4, value: 4, label: 'Glucose Snuff' },
   { id: 5, value: 5, label: 'Accessory' },
   { id: 6, value: 6, label: 'Nicotine Pouch' },
-  { id: 7, value: 7, label: 'Herbal Snuff' },
-  { id: 8, value: 8, label: 'Nasal Snuff' }
+  { id: 7, value: 7, label: 'Herbal Snuff' }
 ] as const
 
 // enum_grinds (6 options)
@@ -59,9 +58,10 @@ export const PRODUCT_BRANDS = [
   { id: 5, value: 5, label: 'Samuel Gawith' },
   { id: 6, value: 6, label: 'Toque' },
   { id: 7, value: 7, label: 'Wilson of Sharrow' },
-  { id: 8, value: 8, label: 'Fribourg & Treyer' },
-  { id: 9, value: 9, label: 'Bernard' },
-  { id: 10, value: 10, label: 'Dholakia' }
+  { id: 8, value: 8, label: 'ZYN' },
+  { id: 9, value: 9, label: 'Fribourg & Treyer' },
+  { id: 10, value: 10, label: 'Bernard' },
+  { id: 11, value: 11, label: 'Dholakia' }
   // Note: Full 43 brands available in schema - using subset for mock
 ] as const
 
@@ -130,6 +130,7 @@ export const MOCK_PRODUCTS = [
     name: "McChrystal's Original & Genuine",
     brand_id: 1,
     brand_name: 'McChrystals',
+    type_id: 1, // Tobacco Snuff
     image_url: '/images/products/mcchrystals-original.jpg',
     price: '£4.50',
     in_stock: true,
@@ -141,6 +142,7 @@ export const MOCK_PRODUCTS = [
     name: 'Gawith Hoggarth Kendal Brown',
     brand_id: 4,
     brand_name: 'Gawith Hoggarth',
+    type_id: 1, // Tobacco Snuff
     image_url: '/images/products/gh-kendal-brown.jpg',
     price: '£3.95',
     in_stock: true,
@@ -152,6 +154,7 @@ export const MOCK_PRODUCTS = [
     name: 'Toque Whisky & Honey',
     brand_id: 6,
     brand_name: 'Toque',
+    type_id: 7, // Herbal Snuff
     image_url: '/images/products/toque-whisky-honey.jpg',
     price: '£4.25',
     in_stock: false,
@@ -163,8 +166,21 @@ export const MOCK_PRODUCTS = [
     name: 'Wilson Best SP No.6',
     brand_id: 7,
     brand_name: 'Wilson of Sharrow',
+    type_id: 1, // Tobacco Snuff
     image_url: '/images/products/wilson-best-sp6.jpg',
     price: '£3.50',
+    in_stock: true,
+    reviewed: false
+  },
+  {
+    id: 5,
+    shopify_handle: 'zyn-cool-mint-pouches',
+    name: 'ZYN Cool Mint Pouches',
+    brand_id: 8,
+    brand_name: 'ZYN',
+    type_id: 6, // Nicotine Pouch
+    image_url: '/images/products/zyn-cool-mint.jpg',
+    price: '£5.99',
     in_stock: true,
     reviewed: false
   }
