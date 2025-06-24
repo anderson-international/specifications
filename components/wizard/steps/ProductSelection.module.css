@@ -96,6 +96,31 @@
   color: #6b7280;
 }
 
+.searchInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.searchInput {
+  padding-right: 2.5rem !important; /* Ensure space for the clear button */
+}
+
+.inlineClearButton {
+  composes: actionButton from '../controls/common.module.css';
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.inlineClearButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Clear button */
 .clearButton {
   flex: 0 0 auto;

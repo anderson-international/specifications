@@ -6,21 +6,22 @@ import { useSpecificationSubmission } from './useSpecificationSubmission'
 import { WizardFormData, UseSpecificationWizardReturn, UseSpecificationWizardProps } from '../types/wizard.types'
 
 const defaultValues: Partial<WizardFormData> = {
-  shopify_handle: null,
-  product_brand_id: null,
-  product_type_id: null,
-  grind_id: null,
-  experience_level_id: null,
+  shopify_handle: 'gid://shopify/Product/8675309519157',
+  product_brand_id: 1,
+  product_type_id: 1,
+  grind_id: 1,
+  experience_level_id: 1,
   is_fermented: false,
   is_oral_tobacco: false,
   is_artisan: false,
-  nicotine_level_id: null,
-  moisture_level_id: null,
-  tasting_notes: [],
-  cures: [],
-  tobacco_types: [],
-  review: '',
-  star_rating: 0
+  nicotine_level_id: 1,
+  moisture_level_id: 1,
+  tasting_notes: [1, 2, 3],
+  cures: [1, 2],
+  tobacco_types: [1, 2],
+  review: 'This is a default review for testing purposes.',
+  star_rating: 3,
+  rating_boost: 2
 }
 
 /**

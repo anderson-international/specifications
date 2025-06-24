@@ -1,23 +1,25 @@
 .container {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 1rem;
 }
 
 .stars {
-  display: flex;
-  gap: 0.25rem;
+  display: grid;
+  grid-template-columns: repeat(5, 32px);
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .star {
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 0; /* Remove padding */
   color: #4a5568;
   transition: transform 0.15s ease, color 0.15s ease;
-  height: 48px; /* Mobile-friendly touch target */
-  width: 48px;
+  height: 32px; /* Reduce size for alignment */
+  width: 32px;  /* Reduce size for alignment */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -32,44 +34,12 @@
   color: #f6ad55;
 }
 
-.stars:hover .star {
-  color: #4a5568;
-}
-
-.stars:hover .star:hover,
-.stars:hover .star:hover ~ .star {
-  color: #f6ad55;
-}
-
-.stars .star:nth-child(1):hover,
-.stars .star:nth-child(1):hover ~ .star {
-  color: #f6ad55;
-}
-
-.stars .star:nth-child(2):hover,
-.stars .star:nth-child(2):hover ~ .star {
-  color: #f6ad55;
-}
-
-.stars .star:nth-child(3):hover,
-.stars .star:nth-child(3):hover ~ .star {
-  color: #f6ad55;
-}
-
-.stars .star:nth-child(4):hover,
-.stars .star:nth-child(4):hover ~ .star {
-  color: #f6ad55;
-}
-
-.stars .star:nth-child(5):hover,
-.stars .star:nth-child(5):hover ~ .star {
-  color: #f6ad55;
-}
-
 .ratingText {
-  margin-top: 0.5rem;
   font-size: 0.875rem;
-  color: #f6ad55;
+  color: #f6ad55; /* Yellow to match filled stars */
+  min-width: 80px; /* Reserve space for longer text */
+  font-style: italic;
+  text-align: left;
 }
 
 .disabled {
@@ -86,7 +56,5 @@
 
 /* Fix for focus state */
 .star:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
-  border-radius: 4px;
+  outline: none; /* Remove default focus outline */
 }

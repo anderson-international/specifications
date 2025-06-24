@@ -59,67 +59,71 @@ const TastingProfile = ({
       totalSteps={totalSteps}
     >
       
-      <div 
-        className={styles.formGroup}
-        role="group"
-        aria-labelledby="tasting-notes-label"
-      >
-        <label 
-          id="tasting-notes-label"
-          className={styles.label}
+      <div className={styles.container}>
+        <div 
+          className={styles.formGroup}
+          role="group"
+          aria-labelledby="tasting-notes-label"
         >
-          Tasting Notes
-        </label>
-        <p className={styles.description}>Select the flavors and aromas you detect or enjoy</p>
-        <MultiSelectChips
-          options={TASTING_NOTES as unknown as Option[]}
-          selectedValues={tastingNotes}
-          onChange={handleTastingNotesChange}
-          disabled={disabled}
-          name="tasting-notes"
-        />
-      </div>
-      
-      <div 
-        className={styles.formGroup}
-        role="group"
-        aria-labelledby="cures-label"
-      >
-        <label 
-          id="cures-label"
-          className={styles.label}
-        >
-          Cures
-        </label>
-        <p className={styles.description}>Select the curing methods used</p>
-        <MultiSelectChips
-          options={CURES as unknown as Option[]}
-          selectedValues={cures}
-          onChange={handleCuresChange}
-          disabled={disabled}
-          name="cures"
-        />
-      </div>
-      
-      <div 
-        className={styles.formGroup}
-        role="group"
-        aria-labelledby="tobacco-types-label"
-      >
-        <label 
-          id="tobacco-types-label"
-          className={styles.label}
-        >
-          Tobacco Types
-        </label>
-        <p className={styles.description}>Select the tobacco varieties used</p>
-        <MultiSelectChips
-          options={TOBACCO_TYPES as unknown as Option[]}
-          selectedValues={tobaccoTypes}
-          onChange={handleTobaccoTypesChange}
-          disabled={disabled}
-          name="tobacco-types"
-        />
+          <label 
+            id="tasting-notes-label"
+            className={styles.label}
+          >
+            Tasting Notes
+          </label>
+
+          <MultiSelectChips
+            options={TASTING_NOTES as unknown as Option[]}
+            selectedValues={tastingNotes}
+            onChange={handleTastingNotesChange}
+            disabled={disabled}
+            name="tasting-notes"
+          />
+        </div>
+
+        <div className={styles.grid}>
+          <div 
+            className={styles.formGroup}
+            role="group"
+            aria-labelledby="cures-label"
+          >
+            <label 
+              id="cures-label"
+              className={styles.label}
+            >
+              Cures
+            </label>
+
+            <MultiSelectChips
+              options={CURES as unknown as Option[]}
+              selectedValues={cures}
+              onChange={handleCuresChange}
+              disabled={disabled}
+              name="cures"
+            />
+          </div>
+          
+          <div 
+            className={styles.formGroup}
+            role="group"
+            aria-labelledby="tobacco-types-label"
+          >
+            <label 
+              id="tobacco-types-label"
+              className={styles.label}
+            >
+              Tobacco Types
+            </label>
+
+            <MultiSelectChips
+              options={TOBACCO_TYPES as unknown as Option[]}
+              selectedValues={tobaccoTypes}
+              onChange={handleTobaccoTypesChange}
+              disabled={disabled}
+              name="tobacco-types"
+            />
+          </div>
+        </div>
       </div>
     </WizardStepCard>
   )

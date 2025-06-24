@@ -45,30 +45,7 @@ const DevAuthWrapper = ({ children }: DevAuthWrapperProps): JSX.Element => {
     )
   }
 
-  return (
-    <div className={styles.appContainer}>
-      <header className={styles.header}>
-        <div className={styles.headerContent}>
-          <h1 className={styles.appTitle}>Specification Builder</h1>
-          <div className={styles.userInfo}>
-            <span className={styles.userName}>{user.name}</span>
-            <span className={styles.userRole}>
-              {user.role_name}
-            </span>
-            <button 
-              onClick={signOut}
-              className={styles.signOutBtn}
-            >
-              Sign Out
-            </button>
-          </div>
-        </div>
-      </header>
-      <main className={styles.main}>
-        {children}
-      </main>
-    </div>
-  )
+  return <>{children}</>
 }
 
 export default React.memo(DevAuthWrapper)

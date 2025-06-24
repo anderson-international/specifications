@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import { FormProvider } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { Specification } from '@/lib/schemas/specification'
 import WizardProgress from './controls/WizardProgress'
 import ProductSelection from './steps/ProductSelection'
@@ -113,7 +113,7 @@ const SpecificationWizard = ({
                   <button
                     type="submit"
                     className={styles.submitButton}
-                    disabled={isSubmitting || isSavingDraft}
+                    disabled={isSubmitting || isSavingDraft || !isCurrentStepValid}
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit'}
                   </button>

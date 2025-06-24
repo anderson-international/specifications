@@ -103,23 +103,15 @@ const ProductSelection = ({
             role="group" 
             aria-labelledby="product-search-label"
             aria-describedby="product-search-description"
+            className={styles.searchGroup}
           >
             <ProductSearch
               searchTerm={searchTerm}
               onSearchChange={handleSearchChange}
+              onClear={handleClearFilters}
               disabled={disabled}
             />
           </div>
-          
-          <button 
-            type="button" 
-            onClick={handleClearFilters}
-            disabled={disabled}
-            className={styles.clearButton}
-            aria-label="Clear all filters"
-          >
-            ✕
-          </button>
         </div>
       </div>
       

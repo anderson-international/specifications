@@ -12,11 +12,9 @@ async function CreateSpecificationPage(): Promise<JSX.Element> {
   const enumData: SpecificationEnumData = await getSpecificationEnumData()
 
   return (
-    <div className={styles.container}>
-      <Suspense fallback={<div>Loading...</div>}>
-        <CreateSpecificationClient enumData={enumData} />
-      </Suspense>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreateSpecificationClient enumData={enumData} />
+    </Suspense>
   )
 }
 

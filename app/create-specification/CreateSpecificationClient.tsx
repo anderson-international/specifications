@@ -51,20 +51,9 @@ export default function CreateSpecificationClient(_props: CreateSpecificationCli
   }, [productId])
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-white">Create Specification</h1>
-        <button 
-          onClick={handleCancel}
-          className="px-4 py-2 text-sm text-gray-300 hover:text-white"
-        >
-          Cancel
-        </button>
-      </div>
-      <SpecificationWizard
-        onSubmit={handleSubmit}
-        initialData={initialData}
-      />
-    </div>
+    <SpecificationWizard
+      onSubmit={handleSubmit}
+      initialData={initialData}
+    />
   )
 }

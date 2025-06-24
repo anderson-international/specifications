@@ -6,22 +6,25 @@
   gap: 1.5rem;
 }
 
+.ratingControl {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .label {
   font-weight: 600;
-  color: var(--color-text-primary);
-  font-size: 0.9rem;
-}
-
-.description {
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
-  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #e2e8f0; /* Lighter grey for labels */
+  width: 120px;
+  flex-shrink: 0;
 }
 
 .textarea {
@@ -52,6 +55,10 @@
   color: var(--color-text-secondary);
   text-align: right;
   margin-top: 0.25rem;
+}
+
+.characterCount.error {
+  color: var(--color-error);
 }
 
 .ratingSection {

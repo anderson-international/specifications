@@ -105,7 +105,7 @@
 
 @media (max-width: 768px) {
   .wizardContainer {
-    padding: 1rem;
+    padding: 1rem 0;
   }
   
   .wizardFooter {

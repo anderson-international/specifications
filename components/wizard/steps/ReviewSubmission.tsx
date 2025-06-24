@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
-import StarRating from './StarRating'
+import Ratings from './Ratings'
 import styles from './ReviewSubmission.module.css'
 
 interface ReviewSubmissionProps {
@@ -15,6 +15,7 @@ interface ReviewSubmissionProps {
 interface ReviewSubmissionFormData {
   review: string
   star_rating: number
+  rating_boost: number
 }
 
 /**
@@ -34,48 +35,49 @@ const ReviewSubmission = ({
   // Watch form values - Optimized with single watch call
   const {
     review = '',
-    star_rating: starRating = 0
+    star_rating: starRating = 2,
+    rating_boost: ratingBoost = 0
   } = watch()
-  
-  const handleStarRatingChange = useCallback((rating: number): void => {
-    setValue('star_rating', rating, { shouldValidate: true })
-  }, [setValue])
   
   return (
     <WizardStepCard
       title="Write Your Review"
       stepNumber={stepNumber}
       totalSteps={totalSteps}
+      disabled={disabled}
     >
-      <div className={styles.formGroup}>
-        <label className={styles.label} htmlFor="star-rating">
-          Overall Rating
-        </label>
-        <p className={styles.description}>Rate your overall experience with this product</p>
-        <StarRating
-          value={starRating}
-          onChange={handleStarRatingChange}
-          disabled={disabled}
-        />
-      </div>
-      
+      <Ratings
+        starRating={watch('star_rating')}
+        ratingBoost={watch('rating_boost')}
+        onStarRatingChange={(value): void => {
+          setValue('star_rating', value, { shouldValidate: true })
+          if (value === 5) {
+            setValue('rating_boost', 0, { shouldValidate: true })
+          }
+        }}
+        onRatingBoostChange={(value): void => {
+          setValue('rating_boost', value, { shouldValidate: true })
+        }}
+      />
+
       <div className={styles.formGroup}>
         <label className={styles.label} htmlFor="review-text">
           Your Review
         </label>
-        <p className={styles.description}>
-          Share your thoughts, experiences, and recommendations about this product
-        </p>
         <textarea
           id="review-text"
           className={styles.textarea}
-          placeholder="Write your detailed review here... (minimum 10 characters)"
+          value={review}
+          onChange={(e): void => setValue('review', e.target.value)}
+          placeholder="Write your detailed review here... (minimum 150 characters)"
+          rows={5}
+          maxLength={2000}
           disabled={disabled}
-          rows={8}
-          {...register('review')}
         />
-        <div className={styles.characterCount}>
-          {review.length}/2000 characters
+        <div 
+          className={`${styles.charCount} ${review.length < 150 ? styles.error : ''}`}
+        >
+          {review.length}/150
         </div>
       </div>
     </WizardStepCard>

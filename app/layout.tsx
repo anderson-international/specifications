@@ -21,11 +21,9 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <DevAuthWrapper>
-            <AppLayout>
-              {children}
-            </AppLayout>
+            <AppLayout>{children}</AppLayout>
           </DevAuthWrapper>
-        </AuthProvider>  
+        </AuthProvider>
       </body>
     </html>
   )

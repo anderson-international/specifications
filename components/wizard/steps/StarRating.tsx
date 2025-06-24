@@ -1,76 +1,96 @@
 'use client'
 
-import React, { useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import styles from './StarRating.module.css'
+
+// StarIcon Component for reusability
+const StarIcon = (): JSX.Element => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    width="24"
+    height="24"
+  >
+    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+  </svg>
+)
+
+const getRatingLabel = (rating: number): string => {
+  switch (rating) {
+    case 1:
+      return 'Poor'
+    case 2:
+      return 'Fair'
+    case 3:
+      return 'Good'
+    case 4:
+      return 'Very Good'
+    case 5:
+      return 'Excellent'
+    default:
+      return ''
+  }
+}
 
 interface StarRatingProps {
   value: number
   onChange: (value: number) => void
-  disabled?: boolean
   maxRating?: number
+  disabled?: boolean
 }
 
-/**
- * Star rating component with hover effect and accessibility support
- */
 const StarRating = ({
   value,
   onChange,
-  disabled = false,
-  maxRating = 5
+  maxRating = 5,
+  disabled = false
 }: StarRatingProps): JSX.Element => {
-  // Generate stars array based on maxRating
-  const stars = useMemo(() => {
-    return Array.from({ length: maxRating }, (_, i) => i + 1)
-  }, [maxRating])
-  
-  // Handle star click
-  const handleStarClick = useCallback((rating: number): void => {
-    if (disabled) return
-    // If clicking the same star twice, clear the rating
-    onChange(value === rating ? 0 : rating)
-  }, [onChange, value, disabled])
-  
-  // Get appropriate label for aria-label based on star value
-  const getRatingLabel = useCallback((starValue: number): string => {
-    const labels = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent']
-    return starValue <= labels.length ? labels[starValue - 1] : `${starValue} out of ${maxRating}`
-  }, [maxRating])
+  const [hoverValue, setHoverValue] = useState(0)
+
+  const handleStarClick = useCallback(
+    (rating: number) => {
+      if (!disabled) {
+        // Allow deselecting to 0, but default to 1 if it was 1
+        const newValue = value === rating ? 0 : rating
+        onChange(newValue)
+      }
+    },
+    [value, onChange, disabled]
+  )
+
+  const stars = useMemo(() => Array.from({ length: maxRating }, (_, i) => i + 1), [
+    maxRating
+  ])
+
+  const ratingText = getRatingLabel(value)
 
   return (
-    <div className={styles.container} role="group" aria-label="Product rating">
-      <div className={`${styles.stars} ${disabled ? styles.disabled : ''}`}>
+    <div
+      className={`${styles.container} ${disabled ? styles.disabled : ''}`}
+      role="group"
+      aria-label="Product rating"
+    >
+      <div className={styles.stars}>
         {stars.map((star) => (
           <button
             key={star}
             type="button"
-            className={`${styles.star} ${star <= value ? styles.filled : ''}`}
+            className={`${styles.star} ${star <= (hoverValue || value) ? styles.filled : ''}`}
             onClick={(): void => handleStarClick(star)}
+            onMouseEnter={(): void => setHoverValue(star)}
+            onMouseLeave={(): void => setHoverValue(0)}
             disabled={disabled}
-            aria-label={`${getRatingLabel(star)}, ${star} out of ${maxRating} stars`}
+            aria-label={`Rate ${star} out of ${maxRating}`}
             aria-pressed={star <= value}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              width="24"
-              height="24"
-            >
-              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-            </svg>
+            <StarIcon />
           </button>
         ))}
       </div>
-      
-      {value > 0 && (
-        <div className={styles.ratingText} aria-live="polite">
-          {getRatingLabel(value)}
-        </div>
-      )}
+      {ratingText && <span className={styles.ratingText}>{ratingText}</span>}
     </div>
   )
 }
 
-// Export with React.memo for performance optimization
 export default React.memo(StarRating)
