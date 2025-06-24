@@ -2,11 +2,19 @@
 
 import { useState, useEffect, useCallback } from 'react'
 
-export interface DashboardStats {
+export interface SystemStats {
   total_products: number
   reviewed_products: number
+}
+
+export interface UserStats {
   total_specifications: number
-  pending_specifications: number
+  draft_specifications: number
+}
+
+export interface DashboardStats {
+  systemStats: SystemStats
+  userStats: UserStats
 }
 
 interface UseDashboardStatsReturn {

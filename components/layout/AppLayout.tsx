@@ -25,30 +25,13 @@ const NavContent = React.memo(({ user, signOut }: NavContentProps) => {
 
   return (
     <div className={styles.navContent}>
-      <div className={styles.progressCard}>
-        <div className={styles.progressStats}>
-          {isLoading ? (
-            <>
-              <span className={styles.progressNumber}>--</span>
-              <span className={styles.progressTotal}>/--</span>
-            </>
-          ) : (
-            <>
-              <span className={styles.progressNumber}>{stats?.reviewed_products || 0}</span>
-              <span className={styles.progressTotal}>/{stats?.total_products || 0}</span>
-            </>
-          )}
-        </div>
-        <p className={styles.progressLabel}>products reviewed</p>
-      </div>
-
       <ul className={styles.navLinks}>
-        <li><Link href="/dashboard" className={styles.navLink}>📊 Dashboard</Link></li>
-        <li><Link href="/products" className={styles.navLink}>📦 Products</Link></li>
-        <li><Link href="/specifications" className={styles.navLink}>📝 My Specifications</Link></li>
-        <li><Link href="/specifications/new" className={styles.navLink}>➕ New Specification</Link></li>
+        <li><Link href="/" className={styles.navLink}>Dashboard</Link></li>
+        <li><Link href="/products" className={styles.navLink}>Products</Link></li>
+        <li><Link href="/specifications" className={styles.navLink}>My Specifications</Link></li>
+        <li><Link href="/specifications/new" className={styles.navLink}>New Specification</Link></li>
         {isAdmin && (
-          <li><Link href="/admin" className={styles.navLink}>⚙️ Admin</Link></li>
+          <li><Link href="/admin" className={styles.navLink}>Admin</Link></li>
         )}
       </ul>
     </div>
@@ -87,19 +70,23 @@ const AppLayout = ({ children }: AppLayoutProps): JSX.Element => {
       />
       <nav className={`${styles.nav} ${isNavOpen ? styles.navOpen : ''}`}>
         <div className={styles.navHeader}>
-          <h1 className={styles.appTitle}>Snuff Specs</h1>
-          <button
-            className={styles.toggleButton}
-            onClick={closeNav}
-            aria-label="Close navigation"
-          >
-            ✕
-          </button>
+          <div className={styles.navHeaderLeft} />
+          <div className={styles.navHeaderCenter}>
+            <Image src="/site-icon.png" alt="Site Icon" width={56} height={56} className={styles.siteIcon} />
+          </div>
+          <div className={styles.navHeaderRight}>
+            <button
+              className={styles.toggleButton}
+              onClick={closeNav}
+              aria-label="Close navigation"
+            >
+              ✕
+            </button>
+          </div>
         </div>
         <NavContent user={user} signOut={signOut} />
         <div className={styles.navFooter}>
-          {user && <span className={styles.userName}>{user.name}</span>}
-          <button onClick={() => signOut()} className={styles.signOutButton}>
+          <button onClick={(): void => signOut()} className={styles.signOutButton}>
             Sign Out
           </button>
         </div>
@@ -117,11 +104,19 @@ const AppLayout = ({ children }: AppLayoutProps): JSX.Element => {
             </button>
           </div>
           <div className={styles.headerCenter}>
-            <Image src="/site-icon.png" alt="Site Icon" width={32} height={32} className={styles.siteIcon} />
-            <h1 className={styles.headerTitle}>Specification Builder</h1>
+            <Image src="/site-icon.png" alt="Site Icon" width={48} height={48} className={styles.siteIcon} />
+            <div className={styles.titleContainer}>
+              <span className={styles.headerTitle}>Spec</span>
+              <span className={styles.headerSubtitle}>Builder</span>
+            </div>
           </div>
           <div className={styles.headerRight}>
-            {/* Spacer for centering */}
+            {user && (
+              <div className={styles.userInfo}>
+                <span className={styles.headerUserName}>{user.name}</span>
+                <span className={styles.headerUserRole}>{user.role_name}</span>
+              </div>
+            )}
           </div>
         </header>
         <main className={styles.main}>

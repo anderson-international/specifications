@@ -13,7 +13,7 @@
 .main {
   flex-grow: 1;
   padding: 1rem 0;
-  padding-top: 76px; /* 60px header + 16px margin */
+  padding-top: 96px; /* 80px header + 16px margin */
 }
 
 @media (min-width: 769px) {
@@ -30,7 +30,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 1rem;
-  height: 60px;
+  height: 80px;
   background-color: var(--bg-card);
   border-bottom: 1px solid var(--border);
   position: fixed;
@@ -72,10 +72,43 @@
 
 
 
-.headerTitle {
+.titleContainer {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.headerTitle, .headerSubtitle {
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   margin: 0;
+  color: var(--text-primary);
+}
+
+.headerSubtitle {
+  font-weight: 400;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.2;
+}
+
+.headerUserName {
+  color: #2ecc71;
+  font-weight: 600;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.headerUserRole {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .userName {
@@ -164,16 +197,22 @@
   justify-content: space-between;
   padding: 0 1rem;
   border-bottom: 1px solid var(--border);
-  min-height: 60px;
+  min-height: 80px;
   flex-shrink: 0;
 }
 
-.appTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 0;
-  white-space: nowrap;
+.navHeaderLeft, .navHeaderRight {
+  flex: 1 1 0%;
+}
+
+.navHeaderRight {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.navHeaderCenter {
+  display: flex;
+  justify-content: center;
 }
 
 .navContent {

@@ -1,41 +1,66 @@
 import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { prisma } from '@/lib/prisma'
 
-export interface DashboardStats {
+export interface SystemStats {
   total_products: number
   reviewed_products: number
+}
+
+export interface UserStats {
   total_specifications: number
-  pending_specifications: number
+  draft_specifications: number
+}
+
+export interface DashboardStats {
+  systemStats: SystemStats
+  userStats: UserStats
 }
 
 export async function GET(): Promise<NextResponse> {
+  const session = await getServerSession(authOptions)
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const userId = session.user.id
+
   try {
-    // Get total unique products (distinct shopify handles)
-    const totalProducts = await prisma.specifications.findMany({
+    // --- System Stats ---
+    const reviewedProducts = await prisma.specifications.findMany({
       select: {
-        shopify_handle: true
+        shopify_handle: true,
       },
-      distinct: ['shopify_handle']
+      distinct: ['shopify_handle'],
+    })
+    const reviewedProductsCount = reviewedProducts.length
+
+    // This is a placeholder; you might have a separate products table
+    const totalProductsCount = reviewedProductsCount; // Assuming for now
+
+    // --- User Stats ---
+    const totalSpecifications = await prisma.specifications.count({
+      where: { user_id: userId },
     })
 
-    // Get reviewed products count (products with at least one specification)
-    const reviewedProductsCount = totalProducts.length
-
-    // Get total specifications count
-    const totalSpecifications = await prisma.specifications.count()
-
-    // Get pending specifications (status_id = 1 typically means pending/draft)
-    const pendingSpecifications = await prisma.specifications.count({
+    const draftSpecifications = await prisma.specifications.count({
       where: {
-        status_id: 1
-      }
+        user_id: userId,
+        status_id: 1, // Draft status
+      },
     })
 
     const stats: DashboardStats = {
-      total_products: totalProducts.length,
-      reviewed_products: reviewedProductsCount,
-      total_specifications: totalSpecifications,
-      pending_specifications: pendingSpecifications
+      systemStats: {
+        total_products: totalProductsCount,
+        reviewed_products: reviewedProductsCount,
+      },
+      userStats: {
+        total_specifications: totalSpecifications,
+        draft_specifications: draftSpecifications,
+      },
     }
 
     return NextResponse.json(stats)
