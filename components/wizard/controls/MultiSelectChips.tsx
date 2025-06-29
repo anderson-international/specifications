@@ -1,12 +1,43 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { useMultiSelect, Option } from '../hooks/useMultiSelect'
 import styles from './MultiSelectChips.module.css'
 import DropdownMenu from './DropdownMenu'
 
 // Re-export Option for convenience
 export type { Option }
+
+interface ChipProps {
+  option: Option
+  onRemove: (id: string | number) => void
+  disabled?: boolean
+}
+
+const Chip = React.memo(function Chip({ option, onRemove, disabled }: ChipProps) {
+  const handleRemoveClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      onRemove(option.id)
+    },
+    [onRemove, option.id]
+  )
+
+  return (
+    <div className={styles.chip}>
+      {option.label}
+      <button
+        type="button"
+        className={styles.chipRemove}
+        onClick={handleRemoveClick}
+        disabled={disabled}
+        aria-label={`Remove ${option.label}`}
+      >
+        ×
+      </button>
+    </div>
+  )
+})
 
 interface MultiSelectChipsProps {
   options: Option[]
@@ -20,6 +51,7 @@ interface MultiSelectChipsProps {
 }
 
 const MultiSelectChips = ({
+
   options,
   selectedValues,
   onChange,
@@ -47,9 +79,14 @@ const MultiSelectChips = ({
     handleClearAll
   } = useMultiSelect({ options, selectedValues, onChange, disabled })
 
-  const controlId = useMemo((): string => 
-    `multiselect-${name}-${Math.random().toString(36).substring(2, 9)}`, 
-    [name]
+  const controlId = useMemo(() => `multiselect-${name}`, [name])
+
+  const onClearAll = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      handleClearAll()
+    },
+    [handleClearAll]
   )
 
   return (
@@ -75,21 +112,12 @@ const MultiSelectChips = ({
       >
         <div className={styles.chipList}>
           {selectedOptions.map(option => (
-            <div key={option.id} className={styles.chip}>
-              {option.label}
-              <button
-                type="button"
-                className={styles.chipRemove}
-                onClick={(e): void => {
-                  e.stopPropagation()
-                  handleRemoveOption(option.id)
-                }}
-                disabled={disabled}
-                aria-label={`Remove ${option.label}`}
-              >
-                ×
-              </button>
-            </div>
+            <Chip
+              key={option.id}
+              option={option}
+              onRemove={handleRemoveOption}
+              disabled={disabled}
+            />
           ))}
           <input
             id={controlId}
@@ -109,10 +137,7 @@ const MultiSelectChips = ({
         <div className={styles.actionsWrapper}>
           {selectedOptions.length > 0 && (
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleClearAll();
-              }}
+              onClick={onClearAll}
               className={styles.clearButton}
               aria-label="Clear all selections"
               type="button"

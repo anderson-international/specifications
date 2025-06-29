@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useCallback } from 'react'
 import { AuthUser, USER_ROLES } from '@/types'
+import { useDevAuth } from '@/hooks/useDevAuth'
 import styles from '@/styles/auth.module.css'
 
 interface DevAuthProps {
@@ -9,49 +10,39 @@ interface DevAuthProps {
   currentUser: AuthUser | null
 }
 
-export default function DevAuth({ onUserSelect, currentUser }: DevAuthProps): JSX.Element {
-  const [users, setUsers] = useState<AuthUser[]>([])
-  const [loading, setLoading] = useState(true)
+const DevAuth = ({ onUserSelect, currentUser }: DevAuthProps): JSX.Element => {
+  const { users, loading, error, retry } = useDevAuth()
 
-  useEffect(() => {
-    fetchUsers()
-  }, [])
-
-  const fetchUsers = async (): Promise<void> => {
-    try {
-      const response = await fetch('/api/auth/dev-users')
-      if (response.ok) {
-        const userData = await response.json()
-        setUsers(userData)
-      }
-    } catch (error) {
-      console.error('Failed to fetch users:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleUserChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+  const handleUserChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>): void => {
     const userId = e.target.value
     if (userId === '') {
       onUserSelect(null)
+      localStorage.removeItem('dev-user')
     } else {
       const selectedUser = users.find(user => user.id === userId)
       if (selectedUser) {
         onUserSelect(selectedUser)
-        // Store in localStorage for persistence
         localStorage.setItem('dev-user', JSON.stringify(selectedUser))
       }
     }
-  }
+  }, [users, onUserSelect])
 
-  const handleLogout = (): void => {
+  const handleLogout = useCallback((): void => {
     onUserSelect(null)
     localStorage.removeItem('dev-user')
-  }
+  }, [onUserSelect])
 
   if (loading) {
     return <div className={styles.loading}>Loading users...</div>
+  }
+
+  if (error) {
+    return (
+      <div className={styles.errorContainer}>
+        <p>Could not load users.</p>
+        <button onClick={retry} className={styles.retryBtn}>Retry</button>
+      </div>
+    )
   }
 
   return (
@@ -64,16 +55,13 @@ export default function DevAuth({ onUserSelect, currentUser }: DevAuthProps): JS
               {USER_ROLES[currentUser.role_id as keyof typeof USER_ROLES]}
             </span>
           </div>
-          <button 
-            onClick={handleLogout}
-            className={styles.logoutBtn}
-          >
+          <button onClick={handleLogout} className={styles.logoutBtn}>
             Switch User
           </button>
         </div>
       ) : (
         <div className={styles.selectContainer}>
-          <select 
+          <select
             id="user-select"
             onChange={handleUserChange}
             value=""
@@ -91,3 +79,5 @@ export default function DevAuth({ onUserSelect, currentUser }: DevAuthProps): JS
     </>
   )
 }
+
+export default React.memo(DevAuth)

@@ -8,7 +8,7 @@ import styles from './ProductCard.module.css'
 interface ProductCardProps {
   product: Product
   isSelected: boolean
-  onSelect: (product: Product) => void
+  onSelect: (handle: string) => void
   disabled?: boolean
 }
 
@@ -24,17 +24,17 @@ const ProductCard = ({
   // Handle card click
   const handleClick = useCallback((): void => {
     if (disabled) return
-    onSelect(product)
-  }, [disabled, onSelect, product])
+    onSelect(product.handle)
+  }, [disabled, onSelect, product.handle])
 
   // Handle keyboard interaction
   const handleKeyDown = useCallback((e: React.KeyboardEvent): void => {
     if (disabled) return
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      onSelect(product)
+      onSelect(product.handle)
     }
-  }, [disabled, onSelect, product])
+  }, [disabled, onSelect, product.handle])
 
   return (
     <div

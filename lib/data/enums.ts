@@ -1,8 +1,5 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 import { EnumValue, SpecificationEnumData } from '@/types/enum'
-
-// Initialize Prisma client
-const prisma = new PrismaClient()
 
 /**
  * Fetch all enum data required for the specification form

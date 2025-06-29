@@ -3,12 +3,12 @@
 import React from 'react'
 import Link from 'next/link'
 import { SpecificationCard } from '@/components/specifications/SpecificationCard'
-import { SpecificationFilters } from '@/components/specifications/SpecificationFilters'
+import { FilterControls } from '@/components/shared/FilterControls'
 import { CollapsibleGroup } from '@/components/specifications/CollapsibleGroup'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { useSpecifications } from '@/hooks/useSpecifications'
 import { useSpecificationFilters } from '@/hooks/useSpecificationFilters'
-import { getStatusTitle } from '@/lib/utils/specificationPageUtils'
+import { getStatusTitle } from '@/lib/utils'
 import styles from './specifications.module.css'
 
 export default function SpecificationsPage(): JSX.Element {
@@ -62,13 +62,30 @@ export default function SpecificationsPage(): JSX.Element {
           </Link>
         </div>
 
-        <SpecificationFilters
-          statusFilter={statusFilter}
+        <FilterControls
           searchQuery={searchQuery}
-          onStatusChange={setStatusFilter}
           onSearchChange={setSearchQuery}
-          totalCount={specifications.length}
-          filteredCount={filteredSpecs.length}
+          searchPlaceholder="Search by product or brand..."
+          filters={[
+            {
+              id: 'status',
+              label: 'Filter by Status:',
+              value: statusFilter,
+              options: [
+                { value: 'all', label: 'All Specifications' },
+                { value: 'draft', label: 'Drafts' },
+                { value: 'submitted', label: 'Submitted' },
+                { value: 'reviewed', label: 'Reviewed' },
+              ],
+            },
+          ]}
+          onFilterChange={(id, value) => setStatusFilter(value)}
+          onClearAll={() => {
+            setSearchQuery('')
+            setStatusFilter('all')
+          }}
+          showClearAll={searchQuery !== '' || statusFilter !== 'all'}
+          summaryText={`${filteredSpecs.length} of ${specifications.length} specification${specifications.length !== 1 ? 's' : ''}`}
         />
 
         <div className={styles.content}>

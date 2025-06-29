@@ -3,7 +3,7 @@
  * Centralizes form data interfaces to prevent duplication
  */
 
-import { Specification } from '@/lib/schemas/specification'
+import { Specification } from '@/types'
 import { UseFormReturn } from 'react-hook-form'
 
 export interface WizardFormData {
@@ -22,11 +22,13 @@ export interface WizardFormData {
   tobacco_types: number[]
   review: string
   star_rating: number
+  rating_boost: number
 }
 
 export interface UseSpecificationWizardProps {
   onSubmit: (data: Specification) => void | Promise<void>
   initialData?: Record<string, unknown>
+  userId: string
 }
 
 export interface UseSpecificationWizardReturn {
@@ -44,6 +46,7 @@ export interface UseSpecificationWizardReturn {
 export interface UseSubmissionProps {
   onSubmit: (data: Specification) => void | Promise<void>
   methods: UseFormReturn<WizardFormData>
+  userId: string
 }
 
 export interface UseSpecificationSubmissionReturn {

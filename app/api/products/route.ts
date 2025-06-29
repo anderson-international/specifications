@@ -1,74 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-
-export interface Product {
-  id: string
-  handle: string
-  title: string
-  brand: string
-  image_url: string | null
-  is_reviewed: boolean
-}
+import { productCache, RedisProductCache } from '@/lib/cache'
+import type { Product } from '@/lib/types/product'
 
 export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
-    // Get unique products from specifications table
-    // Group by shopify_handle and get the first specification for each product
-    const rawProducts = await prisma.specifications.findMany({
-      select: {
-        shopify_handle: true,
-        enum_product_brands: {
-          select: {
-            name: true
-          }
-        }
-      },
-      distinct: ['shopify_handle'],
-      orderBy: {
-        created_at: 'desc'
-      }
-    })
+    console.log('=== API /products called (Redis) ===');
+    
+    // Check if Redis cache is still warming up
+    const isWarming = RedisProductCache.isWarming();
+    console.log('Redis cache warming status:', isWarming);
+    
+    if (isWarming) {
+      console.log('Redis cache still warming, returning 202');
+      return NextResponse.json({
+        warming: true,
+        message: 'Redis cache is initializing, please wait...'
+      }, { status: 202 }); // 202 Accepted - processing
+    }
 
-    // Get specification counts to determine if product is reviewed
-    const specificationCounts = await prisma.specifications.groupBy({
-      by: ['shopify_handle'],
-      _count: {
-        id: true
-      }
-    })
-
-    // Transform data to match frontend interface
-    const products: Product[] = rawProducts.map((spec, index) => {
-      const specCount = specificationCounts.find(
-        s => s.shopify_handle === spec.shopify_handle
-      )?._count.id || 0
-
-      // Generate title from handle (replace hyphens with spaces, capitalize)
-      const title = spec.shopify_handle
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ')
-
-      return {
-        id: `prod-${index + 1}`,
-        handle: spec.shopify_handle,
-        title: title,
-        brand: spec.enum_product_brands.name,
-        image_url: null, // No image storage in current schema
-        is_reviewed: specCount > 0
-      }
-    })
+    console.log('Redis cache ready, fetching products...');
+    
+    // Fetch all products from Redis cache with enhanced error logging
+    const products = await productCache.getAllProducts();
+    
+    console.log(`Successfully fetched ${products.length} products from Redis cache`);
+    const withSpecs = products.filter(p => p.spec_count_total > 0).length;
+    console.log(`Products with specs: ${withSpecs}`);
 
     return NextResponse.json({
-      products,
+      products: products,
       total: products.length,
-      reviewed_count: products.filter(p => p.is_reviewed).length
+      total_with_specs: withSpecs
     })
 
   } catch (error) {
-    console.error('Error fetching products:', error)
+    console.error('🚨 CRITICAL Redis API error - detailed logging:');
+    console.error('Error type:', typeof error);
+    console.error('Error instanceof Error:', error instanceof Error);
+    console.error('Error message:', error instanceof Error ? error.message : String(error));
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error('Full error object:', error);
+    
     return NextResponse.json(
-      { error: 'Failed to fetch products' },
+      { 
+        error: 'Internal Server Error', 
+        details: error instanceof Error ? error.message : String(error),
+        type: typeof error
+      },
       { status: 500 }
     )
   }

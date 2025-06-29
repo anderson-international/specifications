@@ -1,14 +1,6 @@
 // Common types for the Product Selection step
-
-export interface Product {
-  id: number | string
-  title: string
-  handle: string
-  brand_id: number
-  brand_name: string
-  image_url?: string
-  is_reviewed: boolean
-}
+// Re-export canonical Product type for consistency
+export type { Product } from '@/lib/types/product';
 
 export interface Brand {
   id: number

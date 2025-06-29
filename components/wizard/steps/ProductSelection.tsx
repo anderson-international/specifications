@@ -1,21 +1,15 @@
 'use client'
 
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
-import ProductBrandFilter from './ProductBrandFilter'
-import ProductTypeFilter from './ProductTypeFilter'
-import ProductSearch from './ProductSearch'
-import ProductGrid from './ProductGrid'
-import { useProductSelection } from '../hooks/useProductSelection'
-import { type MockProduct } from '@/constants/wizardOptions'
-import styles from './ProductSelection.module.css'
+import ProductSelector from '@/components/shared/ProductSelector'
 
 interface ProductSelectionProps {
   stepNumber: number
   totalSteps: number
   disabled?: boolean
-  onProductSelect?: () => void
+  onProductSelect: () => void;
 }
 
 interface ProductSelectionFormData {
@@ -39,32 +33,23 @@ const ProductSelection = ({
   
   const shopifyHandle = watch('shopify_handle')
   
-  const {
-    selectedBrandId,
-    selectedTypeId,
-    searchTerm,
-    filteredProducts,
-    handleBrandFilter,
-    handleTypeFilter,
-    handleSearchChange,
-    handleProductSelect,
-    handleClearFilters
-  } = useProductSelection({
-    shopifyHandle,
-    onProductSelect: useCallback((product: MockProduct): void => {
-      try {
-        setValue('shopify_handle', product.shopify_handle, { shouldValidate: true })
-        setValue('product_brand_id', product.brand_id, { shouldValidate: true })
-        
-        // Auto-advance to next step for mobile-first UX
-        if (onProductSelect) {
-          onProductSelect()
-        }
-      } catch (error) {
-        console.error('Error selecting product:', error)
-      }
-    }, [setValue, onProductSelect])
-  })
+  const initialSelection = useMemo(() => {
+    return shopifyHandle ? [shopifyHandle] : []
+  }, [shopifyHandle])
+  
+  const handleProductSelection = useCallback((productIds: string[]) => {
+    const selectedHandle = productIds[0] || null
+    setValue('shopify_handle', selectedHandle, { shouldValidate: true })
+    
+    // Note: We're setting product_brand_id to null here since ProductSelector
+    // doesn't currently provide brand_id. This could be enhanced if needed.
+    setValue('product_brand_id', null, { shouldValidate: true })
+    
+    // Call the parent callback to proceed to next step
+    if (selectedHandle) {
+      onProductSelect()
+    }
+  }, [setValue, onProductSelect])
   
   return (
     <WizardStepCard
@@ -72,61 +57,14 @@ const ProductSelection = ({
       stepNumber={stepNumber}
       totalSteps={totalSteps}
     >
-      <div className={styles.filtersContainer}>
-        <div className={styles.filterRow}>
-          <div 
-            role="group" 
-            aria-labelledby="brand-filter-label"
-            aria-describedby="brand-filter-description"
-          >
-            <ProductBrandFilter
-              selectedBrandId={selectedBrandId}
-              onBrandFilter={handleBrandFilter}
-              disabled={disabled}
-            />
-          </div>
-          <div 
-            role="group" 
-            aria-labelledby="product-type-filter-label"
-            aria-describedby="product-type-filter-description"
-          >
-            <ProductTypeFilter
-              selectedTypeId={selectedTypeId}
-              onTypeFilter={handleTypeFilter}
-              disabled={disabled}
-            />
-          </div>
-        </div>
-        
-        <div className={styles.searchRow}>
-          <div 
-            role="group" 
-            aria-labelledby="product-search-label"
-            aria-describedby="product-search-description"
-            className={styles.searchGroup}
-          >
-            <ProductSearch
-              searchTerm={searchTerm}
-              onSearchChange={handleSearchChange}
-              onClear={handleClearFilters}
-              disabled={disabled}
-            />
-          </div>
-        </div>
-      </div>
-      
-      <div 
-        role="group" 
-        aria-labelledby="product-grid-label"
-        aria-describedby="product-grid-description"
-      >
-        <ProductGrid
-          products={filteredProducts}
-          selectedHandle={shopifyHandle}
-          onProductSelect={handleProductSelect}
-          disabled={disabled}
-        />
-      </div>
+      <ProductSelector
+        mode="single"
+        onSelectionChange={handleProductSelection}
+        initialSelection={initialSelection}
+        title="Choose a Product to Review"
+        searchPlaceholder="Search products..."
+        disabled={disabled}
+      />
     </WizardStepCard>
   )
 }

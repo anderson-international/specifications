@@ -28,7 +28,7 @@ const defaultValues: Partial<WizardFormData> = {
  * Main wizard hook for managing multi-step specification creation
  * Simplified to use React Hook Form without Zod validation
  */
-export const useSpecificationWizard = ({ onSubmit, initialData = {} }: UseSpecificationWizardProps): UseSpecificationWizardReturn => {
+export const useSpecificationWizard = ({ onSubmit, initialData = {}, userId }: UseSpecificationWizardProps): UseSpecificationWizardReturn => {
   const [activeStep, setActiveStep] = useState<number>(0)
 
   const methods = useForm<WizardFormData>({
@@ -37,7 +37,8 @@ export const useSpecificationWizard = ({ onSubmit, initialData = {} }: UseSpecif
 
   const { isSubmitting, isSavingDraft, handleFormSubmit, saveDraft } = useSpecificationSubmission({
     onSubmit,
-    methods
+    methods,
+    userId
   })
 
   const handleNext = useCallback(() => {

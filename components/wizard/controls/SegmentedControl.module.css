@@ -69,6 +69,8 @@
   position: absolute;
   height: calc(100% - 4px);
   top: 2px;
+  left: var(--indicator-left, 0);
+  width: var(--indicator-width, 0);
   background-color: #1878B9;
   border-radius: 6px;
   transition: all 0.2s ease;

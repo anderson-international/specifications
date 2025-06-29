@@ -1,10 +1,10 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import { Specification } from '@/lib/schemas/specification'
 import { WizardFormData, UseSubmissionProps, UseSpecificationSubmissionReturn } from '../types/wizard.types'
+import { Specification } from '@/types'
 
-export const useSpecificationSubmission = ({ onSubmit, methods }: UseSubmissionProps): UseSpecificationSubmissionReturn => {
+export const useSpecificationSubmission = ({ onSubmit, methods, userId }: UseSubmissionProps): UseSpecificationSubmissionReturn => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [isSavingDraft, setIsSavingDraft] = useState<boolean>(false)
 
@@ -24,9 +24,10 @@ export const useSpecificationSubmission = ({ onSubmit, methods }: UseSubmissionP
     tobacco_type_ids: formData.tobacco_types,
     review_text: formData.review,
     star_rating: formData.star_rating,
+    rating_boost: formData.rating_boost,
     status_id: statusId,
-    user_id: '00000000-0000-0000-0000-000000000000'
-  }), [])
+    user_id: userId
+  }), [userId])
 
   const handleFormSubmit = useCallback(async (formData: WizardFormData) => {
     setIsSubmitting(true)

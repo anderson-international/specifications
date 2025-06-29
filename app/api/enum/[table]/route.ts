@@ -26,7 +26,7 @@ export async function GET(
   try {
     const { table } = await params
     const tableName = validateTableName(table)
-    const { search, page, limit } = withQuery(request, EnumQuerySchema)
+    const { search, page, limit } = EnumQuerySchema.parse(withQuery(request))
 
     const result = await listEnums({ table: tableName, search, page, limit })
     return createApiResponse(result)
@@ -43,7 +43,7 @@ export async function POST(
   try {
     const { table } = await params
     const tableName = validateTableName(table)
-    const body = await withJsonBody(request, CreateEnumValueSchema)
+    const body = CreateEnumValueSchema.parse(await withJsonBody(request))
 
     const newValue = await createEnum(tableName, body)
     return createApiResponse(newValue, 'Enum value created successfully')
@@ -60,7 +60,7 @@ export async function PUT(
   try {
     const { table } = await params
     const tableName = validateTableName(table)
-    const body = await withJsonBody(request, UpdateEnumValueSchema)
+    const body = UpdateEnumValueSchema.parse(await withJsonBody(request))
 
     const updated = await updateEnum(tableName, body)
     return createApiResponse(updated, 'Enum value updated successfully')

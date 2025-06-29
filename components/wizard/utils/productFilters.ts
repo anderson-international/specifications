@@ -11,25 +11,17 @@ export const filterProducts = (
   selectedTypeId: number | null,
   searchTerm: string
 ): MockProduct[] => {
-  let filtered = [...products]
-  
-  if (selectedBrandId) {
-    filtered = filtered.filter(p => p.brand_id === selectedBrandId)
-  }
-  
-  if (selectedTypeId) {
-    filtered = filtered.filter(p => p.type_id === selectedTypeId)
-  }
-  
-  if (searchTerm) {
-    const term = searchTerm.toLowerCase()
-    filtered = filtered.filter(p => 
-      p.name.toLowerCase().includes(term) ||
-      p.brand_name.toLowerCase().includes(term)
-    )
-  }
-  
-  return filtered
+    return products
+    .filter(p => !selectedBrandId || p.brand_id === selectedBrandId)
+    .filter(p => !selectedTypeId || p.type_id === selectedTypeId)
+    .filter(p => {
+      if (!searchTerm) return true
+      const term = searchTerm.toLowerCase()
+      return (
+        p.name.toLowerCase().includes(term) ||
+        p.brand_name.toLowerCase().includes(term)
+      )
+    })
 }
 
 /**

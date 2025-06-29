@@ -9,18 +9,24 @@ import ReviewSubmission from '../steps/ReviewSubmission'
 export interface WizardStep {
   id: string
   title: string
-  component: (stepNumber: number, totalSteps: number, disabled: boolean) => React.ReactNode
+  component: (
+    stepNumber: number,
+    totalSteps: number,
+    disabled: boolean,
+    onNext: () => void
+  ) => React.ReactNode
 }
 
 export const createWizardSteps = (): WizardStep[] => [
   {
     id: 'product',
     title: 'Product',
-    component: (stepNumber, totalSteps, disabled) => (
-      <ProductSelection 
-        stepNumber={stepNumber} 
-        totalSteps={totalSteps} 
-        disabled={disabled} 
+    component: (stepNumber, totalSteps, disabled, onNext) => (
+      <ProductSelection
+        stepNumber={stepNumber}
+        totalSteps={totalSteps}
+        disabled={disabled}
+        onProductSelect={onNext}
       />
     )
   },
@@ -28,10 +34,10 @@ export const createWizardSteps = (): WizardStep[] => [
     id: 'characteristics',
     title: 'Characteristics',
     component: (stepNumber, totalSteps, disabled) => (
-      <ProductCharacteristics 
-        stepNumber={stepNumber} 
-        totalSteps={totalSteps} 
-        disabled={disabled} 
+      <ProductCharacteristics
+        stepNumber={stepNumber}
+        totalSteps={totalSteps}
+        disabled={disabled}
       />
     )
   },
@@ -39,10 +45,10 @@ export const createWizardSteps = (): WizardStep[] => [
     id: 'tasting',
     title: 'Tasting',
     component: (stepNumber, totalSteps, disabled) => (
-      <TastingProfile 
-        stepNumber={stepNumber} 
-        totalSteps={totalSteps} 
-        disabled={disabled} 
+      <TastingProfile
+        stepNumber={stepNumber}
+        totalSteps={totalSteps}
+        disabled={disabled}
       />
     )
   },
@@ -50,10 +56,10 @@ export const createWizardSteps = (): WizardStep[] => [
     id: 'review',
     title: 'Review',
     component: (stepNumber, totalSteps, disabled) => (
-      <ReviewSubmission 
-        stepNumber={stepNumber} 
-        totalSteps={totalSteps} 
-        disabled={disabled} 
+      <ReviewSubmission
+        stepNumber={stepNumber}
+        totalSteps={totalSteps}
+        disabled={disabled}
       />
     )
   }

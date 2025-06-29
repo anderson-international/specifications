@@ -19,40 +19,13 @@ Avoid: Files exceeding size limits, Missing return types, Components without Rea
 
 ### **1. File Size Limits (⚠️ CRITICAL)**
 ```
-Component Files: MAX 150 lines
-Page Files: MAX 200 lines  
-Utility Files: MAX 100 lines
+Component Files: MAX 150 lines (Target: < 120 lines)
+Page Files:      MAX 200 lines
+Utility Files:   MAX 100 lines
 ```
-**FAILURE CONSEQUENCE**: We require immediate refactoring. This blocks development.
-**DETECTION**: Count lines before save.
-**SOLUTION**: Split components. Extract custom hooks.
-**REFERENCE**: [`../../guides/../../guides/code-rules-quality.md`](code-rules-quality.md "Priority: HIGH - TypeScript standards and ESLint rules")
-
-#### **🔧 MANDATORY IMPLEMENTATION PROCESS (AI ENFORCEMENT)**
-
-**BEFORE WRITING ANY COMPONENT:**
-- [ ] **Estimate component size** - Will this design exceed 150 lines?
-- [ ] **Plan extraction strategy** - Identify hooks, sub-components, utilities to extract
-- [ ] **Design architecture first** - Split concerns before writing code
-
-**DURING CODING (Every 20-30 lines):**
-- [ ] **Count current lines** - Stop and check progress toward limit
-- [ ] **Evaluate extraction points** - Identify code that can be moved out
-- [ ] **Refactor immediately** - Don't defer extraction to end
-
-**AI VALIDATION CHECKLIST:**
-```
-Line 30: STOP - Am I approaching 50% of limit? Plan extractions now.
-Line 60: STOP - Am I approaching 80% of limit? Extract immediately.
-Line 100: STOP - CRITICAL - Must extract before continuing.
-Line 120: STOP - EMERGENCY - Component is approaching limit.
-```
-
-**EXTRACTION PRIORITIES:**
-1. **Custom hooks** - State management, API calls, complex calculations
-2. **Sub-components** - Repeated JSX patterns, form sections, display components  
-3. **Utility functions** - Pure functions, formatters, validators
-4. **Constants** - Large option arrays, configuration objects
+**FAILURE CONSEQUENCE**: Immediate refactoring is required, blocking development.
+**SOLUTION**: Split components, extract custom hooks, and move logic to utilities.
+**REFERENCE**: [`../../guides/code-rules-quality.md`](code-rules-quality.md "Priority: HIGH - TypeScript standards and ESLint rules")
 
 ### **2. TypeScript Return Types (⚠️ CRITICAL)**
 ```typescript

@@ -4,7 +4,7 @@ import React from 'react'
 import { useDashboardStats } from '@/hooks/useDashboardStats'
 import styles from './Dashboard.module.css'
 
-const DashboardClient = (): JSX.Element => {
+const DashboardClient: React.FC = (): JSX.Element => {
   const { stats, isLoading } = useDashboardStats()
 
   return (
@@ -32,14 +32,13 @@ const DashboardClient = (): JSX.Element => {
             <h3 className={styles.statValue}>{isLoading ? '--' : stats?.userStats.total_specifications}</h3>
             <p className={styles.statLabel}>My Specifications</p>
           </div>
-          <div className={styles.statCard}>
-            <h3 className={styles.statValue}>{isLoading ? '--' : stats?.userStats.draft_specifications}</h3>
-            <p className={styles.statLabel}>Draft Specifications</p>
-          </div>
         </div>
       </section>
     </div>
   )
 }
 
-export default DashboardClient
+
+
+export default React.memo(DashboardClient)
+DashboardClient.displayName = 'DashboardClient'

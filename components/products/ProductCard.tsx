@@ -4,16 +4,8 @@ import React, { useCallback } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
+import { Product } from '@/types/product'
 import styles from './ProductCard.module.css'
-
-interface Product {
-  id: string
-  handle: string
-  title: string
-  brand: string
-  image_url: string | null
-  is_reviewed: boolean
-}
 
 interface ProductCardProps {
   product: Product

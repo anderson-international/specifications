@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
-import MultiSelectChips, { Option } from '../controls/MultiSelectChips'
+import MultiSelectChips from '../controls/MultiSelectChips'
 import { TASTING_NOTES, CURES, TOBACCO_TYPES } from '@/constants/wizardOptions'
 import styles from './TastingProfile.module.css'
 
@@ -40,17 +40,16 @@ const TastingProfile = ({
     tobacco_types: tobaccoTypes = []
   } = watch()
   
-  const handleTastingNotesChange = useCallback((values: (number | string)[]): void => {
-    setValue('tasting_notes', values as number[], { shouldValidate: true })
-  }, [setValue])
-  
-  const handleCuresChange = useCallback((values: (number | string)[]): void => {
-    setValue('cures', values as number[], { shouldValidate: true })
-  }, [setValue])
-  
-  const handleTobaccoTypesChange = useCallback((values: (number | string)[]): void => {
-    setValue('tobacco_types', values as number[], { shouldValidate: true })
-  }, [setValue])
+  const createMultiSelectHandler = useCallback(
+    (fieldName: keyof TastingProfileFormData) => (values: (number | string)[]) => {
+      setValue(fieldName, values.map(Number), { shouldValidate: true });
+    },
+    [setValue]
+  );
+
+  const handleTastingNotesChange = createMultiSelectHandler('tasting_notes');
+  const handleCuresChange = createMultiSelectHandler('cures');
+  const handleTobaccoTypesChange = createMultiSelectHandler('tobacco_types');
   
   return (
     <WizardStepCard
@@ -73,7 +72,7 @@ const TastingProfile = ({
           </label>
 
           <MultiSelectChips
-            options={TASTING_NOTES as unknown as Option[]}
+            options={TASTING_NOTES}
             selectedValues={tastingNotes}
             onChange={handleTastingNotesChange}
             disabled={disabled}
@@ -95,7 +94,7 @@ const TastingProfile = ({
             </label>
 
             <MultiSelectChips
-              options={CURES as unknown as Option[]}
+              options={CURES}
               selectedValues={cures}
               onChange={handleCuresChange}
               disabled={disabled}
@@ -116,7 +115,7 @@ const TastingProfile = ({
             </label>
 
             <MultiSelectChips
-              options={TOBACCO_TYPES as unknown as Option[]}
+              options={TOBACCO_TYPES}
               selectedValues={tobaccoTypes}
               onChange={handleTobaccoTypesChange}
               disabled={disabled}

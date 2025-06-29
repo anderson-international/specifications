@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState, KeyboardEvent } from 'react'
 import styles from './SegmentedControl.module.css'
 
 export interface SegmentedOption {
@@ -20,11 +20,44 @@ interface SegmentedControlProps {
   fullWidth?: boolean
 }
 
+interface SegmentedOptionDisplayProps {
+  option: SegmentedOption
+  isSelected: boolean
+  isDisabled: boolean
+  onClick: (option: SegmentedOption) => void
+  onKeyDown: (e: KeyboardEvent, option: SegmentedOption) => void
+}
+
+const SegmentedOptionDisplayComponent = ({ option, isSelected, isDisabled, onClick, onKeyDown }: SegmentedOptionDisplayProps): JSX.Element => {
+    const handleClick = useCallback(() => onClick(option), [onClick, option])
+    const handleKeyDown = useCallback(
+      (e: KeyboardEvent) => onKeyDown(e, option),
+      [onKeyDown, option]
+    )
+
+    return (
+      <div
+        role="radio"
+        aria-checked={isSelected}
+        tabIndex={isDisabled ? -1 : 0}
+        className={`${styles.option} ${isSelected ? styles.selected : ''}`}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+      >
+        {option.label}
+      </div>
+    )
+  }
+const SegmentedOptionDisplay = React.memo(SegmentedOptionDisplayComponent);
+SegmentedOptionDisplay.displayName = 'SegmentedOptionDisplay';
+
 /**
  * A mobile-friendly segmented control component for option selection
  * Designed as a replacement for select/radio inputs for small option sets
  */
-const SegmentedControl = ({
+const SegmentedControlComponent = ({
+
+
   options,
   value,
   onChange,
@@ -97,7 +130,12 @@ const SegmentedControl = ({
   }, [disabled, touchStartX, options, value, onChange])
 
   // Generate a unique ID for this control instance
-  const controlId = useMemo((): string => `segmented-${name}-${Math.random().toString(36).substring(2, 9)}`, [name])
+  const controlId = useMemo(() => `segmented-${name}`, [name])
+
+  const indicatorStyle = useMemo(() => ({
+    '--indicator-left': `${(selectedIndex / options.length) * 100}%`,
+    '--indicator-width': `${(1 / options.length) * 100}%`,
+  } as React.CSSProperties), [selectedIndex, options.length]);
 
   return (
     <div className={styles.container}>
@@ -114,30 +152,21 @@ const SegmentedControl = ({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        style={indicatorStyle}
       >
-        {options.map((option) => (
-          <div
+        {options.map(option => (
+          <SegmentedOptionDisplay
             key={option.id}
-            role="radio"
-            aria-checked={value === option.id}
-            tabIndex={disabled ? -1 : 0}
-            className={`${styles.option} ${value === option.id ? styles.selected : ''}`}
-            onClick={(): void => handleOptionClick(option)}
-            onKeyDown={(e): void => handleKeyDown(e, option)}
-          >
-            {option.label}
-          </div>
-        ))}
-        
-        {/* Sliding highlight indicator */}
-        {selectedIndex >= 0 && (
-          <div
-            className={styles.indicator}
-            style={{
-              left: `${(selectedIndex / options.length) * 100}%`,
-              width: `${(1 / options.length) * 100}%`
-            }}
+            option={option}
+            isSelected={value === option.id}
+            isDisabled={disabled || false}
+            onClick={handleOptionClick}
+            onKeyDown={handleKeyDown}
           />
+        ))}
+
+        {selectedIndex >= 0 && (
+          <div className={styles.indicator} />
         )}
       </div>
       
@@ -147,4 +176,6 @@ const SegmentedControl = ({
 }
 
 // Export with React.memo for performance optimization
-export default React.memo(SegmentedControl)
+const SegmentedControl = React.memo(SegmentedControlComponent);
+SegmentedControl.displayName = 'SegmentedControl';
+export default SegmentedControl;

@@ -1,0 +1,72 @@
+.productRow {
+  background-color: #252831;
+  border: 1px solid #343741;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.productRow:hover {
+  background-color: #2d323c;
+  border-color: #4a5568;
+}
+
+.productRow:focus {
+  outline: none;
+  border-color: #1878B9;
+  box-shadow: 0 0 0 2px rgba(24, 120, 185, 0.3);
+}
+
+.productRow.selected {
+  border-color: #1878B9;
+  background-color: #1a2332;
+  box-shadow: 0 0 0 1px rgba(24, 120, 185, 0.3);
+}
+
+.productRow.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.productInfo {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #e2e8f0;
+  margin: 0 0 0.25rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand {
+  font-size: 0.75rem;
+  color: #a0aec0;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.checkbox {
+  margin-left: 0.75rem;
+  flex-shrink: 0;
+}
+
+.checkboxInput {
+  width: 16px;
+  height: 16px;
+  accent-color: #1878B9;
+}

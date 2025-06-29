@@ -8,14 +8,15 @@ import AppLayout from '@/components/layout/AppLayout'
 export const metadata: Metadata = {
   title: 'Snuff Specifications',
   description: 'Specification management system for snuff products',
-  viewport: 'width=device-width, initial-scale=1',
 }
 
-export default function RootLayout({
+export const viewport = 'width=device-width, initial-scale=1'
+
+export default React.memo(function RootLayout({
   children,
 }: {
   children: React.ReactNode
-}) {
+}): JSX.Element {
   return (
     <html lang="en">
       <body>
@@ -27,4 +28,5 @@ export default function RootLayout({
       </body>
     </html>
   )
-}
+})
+

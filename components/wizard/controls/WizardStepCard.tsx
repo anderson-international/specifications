@@ -9,6 +9,7 @@ interface WizardStepCardProps {
   stepNumber: number
   totalSteps: number
   isValid?: boolean
+  disabled?: boolean
 }
 
 /**

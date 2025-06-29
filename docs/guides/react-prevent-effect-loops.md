@@ -68,6 +68,22 @@ useEffect(() => {
 }, [handleUpdate]);
 ```
 
+**Critical Rule:** Only include dependencies used in ALL execution paths.
+
+```jsx
+// ❌ WRONG: onSelectionChange not used in multi-select path
+const handleSelect = useCallback((item) => {
+  if (mode === 'single') {
+    onSelectionChange(item); // Used here
+  } else {
+    // onSelectionChange NOT used here
+  }
+}, [mode, onSelectionChange]); // Causes unnecessary re-renders
+
+// ✅ CORRECT: Conditional dependencies
+}, mode === 'single' ? [mode, onSelectionChange] : [mode]);
+```
+
 ### 2. Derived State (⚠️ CRITICAL)
 
 **Problem:** Calculated values change identity on each render, triggering effects.
@@ -203,9 +219,16 @@ useEffect(() => {
 useEffect(() => {
   fetchData();
 }, [() => formatData(data)]); // New function every render
+
+// ❌ WRONG: Default parameter with array/object literal
+function MyComponent({ initialData = [] }) {
+  useEffect(() => {
+    processData(initialData);
+  }, [initialData]); // New array reference every render!
+}
 ```
 
-**Solution:** Use primitive values or memoized objects.
+**Solution:** Use primitive values, memoized objects, or stable constants.
 
 ```jsx
 // ✅ CORRECT: Use primitive
@@ -218,6 +241,14 @@ const formatDataFn = useCallback(() => formatData(data), [data]);
 useEffect(() => {
   fetchData();
 }, [formatDataFn]); // Stable function reference
+
+// ✅ CORRECT: Stable constant for default parameter
+const EMPTY_ARRAY = [];
+function MyComponent({ initialData = EMPTY_ARRAY }) {
+  useEffect(() => {
+    processData(initialData);
+  }, [initialData]); // Stable reference
+}
 ```
 
 ## Testing for Infinite Loops

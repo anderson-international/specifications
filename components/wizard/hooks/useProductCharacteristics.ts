@@ -39,37 +39,31 @@ export const useProductCharacteristics = () => {
     )
   }, [grindId, experienceLevelId, nicotineLevelId, moistureLevelId])
   
-  const handleGrindChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>): void => {
-    const value = e.target.value
-    setValue('grind_id', value ? Number(value) : null, { shouldValidate: true })
-  }, [setValue])
-  
-  const handleExperienceChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>): void => {
-    const value = e.target.value
-    setValue('experience_level_id', value ? Number(value) : null, { shouldValidate: true })
-  }, [setValue])
-  
-  const handleNicotineLevelChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>): void => {
-    const value = e.target.value
-    setValue('nicotine_level_id', value ? Number(value) : null, { shouldValidate: true })
-  }, [setValue])
-  
-  const handleMoistureLevelChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>): void => {
-    const value = e.target.value
-    setValue('moisture_level_id', value ? Number(value) : null, { shouldValidate: true })
-  }, [setValue])
-  
-  const handleFermentedChange = useCallback((checked: boolean): void => {
-    setValue('is_fermented', checked, { shouldValidate: true })
-  }, [setValue])
-  
-  const handleOralTobaccoChange = useCallback((checked: boolean): void => {
-    setValue('is_oral_tobacco', checked, { shouldValidate: true })
-  }, [setValue])
-  
-  const handleArtisanChange = useCallback((checked: boolean): void => {
-    setValue('is_artisan', checked, { shouldValidate: true })
-  }, [setValue])
+  const createSelectHandler = useCallback(
+    (fieldName: keyof ProductCharacteristicsFormData) =>
+      (e: React.ChangeEvent<HTMLSelectElement>): void => {
+        const value = e.target.value
+        setValue(fieldName, value ? Number(value) : null, { shouldValidate: true })
+      },
+    [setValue]
+  )
+
+  const createBooleanHandler = useCallback(
+    (fieldName: keyof ProductCharacteristicsFormData) =>
+      (checked: boolean): void => {
+        setValue(fieldName, checked, { shouldValidate: true })
+      },
+    [setValue]
+  )
+
+  const handleGrindChange = createSelectHandler('grind_id')
+  const handleExperienceChange = createSelectHandler('experience_level_id')
+  const handleNicotineLevelChange = createSelectHandler('nicotine_level_id')
+  const handleMoistureLevelChange = createSelectHandler('moisture_level_id')
+
+  const handleFermentedChange = createBooleanHandler('is_fermented')
+  const handleOralTobaccoChange = createBooleanHandler('is_oral_tobacco')
+  const handleArtisanChange = createBooleanHandler('is_artisan')
 
   return {
     register,

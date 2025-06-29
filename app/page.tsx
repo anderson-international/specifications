@@ -1,8 +1,11 @@
 import React from 'react'
 import DashboardClient from './DashboardClient'
 
-const DashboardPage = (): JSX.Element => {
+const DashboardPage: React.FC = (): JSX.Element => {
   return <DashboardClient />
 }
 
-export default DashboardPage
+
+
+export default React.memo(DashboardPage)
+DashboardPage.displayName = 'DashboardPage'

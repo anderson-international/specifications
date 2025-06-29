@@ -49,7 +49,18 @@ function ProductFilters({
             onChange={handleSearchChange}
             className={styles.searchInput}
           />
-          <span className={styles.searchIcon}>🔍</span>
+          {searchTerm ? (
+            <button
+              onClick={() => onSearchChange('')}
+              className={styles.searchIcon}
+              type="button"
+              aria-label="Clear search"
+            >
+              &times;
+            </button>
+          ) : (
+            <span className={styles.searchIcon}>🔍</span>
+          )}
         </div>
       </div>
 

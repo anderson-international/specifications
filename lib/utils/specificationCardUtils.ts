@@ -5,30 +5,22 @@
 import { SpecificationStatus } from '@/types/specification'
 
 /**
- * Format a date string to human-readable relative time
+ * Get the CSS class for a specification status
  */
-export function formatLastModified(dateString: string): string {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
-  
-  if (diffInHours < 1) return 'Just now'
-  if (diffInHours < 24) return `${diffInHours}h ago`
-  if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`
-  return date.toLocaleDateString()
-}
-
-/**
- * Get the background color for a specification status
- */
-export function getStatusColor(status: SpecificationStatus): string {
+export function getStatusClass(status: SpecificationStatus): string {
   switch (status) {
-    case 'draft': return '#f59e0b'
-    case 'pending_review': return '#3b82f6'
-    case 'approved': return '#10b981'
-    case 'rejected': return '#ef4444'
-    case 'published': return '#8b5cf6'
-    default: return '#6b7280'
+    case 'draft':
+      return 'status--draft'
+    case 'pending_review':
+      return 'status--pending_review'
+    case 'approved':
+      return 'status--approved'
+    case 'rejected':
+      return 'status--rejected'
+    case 'published':
+      return 'status--published'
+    default:
+      return 'status--default'
   }
 }
 

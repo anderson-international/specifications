@@ -9,7 +9,6 @@ export interface SystemStats {
 
 export interface UserStats {
   total_specifications: number
-  draft_specifications: number
 }
 
 export interface DashboardStats {
@@ -32,8 +31,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     // System-wide stats
     const totalSpecifications = await prisma.specifications.count()
-    const specificationsAwaitingReview = await prisma.specifications.count({
-      where: { status_id: 2 }, // Awaiting Review
+    const specificationsReviewed = await prisma.specifications.count({
+      where: { status_id: 1 }, // Published
     })
 
     // User-specific stats
@@ -41,28 +40,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       where: { user_id: userId },
     })
 
-    const userStatsByStatus = await prisma.specifications.groupBy({
-      by: ['status_id'],
-      where: {
-        user_id: userId,
-      },
-      _count: {
-        status_id: true,
-      },
-    })
-
-    const draftSpecifications =
-      userStatsByStatus.find(stat => stat.status_id === 1)?._count.status_id || 0
-
     // The original code had a placeholder for total_products. I'll use totalSpecifications.
     const stats: DashboardStats = {
       systemStats: {
         total_products: totalSpecifications,
-        reviewed_products: specificationsAwaitingReview,
+        reviewed_products: specificationsReviewed,
       },
       userStats: {
         total_specifications: totalUserSpecifications,
-        draft_specifications: draftSpecifications,
       },
     }
 

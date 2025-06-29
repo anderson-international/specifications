@@ -176,7 +176,7 @@ This database supports a snuff specification management system with:
 - Multi-reviewer specifications for products
 - Enum-based categorization system
 - Junction tables for many-to-many relationships
-- Draft/published workflow via status system
+- Status-based workflow system
 - Integration with Shopify for product data
 
 `;
@@ -256,7 +256,7 @@ function generateTableDocumentation(tableName, data) {
   if (tableName === 'specifications') {
     doc += `**Purpose:** Core specification data - main CRUD operations focus here\n`;
     doc += `**Form:** Multi-step wizard (product selection, ratings, text review, enum selections)\n`;
-    doc += `**Workflow:** Draft → Published → Needs Revision → Under Review\n`;
+    doc += `**Workflow:** Published ↔ Needs Revision\n`;
   } else if (tableName === 'users') {
     doc += `**Purpose:** User management - Admin vs Reviewer roles\n`;
     doc += `**Form:** Simple user profile form\n`;
@@ -296,6 +296,18 @@ function generateTableDocumentation(tableName, data) {
     doc += `**Relationships:**\n`;
     foreignKeys.forEach(fk => {
       doc += `- ${fk.column_name} → ${fk.foreign_table_name}.${fk.foreign_column_name}\n`;
+    });
+    doc += `\n`;
+  }
+  
+  // Add index information with AI optimization guidance
+  const tableIndexes = data.indexes.filter(i => !i.indexname.endsWith('_pkey')); // Skip primary keys
+  if (tableIndexes.length > 0) {
+    doc += `**Indexes:**\n`;
+    tableIndexes.forEach(idx => {
+      const indexType = idx.indexdef.includes('UNIQUE') ? 'UNIQUE' : 'STANDARD';
+      const columns = idx.indexdef.match(/\(([^)]+)\)/)?.[1] || 'unknown';
+      doc += `- **${idx.indexname}**: ${indexType} on (${columns}) - QUERY: Optimized for WHERE/GROUP BY on these columns\n`;
     });
     doc += `\n`;
   }
@@ -364,10 +376,8 @@ function generateAIGuidance(tableData) {
 - Email: Valid email format for users table
 
 ### Status Workflow Logic
-- Draft (1): Editable by owner, not visible to others
-- Published (2): Read-only for reviewers, visible to all
-- Needs Revision (3): Flagged for improvement, editable by owner
-- Under Review (4): Awaiting admin approval, read-only for reviewers
+- Published (1): Visible to all, read-only for reviewers.
+- Needs Revision (2): Flagged for improvement, editable by owner.
 
 ### Performance Considerations
 - Use indexes on foreign key columns for joins

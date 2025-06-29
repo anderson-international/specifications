@@ -2,7 +2,7 @@ import React, { Suspense } from 'react'
 import { getSpecificationEnumData } from '@/lib/data/enums'
 import { SpecificationEnumData } from '@/types/enum'
 import CreateSpecificationClient from './CreateSpecificationClient'
-import styles from './page.module.css'
+
 
 /**
  * Server component that fetches enum data and renders the client component

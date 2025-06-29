@@ -1,4 +1,4 @@
-import { SpecificationFormData } from '@/lib/schemas/specification'
+
 
 /**
  * Specification status enum for UI display
@@ -14,6 +14,38 @@ export type SpecificationStatus =
  * Specification interface for UI components
  * Extends the form data with database and UI-specific fields
  */
+export interface SpecificationFormData {
+  // Product Selection
+  shopify_handle: string
+  product_brand_id: number
+
+  // Characteristics 1
+  product_type_id: number
+  experience_level_id: number
+  tobacco_type_ids: number[]
+
+  // Characteristics 2
+  cure_type_ids: number[]
+  grind_id: number
+  is_fermented: boolean
+  is_oral_tobacco: boolean
+  is_artisan: boolean
+
+  // Sensory Profile
+  tasting_note_ids: number[]
+  nicotine_level_id: number
+  moisture_level_id: number
+
+  // Review & Rating
+  review_text?: string
+  star_rating: number
+  rating_boost?: number
+
+  // Metadata
+  status_id: number
+  user_id: string
+}
+
 export interface Specification extends SpecificationFormData {
   id: string
   userId: string
@@ -151,4 +183,4 @@ export type SpecificationAction =
 /**
  * Export commonly used types for convenience
  */
-export type { SpecificationFormData } from '@/lib/schemas/specification'
+

@@ -25,7 +25,7 @@ const ToggleSwitch = ({
   disabled = false
 }: ToggleSwitchProps): JSX.Element => {
   // Generate a unique ID for this control instance
-  const switchId = useMemo((): string => `toggle-${name}-${Math.random().toString(36).substring(2, 9)}`, [name])
+  const switchId = useMemo(() => `toggle-${name}`, [name])
   
   // Handle toggle click
   const handleToggle = useCallback((): void => {

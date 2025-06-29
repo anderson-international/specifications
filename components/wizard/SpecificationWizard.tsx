@@ -1,10 +1,9 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider } from 'react-hook-form'
 import { Specification } from '@/lib/schemas/specification'
 import WizardProgress from './controls/WizardProgress'
-import ProductSelection from './steps/ProductSelection'
 import { useSpecificationWizard } from './hooks/useSpecificationWizard'
 import { useStepValidation } from './hooks/useStepValidation'
 import { createWizardSteps } from './constants/wizardSteps'
@@ -13,6 +12,7 @@ import styles from './SpecificationWizard.module.css'
 interface SpecificationWizardProps {
   onSubmit: (data: Specification) => void | Promise<void>
   initialData?: Record<string, unknown>
+  userId: string
 }
 
 /**
@@ -20,7 +20,8 @@ interface SpecificationWizardProps {
  */
 const SpecificationWizard = ({
   onSubmit,
-  initialData = {}
+  initialData = {},
+  userId
 }: SpecificationWizardProps): JSX.Element => {
   const {
     methods,
@@ -32,7 +33,7 @@ const SpecificationWizard = ({
     handleStepClick,
     handleFormSubmit,
     saveDraft
-  } = useSpecificationWizard({ onSubmit, initialData })
+  } = useSpecificationWizard({ onSubmit, initialData, userId })
 
   const steps = useMemo(() => createWizardSteps(), [])
   const currentStep = steps[activeStep]
@@ -42,6 +43,8 @@ const SpecificationWizard = ({
     currentStepId: currentStep.id,
     methods
   })
+
+
 
   return (
     <FormProvider {...methods}>
@@ -60,21 +63,11 @@ const SpecificationWizard = ({
 
         <form onSubmit={methods.handleSubmit(handleFormSubmit)} className={styles.form}>
           <div className={styles.stepContent}>
-            {activeStep === 0 ? (
-              <ProductSelection 
-                stepNumber={activeStep + 1} 
-                totalSteps={totalSteps} 
-                disabled={isSubmitting}
-                onProductSelect={() => {
-                  try {
-                    handleNext()
-                  } catch (error) {
-                    console.error('Error advancing wizard step:', error)
-                  }
-                }}
-              />
-            ) : (
-              currentStep.component(activeStep + 1, totalSteps, isSubmitting)
+            {currentStep.component(
+              activeStep + 1,
+              totalSteps,
+              isSubmitting,
+              handleNext
             )}
           </div>
 

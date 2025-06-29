@@ -174,7 +174,8 @@
       "description": "AI-optimized database schema documentation for CRUD forms and API development",
       "workflows": [
         "docs-forms",
-        "docs-api"
+        "docs-api",
+        "docs-db"
       ]
     }
   ],
@@ -272,7 +273,7 @@
   ],
   "workflowIntegration": [
     {
-      "workflow": "docs-ai-context",
+      "workflow": "docs-init",
       "documents": [
         "QEbDzLsg",
         "H7cdM9hi"
@@ -307,7 +308,8 @@
         "culNx_Ga",
         "h57bzPbS",
         "56Oz23_w",
-        "NjQJhb5-"
+        "NjQJhb5-",
+        "Vw_gIXfS"
       ],
       "description": "UI development with design specifications and technical implementation"
     },

@@ -9,7 +9,7 @@ export interface User {
 }
 
 export interface Specification {
-  id: number
+  id?: number
   shopify_handle: string
   product_type_id: number
   is_fermented: boolean
@@ -19,13 +19,17 @@ export interface Specification {
   experience_level_id: number
   nicotine_level_id: number
   moisture_level_id: number
+  tasting_note_ids: number[]
+  cure_type_ids: number[]
+  tobacco_type_ids: number[]
   product_brand_id: number
   status_id: number
   user_id: string
   star_rating: number
+  review_text?: string
   rating_boost: number
-  created_at: Date
-  updated_at: Date
+  created_at?: Date
+  updated_at?: Date
   
   // Relations (when included)
   users?: User

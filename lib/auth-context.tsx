@@ -18,28 +18,15 @@ interface AuthProviderProps {
   children: React.ReactNode
 }
 
-export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
+export const AuthProvider = React.memo(function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Load user from localStorage on mount
+  // Initialize loading state without auto-loading user
   useEffect(() => {
-    const loadStoredUser = (): void => {
-      try {
-        const storedUser = localStorage.getItem('dev-user')
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser) as AuthUser
-          setUser(parsedUser)
-        }
-      } catch (error) {
-        console.error('Failed to load stored user:', error)
-        localStorage.removeItem('dev-user')
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadStoredUser()
+    // Clear any existing stored user to ensure fresh authentication
+    localStorage.removeItem('dev-user')
+    setIsLoading(false)
   }, [])
 
   const signIn = useCallback((selectedUser: AuthUser): void => {
@@ -70,7 +57,8 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
       {children}
     </AuthContext.Provider>
   )
-}
+})
+
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext)

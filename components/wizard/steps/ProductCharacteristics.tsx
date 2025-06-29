@@ -2,6 +2,7 @@
 
 import React from 'react'
 import WizardStepCard from '../controls/WizardStepCard'
+import CharacteristicSelect from './CharacteristicSelect'
 import ProductAttributeToggles from './ProductAttributeToggles'
 import { useProductCharacteristics } from '../hooks/useProductCharacteristics'
 import { GRINDS, EXPERIENCE_LEVELS, NICOTINE_LEVELS, MOISTURE_LEVELS } from '@/constants/wizardOptions'
@@ -22,7 +23,7 @@ const ProductCharacteristics = ({
   disabled = false
 }: ProductCharacteristicsProps): JSX.Element => {
   const {
-    register,
+
     grindId,
     experienceLevelId,
     nicotineLevelId,
@@ -47,79 +48,40 @@ const ProductCharacteristics = ({
     >
       <div className={styles.characteristicsContainer}>
         <div className={styles.characteristicsRow}>
-          <div>
-            <select
-              id="grind-filter"
-              {...register('grind_id')}
-              value={grindId || ''}
-              onChange={handleGrindChange}
-              disabled={disabled}
-              className={styles.select}
-            >
-              <option value="">Select Grind</option>
-              {GRINDS.map(grind => (
-                <option key={grind.id} value={grind.id}>
-                  {grind.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <select
-              id="experience-level-filter"
-              {...register('experience_level_id')}
-              value={experienceLevelId || ''}
-              onChange={handleExperienceChange}
-              disabled={disabled}
-              className={styles.select}
-            >
-              <option value="">Select Experience</option>
-              {EXPERIENCE_LEVELS.map(level => (
-                <option key={level.id} value={level.id}>
-                  {level.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <CharacteristicSelect
+            id="grind-filter"
+            label="Select Grind"
+            value={grindId || ''}
+            onChange={handleGrindChange}
+            options={GRINDS}
+            disabled={disabled}
+          />
+          <CharacteristicSelect
+            id="experience-level-filter"
+            label="Select Experience"
+            value={experienceLevelId || ''}
+            onChange={handleExperienceChange}
+            options={EXPERIENCE_LEVELS}
+            disabled={disabled}
+          />
         </div>
-        
         <div className={styles.characteristicsRow}>
-          <div>
-            <select
-              id="nicotine-level-filter"
-              {...register('nicotine_level_id')}
-              value={nicotineLevelId || ''}
-              onChange={handleNicotineLevelChange}
-              disabled={disabled}
-              className={styles.select}
-            >
-              <option value="">Select Nicotine Level</option>
-              {NICOTINE_LEVELS.map(level => (
-                <option key={level.id} value={level.id}>
-                  {level.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <select
-              id="moisture-level-filter"
-              {...register('moisture_level_id')}
-              value={moistureLevelId || ''}
-              onChange={handleMoistureLevelChange}
-              disabled={disabled}
-              className={styles.select}
-            >
-              <option value="">Select Moisture Level</option>
-              {MOISTURE_LEVELS.map(level => (
-                <option key={level.id} value={level.id}>
-                  {level.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <CharacteristicSelect
+            id="nicotine-level-filter"
+            label="Select Nicotine Level"
+            value={nicotineLevelId || ''}
+            onChange={handleNicotineLevelChange}
+            options={NICOTINE_LEVELS}
+            disabled={disabled}
+          />
+          <CharacteristicSelect
+            id="moisture-level-filter"
+            label="Select Moisture Level"
+            value={moistureLevelId || ''}
+            onChange={handleMoistureLevelChange}
+            options={MOISTURE_LEVELS}
+            disabled={disabled}
+          />
         </div>
       </div>
       

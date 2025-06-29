@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useMemo, useRef } from 'react'
+import { useDropdownPosition } from './useDropdownPosition'
+import { useClickOutside } from './useClickOutside'
 export interface Option {
   id: number | string
   label: string
@@ -49,7 +51,7 @@ export const useMultiSelect = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, left: 0, width: 0 })
+
 
   const filteredOptions = useMemo((): Option[] => {
     if (!searchTerm) return options
@@ -99,28 +101,11 @@ export const useMultiSelect = ({
     }
   }, [isOpen, disabled])
 
-  useEffect(() => {
-    const calculatePosition = () => {
-      if (isOpen && containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        setDropdownPosition({
-          top: rect.bottom + window.scrollY,
-          left: rect.left + window.scrollX,
-          width: rect.width,
-        });
-      }
-    };
+  const dropdownPosition = useDropdownPosition(containerRef, isOpen)
 
-    calculatePosition();
-
-    window.addEventListener('resize', calculatePosition);
-    window.addEventListener('scroll', calculatePosition, true);
-
-    return () => {
-      window.removeEventListener('resize', calculatePosition);
-      window.removeEventListener('scroll', calculatePosition, true);
-    };
-  }, [isOpen]);
+  useClickOutside([containerRef, dropdownRef], () => {
+    setIsOpen(false)
+  })
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent): void => {
     if (disabled) return
@@ -135,23 +120,7 @@ export const useMultiSelect = ({
     }
   }, [disabled])
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent): void => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node) &&
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false)
-      }
-    }
-    
-    document.addEventListener('click', handleClickOutside)
-    return () => {
-      document.removeEventListener('click', handleClickOutside)
-    }
-  }, [])
+
 
   return {
     isOpen,

@@ -1,18 +1,21 @@
 'use client'
 
-import React from 'react'
-import SpecificationWizard from '@/components/wizard/SpecificationWizard'
+import React, { useCallback } from 'react'
 import { Specification } from '@/lib/schemas/specification'
+import SpecificationWizard from '@/components/wizard/SpecificationWizard'
+import { useAuth } from '@/lib/auth-context'
 
 export default function NewSpecificationPage(): JSX.Element {
-  const handleSubmit = async (data: Specification): Promise<void> => {
-    console.log('Specification submitted:', data)
-    // TODO: Implement actual submission logic
-  }
+  const { user } = useAuth();
+
+  const handleSubmit = useCallback(async (data: Specification): Promise<void> => {
+    // TODO: Implement actual API call to create specification
+    console.log('Specification data:', data)
+  }, [])
 
   return (
     <div className="container mx-auto py-8">
-      <SpecificationWizard onSubmit={handleSubmit} />
+      <SpecificationWizard onSubmit={handleSubmit} userId={user?.id || ''} />
     </div>
   )
 }

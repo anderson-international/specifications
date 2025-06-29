@@ -1,70 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
 import { Specification } from '@/types/specification'
-
-// Mock data - will be replaced with API call
-const mockSpecifications: Specification[] = [
-  {
-    id: '1',
-    userId: 'user-1',
-    status: 'draft',
-    progress: 75,
-    createdAt: '2024-01-15T10:30:00Z',
-    updatedAt: '2024-01-15T14:20:00Z',
-    lastModified: '2024-01-15T14:20:00Z',
-    product: {
-      id: 'prod-1',
-      handle: 'peterson-early-morning-pipe',
-      title: 'Peterson Early Morning Pipe',
-      brand: 'Peterson',
-      imageUrl: '/images/products/peterson-early-morning.jpg'
-    },
-    // Form data stored elsewhere in production
-  },
-  {
-    id: '2',
-    userId: 'user-1',
-    status: 'pending_review',
-    progress: 100,
-    createdAt: '2024-01-14T16:45:00Z',
-    updatedAt: '2024-01-14T16:45:00Z',
-    lastModified: '2024-01-14T16:45:00Z',
-    product: {
-      id: 'prod-2',
-      handle: 'dunhill-nightcap',
-      title: 'Dunhill Nightcap',
-      brand: 'Dunhill',
-      imageUrl: '/images/products/dunhill-nightcap.jpg'
-    },
-    // Form data stored elsewhere in production
-  },
-  {
-    id: '3',
-    userId: 'user-1',
-    status: 'approved',
-    progress: 100,
-    score: 4.2,
-    createdAt: '2024-01-10T09:15:00Z',
-    updatedAt: '2024-01-12T11:30:00Z',
-    lastModified: '2024-01-12T11:30:00Z',
-    reviewedAt: '2024-01-12T11:30:00Z',
-    product: {
-      id: 'prod-3',
-      handle: 'mac-baren-hh-old-dark-fired',
-      title: 'Mac Baren HH Old Dark Fired',
-      brand: 'Mac Baren',
-      imageUrl: '/images/products/mac-baren-hh-old-dark.jpg'
-    },
-    review: {
-      reviewerId: 'reviewer-1',
-      reviewerName: 'John Reviewer',
-      comments: 'Excellent detailed review with accurate tasting notes.',
-      reviewedAt: '2024-01-12T11:30:00Z'
-    },
-    // Form data stored elsewhere in production
-  }
-]
+import { useCallback, useEffect, useState } from 'react'
 
 interface UseSpecificationsReturn {
   specifications: Specification[]
@@ -91,7 +28,7 @@ export function useSpecifications(): UseSpecificationsReturn {
         // Simulate API call delay
         await new Promise(resolve => setTimeout(resolve, 500))
         
-        setSpecifications(mockSpecifications)
+        setSpecifications([])
       } catch (err) {
         setError('Failed to load specifications')
         console.error('Error loading specifications:', err)
@@ -110,7 +47,7 @@ export function useSpecifications(): UseSpecificationsReturn {
     
     // Trigger re-load
     setTimeout(() => {
-      setSpecifications(mockSpecifications)
+      setSpecifications([])
       setIsLoading(false)
     }, 500)
   }, [])

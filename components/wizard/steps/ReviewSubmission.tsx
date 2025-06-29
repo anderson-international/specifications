@@ -28,16 +28,29 @@ const ReviewSubmission = ({
 }: ReviewSubmissionProps): JSX.Element => {
   const { 
     watch, 
-    setValue, 
-    register
+    setValue
   } = useFormContext<ReviewSubmissionFormData>()
   
-  // Watch form values - Optimized with single watch call
   const {
     review = '',
     star_rating: starRating = 2,
     rating_boost: ratingBoost = 0
   } = watch()
+
+  const handleStarRatingChange = useCallback((value: number) => {
+    setValue('star_rating', value, { shouldValidate: true })
+    if (value === 5) {
+      setValue('rating_boost', 0, { shouldValidate: true })
+    }
+  }, [setValue])
+
+  const handleRatingBoostChange = useCallback((value: number) => {
+    setValue('rating_boost', value, { shouldValidate: true })
+  }, [setValue])
+
+  const handleReviewChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setValue('review', e.target.value, { shouldValidate: true })
+  }, [setValue])
   
   return (
     <WizardStepCard
@@ -47,17 +60,10 @@ const ReviewSubmission = ({
       disabled={disabled}
     >
       <Ratings
-        starRating={watch('star_rating')}
-        ratingBoost={watch('rating_boost')}
-        onStarRatingChange={(value): void => {
-          setValue('star_rating', value, { shouldValidate: true })
-          if (value === 5) {
-            setValue('rating_boost', 0, { shouldValidate: true })
-          }
-        }}
-        onRatingBoostChange={(value): void => {
-          setValue('rating_boost', value, { shouldValidate: true })
-        }}
+        starRating={starRating}
+        ratingBoost={ratingBoost}
+        onStarRatingChange={handleStarRatingChange}
+        onRatingBoostChange={handleRatingBoostChange}
       />
 
       <div className={styles.formGroup}>
@@ -68,7 +74,7 @@ const ReviewSubmission = ({
           id="review-text"
           className={styles.textarea}
           value={review}
-          onChange={(e): void => setValue('review', e.target.value)}
+          onChange={handleReviewChange}
           placeholder="Write your detailed review here... (minimum 150 characters)"
           rows={5}
           maxLength={2000}

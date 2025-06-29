@@ -66,7 +66,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         shopify_handle,
         user_id,
         ...specData,
-        status_id: 1 // Default to draft
+        status_id: 2 // Default to 'Needs Revision'
       },
       include: {
         users: {

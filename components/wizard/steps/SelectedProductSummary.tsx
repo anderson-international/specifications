@@ -7,17 +7,13 @@ import styles from './SelectedProductSummary.module.css'
 
 interface SelectedProductSummaryProps {
   product: Product | null
-  shopifyHandle: string | null
-  brandId: number | null
 }
 
 /**
  * Displays a summary of the selected product
  */
 const SelectedProductSummary = ({
-  product,
-  shopifyHandle,
-  brandId
+  product
 }: SelectedProductSummaryProps): JSX.Element | null => {
   if (!product) return null
 
@@ -51,11 +47,11 @@ const SelectedProductSummary = ({
           <div className={styles.metaData}>
             <div className={styles.metaItem}>
               <span className={styles.metaLabel}>Shopify Handle:</span>
-              <span className={styles.metaValue}>{shopifyHandle || product.handle}</span>
+              <span className={styles.metaValue}>{product.handle}</span>
             </div>
             <div className={styles.metaItem}>
               <span className={styles.metaLabel}>Brand ID:</span>
-              <span className={styles.metaValue}>{brandId || product.brand_id}</span>
+              <span className={styles.metaValue}>{product.brand_id}</span>
             </div>
           </div>
           

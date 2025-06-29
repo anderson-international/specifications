@@ -118,6 +118,30 @@
   text-transform: uppercase;
 }
 
+.status--draft {
+  background-color: var(--color-warning);
+}
+
+.status--pending_review {
+  background-color: var(--color-info);
+}
+
+.status--approved {
+  background-color: var(--color-success);
+}
+
+.status--rejected {
+  background-color: var(--color-danger);
+}
+
+.status--published {
+  background-color: var(--color-primary);
+}
+
+.status--default {
+  background-color: var(--color-text-tertiary);
+}
+
 .lastModified {
   font-size: 0.75rem;
   color: var(--color-text-tertiary);

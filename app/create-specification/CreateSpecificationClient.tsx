@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import SpecificationWizard from '@/components/wizard/SpecificationWizard'
 import { Specification } from '@/lib/schemas/specification'
 import { SpecificationEnumData } from '@/types/enum'
+import { useAuth } from '@/lib/auth-context'
 
 interface CreateSpecificationClientProps {
   enumData: SpecificationEnumData
@@ -14,6 +15,7 @@ interface CreateSpecificationClientProps {
 export default function CreateSpecificationClient(_props: CreateSpecificationClientProps): JSX.Element {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { user } = useAuth();
   const [productId, setProductId] = useState<string | undefined>(undefined)
 
   useEffect(() => {
@@ -36,9 +38,6 @@ export default function CreateSpecificationClient(_props: CreateSpecificationCli
     }
   }, [router])
 
-  const handleCancel = useCallback((): void => {
-    router.back()
-  }, [router])
 
   // Prepare initial data if productId is provided
   const initialData = useMemo(() => {
@@ -54,6 +53,7 @@ export default function CreateSpecificationClient(_props: CreateSpecificationCli
     <SpecificationWizard
       onSubmit={handleSubmit}
       initialData={initialData}
+      userId={user?.id || ''}
     />
   )
 }

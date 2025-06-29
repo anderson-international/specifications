@@ -1,13 +1,13 @@
 ---
 id: SfA_v5_k
 title: AI-Optimized Database Schema Documentation
-date: 2025-06-23
+date: 2025-06-29
 description: Provide structured database information for AI models to plan interactions and generate CRUD forms
 ---
 
 # AI-Optimized Database Schema Documentation
 
-*Generated: 2025-06-23*  
+*Generated: 2025-06-29*  
 *Purpose: Provide structured database information for AI models to plan interactions and generate CRUD forms*
 
 ## Overview
@@ -16,7 +16,7 @@ This database supports a snuff specification management system with:
 - Multi-reviewer specifications for products
 - Enum-based categorization system
 - Junction tables for many-to-many relationships
-- Draft/published workflow via status system
+- Status-based workflow system
 - Integration with Shopify for product data
 
 ## Core Tables
@@ -60,7 +60,7 @@ This database supports a snuff specification management system with:
 ### specifications
 **Purpose:** Core specification data - main CRUD operations focus here
 **Form:** Multi-step wizard (product selection, ratings, text review, enum selections)
-**Workflow:** Draft → Published → Needs Revision → Under Review
+**Workflow:** Published ↔ Needs Revision
 
 **Columns:**
 - **id**: INTEGER *required*
@@ -86,12 +86,23 @@ This database supports a snuff specification management system with:
 **Relationships:**
 - product_type_id → enum_product_types.id
 - moisture_level_id → enum_moisture_levels.id
-- status_id → enum_specification_statuses.id
 - grind_id → enum_grinds.id
 - experience_level_id → enum_experience_levels.id
+- status_id → enum_specification_statuses.id
 - product_brand_id → enum_product_brands.id
 - user_id → users.id
 - nicotine_level_id → enum_nicotine_levels.id
+
+**Indexes:**
+- **idx_specifications_experience_level_id**: STANDARD on (experience_level_id) - QUERY: Optimized for WHERE/GROUP BY on these columns
+- **idx_specifications_grind_id**: STANDARD on (grind_id) - QUERY: Optimized for WHERE/GROUP BY on these columns
+- **idx_specifications_nicotine_level_id**: STANDARD on (nicotine_level_id) - QUERY: Optimized for WHERE/GROUP BY on these columns
+- **idx_specifications_product_brand_id**: STANDARD on (product_brand_id) - QUERY: Optimized for WHERE/GROUP BY on these columns
+- **idx_specifications_product_type_id**: STANDARD on (product_type_id) - QUERY: Optimized for WHERE/GROUP BY on these columns
+- **idx_specifications_shopify_handle**: STANDARD on (shopify_handle) - QUERY: Optimized for WHERE/GROUP BY on these columns
+- **idx_specifications_status_id**: STANDARD on (status_id) - QUERY: Optimized for WHERE/GROUP BY on these columns
+- **idx_specifications_submission_id**: STANDARD on (submission_id) - QUERY: Optimized for WHERE/GROUP BY on these columns
+- **specifications_submission_id_key**: UNIQUE on (submission_id) - QUERY: Optimized for WHERE/GROUP BY on these columns
 
 ### users
 **Purpose:** User management - Admin vs Reviewer roles
@@ -108,6 +119,11 @@ This database supports a snuff specification management system with:
 
 **Relationships:**
 - role_id → enum_roles.id
+
+**Indexes:**
+- **idx_user_email**: STANDARD on (email) - QUERY: Optimized for WHERE/GROUP BY on these columns
+- **idx_user_slack_userid**: STANDARD on (slack_userid) - QUERY: Optimized for WHERE/GROUP BY on these columns
+- **users_email_key**: UNIQUE on (email) - QUERY: Optimized for WHERE/GROUP BY on these columns
 
 ## Junction Tables (Many-to-Many Relationships)
 
@@ -189,11 +205,7 @@ All enum tables follow the standard structure with id, name, created_at, updated
 
 ### enum_specification_statuses
 **Form:** Dropdown/select options | **Validation:** Required field, foreign key constraint
-**Values:** {1:"draft", 2:"published", 3:"needs_revision", 4:"under_review"}
-
-### enum_statuses
-**Form:** Dropdown/select options | **Validation:** Required field, foreign key constraint
-**Values:** {1:"Draft", 2:"Published", 6:"Need revision", 7:"Under Review"}
+**Values:** {1:"published", 2:"needs_revision"}
 
 ### enum_tasting_notes
 **Form:** Dropdown/select options | **Validation:** Required field, foreign key constraint
@@ -227,10 +239,8 @@ All enum tables follow the standard structure with id, name, created_at, updated
 - Email: Valid email format for users table
 
 ### Status Workflow Logic
-- Draft (1): Editable by owner, not visible to others
-- Published (2): Read-only for reviewers, visible to all
-- Needs Revision (3): Flagged for improvement, editable by owner
-- Under Review (4): Awaiting admin approval, read-only for reviewers
+- Published (1): Visible to all, read-only for reviewers.
+- Needs Revision (2): Flagged for improvement, editable by owner.
 
 ### Performance Considerations
 - Use indexes on foreign key columns for joins
