@@ -15,4 +15,10 @@ export interface CacheStats {
   cacheSize: number;
   lastUpdated: string;
   isValid: boolean;
+  cacheHits: number;
+  cacheMisses: number;
+  hitRatePercentage: number;
+  lastHitTime: string | null;
+  lastMissTime: string | null;
+  efficiency: 'excellent' | 'good' | 'fair' | 'poor';
 }

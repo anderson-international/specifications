@@ -24,7 +24,7 @@ export async function register() {
       // Verify Redis cache state after initialization
       const instance = RedisProductCache.getInstance();
       const isValid = await instance.isValid();
-      const stats = await instance.getCacheStats();
+      const stats = await instance.getStats();
       
       console.log(`🔧 INSTRUMENTATION: Redis cache verification - valid: ${isValid}`);
       console.log(`🔧 INSTRUMENTATION: Redis cache verification - products: ${stats.totalProducts}`);

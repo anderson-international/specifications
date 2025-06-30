@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { FilterControls } from '@/components/shared/FilterControls';
 import ProductRow from './ProductRow';
 import SelectedProductsModal from './SelectedProductsModal';
@@ -45,9 +45,29 @@ const ProductSelector = ({
     setIsModalOpen(false);
   }, [handleConfirmSelection]);
 
-  const handleFilterChange = useCallback((id: string, value: string) => {
-    if (id === 'brand') setSelectedBrand(value);
+  // Wrap state setters in useCallback for performance
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchTerm(value);
+  }, [setSearchTerm]);
+
+  const handleBrandChange = useCallback((value: string) => {
+    setSelectedBrand(value);
   }, [setSelectedBrand]);
+
+  const handleFilterChange = useCallback((id: string, value: string) => {
+    if (id === 'brand') handleBrandChange(value);
+  }, [handleBrandChange]);
+
+  // Memoize utility function calls
+  const filterConfig = useMemo(() => 
+    createFilterConfig(selectedBrand, brandOptions), 
+    [selectedBrand, brandOptions]
+  );
+
+  const showClearAll = useMemo(() => 
+    shouldShowClearAll(searchTerm, selectedBrand), 
+    [searchTerm, selectedBrand]
+  );
 
   if (error) {
     return (
@@ -75,12 +95,12 @@ const ProductSelector = ({
 
       <FilterControls
         searchQuery={searchTerm}
-        onSearchChange={setSearchTerm}
+        onSearchChange={handleSearchChange}
         searchPlaceholder={searchPlaceholder}
-        filters={createFilterConfig(selectedBrand, brandOptions)}
+        filters={filterConfig}
         onFilterChange={handleFilterChange}
         onClearAll={handleClearFilters}
-        showClearAll={shouldShowClearAll(searchTerm, selectedBrand)}
+        showClearAll={showClearAll}
         disabled={disabled}
       />
 
