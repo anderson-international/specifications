@@ -1,6 +1,6 @@
 # React Components
 
-*Server vs Client component patterns and Next.js App Router architecture.*
+_Server vs Client component patterns and Next.js App Router architecture._
 
 <!-- AI_QUICK_REF
 Overview: Server vs Client component patterns, Next.js App Router architecture
@@ -10,7 +10,7 @@ Avoid: Mixing server/client concerns, Missing return types, Hooks in server comp
 
 <!-- RELATED_DOCS
 Core Patterns: react-patterns.md (Core React patterns and memo usage), react-hooks.md (Hook patterns and state management)
-Quality Rules: code-eslint.md (TypeScript return types and ESLint rules)  
+Quality Rules: code-eslint.md (TypeScript return types and ESLint rules)
 Form Integration: form-validation.md (React Hook Form patterns and database integration)
 UI Architecture: design-patterns-ui-ux.md (Component styling), react-patterns-ui-ux.md (Component architecture)
 Technical Foundation: technical-stack.md (Next.js 15, React 18 config), api-core.md (API integration), api-patterns-auth.md (Authentication)
@@ -23,6 +23,7 @@ This document defines server vs client component patterns for Next.js App Router
 ## ⚠️ **CRITICAL**: Server vs Client Components
 
 ### ✅ REQUIRED: Server Components - Data Fetching Patterns
+
 ```typescript
 // ✅ Server Component (no directive needed)
 // app/products/page.tsx
@@ -32,7 +33,7 @@ import { getProducts } from '@/lib/data';
 export default async function ProductsPage(): Promise<JSX.Element> {
   // Data fetching at the server level
   const products = await getProducts();
-  
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6">Products</h1>
@@ -43,6 +44,7 @@ export default async function ProductsPage(): Promise<JSX.Element> {
 ```
 
 ### ✅ REQUIRED: Client Components - Interactive Patterns
+
 ```typescript
 // ✅ Client Component - Required for hooks
 // app/products/ProductGrid.tsx
@@ -57,19 +59,19 @@ type Props = {
 
 export default function ProductGrid({ initialProducts }: Props): JSX.Element {
   const [filter, setFilter] = useState('');
-  
+
   // ✅ useCallback and useMemo patterns
   const handleFilterChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setFilter(e.target.value);
   }, []);
-  
-  const filteredProducts = useMemo(() => 
-    initialProducts.filter(product => 
+
+  const filteredProducts = useMemo(() =>
+    initialProducts.filter(product =>
       product.name.toLowerCase().includes(filter.toLowerCase())
     ),
     [initialProducts, filter]
   );
-  
+
   return (
     <div>
       <input
@@ -90,32 +92,34 @@ export default function ProductGrid({ initialProducts }: Props): JSX.Element {
 ```
 
 ### ❌ CRITICAL: Server Components - Forbidden Patterns
+
 ```typescript
 // ❌ BAD: Cannot use hooks in server components
 export default async function ProductsPage() {
   // ❌ Error: Hooks not allowed in server components
   const [state, setState] = useState(); // Hooks not allowed
   useEffect(() => {}, []); // Browser APIs not available
-  
+
   return <div>Content</div>;
 }
 ```
 
 ### ❌ CRITICAL: Mixing Client/Server Concerns
+
 ```typescript
 // ❌ BAD: Mixing client-side interactivity in what should be a server component
 import { useState } from 'react';
 
 export default async function ProductsPage() {
   const products = await fetch('/api/products').then(res => res.json());
-  
+
   // ❌ Error: Using client hooks in a server component
   const [filter, setFilter] = useState('');
-  
+
   return (
     <div>
-      <input 
-        value={filter} 
+      <input
+        value={filter}
         onChange={(e) => setFilter(e.target.value)}
       />
       {/* Rest of component */}
@@ -131,16 +135,17 @@ export default async function ProductsPage() {
 ## 🔥 **HIGH**: Server Actions Integration
 
 ### ✅ Correct: Form Actions with Server Components
+
 ```typescript
 // Server Action
 async function createSpecification(formData: FormData): Promise<void> {
   'use server';
-  
+
   const data = {
     productId: formData.get('productId') as string,
     // ... other fields
   };
-  
+
   await prisma.spec.create({ data });
   redirect('/specifications');
 }
@@ -159,6 +164,7 @@ export default function CreateForm(): JSX.Element {
 ## 🔥 **HIGH**: Export Patterns
 
 ### ✅ Correct: Component Export Standards
+
 ```typescript
 // ✅ Correct: Named export with React.memo
 export const ProductCard = React.memo(({ product }: ProductCardProps): JSX.Element => {
@@ -174,6 +180,7 @@ export default function ProductsPage(): JSX.Element {
 ## Component Architecture Guidelines
 
 ### 🔥 **HIGH**: Separation of Concerns
+
 1. **Server Components**: Use for data fetching, static rendering, and server-side logic
 2. **Client Components**: Use for interactivity, hooks, and browser APIs
 3. **Hybrid Architecture**: Pass data from server to client components via props

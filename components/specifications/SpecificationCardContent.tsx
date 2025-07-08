@@ -49,18 +49,17 @@ export function SpecificationCardContent({ specification }: SpecificationCardCon
                 style={{ width: `${specification.progress}%` }}
               />
             </div>
-            <span className={styles.progressText}>
-              {specification.progress}% complete
-            </span>
+            <span className={styles.progressText}>{specification.progress}% complete</span>
           </div>
         )}
 
-        {(specification.status === 'approved' || specification.status === 'published') && specification.score && (
-          <div className={styles.score}>
-            <span className={styles.scoreLabel}>Score:</span>
-            <span className={styles.scoreValue}>{specification.score}/5</span>
-          </div>
-        )}
+        {(specification.status === 'approved' || specification.status === 'published') &&
+          specification.score && (
+            <div className={styles.score}>
+              <span className={styles.scoreLabel}>Score:</span>
+              <span className={styles.scoreValue}>{specification.score}/5</span>
+            </div>
+          )}
       </div>
     </>
   )

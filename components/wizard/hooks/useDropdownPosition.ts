@@ -20,7 +20,7 @@ export const useDropdownPosition = (
       setPosition({
         top: rect.bottom + window.scrollY,
         left: rect.left + window.scrollX,
-        width: rect.width
+        width: rect.width,
       })
     }
   }, [isOpen, containerRef])

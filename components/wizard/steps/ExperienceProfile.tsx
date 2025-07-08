@@ -25,50 +25,45 @@ interface ExperienceProfileFormData {
 const ExperienceProfile = ({
   stepNumber,
   totalSteps,
-  disabled = false
+  disabled = false,
 }: ExperienceProfileProps): JSX.Element => {
-  const { 
-    watch, 
-    setValue
-  } = useFormContext<ExperienceProfileFormData>()
-  
+  const { watch, setValue } = useFormContext<ExperienceProfileFormData>()
+
   // Watch form values - Optimized with single watch call
   const {
     experience_level_id: experienceLevelId,
     nicotine_level_id: nicotineLevelId,
-    moisture_level_id: moistureLevelId
+    moisture_level_id: moistureLevelId,
   } = watch()
-  
+
   // Handle experience level change
-  const handleExperienceChange = useCallback((value: string | number): void => {
-    setValue('experience_level_id', Number(value), { shouldValidate: true })
-  }, [setValue])
-  
+  const handleExperienceChange = useCallback(
+    (value: string | number): void => {
+      setValue('experience_level_id', Number(value), { shouldValidate: true })
+    },
+    [setValue]
+  )
+
   // Handle nicotine level change
-  const handleNicotineChange = useCallback((value: string | number): void => {
-    setValue('nicotine_level_id', Number(value), { shouldValidate: true })
-  }, [setValue])
-  
+  const handleNicotineChange = useCallback(
+    (value: string | number): void => {
+      setValue('nicotine_level_id', Number(value), { shouldValidate: true })
+    },
+    [setValue]
+  )
+
   // Handle moisture level change
-  const handleMoistureChange = useCallback((value: string | number): void => {
-    setValue('moisture_level_id', Number(value), { shouldValidate: true })
-  }, [setValue])
-  
+  const handleMoistureChange = useCallback(
+    (value: string | number): void => {
+      setValue('moisture_level_id', Number(value), { shouldValidate: true })
+    },
+    [setValue]
+  )
+
   return (
-    <WizardStepCard
-      title="Experience Profile"
-      stepNumber={stepNumber}
-      totalSteps={totalSteps}
-    >
-      <div 
-        className={styles.formGroup}
-        role="group"
-        aria-labelledby="experience-level-label"
-      >
-        <label 
-          id="experience-level-label"
-          className={styles.label}
-        >
+    <WizardStepCard title="Experience Profile" stepNumber={stepNumber} totalSteps={totalSteps}>
+      <div className={styles.formGroup} role="group" aria-labelledby="experience-level-label">
+        <label id="experience-level-label" className={styles.label}>
           Experience Level
         </label>
         <p className={styles.description}>How familiar are you with this type of product?</p>
@@ -82,14 +77,9 @@ const ExperienceProfile = ({
           aria-labelledby="experience-level-label"
         />
       </div>
-      
-      <div 
-        className={styles.formGroup}
-      >
-        <label 
-          className={styles.label}
-          htmlFor="nicotine-level"
-        >
+
+      <div className={styles.formGroup}>
+        <label className={styles.label} htmlFor="nicotine-level">
           Nicotine Level
         </label>
         <p className={styles.description}>What nicotine level do you prefer?</p>
@@ -102,14 +92,9 @@ const ExperienceProfile = ({
           fullWidth
         />
       </div>
-      
-      <div 
-        className={styles.formGroup}
-      >
-        <label 
-          className={styles.label}
-          htmlFor="moisture-level"
-        >
+
+      <div className={styles.formGroup}>
+        <label className={styles.label} htmlFor="moisture-level">
           Moisture Level
         </label>
         <p className={styles.description}>What moisture level do you prefer?</p>

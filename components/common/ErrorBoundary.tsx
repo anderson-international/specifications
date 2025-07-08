@@ -24,8 +24,8 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     return { hasError: true, error }
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-    console.error('ErrorBoundary caught an error:', error, errorInfo)
+  componentDidCatch(_error: Error, _errorInfo: React.ErrorInfo): void {
+    // Error is already captured in state for display to user
   }
 
   handleRetry = (): void => {
@@ -45,11 +45,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             <p className={styles.errorMessage}>
               {this.state.error?.message || 'An unexpected error occurred'}
             </p>
-            <button 
-              onClick={this.handleRetry}
-              className={styles.retryButton}
-              type="button"
-            >
+            <button onClick={this.handleRetry} className={styles.retryButton} type="button">
               Try Again
             </button>
           </div>

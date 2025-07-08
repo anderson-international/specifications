@@ -2,23 +2,23 @@
 // This is the single source of truth for Product types across the entire application
 
 export interface Product {
-  id: string;
-  handle: string; 
-  title: string;
-  brand: string;
-  image_url: string | null;
-  spec_count_total: number;
+  id: string
+  handle: string
+  title: string
+  brand: string
+  image_url: string | null
+  spec_count_total: number
 }
 
 export interface CacheStats {
-  totalProducts: number;
-  cacheSize: number;
-  lastUpdated: string;
-  isValid: boolean;
-  cacheHits: number;
-  cacheMisses: number;
-  hitRatePercentage: number;
-  lastHitTime: string | null;
-  lastMissTime: string | null;
-  efficiency: 'excellent' | 'good' | 'fair' | 'poor';
+  totalProducts: number
+  cacheSize: number
+  lastUpdated: string
+  isValid: boolean
+  cacheHits: number
+  cacheMisses: number
+  hitRatePercentage: number
+  lastHitTime: string | null
+  lastMissTime: string | null
+  efficiency: 'excellent' | 'good' | 'fair' | 'poor'
 }

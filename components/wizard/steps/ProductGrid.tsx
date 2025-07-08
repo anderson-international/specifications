@@ -19,26 +19,25 @@ const ProductGrid = ({
   products,
   selectedHandle,
   onProductSelect,
-  disabled = false
+  disabled = false,
 }: ProductGridProps): JSX.Element => {
-  const handleSelect = useCallback((handle: string) => {
-    const selectedProduct = products.find(p => p.shopify_handle === handle);
-    if (selectedProduct) {
-      onProductSelect(selectedProduct);
-    }
-  }, [products, onProductSelect]);
+  const handleSelect = useCallback(
+    (handle: string) => {
+      const selectedProduct = products.find((p) => p.shopify_handle === handle)
+      if (selectedProduct) {
+        onProductSelect(selectedProduct)
+      }
+    },
+    [products, onProductSelect]
+  )
 
   if (products.length === 0) {
-    return (
-      <div className={styles.noResults}>
-        No products found matching your criteria.
-      </div>
-    )
+    return <div className={styles.noResults}>No products found matching your criteria.</div>
   }
 
   return (
     <div className={styles.productGrid}>
-      {products.map(product => {
+      {products.map((product) => {
         const cardProduct = {
           id: product.id,
           title: product.name,
@@ -46,8 +45,8 @@ const ProductGrid = ({
           brand_id: product.brand_id,
           brand_name: product.brand_name,
           image_url: product.image_url,
-          is_reviewed: product.reviewed
-        };
+          is_reviewed: product.reviewed,
+        }
 
         return (
           <ProductCard
@@ -57,10 +56,10 @@ const ProductGrid = ({
             onSelect={handleSelect}
             disabled={disabled}
           />
-        );
+        )
       })}
     </div>
-  );
+  )
 }
 
 export default React.memo(ProductGrid)

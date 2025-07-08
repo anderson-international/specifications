@@ -1,6 +1,6 @@
 # Code Structure
 
-*Project structure and naming conventions for maintainable code.*
+_Project structure and naming conventions for maintainable code._
 
 <!-- AI_QUICK_REF
 Overview: Project structure and naming conventions
@@ -48,6 +48,7 @@ specifications/
 ## Naming Conventions
 
 ### Variables and Functions
+
 - **Variables**: camelCase, descriptive nouns - `userData`, `isLoading`
 - **Functions**: camelCase, descriptive verbs - `fetchUserData`, `calculateTotal`
 - **Constants**: UPPER_SNAKE_CASE - `API_URL`, `MAX_RETRY_ATTEMPTS`
@@ -55,12 +56,14 @@ specifications/
 - **Hooks**: Prefix with "use" - `useFormState`, `useApiData`
 
 ### Components and Types
+
 - **React Components**: PascalCase - `NavigationBar`, `UserProfile`
 - **Interfaces/Types**: PascalCase - `User`, `FormProps`, `ApiResponse`
 - **Enums**: PascalCase, singular - `ButtonType`, `UserRole`
 - **Generic Types**: Single uppercase letter - `T`, `K`, `V`
 
 ### Files and Directories
+
 - **Components**: PascalCase - `Button.tsx`, `UserProfile.tsx`
 - **Hooks**: camelCase with "use" prefix - `useAuth.ts`, `useLocalStorage.ts`
 - **Utilities**: camelCase - `apiClient.ts`, `formatUtils.ts`
@@ -71,17 +74,17 @@ specifications/
 
 ```typescript
 // 1. React/Next.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 // 2. Third-party (alphabetical)
-import { Typography, Button } from '@mui/material';
+import { Typography, Button } from '@mui/material'
 // 3. Internal - hooks, utils, context
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth'
 // 4. Components
-import UserAvatar from '@/components/UserAvatar';
+import UserAvatar from '@/components/UserAvatar'
 // 5. Types
-import type { User } from '@/types';
+import type { User } from '@/types'
 // 6. Styles (last)
-import styles from './Component.module.css';
+import styles from './Component.module.css'
 ```
 
 **Groups**: React/Next.js → Third-party → Internal → Components → Types → Styles
@@ -103,14 +106,14 @@ interface UserProfileProps {
 export const UserProfile = ({ userId, isEditable = false, onUpdate }: UserProfileProps): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     fetchUserData(userId).then(setUser).finally(() => setIsLoading(false));
   }, [userId]);
-  
+
   if (isLoading) return <div>Loading...</div>;
   if (!user) return <div>User not found</div>;
-  
+
   return (
     <div>
       <h2>{user.name}</h2>
@@ -127,31 +130,41 @@ export const UserProfile = ({ userId, isEditable = false, onUpdate }: UserProfil
 
 ```typescript
 // Variables and functions
-const userSettings = getUserSettings();
-const isAuthenticated = checkAuthStatus();
-const MAX_RETRY_ATTEMPTS = 3;
+const userSettings = getUserSettings()
+const isAuthenticated = checkAuthStatus()
+const MAX_RETRY_ATTEMPTS = 3
 
 function calculateTotalPrice(items: CartItem[]): number {
-  return items.reduce((total, item) => total + item.price, 0);
+  return items.reduce((total, item) => total + item.price, 0)
 }
 
 // Components and types
-interface UserProfileProps { user: User; isEditable?: boolean; }
-type FilterOptions = 'active' | 'archived' | 'all';
+interface UserProfileProps {
+  user: User
+  isEditable?: boolean
+}
+type FilterOptions = 'active' | 'archived' | 'all'
 
 class UserRepository {
-  private _connection: Connection;
-  public async findById(id: string): Promise<User | null> { /* Implementation */ }
+  private _connection: Connection
+  public async findById(id: string): Promise<User | null> {
+    /* Implementation */
+  }
 }
 
 // Constants and enums
-const API_ENDPOINTS = { USERS: '/api/users', PRODUCTS: '/api/products' } as const;
-enum UserRole { ADMIN = 'admin', USER = 'user', GUEST = 'guest' }
+const API_ENDPOINTS = { USERS: '/api/users', PRODUCTS: '/api/products' } as const
+enum UserRole {
+  ADMIN = 'admin',
+  USER = 'user',
+  GUEST = 'guest',
+}
 ```
 
 ## File Organization Best Practices
 
 ### Component Structure
+
 ```
 components/Button/
 ├── Button.tsx
@@ -160,16 +173,18 @@ components/Button/
 ```
 
 ### Barrel Exports
+
 ```typescript
 // components/index.ts
-export { Button } from './Button';
-export { Modal } from './Modal';
+export { Button } from './Button'
+export { Modal } from './Modal'
 ```
 
 ### Size Limits
+
 - **Components**: Max 150 lines
-- **Hooks**: Max 100 lines  
+- **Hooks**: Max 100 lines
 - **Utils**: Max 50 lines
-- **Types**: Max 200 lines
+- **Types**: Max 100 lines
 
 **When exceeded**: Extract to custom hooks, utilities, sub-components, or separate type files.

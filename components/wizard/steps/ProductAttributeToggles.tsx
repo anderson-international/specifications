@@ -24,7 +24,7 @@ const ProductAttributeToggles = ({
   onFermentedChange,
   onOralTobaccoChange,
   onArtisanChange,
-  disabled = false
+  disabled = false,
 }: ProductAttributeTogglesProps): JSX.Element => (
   <div className={styles.toggleSection}>
     <ToggleSwitch
@@ -34,7 +34,7 @@ const ProductAttributeToggles = ({
       name="is-fermented"
       label="Fermented Product"
     />
-    
+
     <ToggleSwitch
       checked={isOralTobacco}
       onChange={onOralTobaccoChange}
@@ -42,7 +42,7 @@ const ProductAttributeToggles = ({
       name="is-oral-tobacco"
       label="Oral Tobacco"
     />
-    
+
     <ToggleSwitch
       checked={isArtisan}
       onChange={onArtisanChange}

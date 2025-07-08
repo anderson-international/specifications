@@ -21,18 +21,18 @@ interface SpecificationWizardProps {
 const SpecificationWizard = ({
   onSubmit,
   initialData = {},
-  userId
+  userId,
 }: SpecificationWizardProps): JSX.Element => {
   const {
     methods,
     activeStep,
+    _completedSteps,
     isSubmitting,
-    isSavingDraft,
     handleNext,
     handlePrevious,
     handleStepClick,
     handleFormSubmit,
-    saveDraft
+    canNavigateToStep,
   } = useSpecificationWizard({ onSubmit, initialData, userId })
 
   const steps = useMemo(() => createWizardSteps(), [])
@@ -41,10 +41,8 @@ const SpecificationWizard = ({
 
   const isCurrentStepValid = useStepValidation({
     currentStepId: currentStep.id,
-    methods
+    methods,
   })
-
-
 
   return (
     <FormProvider {...methods}>
@@ -53,67 +51,52 @@ const SpecificationWizard = ({
           <WizardProgress
             steps={steps.map((step, index) => ({
               id: index + 1,
-              title: step.title
+              title: step.title,
             }))}
             currentStepId={activeStep + 1}
             onStepClick={handleStepClick}
             allowNavigation={true}
+            canNavigateToStep={canNavigateToStep}
           />
         </div>
 
         <form onSubmit={methods.handleSubmit(handleFormSubmit)} className={styles.form}>
           <div className={styles.stepContent}>
-            {currentStep.component(
-              activeStep + 1,
-              totalSteps,
-              isSubmitting,
-              handleNext
-            )}
+            {currentStep.component(activeStep + 1, totalSteps, isSubmitting, handleNext)}
           </div>
 
-          {activeStep > 0 && (
-            <div className={styles.wizardFooter}>
-              <button
-                type="button"
-                onClick={saveDraft}
-                className={styles.draftButton}
-                disabled={isSubmitting || isSavingDraft}
-              >
-                {isSavingDraft ? 'Saving...' : 'Save Draft'}
-              </button>
-              
-              <div className={styles.navigationButtons}>
-                {activeStep > 0 && (
-                  <button
-                    type="button"
-                    onClick={handlePrevious}
-                    className={styles.backButton}
-                    disabled={isSubmitting || isSavingDraft}
-                  >
-                    Back
-                  </button>
-                )}
-                {activeStep < steps.length - 1 ? (
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    className={styles.nextButton}
-                    disabled={isSubmitting || isSavingDraft || !isCurrentStepValid}
-                  >
-                    Next
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    className={styles.submitButton}
-                    disabled={isSubmitting || isSavingDraft || !isCurrentStepValid}
-                  >
-                    {isSubmitting ? 'Submitting...' : 'Submit'}
-                  </button>
-                )}
-              </div>
+          <div className={styles.wizardFooter}>
+            <div className={styles.navigationButtons}>
+              {activeStep > 0 && (
+                <button
+                  type="button"
+                  onClick={handlePrevious}
+                  className={styles.backButton}
+                  disabled={isSubmitting}
+                >
+                  Back
+                </button>
+              )}
+              {activeStep < steps.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className={styles.nextButton}
+                  disabled={isSubmitting || !isCurrentStepValid}
+                >
+                  Next
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className={styles.submitButton}
+                  disabled={isSubmitting || !isCurrentStepValid}
+                >
+                  {isSubmitting ? 'Submitting...' : 'Submit'}
+                </button>
+              )}
             </div>
-          )}
+          </div>
         </form>
       </div>
     </FormProvider>

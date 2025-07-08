@@ -14,14 +14,11 @@ export interface ApiError {
   details?: unknown
 }
 
-export function createApiResponse<T>(
-  data?: T, 
-  message?: string
-): NextResponse<ApiResponse<T>> {
+export function createApiResponse<T>(data?: T, message?: string): NextResponse<ApiResponse<T>> {
   return NextResponse.json({
     data,
     message,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   })
 }
 
@@ -31,18 +28,16 @@ export function createApiError(
   details?: Record<string, unknown>
 ): NextResponse<ApiResponse> {
   const message = error instanceof Error ? error.message : error
-  
-  console.error('API Error:', { message, status, details })
-  
+
   const response: ApiResponse = {
     error: message,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   }
-  
+
   if (details) {
     response.details = details
   }
-  
+
   return NextResponse.json(response, { status })
 }
 
@@ -50,7 +45,7 @@ export function handleApiError(error: unknown): NextResponse<ApiResponse> {
   if (error instanceof Error) {
     return createApiError(error.message, 500)
   }
-  
+
   return createApiError('An unexpected error occurred', 500)
 }
 

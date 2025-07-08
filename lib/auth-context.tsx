@@ -18,7 +18,9 @@ interface AuthProviderProps {
   children: React.ReactNode
 }
 
-export const AuthProvider = React.memo(function AuthProvider({ children }: AuthProviderProps): JSX.Element {
+export const AuthProvider = React.memo(function AuthProvider({
+  children,
+}: AuthProviderProps): JSX.Element {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -43,22 +45,20 @@ export const AuthProvider = React.memo(function AuthProvider({ children }: AuthP
   const isAdmin = useMemo(() => user?.role_id === 1, [user?.role_id])
   const isReviewer = useMemo(() => user?.role_id === 2, [user?.role_id])
 
-  const contextValue = useMemo(() => ({
-    user,
-    isLoading,
-    signIn,
-    signOut,
-    isAdmin,
-    isReviewer
-  }), [user, isLoading, signIn, signOut, isAdmin, isReviewer])
-
-  return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      user,
+      isLoading,
+      signIn,
+      signOut,
+      isAdmin,
+      isReviewer,
+    }),
+    [user, isLoading, signIn, signOut, isAdmin, isReviewer]
   )
-})
 
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+})
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext)

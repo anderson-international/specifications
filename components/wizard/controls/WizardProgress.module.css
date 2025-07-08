@@ -5,7 +5,7 @@
 
 .progressBar {
   height: 6px;
-  background-color: #2D3748;
+  background-color: #2d3748;
   border-radius: 3px;
   margin-bottom: 1rem;
   position: relative;
@@ -18,7 +18,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background-color: #1878B9;
+  background-color: #1878b9;
   transition: width 0.3s ease;
 }
 
@@ -51,14 +51,14 @@
 }
 
 .step.completed .stepIndicator {
-  background-color: #1878B9;
+  background-color: #1878b9;
   color: white;
-  border: 2px solid #1878B9;
+  border: 2px solid #1878b9;
 }
 
 .step.current .stepIndicator {
   background-color: #252831;
-  border: 2px solid #1878B9;
+  border: 2px solid #1878b9;
   color: white;
 }
 
@@ -92,13 +92,13 @@
   height: 2px;
   background-color: #4a5568;
   top: 14px;
-  width: 100%;
-  left: 50%;
+  width: calc(100% - 28px);
+  left: 14px;
   z-index: 0;
 }
 
 .step.completed .stepConnector {
-  background-color: #1878B9;
+  background-color: #1878b9;
 }
 
 .clickable {
@@ -132,13 +132,13 @@
     font-size: 0.7rem;
     max-width: 80px;
   }
-  
+
   .stepIndicator {
     width: 24px;
     height: 24px;
     font-size: 0.75rem;
   }
-  
+
   .stepConnector {
     top: 12px;
   }

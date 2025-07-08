@@ -1,65 +1,98 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import { WizardFormData, UseSubmissionProps, UseSpecificationSubmissionReturn } from '../types/wizard.types'
-import { Specification } from '@/types'
+import { UseFormReturn } from 'react-hook-form'
+import { WizardFormData } from '../types/WizardFormData'
+import { TransformedSpecificationData } from '../types/DatabaseTypes'
+import { validateRequiredFields } from '../utils/specificationValidation'
 
-export const useSpecificationSubmission = ({ onSubmit, methods, userId }: UseSubmissionProps): UseSpecificationSubmissionReturn => {
+interface UseSpecificationSubmissionProps {
+  onSubmit: (data: WizardFormData) => void
+  methods: UseFormReturn<WizardFormData>
+  userId: string
+}
+
+interface UseSpecificationSubmissionReturn {
+  isSubmitting: boolean
+  handleFormSubmit: () => Promise<void>
+}
+
+const useSpecificationSubmission = ({
+  onSubmit,
+  methods,
+  userId,
+}: UseSpecificationSubmissionProps): UseSpecificationSubmissionReturn => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-  const [isSavingDraft, setIsSavingDraft] = useState<boolean>(false)
 
-  const transformFormData = useCallback((formData: WizardFormData, statusId: number): Specification => ({
-    shopify_handle: formData.shopify_handle || '',
-    product_brand_id: formData.product_brand_id || 0,
-    product_type_id: formData.product_type_id || 0,
-    grind_id: formData.grind_id || 0,
-    experience_level_id: formData.experience_level_id || 0,
-    is_fermented: formData.is_fermented,
-    is_oral_tobacco: formData.is_oral_tobacco,
-    is_artisan: formData.is_artisan,
-    nicotine_level_id: formData.nicotine_level_id || 0,
-    moisture_level_id: formData.moisture_level_id || 0,
-    tasting_note_ids: formData.tasting_notes,
-    cure_type_ids: formData.cures,
-    tobacco_type_ids: formData.tobacco_types,
-    review_text: formData.review,
-    star_rating: formData.star_rating,
-    rating_boost: formData.rating_boost,
-    status_id: statusId,
-    user_id: userId
-  }), [userId])
+  const transformFormData = useCallback(
+    (formData: WizardFormData): TransformedSpecificationData => {
+      const { tasting_notes, cures, tobacco_types, ...coreData } = formData
 
-  const handleFormSubmit = useCallback(async (formData: WizardFormData) => {
+      return {
+        specification: {
+          shopify_handle: coreData.shopify_handle,
+          product_type_id: coreData.product_type_id,
+          is_fermented: coreData.is_fermented || false,
+          is_oral_tobacco: coreData.is_oral_tobacco || false,
+          is_artisan: coreData.is_artisan || false,
+          grind_id: coreData.grind_id,
+          nicotine_level_id: coreData.nicotine_level_id,
+          experience_level_id: coreData.experience_level_id,
+          review: coreData.review || '',
+          star_rating: coreData.star_rating,
+          rating_boost: coreData.rating_boost || 0,
+          user_id: userId,
+          moisture_level_id: coreData.moisture_level_id,
+          product_brand_id: coreData.product_brand_id,
+          status_id: 1, // Default to 'published'
+        },
+        junctionData: {
+          tasting_note_ids: tasting_notes || [],
+          cure_ids: cures || [],
+          tobacco_type_ids: tobacco_types || [],
+        },
+      }
+    },
+    [userId]
+  )
+
+  const handleFormSubmit = useCallback(async (): Promise<void> => {
     setIsSubmitting(true)
-    const specificationData = transformFormData(formData, 2) // Published status
-    
+
     try {
-      await onSubmit(specificationData)
+      const formData = methods.getValues()
+      const { specification, junctionData } = transformFormData(formData)
+
+      // Validate transformed data
+      validateRequiredFields(specification, junctionData)
+
+      // Submit to database via API
+      const response = await fetch('/api/specifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ specification, junctionData }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }))
+        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`)
+      }
+
+      // Call success callback
+      await onSubmit(formData)
     } catch (error) {
-      console.error('Error submitting form:', error)
+      throw error
     } finally {
       setIsSubmitting(false)
     }
-  }, [onSubmit, transformFormData])
-
-  const saveDraft = useCallback(async () => {
-    setIsSavingDraft(true)
-    const formData = methods.getValues()
-    const draftData = transformFormData(formData, 1) // Draft status
-
-    try {
-      await onSubmit(draftData)
-    } catch (error) {
-      console.error('Error saving draft:', error)
-    } finally {
-      setIsSavingDraft(false)
-    }
-  }, [methods, onSubmit, transformFormData])
+  }, [methods, transformFormData, onSubmit])
 
   return {
     isSubmitting,
-    isSavingDraft,
     handleFormSubmit,
-    saveDraft
   }
 }
+
+export default useSpecificationSubmission

@@ -2,42 +2,42 @@
 
 /**
  * Schema Query Tool
- * 
+ *
  * Size-aware, paginated database schema query tool that outputs structured
  * information to stdout for AI models to use when planning database interactions
  * and generating CRUD forms.
- * 
+ *
  * Respects 7,800 byte output limit with automatic pagination.
  */
 
-const { Client } = require('pg');
-const fs = require('fs');
-const path = require('path');
-require('dotenv').config();
+const { Client } = require('pg')
+const fs = require('fs')
+const path = require('path')
+require('dotenv').config()
 
 // Configuration
-const MAX_OUTPUT_BYTES = 7800;
-const ITEMS_PER_PAGE = 10;
+const MAX_OUTPUT_BYTES = 7800
+const ITEMS_PER_PAGE = 10
 
 class SchemaQueryTool {
   constructor() {
     this.client = new Client({
       connectionString: process.env.DATABASE_URL,
-    });
-    this.connected = false;
+    })
+    this.connected = false
   }
 
   async connect() {
     if (!this.connected) {
-      await this.client.connect();
-      this.connected = true;
+      await this.client.connect()
+      this.connected = true
     }
   }
 
   async disconnect() {
     if (this.connected) {
-      await this.client.end();
-      this.connected = false;
+      await this.client.end()
+      this.connected = false
     }
   }
 
@@ -52,26 +52,26 @@ class SchemaQueryTool {
       WHERE t.table_schema = 'public'
       AND t.table_type = 'BASE TABLE'
       ORDER BY t.table_name;
-    `;
-    
-    const result = await this.client.query(query);
-    return result.rows;
+    `
+
+    const result = await this.client.query(query)
+    return result.rows
   }
 
   async getTableData(tableName) {
     const [columns, constraints, indexes] = await Promise.all([
       this.getTableColumns(tableName),
       this.getTableConstraints(tableName),
-      this.getTableIndexes(tableName)
-    ]);
+      this.getTableIndexes(tableName),
+    ])
 
     return {
       tableName,
       columns,
       constraints,
       indexes,
-      enumValues: tableName.startsWith('enum_') ? await this.getEnumValues(tableName) : []
-    };
+      enumValues: tableName.startsWith('enum_') ? await this.getEnumValues(tableName) : [],
+    }
   }
 
   async getTableColumns(tableName) {
@@ -89,10 +89,10 @@ class SchemaQueryTool {
       WHERE c.table_schema = 'public'
       AND c.table_name = $1
       ORDER BY c.ordinal_position;
-    `;
-    
-    const result = await this.client.query(query, [tableName]);
-    return result.rows;
+    `
+
+    const result = await this.client.query(query, [tableName])
+    return result.rows
   }
 
   async getTableConstraints(tableName) {
@@ -116,10 +116,10 @@ class SchemaQueryTool {
       WHERE tc.table_schema = 'public'
       AND tc.table_name = $1
       ORDER BY tc.constraint_type;
-    `;
-    
-    const result = await this.client.query(query, [tableName]);
-    return result.rows;
+    `
+
+    const result = await this.client.query(query, [tableName])
+    return result.rows
   }
 
   async getTableIndexes(tableName) {
@@ -131,49 +131,55 @@ class SchemaQueryTool {
       WHERE schemaname = 'public'
       AND tablename = $1
       ORDER BY indexname;
-    `;
-    
-    const result = await this.client.query(query, [tableName]);
-    return result.rows;
+    `
+
+    const result = await this.client.query(query, [tableName])
+    return result.rows
   }
 
   async getEnumValues(tableName) {
     try {
-      const query = `SELECT id, name FROM ${tableName} ORDER BY id`;
-      const result = await this.client.query(query);
-      return result.rows;
+      const query = `SELECT id, name FROM ${tableName} ORDER BY id`
+      const result = await this.client.query(query)
+      return result.rows
     } catch (error) {
-      return [];
+      return []
     }
   }
 
   generateIndex(tables) {
-    const coreTables = tables.filter(t => !t.table_name.startsWith('enum_') && !t.table_name.startsWith('spec_'));
-    const enumTables = tables.filter(t => t.table_name.startsWith('enum_'));
-    const junctionTables = tables.filter(t => t.table_name.startsWith('spec_'));
+    const coreTables = tables.filter(
+      (t) => !t.table_name.startsWith('enum_') && !t.table_name.startsWith('spec_')
+    )
+    const enumTables = tables.filter((t) => t.table_name.startsWith('enum_'))
+    const junctionTables = tables.filter((t) => t.table_name.startsWith('spec_'))
 
-    const enumPages = Math.ceil(enumTables.length / ITEMS_PER_PAGE);
-    const junctionPages = Math.ceil(junctionTables.length / ITEMS_PER_PAGE);
+    const enumPages = Math.ceil(enumTables.length / ITEMS_PER_PAGE)
+    const junctionPages = Math.ceil(junctionTables.length / ITEMS_PER_PAGE)
 
     let output = `# Database Schema Index
 
 ## Available Tables
 
 ### Core Tables (${coreTables.length} tables)
-${coreTables.map(t => `- **${t.table_name}** → Use: --table ${t.table_name}`).join('\n')}
+${coreTables.map((t) => `- **${t.table_name}** → Use: --table ${t.table_name}`).join('\n')}
 
 ### Enum Tables (${enumTables.length} tables, ${enumPages} pages)
-${enumPages > 1 ? 
-  Array.from({length: enumPages}, (_, i) => 
-    `- Page ${i + 1}: --enums --page ${i + 1} (${Math.min(ITEMS_PER_PAGE, enumTables.length - i * ITEMS_PER_PAGE)} tables)`
-  ).join('\n') :
-  '- All tables: --enums --page 1'
+${
+  enumPages > 1
+    ? Array.from(
+        { length: enumPages },
+        (_, i) =>
+          `- Page ${i + 1}: --enums --page ${i + 1} (${Math.min(ITEMS_PER_PAGE, enumTables.length - i * ITEMS_PER_PAGE)} tables)`
+      ).join('\n')
+    : '- All tables: --enums --page 1'
 }
 
 ### Junction Tables (${junctionTables.length} tables)
-${junctionTables.length <= ITEMS_PER_PAGE ? 
-  '- All tables: --pattern "spec_*"' :
-  `- ${junctionPages} pages available: --pattern "spec_*" --page 1`
+${
+  junctionTables.length <= ITEMS_PER_PAGE
+    ? '- All tables: --pattern "spec_*"'
+    : `- ${junctionPages} pages available: --pattern "spec_*" --page 1`
 }
 
 ## Usage Examples
@@ -200,248 +206,253 @@ Each command respects the 7,800 byte output limit and provides navigation for ad
 ## Size Information
 - Individual table queries: 500-3000 bytes each
 - Enum page queries: 1000-2000 bytes each
-`;
+`
 
-    return output;
+    return output
   }
 
   generateTableDocumentation(tableData) {
-    const { tableName, columns, constraints, indexes, enumValues } = tableData;
-    
-    let doc = `# Table: ${tableName}\n\n`;
-    
+    const { tableName, columns, constraints, indexes, enumValues } = tableData
+
+    let doc = `# Table: ${tableName}\n\n`
+
     // Add table purpose and form guidance
     if (tableName === 'specifications') {
-      doc += `**Purpose:** Core specification data - main CRUD operations focus here\n`;
-      doc += `**Form:** Multi-step wizard (product selection, ratings, text review, enum selections)\n`;
-      doc += `**Workflow:** Published ↔ Needs Revision\n\n`;
+      doc += `**Purpose:** Core specification data - main CRUD operations focus here\n`
+      doc += `**Form:** Multi-step wizard (product selection, ratings, text review, enum selections)\n`
+      doc += `**Workflow:** Published ↔ Needs Revision\n\n`
     } else if (tableName.startsWith('enum_')) {
-      doc += `**Purpose:** Enum table - dropdown/select options\n`;
-      doc += `**Form:** Dropdown/select options | **Validation:** Required field, foreign key constraint\n`;
+      doc += `**Purpose:** Enum table - dropdown/select options\n`
+      doc += `**Form:** Dropdown/select options | **Validation:** Required field, foreign key constraint\n`
       if (enumValues.length > 0) {
         const valueMap = enumValues.reduce((acc, row) => {
-          acc[row.id] = row.name;
-          return acc;
-        }, {});
-        doc += `**Values:** ${JSON.stringify(valueMap)}\n`;
+          acc[row.id] = row.name
+          return acc
+        }, {})
+        doc += `**Values:** ${JSON.stringify(valueMap)}\n`
       }
-      doc += `\n`;
+      doc += `\n`
     } else if (tableName.startsWith('spec_')) {
-      doc += `**Purpose:** Junction table - handle as multi-select in forms\n`;
-      doc += `**Form:** Multi-select checkboxes or tags\n\n`;
+      doc += `**Purpose:** Junction table - handle as multi-select in forms\n`
+      doc += `**Form:** Multi-select checkboxes or tags\n\n`
     }
-    
+
     // Add columns
-    doc += `**Columns:**\n`;
-    columns.forEach(column => {
-      const nullable = column.is_nullable === 'YES' ? '' : ' *required*';
-      const aiHints = this.generateColumnAIHints(tableName, column, constraints);
-      
-      let line = `- **${column.column_name}**: ${column.data_type.toUpperCase()}${nullable}`;
-      
+    doc += `**Columns:**\n`
+    columns.forEach((column) => {
+      const nullable = column.is_nullable === 'YES' ? '' : ' *required*'
+      const aiHints = this.generateColumnAIHints(tableName, column, constraints)
+
+      let line = `- **${column.column_name}**: ${column.data_type.toUpperCase()}${nullable}`
+
       if (aiHints.length > 0) {
-        line += ` - ${aiHints.join(', ')}`;
+        line += ` - ${aiHints.join(', ')}`
       }
-      
-      doc += line + '\n';
-    });
-    
-    doc += `\n`;
-    
+
+      doc += line + '\n'
+    })
+
+    doc += `\n`
+
     // Add relationships
-    const foreignKeys = constraints.filter(c => c.constraint_type === 'FOREIGN KEY');
+    const foreignKeys = constraints.filter((c) => c.constraint_type === 'FOREIGN KEY')
     if (foreignKeys.length > 0) {
-      doc += `**Relationships:**\n`;
-      foreignKeys.forEach(fk => {
-        doc += `- ${fk.column_name} → ${fk.foreign_table_name}.${fk.foreign_column_name}\n`;
-      });
-      doc += `\n`;
+      doc += `**Relationships:**\n`
+      foreignKeys.forEach((fk) => {
+        doc += `- ${fk.column_name} → ${fk.foreign_table_name}.${fk.foreign_column_name}\n`
+      })
+      doc += `\n`
     }
-    
+
     // Add indexes
-    const tableIndexes = indexes.filter(i => !i.indexname.endsWith('_pkey'));
+    const tableIndexes = indexes.filter((i) => !i.indexname.endsWith('_pkey'))
     if (tableIndexes.length > 0) {
-      doc += `**Indexes:**\n`;
-      tableIndexes.forEach(idx => {
-        const indexType = idx.indexdef.includes('UNIQUE') ? 'UNIQUE' : 'STANDARD';
-        const columns = idx.indexdef.match(/\(([^)]+)\)/)?.[1] || 'unknown';
-        doc += `- **${idx.indexname}**: ${indexType} on (${columns})\n`;
-      });
-      doc += `\n`;
+      doc += `**Indexes:**\n`
+      tableIndexes.forEach((idx) => {
+        const indexType = idx.indexdef.includes('UNIQUE') ? 'UNIQUE' : 'STANDARD'
+        const columns = idx.indexdef.match(/\(([^)]+)\)/)?.[1] || 'unknown'
+        doc += `- **${idx.indexname}**: ${indexType} on (${columns})\n`
+      })
+      doc += `\n`
     }
-    
-    return doc;
+
+    return doc
   }
 
   generateColumnAIHints(tableName, column, constraints) {
-    const hints = [];
-    
+    const hints = []
+
     // Foreign key hints
-    const fkConstraint = constraints.find(c => 
-      c.constraint_type === 'FOREIGN KEY' && c.column_name === column.column_name
-    );
+    const fkConstraint = constraints.find(
+      (c) => c.constraint_type === 'FOREIGN KEY' && c.column_name === column.column_name
+    )
     if (fkConstraint) {
       if (fkConstraint.foreign_table_name.startsWith('enum_')) {
-        hints.push(`FORM: dropdown from ${fkConstraint.foreign_table_name}`);
+        hints.push(`FORM: dropdown from ${fkConstraint.foreign_table_name}`)
       } else {
-        hints.push(`FK: ${fkConstraint.foreign_table_name}.${fkConstraint.foreign_column_name}`);
+        hints.push(`FK: ${fkConstraint.foreign_table_name}.${fkConstraint.foreign_column_name}`)
       }
     }
-    
+
     // Required field hints
     if (column.is_nullable === 'NO' && !column.column_default) {
-      hints.push('REQUIRED');
+      hints.push('REQUIRED')
     }
-    
+
     // Special field hints
     if (column.column_name === 'star_rating') {
-      hints.push('FORM: 1-5 star rating input');
+      hints.push('FORM: 1-5 star rating input')
     } else if (column.column_name === 'review') {
-      hints.push('FORM: textarea for long text');
+      hints.push('FORM: textarea for long text')
     } else if (column.column_name === 'email') {
-      hints.push('FORM: email input with validation');
+      hints.push('FORM: email input with validation')
     } else if (column.column_name.includes('boolean') || column.data_type === 'boolean') {
-      hints.push('FORM: checkbox or toggle');
+      hints.push('FORM: checkbox or toggle')
     }
-    
-    return hints;
+
+    return hints
   }
 
   validateOutputSize(output) {
-    const size = Buffer.byteLength(output, 'utf8');
+    const size = Buffer.byteLength(output, 'utf8')
     if (size > MAX_OUTPUT_BYTES) {
-      throw new Error(`Output size ${size} bytes exceeds limit of ${MAX_OUTPUT_BYTES} bytes`);
+      throw new Error(`Output size ${size} bytes exceeds limit of ${MAX_OUTPUT_BYTES} bytes`)
     }
-    return size;
+    return size
   }
 
   async queryIndex() {
-    await this.connect();
-    const tables = await this.getAllTables();
-    const output = this.generateIndex(tables);
-    this.validateOutputSize(output);
-    return output;
+    await this.connect()
+    const tables = await this.getAllTables()
+    const output = this.generateIndex(tables)
+    this.validateOutputSize(output)
+    return output
   }
 
   async queryTable(tableName) {
-    await this.connect();
-    const tableData = await this.getTableData(tableName);
-    const output = this.generateTableDocumentation(tableData);
-    this.validateOutputSize(output);
-    return output;
+    await this.connect()
+    const tableData = await this.getTableData(tableName)
+    const output = this.generateTableDocumentation(tableData)
+    this.validateOutputSize(output)
+    return output
   }
 
   async queryEnums(page = 1) {
-    await this.connect();
-    const allTables = await this.getAllTables();
-    const enumTables = allTables.filter(t => t.table_name.startsWith('enum_'));
-    
-    const startIndex = (page - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    const pageEnums = enumTables.slice(startIndex, endIndex);
-    
-    const totalPages = Math.ceil(enumTables.length / ITEMS_PER_PAGE);
-    
-    let output = `# Enum Tables - Page ${page} of ${totalPages}\n\n`;
-    
+    await this.connect()
+    const allTables = await this.getAllTables()
+    const enumTables = allTables.filter((t) => t.table_name.startsWith('enum_'))
+
+    const startIndex = (page - 1) * ITEMS_PER_PAGE
+    const endIndex = startIndex + ITEMS_PER_PAGE
+    const pageEnums = enumTables.slice(startIndex, endIndex)
+
+    const totalPages = Math.ceil(enumTables.length / ITEMS_PER_PAGE)
+
+    let output = `# Enum Tables - Page ${page} of ${totalPages}\n\n`
+
     for (const table of pageEnums) {
-      const tableData = await this.getTableData(table.table_name);
-      output += this.generateTableDocumentation(tableData) + '\n';
+      const tableData = await this.getTableData(table.table_name)
+      output += this.generateTableDocumentation(tableData) + '\n'
     }
-    
-    // Add navigation
-    output += `## Navigation\n`;
-    if (page > 1) {
-      output += `Previous: cmd /c node docs/scripts/schema-query.js --enums --page ${page - 1}\n`;
+
+    // Add navigation only if there are multiple pages
+    if (totalPages > 1) {
+      if (page < totalPages) {
+        // Action required - more data to load
+        output += `\n⚠️ **AI ACTION REQUIRED**: This output was truncated due to size limits.\n`
+        output += `**Execute immediately**: cmd /c node docs/scripts/schema-query.js --enums --page ${page + 1}\n`
+      } else if (page > 1) {
+        // Final page - just reference to previous
+        output += `\n**Previous page**: cmd /c node docs/scripts/schema-query.js --enums --page ${page - 1}\n`
+      }
     }
-    if (page < totalPages) {
-      output += `Next: cmd /c node docs/scripts/schema-query.js --enums --page ${page + 1}\n`;
-    }
-    
-    this.validateOutputSize(output);
-    return output;
+
+    this.validateOutputSize(output)
+    return output
   }
 
   async queryPattern(pattern, page = 1) {
-    await this.connect();
-    const allTables = await this.getAllTables();
-    const matchingTables = allTables.filter(t => {
+    await this.connect()
+    const allTables = await this.getAllTables()
+    const matchingTables = allTables.filter((t) => {
       if (pattern.includes('*')) {
-        const regex = new RegExp(pattern.replace(/\*/g, '.*'));
-        return regex.test(t.table_name);
+        const regex = new RegExp(pattern.replace(/\*/g, '.*'))
+        return regex.test(t.table_name)
       }
-      return t.table_name.includes(pattern);
-    });
-    
-    const startIndex = (page - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    const pageTables = matchingTables.slice(startIndex, endIndex);
-    
-    const totalPages = Math.ceil(matchingTables.length / ITEMS_PER_PAGE);
-    
-    let output = `# Tables matching "${pattern}" - Page ${page} of ${totalPages}\n\n`;
-    
+      return t.table_name.includes(pattern)
+    })
+
+    const startIndex = (page - 1) * ITEMS_PER_PAGE
+    const endIndex = startIndex + ITEMS_PER_PAGE
+    const pageTables = matchingTables.slice(startIndex, endIndex)
+
+    const totalPages = Math.ceil(matchingTables.length / ITEMS_PER_PAGE)
+
+    let output = `# Tables matching "${pattern}" - Page ${page} of ${totalPages}\n\n`
+
     for (const table of pageTables) {
-      const tableData = await this.getTableData(table.table_name);
-      output += this.generateTableDocumentation(tableData) + '\n';
+      const tableData = await this.getTableData(table.table_name)
+      output += this.generateTableDocumentation(tableData) + '\n'
     }
-    
-    // Add navigation
-    output += `## Navigation\n`;
-    if (page > 1) {
-      output += `Previous: cmd /c node docs/scripts/schema-query.js --pattern "${pattern}" --page ${page - 1}\n`;
+
+    // Add navigation only if there are multiple pages
+    if (totalPages > 1) {
+      if (page < totalPages) {
+        // Action required - more data to load
+        output += `\n⚠️ **AI ACTION REQUIRED**: This output was truncated due to size limits.\n`
+        output += `**Execute immediately**: cmd /c node docs/scripts/schema-query.js --pattern "${pattern}" --page ${page + 1}\n`
+      } else if (page > 1) {
+        // Final page - just reference to previous
+        output += `\n**Previous page**: cmd /c node docs/scripts/schema-query.js --pattern "${pattern}" --page ${page - 1}\n`
+      }
     }
-    if (page < totalPages) {
-      output += `Next: cmd /c node docs/scripts/schema-query.js --pattern "${pattern}" --page ${page + 1}\n`;
-    }
-    
-    this.validateOutputSize(output);
-    return output;
+
+    this.validateOutputSize(output)
+    return output
   }
 }
 
 // CLI Interface
 async function main() {
-  const args = process.argv.slice(2);
-  const tool = new SchemaQueryTool();
-  
+  const args = process.argv.slice(2)
+  const tool = new SchemaQueryTool()
+
   try {
-    let output = '';
-    
+    let output = ''
+
     if (args.includes('--index')) {
-      output = await tool.queryIndex();
+      output = await tool.queryIndex()
     } else if (args.includes('--table')) {
-      const tableIndex = args.indexOf('--table');
-      const tableName = args[tableIndex + 1];
+      const tableIndex = args.indexOf('--table')
+      const tableName = args[tableIndex + 1]
       if (!tableName) {
-        throw new Error('--table requires a table name');
+        throw new Error('--table requires a table name')
       }
-      output = await tool.queryTable(tableName);
+      output = await tool.queryTable(tableName)
     } else if (args.includes('--enums')) {
-      const pageIndex = args.indexOf('--page');
-      const page = pageIndex !== -1 ? parseInt(args[pageIndex + 1]) || 1 : 1;
-      output = await tool.queryEnums(page);
+      const pageIndex = args.indexOf('--page')
+      const page = pageIndex !== -1 ? parseInt(args[pageIndex + 1]) || 1 : 1
+      output = await tool.queryEnums(page)
     } else if (args.includes('--pattern')) {
-      const patternIndex = args.indexOf('--pattern');
-      const pattern = args[patternIndex + 1];
-      const pageIndex = args.indexOf('--page');
-      const page = pageIndex !== -1 ? parseInt(args[pageIndex + 1]) || 1 : 1;
+      const patternIndex = args.indexOf('--pattern')
+      const pattern = args[patternIndex + 1]
+      const pageIndex = args.indexOf('--page')
+      const page = pageIndex !== -1 ? parseInt(args[pageIndex + 1]) || 1 : 1
       if (!pattern) {
-        throw new Error('--pattern requires a pattern string');
+        throw new Error('--pattern requires a pattern string')
       }
-      output = await tool.queryPattern(pattern, page);
+      output = await tool.queryPattern(pattern, page)
     } else {
       // Default to index
-      output = await tool.queryIndex();
+      output = await tool.queryIndex()
     }
-    
-    console.log(output);
-    
+
+    console.log(output)
   } catch (error) {
-    console.error(`Error: ${error.message}`);
-    process.exit(1);
+    console.error(`Error: ${error.message}`)
+    process.exit(1)
   } finally {
-    await tool.disconnect();
+    await tool.disconnect()
   }
 }
 
@@ -466,15 +477,15 @@ Examples:
   node schema-query.js --pattern "spec_*" --page 1
 
 Output limit: ${MAX_OUTPUT_BYTES} bytes (auto-paginated)
-`);
+`)
 }
 
 if (require.main === module) {
   if (process.argv.includes('--help') || process.argv.includes('-h')) {
-    showUsage();
+    showUsage()
   } else {
-    main();
+    main()
   }
 }
 
-module.exports = { SchemaQueryTool };
+module.exports = { SchemaQueryTool }

@@ -32,12 +32,12 @@ export interface SystemStats {
   products_needs_attention: number
   products_partial_coverage: number
   // Actionable product lists
-  products_needing_attention: ProductInsight[]  // 0 specs
-  products_needing_coverage: ProductInsight[]   // 1 spec
+  products_needing_attention: ProductInsight[] // 0 specs
+  products_needing_coverage: ProductInsight[] // 1 spec
   // Phase 3: Brand and time-based insights
-  brand_coverage_gaps: BrandCoverageGap[]       // Brands with lowest coverage
-  recent_activity_weekly: RecentActivity[]      // Top reviewers this week
-  recent_activity_monthly: RecentActivity[]     // Top reviewers this month
+  brand_coverage_gaps: BrandCoverageGap[] // Brands with lowest coverage
+  recent_activity_weekly: RecentActivity[] // Top reviewers this week
+  recent_activity_monthly: RecentActivity[] // Top reviewers this month
 }
 
 export interface ReviewerLeaderboard {

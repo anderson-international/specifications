@@ -24,14 +24,13 @@ export function useSpecifications(): UseSpecificationsReturn {
       try {
         setIsLoading(true)
         setError(null)
-        
+
         // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 500))
-        
+        await new Promise((resolve) => setTimeout(resolve, 500))
+
         setSpecifications([])
-      } catch (err) {
+      } catch (_err) {
         setError('Failed to load specifications')
-        console.error('Error loading specifications:', err)
       } finally {
         setIsLoading(false)
       }
@@ -44,7 +43,7 @@ export function useSpecifications(): UseSpecificationsReturn {
     setSpecifications([])
     setError(null)
     setIsLoading(true)
-    
+
     // Trigger re-load
     setTimeout(() => {
       setSpecifications([])
@@ -58,34 +57,37 @@ export function useSpecifications(): UseSpecificationsReturn {
   }, [])
 
   const handleDelete = useCallback((id: string): void => {
-    setSpecifications(prev => prev.filter(spec => spec.id !== id))
+    setSpecifications((prev) => prev.filter((spec) => spec.id !== id))
   }, [])
 
-  const handleDuplicate = useCallback((id: string): void => {
-    const specToDuplicate = specifications.find(spec => spec.id === id)
-    if (specToDuplicate) {
-      const newId = Date.now().toString()
-      // Create a new specification with review removed
-      const { review, ...specWithoutReview } = specToDuplicate
-      
-      const newSpec: Specification = {
-        ...specWithoutReview,
-        id: newId,
-        status: 'draft',
-        progress: 0, // Reset progress for new draft
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        lastModified: new Date().toISOString(),
-        product: {
-          ...specToDuplicate.product,
-          title: `${specToDuplicate.product.title} (Copy)`
-        },
-        // Reset review status to undefined
-        review: undefined
+  const handleDuplicate = useCallback(
+    (id: string): void => {
+      const specToDuplicate = specifications.find((spec) => spec.id === id)
+      if (specToDuplicate) {
+        const newId = Date.now().toString()
+        // Create a new specification with review removed
+        const { review: _review, ...specWithoutReview } = specToDuplicate
+
+        const newSpec: Specification = {
+          ...specWithoutReview,
+          id: newId,
+          status: 'draft',
+          progress: 0, // Reset progress for new draft
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          lastModified: new Date().toISOString(),
+          product: {
+            ...specToDuplicate.product,
+            title: `${specToDuplicate.product.title} (Copy)`,
+          },
+          // Reset review status to undefined
+          review: undefined,
+        }
+        setSpecifications((prev) => [newSpec, ...prev])
       }
-      setSpecifications(prev => [newSpec, ...prev])
-    }
-  }, [specifications])
+    },
+    [specifications]
+  )
 
   return {
     specifications,
@@ -94,6 +96,6 @@ export function useSpecifications(): UseSpecificationsReturn {
     handleEdit,
     handleDelete,
     handleDuplicate,
-    handleRetry
+    handleRetry,
   }
 }

@@ -44,7 +44,7 @@ const StarRating = ({
   value,
   onChange,
   maxRating = 5,
-  disabled = false
+  disabled = false,
 }: StarRatingProps): JSX.Element => {
   const [hoverValue, setHoverValue] = useState(0)
 
@@ -59,9 +59,7 @@ const StarRating = ({
     [value, onChange, disabled]
   )
 
-  const stars = useMemo(() => Array.from({ length: maxRating }, (_, i) => i + 1), [
-    maxRating
-  ])
+  const stars = useMemo(() => Array.from({ length: maxRating }, (_, i) => i + 1), [maxRating])
 
   const ratingText = getRatingLabel(value)
 

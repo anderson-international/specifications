@@ -28,39 +28,27 @@ export const createWizardSteps = (): WizardStep[] => [
         disabled={disabled}
         onProductSelect={onNext}
       />
-    )
+    ),
   },
   {
     id: 'characteristics',
     title: 'Characteristics',
     component: (stepNumber, totalSteps, disabled) => (
-      <ProductCharacteristics
-        stepNumber={stepNumber}
-        totalSteps={totalSteps}
-        disabled={disabled}
-      />
-    )
+      <ProductCharacteristics stepNumber={stepNumber} totalSteps={totalSteps} disabled={disabled} />
+    ),
   },
   {
     id: 'tasting',
     title: 'Tasting',
     component: (stepNumber, totalSteps, disabled) => (
-      <TastingProfile
-        stepNumber={stepNumber}
-        totalSteps={totalSteps}
-        disabled={disabled}
-      />
-    )
+      <TastingProfile stepNumber={stepNumber} totalSteps={totalSteps} disabled={disabled} />
+    ),
   },
   {
     id: 'review',
     title: 'Review',
     component: (stepNumber, totalSteps, disabled) => (
-      <ReviewSubmission
-        stepNumber={stepNumber}
-        totalSteps={totalSteps}
-        disabled={disabled}
-      />
-    )
-  }
+      <ReviewSubmission stepNumber={stepNumber} totalSteps={totalSteps} disabled={disabled} />
+    ),
+  },
 ]

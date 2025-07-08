@@ -6,11 +6,10 @@ import SpecificationWizard from '@/components/wizard/SpecificationWizard'
 import { useAuth } from '@/lib/auth-context'
 
 export default function NewSpecificationPage(): JSX.Element {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
-  const handleSubmit = useCallback(async (data: Specification): Promise<void> => {
+  const handleSubmit = useCallback(async (_data: Specification): Promise<void> => {
     // TODO: Implement actual API call to create specification
-    console.log('Specification data:', data)
   }, [])
 
   return (

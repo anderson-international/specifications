@@ -29,11 +29,17 @@ export function getStatusClass(status: SpecificationStatus): string {
  */
 export function getStatusLabel(status: SpecificationStatus): string {
   switch (status) {
-    case 'draft': return 'Draft'
-    case 'pending_review': return 'Pending Review'
-    case 'approved': return 'Approved'
-    case 'rejected': return 'Rejected'
-    case 'published': return 'Published'
-    default: return status
+    case 'draft':
+      return 'Draft'
+    case 'pending_review':
+      return 'Pending Review'
+    case 'approved':
+      return 'Approved'
+    case 'rejected':
+      return 'Rejected'
+    case 'published':
+      return 'Published'
+    default:
+      return status
   }
 }

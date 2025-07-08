@@ -19,7 +19,7 @@
 }
 
 .selectedBadge {
-  background-color: #1878B9;
+  background-color: #1878b9;
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
@@ -87,15 +87,19 @@
   width: 2rem;
   height: 2rem;
   border: 3px solid #343741;
-  border-top: 3px solid #1878B9;
+  border-top: 3px solid #1878b9;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loadingText {
@@ -121,8 +125,8 @@
 }
 
 .nextButton {
-  background-color: #1878B9;
-  border: 1px solid #1878B9;
+  background-color: #1878b9;
+  border: 1px solid #1878b9;
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;

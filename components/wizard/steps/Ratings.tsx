@@ -18,16 +18,12 @@ const Ratings = ({
   ratingBoost,
   onStarRatingChange,
   onRatingBoostChange,
-  disabled = false
+  disabled = false,
 }: RatingsProps): JSX.Element => {
   return (
     <div className={styles.gridContainer}>
       <label className={styles.label}>Overall Rating</label>
-      <StarRating
-        value={starRating}
-        onChange={onStarRatingChange}
-        disabled={disabled}
-      />
+      <StarRating value={starRating} onChange={onStarRatingChange} disabled={disabled} />
 
       <label className={styles.label}>Rating Boost</label>
       <RatingBoost

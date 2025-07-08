@@ -1,6 +1,6 @@
 # Database Forms
 
-*Schema-driven form development and multi-step form patterns.*
+_Schema-driven form development and multi-step form patterns._
 
 <!-- AI_QUICK_REF
 Overview: Schema-driven form development patterns for multi-step forms and database integration
@@ -46,32 +46,30 @@ spec_cures: { purpose: "Junction table - handle as multi-select in forms", formT
 ```typescript
 // Handle specification creation with junction tables
 const createSpecificationWithRelations = async (data: SpecificationFormData) => {
-  const { specification, junctionData } = transformSpecificationData(data);
+  const { specification, junctionData } = transformSpecificationData(data)
 
   // Use database transaction for atomic operations
   return await db.transaction(async (trx) => {
     // Create core specification
-    const [spec] = await trx('specifications')
-      .insert(specification)
-      .returning('*');
+    const [spec] = await trx('specifications').insert(specification).returning('*')
 
     // Create junction table entries
     if (junctionData.spec_tasting_notes.length > 0) {
       await trx('spec_tasting_notes').insert(
-        junctionData.spec_tasting_notes.map(item => ({
+        junctionData.spec_tasting_notes.map((item) => ({
           ...item,
-          specification_id: spec.id
+          specification_id: spec.id,
         }))
-      );
+      )
     }
-    
-    return spec;
-  });
-};
+
+    return spec
+  })
+}
 ```
 
 ### Data Transformation Pattern
 
 For junction table data transformation patterns and detailed implementation, see `db-enums.md` section "Junction Table Data Transformation".
 
-*Database schema annotations are maintained in `docs/project/db-schema.md`. Update annotations when schema changes to maintain form implementation guidance.*
+_Database schema annotations are maintained in `docs/project/db-schema.md`. Update annotations when schema changes to maintain form implementation guidance._

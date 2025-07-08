@@ -1,6 +1,6 @@
 // Common types for the Product Selection step
 // Re-export canonical Product type for consistency
-export type { Product } from '@/lib/types/product';
+export type { Product } from '@/lib/types/product'
 
 export interface Brand {
   id: number

@@ -3,17 +3,17 @@
  */
 
 export const createFilterConfig = (
-  selectedBrand: string, 
+  selectedBrand: string,
   brandOptions: Array<{ value: string; label: string }>
 ) => [
   {
     id: 'brand',
     label: '',
     value: selectedBrand,
-    options: brandOptions
-  }
-];
+    options: brandOptions,
+  },
+]
 
 export const shouldShowClearAll = (searchTerm: string, selectedBrand: string): boolean => {
-  return searchTerm !== '' || selectedBrand !== '';
-};
+  return searchTerm !== '' || selectedBrand !== ''
+}

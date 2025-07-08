@@ -12,14 +12,12 @@ interface DashboardTabNavigationProps {
   tabs: Tab[]
   activeTab: TabId
   onTabClick: (tabId: TabId) => void
-  currentUserRank?: number
 }
 
-const DashboardTabNavigation: React.FC<DashboardTabNavigationProps> = React.memo(({ 
-  tabs, 
-  activeTab, 
-  onTabClick,
-  currentUserRank
+const DashboardTabNavigation: React.FC<DashboardTabNavigationProps> = React.memo(({
+  tabs,
+  activeTab,
+  onTabClick
 }): JSX.Element => {
   const handleTabClick = useCallback((tabId: TabId): void => {
     onTabClick(tabId)

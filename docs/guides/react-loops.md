@@ -1,6 +1,6 @@
 # React Effect Loops
 
-*Preventing infinite loops and performance issues in React effect hooks.*
+_Preventing infinite loops and performance issues in React effect hooks._
 
 <!-- AI_QUICK_REF
 Overview: Core patterns for preventing React effect infinite loops
@@ -21,13 +21,13 @@ This guide focuses specifically on preventing infinite loops in React effects. A
 
 ## Common Causes of React Effect Loops
 
-| Priority | Issue | Description |
-|----------|-------|-------------|
+| Priority        | Issue                 | Description                                                     |
+| --------------- | --------------------- | --------------------------------------------------------------- |
 | ⚠️ **CRITICAL** | Function dependencies | State setters or functions that aren't wrapped in `useCallback` |
-| ⚠️ **CRITICAL** | Derived state | Calculated values not wrapped in `useMemo` |
-| 🔥 **HIGH** | Object/array literals | New objects/arrays created on each render |
-| 🔥 **HIGH** | Context interactions | Circular dependencies between contexts |
-| ⚙️ **MEDIUM** | Missing dependencies | Not including all dependencies used in effect |
+| ⚠️ **CRITICAL** | Derived state         | Calculated values not wrapped in `useMemo`                      |
+| 🔥 **HIGH**     | Object/array literals | New objects/arrays created on each render                       |
+| 🔥 **HIGH**     | Context interactions  | Circular dependencies between contexts                          |
+| ⚙️ **MEDIUM**   | Missing dependencies  | Not including all dependencies used in effect                   |
 
 ## Best Practices for Preventing Loops
 
@@ -68,19 +68,20 @@ const handleSelect = useCallback((item) => {
 // In UserContext
 useEffect(() => {
   if (dataContext.data) {
-    setUser(buildUserFromData(dataContext.data));
+    setUser(buildUserFromData(dataContext.data))
   }
-}, [dataContext.data]);
+}, [dataContext.data])
 
 // In DataContext
 useEffect(() => {
   if (userContext.user) {
-    fetchDataForUser(userContext.user.id);
+    fetchDataForUser(userContext.user.id)
   }
-}, [userContext.user]);
+}, [userContext.user])
 ```
 
 **Solutions:**
+
 - ✅ One context should own data fetching; others should only consume
 - ✅ Establish clear hierarchies between contexts
 - ✅ Avoid circular updates between contexts
@@ -89,11 +90,11 @@ useEffect(() => {
 // ✅ CORRECT: Clear ownership - UserContext owns user data
 // In UserContext (data owner)
 useEffect(() => {
-  fetchUser(userId);
+  fetchUser(userId)
   if (user) {
-    fetchDataForUser(user.id);
+    fetchDataForUser(user.id)
   }
-}, [userId, user]);
+}, [userId, user])
 
 // DataContext just consumes, doesn't fetch
 ```
@@ -105,12 +106,13 @@ useEffect(() => {
 ```jsx
 // ❌ WRONG: Missing dependencies
 useEffect(() => {
-  const filtered = items.filter(item => item.category === selectedCategory);
-  setFilteredItems(filtered);
-}, []); // Missing items and selectedCategory
+  const filtered = items.filter((item) => item.category === selectedCategory)
+  setFilteredItems(filtered)
+}, []) // Missing items and selectedCategory
 ```
 
 **Solutions:**
+
 - ✅ Include ALL dependencies used inside the effect
 - ✅ Use the ESLint react-hooks/exhaustive-deps rule
 - ✅ Prefer primitive values over objects in dependency arrays
@@ -118,7 +120,7 @@ useEffect(() => {
 ```jsx
 // ✅ CORRECT: All dependencies included
 useEffect(() => {
-  const filtered = items.filter(item => item.category === selectedCategory);
-  setFilteredItems(filtered);
-}, [items, selectedCategory, setFilteredItems]);
+  const filtered = items.filter((item) => item.category === selectedCategory)
+  setFilteredItems(filtered)
+}, [items, selectedCategory, setFilteredItems])
 ```

@@ -12,7 +12,7 @@ interface DeleteConfirmModalProps {
 export function DeleteConfirmModal({
   isOpen,
   onConfirm,
-  onCancel
+  onCancel,
 }: DeleteConfirmModalProps): JSX.Element | null {
   const handleConfirm = useCallback((): void => {
     onConfirm()
@@ -29,18 +29,10 @@ export function DeleteConfirmModal({
       <div className={styles.modalContent}>
         <p>Are you sure you want to delete this specification?</p>
         <div className={styles.modalActions}>
-          <button 
-            onClick={handleCancel} 
-            className={styles.cancelButton} 
-            type="button"
-          >
+          <button onClick={handleCancel} className={styles.cancelButton} type="button">
             Cancel
           </button>
-          <button 
-            onClick={handleConfirm} 
-            className={styles.deleteButton} 
-            type="button"
-          >
+          <button onClick={handleConfirm} className={styles.deleteButton} type="button">
             Delete
           </button>
         </div>

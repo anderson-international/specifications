@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Middleware disabled for development phase - using client-side auth
-export default async function middleware(req: NextRequest): Promise<NextResponse> {
-  const { pathname } = req.nextUrl
-  
+export default async function middleware(_req: NextRequest): Promise<NextResponse> {
   // Allow all requests in development mode
   if (process.env.NODE_ENV === 'development') {
     return NextResponse.next()
   }
-  
+
   // TODO: Re-enable auth middleware for production
   // For now, allow all requests
   return NextResponse.next()

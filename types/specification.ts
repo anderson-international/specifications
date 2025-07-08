@@ -1,14 +1,7 @@
-
-
 /**
  * Specification status enum for UI display
  */
-export type SpecificationStatus = 
-  | 'draft' 
-  | 'pending_review' 
-  | 'approved' 
-  | 'rejected' 
-  | 'published'
+export type SpecificationStatus = 'draft' | 'pending_review' | 'approved' | 'rejected' | 'published'
 
 /**
  * Specification interface for UI components
@@ -57,7 +50,7 @@ export interface Specification extends SpecificationFormData {
   lastModified: string // ISO date string for UI display
   reviewedAt?: string // ISO date string
   publishedAt?: string // ISO date string
-  
+
   // Product information for display
   product: {
     id: string
@@ -71,7 +64,7 @@ export interface Specification extends SpecificationFormData {
       price?: number
     }>
   }
-  
+
   // Review information when available
   review?: {
     reviewerId: string
@@ -170,9 +163,9 @@ export interface SpecificationResponse {
 /**
  * Specification action types for state management
  */
-export type SpecificationAction = 
+export type SpecificationAction =
   | 'create'
-  | 'edit' 
+  | 'edit'
   | 'delete'
   | 'submit_for_review'
   | 'approve'
@@ -183,4 +176,3 @@ export type SpecificationAction =
 /**
  * Export commonly used types for convenience
  */
-

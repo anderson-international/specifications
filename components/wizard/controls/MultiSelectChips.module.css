@@ -58,7 +58,7 @@
 .chip {
   display: flex;
   align-items: center;
-  background-color: #1878B9;
+  background-color: #1878b9;
   color: white;
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
@@ -113,8 +113,6 @@
   align-items: center;
 }
 
-
-
 .clearButton {
   composes: actionButton from './common.module.css';
 }
@@ -124,7 +122,7 @@
   transition: transform 0.2s ease;
 }
 
-.chipContainer[aria-expanded="true"] .dropdownIcon {
+.chipContainer[aria-expanded='true'] .dropdownIcon {
   transform: rotate(180deg);
 }
 
@@ -140,7 +138,9 @@
   z-index: 10;
   max-height: 200px;
   overflow-y: auto;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   animation: fadeIn 0.2s ease-in;
 }
 
@@ -175,8 +175,8 @@
 }
 
 .selected .optionCheckbox {
-  background-color: #1878B9;
-  border-color: #1878B9;
+  background-color: #1878b9;
+  border-color: #1878b9;
 }
 
 .optionLabel {
@@ -200,8 +200,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Ensure proper scrollbar styling */

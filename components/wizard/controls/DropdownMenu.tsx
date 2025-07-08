@@ -21,44 +21,47 @@ interface DropdownOptionProps {
   onToggle: (id: string | number) => void
 }
 
-const DropdownOptionComponent = ({ option, isSelected, onToggle }: DropdownOptionProps): JSX.Element => {
-    const handleClick = useCallback(
-      (e: React.MouseEvent): void => {
-        e.stopPropagation()
-        onToggle(option.id)
-      },
-      [onToggle, option.id]
-    )
+const DropdownOptionComponent = ({
+  option,
+  isSelected,
+  onToggle,
+}: DropdownOptionProps): JSX.Element => {
+  const handleClick = useCallback(
+    (e: React.MouseEvent): void => {
+      e.stopPropagation()
+      onToggle(option.id)
+    },
+    [onToggle, option.id]
+  )
 
-    return (
-      <div
-        className={`${styles.option} ${isSelected ? styles.selected : ''}`}
-        onClick={handleClick}
-        role="option"
-        aria-selected={isSelected}
-      >
-        <div className={styles.optionCheckbox}>
-          {isSelected && (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              viewBox="0 0 16 16"
-            >
-              <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
-            </svg>
-          )}
-        </div>
-        <span className={styles.optionLabel}>{option.label}</span>
+  return (
+    <div
+      className={`${styles.option} ${isSelected ? styles.selected : ''}`}
+      onClick={handleClick}
+      role="option"
+      aria-selected={isSelected}
+    >
+      <div className={styles.optionCheckbox}>
+        {isSelected && (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            viewBox="0 0 16 16"
+          >
+            <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+          </svg>
+        )}
       </div>
-    )
-  }
-const DropdownOption = React.memo(DropdownOptionComponent);
-DropdownOption.displayName = 'DropdownOption';
+      <span className={styles.optionLabel}>{option.label}</span>
+    </div>
+  )
+}
+const DropdownOption = React.memo(DropdownOptionComponent)
+DropdownOption.displayName = 'DropdownOption'
 
 const DropdownMenuComponent = ({
-
   isOpen,
   dropdownRef,
   controlId,
@@ -81,7 +84,7 @@ const DropdownMenuComponent = ({
       style={dropdownPosition}
     >
       {filteredOptions.length > 0 ? (
-        filteredOptions.map(option => (
+        filteredOptions.map((option) => (
           <DropdownOption
             key={option.id}
             option={option}
@@ -97,6 +100,6 @@ const DropdownMenuComponent = ({
   )
 }
 
-const DropdownMenu = React.memo(DropdownMenuComponent);
-DropdownMenu.displayName = 'DropdownMenu';
-export default DropdownMenu;
+const DropdownMenu = React.memo(DropdownMenuComponent)
+DropdownMenu.displayName = 'DropdownMenu'
+export default DropdownMenu

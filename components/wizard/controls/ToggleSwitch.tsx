@@ -22,31 +22,32 @@ const ToggleSwitch = ({
   name,
   label,
   error,
-  disabled = false
+  disabled = false,
 }: ToggleSwitchProps): JSX.Element => {
   // Generate a unique ID for this control instance
   const switchId = useMemo(() => `toggle-${name}`, [name])
-  
+
   // Handle toggle click
   const handleToggle = useCallback((): void => {
     if (disabled) return
     onChange(!checked)
   }, [checked, onChange, disabled])
-  
+
   // Handle keyboard events
-  const handleKeyDown = useCallback((e: React.KeyboardEvent): void => {
-    if (disabled) return
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onChange(!checked)
-    }
-  }, [checked, onChange, disabled])
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent): void => {
+      if (disabled) return
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        onChange(!checked)
+      }
+    },
+    [checked, onChange, disabled]
+  )
 
   return (
     <div className={styles.container}>
-      <div 
-        className={`${styles.toggleContainer} ${error ? styles.hasError : ''}`}
-      >
+      <div className={`${styles.toggleContainer} ${error ? styles.hasError : ''}`}>
         <div
           className={`${styles.toggle} ${checked ? styles.checked : ''} ${disabled ? styles.disabled : ''}`}
           role="switch"
@@ -59,11 +60,11 @@ const ToggleSwitch = ({
         >
           <div className={styles.thumb} />
         </div>
-        
+
         {label && (
-          <label 
-            htmlFor={switchId} 
-            id={`${switchId}-label`} 
+          <label
+            htmlFor={switchId}
+            id={`${switchId}-label`}
             className={styles.label}
             onClick={disabled ? undefined : handleToggle}
           >
@@ -71,7 +72,7 @@ const ToggleSwitch = ({
           </label>
         )}
       </div>
-      
+
       {error && <div className={styles.error}>{error}</div>}
     </div>
   )

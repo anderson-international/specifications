@@ -2,66 +2,98 @@
 
 import { useState, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
-import { useSpecificationSubmission } from './useSpecificationSubmission'
-import { WizardFormData, UseSpecificationWizardReturn, UseSpecificationWizardProps } from '../types/wizard.types'
+import useSpecificationSubmission from './useSpecificationSubmission'
+import {
+  WizardFormData,
+  UseSpecificationWizardReturn,
+  UseSpecificationWizardProps,
+} from '../types/wizard.types'
 
 const defaultValues: Partial<WizardFormData> = {
   shopify_handle: 'gid://shopify/Product/8675309519157',
-  product_brand_id: 1,
-  product_type_id: 1,
-  grind_id: 1,
-  experience_level_id: 1,
+  product_brand_id: null,
+  product_type_id: null,
+  grind_id: null,
+  experience_level_id: null,
   is_fermented: false,
   is_oral_tobacco: false,
   is_artisan: false,
-  nicotine_level_id: 1,
-  moisture_level_id: 1,
-  tasting_notes: [1, 2, 3],
-  cures: [1, 2],
-  tobacco_types: [1, 2],
-  review: 'This is a default review for testing purposes.',
-  star_rating: 3,
-  rating_boost: 2
+  nicotine_level_id: null,
+  moisture_level_id: null,
+  tasting_notes: [],
+  cures: [],
+  tobacco_types: [],
+  review: '',
+  star_rating: null,
+  rating_boost: 0,
 }
 
 /**
  * Main wizard hook for managing multi-step specification creation
  * Simplified to use React Hook Form without Zod validation
  */
-export const useSpecificationWizard = ({ onSubmit, initialData = {}, userId }: UseSpecificationWizardProps): UseSpecificationWizardReturn => {
+export const useSpecificationWizard = ({
+  onSubmit,
+  initialData = {},
+  userId,
+}: UseSpecificationWizardProps): UseSpecificationWizardReturn => {
   const [activeStep, setActiveStep] = useState<number>(0)
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
 
   const methods = useForm<WizardFormData>({
-    defaultValues: { ...defaultValues, ...initialData } as WizardFormData
+    defaultValues: { ...defaultValues, ...initialData } as WizardFormData,
   })
 
-  const { isSubmitting, isSavingDraft, handleFormSubmit, saveDraft } = useSpecificationSubmission({
+  const { isSubmitting, handleFormSubmit } = useSpecificationSubmission({
     onSubmit,
     methods,
-    userId
+    userId,
   })
 
   const handleNext = useCallback(() => {
-    setActiveStep(prev => Math.min(prev + 1, 4))
+    setActiveStep((prev) => {
+      const nextStep = Math.min(prev + 1, 4)
+      // Mark current step as completed when moving forward
+      setCompletedSteps((completed) => new Set(completed).add(prev))
+      return nextStep
+    })
   }, [])
 
   const handlePrevious = useCallback(() => {
-    setActiveStep(prev => Math.max(prev - 1, 0))
+    setActiveStep((prev) => Math.max(prev - 1, 0))
   }, [])
 
-  const handleStepClick = useCallback((stepIndex: number) => {
-    setActiveStep(stepIndex - 1)
-  }, [])
+  // Hybrid navigation: allow backward jumps only, forward gated by validation
+  const handleStepClick = useCallback(
+    (stepIndex: number) => {
+      const targetStep = stepIndex - 1
+      const canNavigate = targetStep <= activeStep || completedSteps.has(targetStep)
+
+      if (canNavigate) {
+        setActiveStep(targetStep)
+      }
+    },
+    [activeStep, completedSteps]
+  )
+
+  // Check if user can navigate to a specific step
+  const canNavigateToStep = useCallback(
+    (stepIndex: number) => {
+      const targetStep = stepIndex - 1
+      return targetStep <= activeStep || completedSteps.has(targetStep)
+    },
+    [activeStep, completedSteps]
+  )
 
   return {
     methods,
     activeStep,
+    completedSteps,
     isSubmitting,
-    isSavingDraft,
     handleNext,
     handlePrevious,
     handleStepClick,
     handleFormSubmit,
-    saveDraft
+    canNavigateToStep,
   }
 }

@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 export function useNavState() {
   const [isNavOpen, setIsNavOpen] = useState(false)
 
-  const toggleNav = useCallback(() => setIsNavOpen(prev => !prev), [])
+  const toggleNav = useCallback(() => setIsNavOpen((prev) => !prev), [])
   const closeNav = useCallback(() => setIsNavOpen(false), [])
 
   const pathname = usePathname()

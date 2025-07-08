@@ -51,8 +51,7 @@ export async function checkEnumReferences(
     })
 
     return { isReferenced: count > 0, count }
-  } catch (error) {
-    console.error('Error checking enum references:', error)
+  } catch (_error) {
     // If we can't check references, err on the side of caution
     return { isReferenced: true, count: 1 }
   }

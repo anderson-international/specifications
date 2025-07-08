@@ -5,7 +5,12 @@ import WizardStepCard from '../controls/WizardStepCard'
 import CharacteristicSelect from './CharacteristicSelect'
 import ProductAttributeToggles from './ProductAttributeToggles'
 import { useProductCharacteristics } from '../hooks/useProductCharacteristics'
-import { GRINDS, EXPERIENCE_LEVELS, NICOTINE_LEVELS, MOISTURE_LEVELS } from '@/constants/wizardOptions'
+import {
+  useGrinds,
+  useExperienceLevels,
+  useNicotineLevels,
+  useMoistureLevels,
+} from '../hooks/useEnumData'
 import styles from './ProductCharacteristics.module.css'
 
 interface ProductCharacteristicsProps {
@@ -20,10 +25,9 @@ interface ProductCharacteristicsProps {
 const ProductCharacteristics = ({
   stepNumber,
   totalSteps,
-  disabled = false
+  disabled = false,
 }: ProductCharacteristicsProps): JSX.Element => {
   const {
-
     grindId,
     experienceLevelId,
     nicotineLevelId,
@@ -37,15 +41,19 @@ const ProductCharacteristics = ({
     handleMoistureLevelChange,
     handleFermentedChange,
     handleOralTobaccoChange,
-    handleArtisanChange
+    handleArtisanChange,
   } = useProductCharacteristics()
 
+  // Fetch enum data from database
+  const { data: grinds, isLoading: grindsLoading } = useGrinds()
+  const { data: experienceLevels, isLoading: experienceLoading } = useExperienceLevels()
+  const { data: nicotineLevels, isLoading: nicotineLoading } = useNicotineLevels()
+  const { data: moistureLevels, isLoading: moistureLoading } = useMoistureLevels()
+
+  const isLoadingEnums = grindsLoading || experienceLoading || nicotineLoading || moistureLoading
+
   return (
-    <WizardStepCard
-      title="Product Characteristics"
-      stepNumber={stepNumber}
-      totalSteps={totalSteps}
-    >
+    <WizardStepCard title="Product Characteristics" stepNumber={stepNumber} totalSteps={totalSteps}>
       <div className={styles.characteristicsContainer}>
         <div className={styles.characteristicsRow}>
           <CharacteristicSelect
@@ -53,16 +61,16 @@ const ProductCharacteristics = ({
             label="Select Grind"
             value={grindId || ''}
             onChange={handleGrindChange}
-            options={GRINDS}
-            disabled={disabled}
+            options={grinds || []}
+            disabled={disabled || isLoadingEnums}
           />
           <CharacteristicSelect
             id="experience-level-filter"
             label="Select Experience"
             value={experienceLevelId || ''}
             onChange={handleExperienceChange}
-            options={EXPERIENCE_LEVELS}
-            disabled={disabled}
+            options={experienceLevels || []}
+            disabled={disabled || isLoadingEnums}
           />
         </div>
         <div className={styles.characteristicsRow}>
@@ -71,20 +79,20 @@ const ProductCharacteristics = ({
             label="Select Nicotine Level"
             value={nicotineLevelId || ''}
             onChange={handleNicotineLevelChange}
-            options={NICOTINE_LEVELS}
-            disabled={disabled}
+            options={nicotineLevels || []}
+            disabled={disabled || isLoadingEnums}
           />
           <CharacteristicSelect
             id="moisture-level-filter"
             label="Select Moisture Level"
             value={moistureLevelId || ''}
             onChange={handleMoistureLevelChange}
-            options={MOISTURE_LEVELS}
-            disabled={disabled}
+            options={moistureLevels || []}
+            disabled={disabled || isLoadingEnums}
           />
         </div>
       </div>
-      
+
       <ProductAttributeToggles
         isFermented={isFermented}
         isOralTobacco={isOralTobacco}

@@ -49,17 +49,13 @@ export const FilterControls: React.FC<FilterControlsProps> = React.memo(
             searchPlaceholder={searchPlaceholder}
           />
 
-          {filters.map(filter => (
-            <FilterGroup
-              key={filter.id}
-              filter={filter}
-              onFilterChange={onFilterChange}
-            />
+          {filters.map((filter) => (
+            <FilterGroup key={filter.id} filter={filter} onFilterChange={onFilterChange} />
           ))}
 
-          <button 
-            onClick={onClearAll} 
-            className={styles.clearAllButton} 
+          <button
+            onClick={onClearAll}
+            className={styles.clearAllButton}
             type="button"
             disabled={!showClearAll}
             title="Clear all filters"

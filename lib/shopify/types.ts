@@ -1,40 +1,40 @@
 // Shopify product types - re-export canonical Product type
-export type { Product } from '@/lib/types/product';
+export type { Product } from '@/lib/types/product'
 
 // Shopify GraphQL response types
 export interface ShopifyMetafield {
-  key: string;
-  value: string;
+  key: string
+  value: string
 }
 
 export interface ShopifyMetafieldEdge {
-  node: ShopifyMetafield;
+  node: ShopifyMetafield
 }
 
 export interface ShopifyProduct {
-  handle: string;
-  title: string;
-  vendor: string;
+  handle: string
+  title: string
+  vendor: string
   featuredImage?: {
-    url: string;
-  } | null;
+    url: string
+  } | null
   metafields: {
-    edges: ShopifyMetafieldEdge[];
-  };
+    edges: ShopifyMetafieldEdge[]
+  }
 }
 
 export interface ShopifyProductEdge {
-  node: ShopifyProduct;
+  node: ShopifyProduct
 }
 
 export interface ShopifyProductsResponse {
   products: {
-    edges: ShopifyProductEdge[];
+    edges: ShopifyProductEdge[]
     pageInfo: {
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor: string;
-      endCursor: string;
-    };
-  };
+      hasNextPage: boolean
+      hasPreviousPage: boolean
+      startCursor: string
+      endCursor: string
+    }
+  }
 }

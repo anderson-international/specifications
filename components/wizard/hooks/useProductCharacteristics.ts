@@ -18,7 +18,7 @@ interface ProductCharacteristicsFormData {
  */
 export const useProductCharacteristics = () => {
   const { watch, setValue, register } = useFormContext<ProductCharacteristicsFormData>()
-  
+
   const formValues = watch()
   const {
     grind_id: grindId,
@@ -27,18 +27,22 @@ export const useProductCharacteristics = () => {
     moisture_level_id: moistureLevelId,
     is_fermented: isFermented,
     is_oral_tobacco: isOralTobacco,
-    is_artisan: isArtisan
+    is_artisan: isArtisan,
   } = formValues
-  
+
   const isValid = useMemo((): boolean => {
     return Boolean(
-      grindId && grindId > 0 &&
-      experienceLevelId && experienceLevelId > 0 &&
-      nicotineLevelId && nicotineLevelId > 0 &&
-      moistureLevelId && moistureLevelId > 0
+      grindId &&
+        grindId > 0 &&
+        experienceLevelId &&
+        experienceLevelId > 0 &&
+        nicotineLevelId &&
+        nicotineLevelId > 0 &&
+        moistureLevelId &&
+        moistureLevelId > 0
     )
   }, [grindId, experienceLevelId, nicotineLevelId, moistureLevelId])
-  
+
   const createSelectHandler = useCallback(
     (fieldName: keyof ProductCharacteristicsFormData) =>
       (e: React.ChangeEvent<HTMLSelectElement>): void => {
@@ -81,6 +85,6 @@ export const useProductCharacteristics = () => {
     handleMoistureLevelChange,
     handleFermentedChange,
     handleOralTobaccoChange,
-    handleArtisanChange
+    handleArtisanChange,
   }
 }

@@ -1,6 +1,6 @@
 # React Hooks Advanced
 
-*Custom hook patterns and performance integration for the spec Builder.*
+_Custom hook patterns and performance integration for the spec Builder._
 
 <!-- AI_QUICK_REF
 Overview: Custom hook patterns, data fetching hooks, and performance integration
@@ -23,55 +23,57 @@ This document defines advanced React hook patterns for custom hooks, data fetchi
 ## ⚙️ **MEDIUM**: Custom Hook Patterns
 
 ### ✅ Correct: Extract Complex State Logic
+
 ```typescript
 // ✅ Extract complex state logic to custom hooks
 const useFormWizard = (initialData: FormData) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState(initialData);
+  const [currentStep, setCurrentStep] = useState(0)
+  const [formData, setFormData] = useState(initialData)
 
   const nextStep = useCallback((): void => {
-    setCurrentStep(prev => prev + 1);
-  }, []);
+    setCurrentStep((prev) => prev + 1)
+  }, [])
 
   const prevStep = useCallback((): void => {
-    setCurrentStep(prev => Math.max(0, prev - 1));
-  }, []);
+    setCurrentStep((prev) => Math.max(0, prev - 1))
+  }, [])
 
   const updateFormData = useCallback((stepData: Partial<FormData>): void => {
-    setFormData(prev => ({ ...prev, ...stepData }));
-  }, []);
+    setFormData((prev) => ({ ...prev, ...stepData }))
+  }, [])
 
-  return { currentStep, formData, nextStep, prevStep, updateFormData };
-};
+  return { currentStep, formData, nextStep, prevStep, updateFormData }
+}
 ```
 
 ### ✅ Correct: Data Fetching Hook
+
 ```typescript
 const useProducts = (categoryId?: string) => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchProducts = useCallback(async (): Promise<void> => {
-    setLoading(true);
-    setError(null);
-    
+    setLoading(true)
+    setError(null)
+
     try {
-      const data = await getProducts(categoryId);
-      setProducts(data);
+      const data = await getProducts(categoryId)
+      setProducts(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch products');
+      setError(err instanceof Error ? err.message : 'Failed to fetch products')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [categoryId]);
+  }, [categoryId])
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    fetchProducts()
+  }, [fetchProducts])
 
-  return { products, loading, error, refetch: fetchProducts };
-};
+  return { products, loading, error, refetch: fetchProducts }
+}
 ```
 
 ## 🔥 **HIGH**: TypeScript Requirements
@@ -81,6 +83,7 @@ const useProducts = (categoryId?: string) => {
 ## 🛠️ **REFACTOR**: Performance Integration
 
 ### ✅ Correct: File Size Integration
+
 When components approach the **⚠️ CRITICAL: 150-line limit**, apply these patterns:
 
 - Extract complex `useState` and `useEffect` logic to custom hooks
@@ -114,9 +117,9 @@ const useProductManagement = () => {
 // ✅ Clean component using custom hook
 const ProductsContainer = (): JSX.Element => {
   const { products, selectedProduct, loading, selectProduct, deleteProduct } = useProductManagement();
-  
+
   return (
-    <ProductsList 
+    <ProductsList
       products={products}
       selectedProduct={selectedProduct}
       loading={loading}
@@ -130,78 +133,87 @@ const ProductsContainer = (): JSX.Element => {
 ## 🔥 **HIGH**: Advanced Hook Patterns
 
 ### ✅ Correct: State Management Hook
+
 ```typescript
-const useToggle = (initialValue: boolean = false): [boolean, () => void, () => void, () => void] => {
-  const [value, setValue] = useState(initialValue);
+const useToggle = (
+  initialValue: boolean = false
+): [boolean, () => void, () => void, () => void] => {
+  const [value, setValue] = useState(initialValue)
 
-  const toggle = useCallback(() => setValue(prev => !prev), []);
-  const setTrue = useCallback(() => setValue(true), []);
-  const setFalse = useCallback(() => setValue(false), []);
+  const toggle = useCallback(() => setValue((prev) => !prev), [])
+  const setTrue = useCallback(() => setValue(true), [])
+  const setFalse = useCallback(() => setValue(false), [])
 
-  return [value, toggle, setTrue, setFalse];
-};
+  return [value, toggle, setTrue, setFalse]
+}
 ```
 
 ### ✅ Correct: Local Storage Hook
+
 ```typescript
 const useLocalStorage = <T>(key: string, initialValue: T): [T, (value: T) => void] => {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
+      const item = window.localStorage.getItem(key)
+      return item ? JSON.parse(item) : initialValue
     } catch (error) {
-      return initialValue;
+      return initialValue
     }
-  });
+  })
 
-  const setValue = useCallback((value: T) => {
-    try {
-      setStoredValue(value);
-      window.localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error('Error setting localStorage value:', error);
-    }
-  }, [key]);
+  const setValue = useCallback(
+    (value: T) => {
+      try {
+        setStoredValue(value)
+        window.localStorage.setItem(key, JSON.stringify(value))
+      } catch (error) {
+        console.error('Error setting localStorage value:', error)
+      }
+    },
+    [key]
+  )
 
-  return [storedValue, setValue];
-};
+  return [storedValue, setValue]
+}
 ```
 
 ### ✅ Correct: Async Operation Hook
+
 ```typescript
 const useAsyncOperation = <T>(
   operation: () => Promise<T>
 ): {
-  data: T | null;
-  loading: boolean;
-  error: string | null;
-  execute: () => Promise<void>;
+  data: T | null
+  loading: boolean
+  error: string | null
+  execute: () => Promise<void>
 } => {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<T | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const execute = useCallback(async (): Promise<void> => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const result = await operation();
-      setData(result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Operation failed');
-    } finally {
-      setLoading(false);
-    }
-  }, [operation]);
+    setLoading(true)
+    setError(null)
 
-  return { data, loading, error, execute };
-};
+    try {
+      const result = await operation()
+      setData(result)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Operation failed')
+    } finally {
+      setLoading(false)
+    }
+  }, [operation])
+
+  return { data, loading, error, execute }
+}
 ```
 
 ## Component Architecture Integration
 
 ### 🔥 **HIGH**: Custom Hook Best Practices
+
 1. **Single Responsibility**: Each custom hook should handle one specific concern
 2. **Explicit Return Types**: Always define TypeScript return types
 3. **Proper Dependencies**: Use useCallback and useMemo within custom hooks

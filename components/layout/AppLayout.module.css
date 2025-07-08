@@ -40,20 +40,24 @@
   z-index: 1000;
 }
 
-.headerLeft, .headerRight {
+.headerLeft,
+.headerRight {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   min-width: 50px; /* Reserve space to prevent layout shift */
 }
 
-.headerLeft, .headerCenter, .headerRight {
+.headerLeft,
+.headerCenter,
+.headerRight {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
-.headerLeft, .headerRight {
+.headerLeft,
+.headerRight {
   flex: 1 1 0%;
 }
 
@@ -70,15 +74,14 @@
   border-radius: 50%;
 }
 
-
-
 .titleContainer {
   display: flex;
   flex-direction: column;
   line-height: 1;
 }
 
-.headerTitle, .headerSubtitle {
+.headerTitle,
+.headerSubtitle {
   font-weight: 600;
   font-size: 1.2rem;
   margin: 0;
@@ -151,7 +154,6 @@
   width: 100%;
 }
 
-
 /* --- Slide-out Navigation --- */
 .nav {
   position: fixed;
@@ -182,7 +184,9 @@
   inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1999;
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  transition:
+    opacity 0.3s ease-in-out,
+    visibility 0.3s ease-in-out;
 }
 
 .overlayVisible {
@@ -201,7 +205,8 @@
   flex-shrink: 0;
 }
 
-.navHeaderLeft, .navHeaderRight {
+.navHeaderLeft,
+.navHeaderRight {
   flex: 1 1 0%;
 }
 

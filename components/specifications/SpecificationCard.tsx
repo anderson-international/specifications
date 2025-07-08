@@ -18,7 +18,7 @@ export const SpecificationCard = React.memo(function SpecificationCard({
   specification,
   onEdit,
   onDelete,
-  onDuplicate
+  onDuplicate,
 }: SpecificationCardProps): JSX.Element {
   const [showActions, setShowActions] = useState<boolean>(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false)
@@ -46,7 +46,7 @@ export const SpecificationCard = React.memo(function SpecificationCard({
   }, [onDuplicate, specification.id])
 
   const toggleActions = useCallback((): void => {
-    setShowActions(prev => !prev)
+    setShowActions((prev) => !prev)
   }, [])
 
   // Swipe actions - only for draft items
@@ -54,27 +54,36 @@ export const SpecificationCard = React.memo(function SpecificationCard({
     onSwipeLeft: specification.status === 'draft' ? handleDelete : undefined,
     onSwipeRight: specification.status === 'draft' ? handleEdit : undefined,
     threshold: 60,
-    preventScroll: true
+    preventScroll: true,
   })
 
-  const cardStyle = specification.status === 'draft' ? {
-    transform: `translateX(${swipeState.offset}px)`
-  } : undefined
+  const cardStyle =
+    specification.status === 'draft'
+      ? {
+          transform: `translateX(${swipeState.offset}px)`,
+        }
+      : undefined
 
   const cardClasses = [
     styles.card,
     specification.status === 'draft' ? styles.swipeable : '',
-    swipeState.isDragging ? styles.dragging : ''
-  ].filter(Boolean).join(' ')
+    swipeState.isDragging ? styles.dragging : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <div className={styles.container}>
       {specification.status === 'draft' && (
         <>
-          <div className={`${styles.swipeAction} ${styles.left} ${swipeState.offset > 60 ? styles.active : ''}`}>
+          <div
+            className={`${styles.swipeAction} ${styles.left} ${swipeState.offset > 60 ? styles.active : ''}`}
+          >
             <span>✏️ Edit</span>
           </div>
-          <div className={`${styles.swipeAction} ${styles.right} ${swipeState.offset < -60 ? styles.active : ''}`}>
+          <div
+            className={`${styles.swipeAction} ${styles.right} ${swipeState.offset < -60 ? styles.active : ''}`}
+          >
             <span>🗑️ Delete</span>
           </div>
         </>

@@ -3,7 +3,6 @@ import { getSpecificationEnumData } from '@/lib/data/enums'
 import { SpecificationEnumData } from '@/types/enum'
 import CreateSpecificationClient from './CreateSpecificationClient'
 
-
 /**
  * Server component that fetches enum data and renders the client component
  */

@@ -1,6 +1,6 @@
 # Code TypeScript
 
-*TypeScript return types and type safety standards.*
+_TypeScript return types and type safety standards._
 
 <!-- AI_QUICK_REF
 Overview: TypeScript type safety and return type requirements
@@ -75,26 +75,26 @@ function UserProfile({ user }) { return <div><h1>{user.name}</h1></div>; }
 ```typescript
 // Specific types instead of 'any'
 function processUserData(user: User): ProcessedUser {
-  return { id: user.id, name: user.name, formattedEmail: formatEmail(user.email) };
+  return { id: user.id, name: user.name, formattedEmail: formatEmail(user.email) }
 }
 
 // Union types
 function handleResponse(data: SuccessResponse | ErrorResponse): void {
-  if ('error' in data) console.error(data.error.message);
-  else processData(data.result);
+  if ('error' in data) console.error(data.error.message)
+  else processData(data.result)
 }
 
 // Unknown with type guards
 function parseApiResponse(response: unknown): ParsedData {
-  if (typeof response !== 'object' || !response) throw new Error('Invalid format');
-  const data = response as Record<string, unknown>;
-  if (!('id' in data) || typeof data.id !== 'string') throw new Error('Missing ID');
-  return { id: data.id, name: typeof data.name === 'string' ? data.name : 'Unknown' };
+  if (typeof response !== 'object' || !response) throw new Error('Invalid format')
+  const data = response as Record<string, unknown>
+  if (!('id' in data) || typeof data.id !== 'string') throw new Error('Missing ID')
+  return { id: data.id, name: typeof data.name === 'string' ? data.name : 'Unknown' }
 }
 
 // Generic constraints
 function filterArray<T extends { id: string }>(items: T[], predicate: (item: T) => boolean): T[] {
-  return items.filter(predicate);
+  return items.filter(predicate)
 }
 ```
 
@@ -102,9 +102,15 @@ function filterArray<T extends { id: string }>(items: T[], predicate: (item: T) 
 
 ```typescript
 // ❌ Using 'any' instead of proper typing
-function processUserData(user: any): any { return { id: user.id, name: user.name }; }
-function sortItems(items: any[]): any[] { return [...items].sort((a, b) => a.name.localeCompare(b.name)); }
-function parseApiResponse(response: any): ParsedData { return { id: response.id, name: response.name }; }
+function processUserData(user: any): any {
+  return { id: user.id, name: user.name }
+}
+function sortItems(items: any[]): any[] {
+  return [...items].sort((a, b) => a.name.localeCompare(b.name))
+}
+function parseApiResponse(response: any): ParsedData {
+  return { id: response.id, name: response.name }
+}
 ```
 
 ## Interface and Type Definitions
@@ -114,58 +120,76 @@ function parseApiResponse(response: any): ParsedData { return { id: response.id,
 ```typescript
 // Interface definitions
 interface User {
-  readonly id: string;
-  name: string;
-  email: string;
-  createdAt: Date;
-  preferences?: UserPreferences;
+  readonly id: string
+  name: string
+  email: string
+  createdAt: Date
+  preferences?: UserPreferences
 }
 
 interface UserPreferences {
-  theme: 'light' | 'dark';
-  notifications: boolean;
-  language: string;
+  theme: 'light' | 'dark'
+  notifications: boolean
+  language: string
 }
 
 // Type aliases and generics
-type Status = 'loading' | 'success' | 'error';
-type UserRole = 'admin' | 'user' | 'guest';
+type Status = 'loading' | 'success' | 'error'
+type UserRole = 'admin' | 'user' | 'guest'
 
 interface ApiResponse<T> {
-  data: T;
-  success: boolean;
-  message?: string;
+  data: T
+  success: boolean
+  message?: string
 }
 
 // Utility types
-type PartialUser = Partial<User>;
-type UserEmail = Pick<User, 'email'>;
-type UserWithoutId = Omit<User, 'id'>;
+type PartialUser = Partial<User>
+type UserEmail = Pick<User, 'email'>
+type UserWithoutId = Omit<User, 'id'>
 ```
 
 ### ❌ Incorrect: Poor Type Definitions
 
 ```typescript
 // ❌ Overly generic or missing specific types
-interface User { [key: string]: any; }
-interface UserPreferences { theme: string; notifications: any; }
-interface ApiResponse { data: any; success: any; }
+interface User {
+  [key: string]: any
+}
+interface UserPreferences {
+  theme: string
+  notifications: any
+}
+interface ApiResponse {
+  data: any
+  success: any
+}
 ```
 
 ## Advanced Type Patterns
 
 ```typescript
 // Discriminated unions
-interface LoadingState { status: 'loading'; }
-interface SuccessState { status: 'success'; data: User[]; }
-interface ErrorState { status: 'error'; error: string; }
-type AsyncState = LoadingState | SuccessState | ErrorState;
-function isErrorState(state: AsyncState): state is ErrorState { return state.status === 'error'; }
+interface LoadingState {
+  status: 'loading'
+}
+interface SuccessState {
+  status: 'success'
+  data: User[]
+}
+interface ErrorState {
+  status: 'error'
+  error: string
+}
+type AsyncState = LoadingState | SuccessState | ErrorState
+function isErrorState(state: AsyncState): state is ErrorState {
+  return state.status === 'error'
+}
 
 // Conditional and template literal types
-type ApiResult<T> = T extends string ? { message: T } : { data: T };
-type EventName = `on${Capitalize<string>}`;
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+type ApiResult<T> = T extends string ? { message: T } : { data: T }
+type EventName = `on${Capitalize<string>}`
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 ```
 
 ## React-Specific TypeScript Patterns

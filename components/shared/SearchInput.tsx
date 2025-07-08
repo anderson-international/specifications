@@ -10,11 +10,7 @@ interface SearchInputProps {
 }
 
 export const SearchInput: React.FC<SearchInputProps> = React.memo(
-  ({
-    searchQuery,
-    onSearchChange,
-    searchPlaceholder,
-  }) => {
+  ({ searchQuery, onSearchChange, searchPlaceholder }) => {
     const handleSearchChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>): void => {
         onSearchChange(e.target.value)

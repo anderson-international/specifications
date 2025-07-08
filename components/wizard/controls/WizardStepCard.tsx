@@ -9,7 +9,6 @@ interface WizardStepCardProps {
   stepNumber: number
   totalSteps: number
   isValid?: boolean
-  disabled?: boolean
 }
 
 /**
@@ -21,7 +20,7 @@ const WizardStepCard = ({
   children,
   stepNumber,
   totalSteps,
-  isValid = true
+  isValid = true,
 }: WizardStepCardProps): JSX.Element => {
   return (
     <div className={styles.card}>
@@ -36,9 +35,7 @@ const WizardStepCard = ({
           )}
         </div>
       </div>
-      <div className={styles.content}>
-        {children}
-      </div>
+      <div className={styles.content}>{children}</div>
     </div>
   )
 }

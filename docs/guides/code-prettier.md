@@ -1,6 +1,6 @@
 # Code Prettier
 
-*Prettier formatting standards for consistent code formatting.*
+_Prettier formatting standards for consistent code formatting._
 
 <!-- AI_QUICK_REF
 Overview: Prettier configuration and formatting standards
@@ -50,32 +50,39 @@ This document defines mandatory Prettier configuration for consistent code forma
 ## Configuration Rules Explained
 
 ### Quote Styles
+
 - **`singleQuote: true`**: Use single quotes for strings
 - **`jsxSingleQuote: true`**: Use single quotes in JSX attributes
 - **`quoteProps: "as-needed"`**: Quote object properties only when needed
 
 ### Semicolons and Punctuation
+
 - **`semi: true`**: Always include semicolons
 - **`trailingComma: "es5"`**: Trailing commas where ES5 allows
 
 ### Indentation and Spacing
+
 - **`tabWidth: 2`**: 2 spaces per indentation level
 - **`useTabs: false`**: Use spaces instead of tabs
 - **`bracketSpacing: true`**: Spaces inside object brackets
 
 ### Line Handling
+
 - **`printWidth: 100`**: Maximum line length of 100 characters
 - **`endOfLine: "lf"`**: Unix-style line endings
 - **`arrowParens: "avoid"`**: Avoid parentheses around single arrow function parameters
 
 ### JSX Formatting
+
 - **`jsxBracketSameLine: false`**: JSX closing brackets on new line
 - **`bracketSameLine: false`**: Consistent with jsxBracketSameLine
 
 ## Integration with Development Tools
 
 ### VSCode Integration
+
 Add to `.vscode/settings.json`:
+
 ```json
 {
   "editor.formatOnSave": true,
@@ -86,6 +93,7 @@ Add to `.vscode/settings.json`:
 ```
 
 ### Package.json Scripts
+
 ```json
 {
   "scripts": {
@@ -97,6 +105,7 @@ Add to `.vscode/settings.json`:
 ```
 
 ### Pre-commit Hook
+
 ```bash
 #!/bin/sh
 # .husky/pre-commit
@@ -104,6 +113,7 @@ npx lint-staged
 ```
 
 With lint-staged configuration:
+
 ```json
 {
   "lint-staged": {
@@ -172,6 +182,7 @@ const processTwoParams = (data,config) => transform(data,config);
 ## File Type Coverage
 
 Prettier formats these file types:
+
 - **TypeScript**: `.ts`, `.tsx`
 - **JavaScript**: `.js`, `.jsx`
 - **JSON**: `.json`
@@ -183,6 +194,7 @@ Prettier formats these file types:
 ## CI/CD Integration
 
 ### GitHub Actions
+
 ```yaml
 name: Code Quality
 on: [push, pull_request]
@@ -201,7 +213,9 @@ jobs:
 ```
 
 ### Build Process
+
 Prettier runs automatically during:
+
 - **Development**: Format on save in VSCode
 - **Pre-commit**: Format staged files before commit
 - **CI/CD**: Verify formatting in build pipeline
@@ -210,6 +224,7 @@ Prettier runs automatically during:
 ## Common Formatting Issues
 
 ### Long Lines
+
 ```typescript
 // ❌ WRONG: Long line (over 100 characters)
 const veryLongFunctionName = (parameterOne: string, parameterTwo: number, parameterThree: boolean, parameterFour: object) => {
@@ -224,6 +239,7 @@ const veryLongFunctionName = (
 ```
 
 ### Object Formatting
+
 ```typescript
 // ✅ CORRECT: Consistent object formatting
 const config = {
@@ -232,19 +248,20 @@ const config = {
   retries: 3,
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer token',
+    Authorization: 'Bearer token',
   },
-};
+}
 ```
 
 ### Array Formatting
+
 ```typescript
 // ✅ CORRECT: Proper array formatting
-const colors = ['red', 'green', 'blue', 'yellow'];
+const colors = ['red', 'green', 'blue', 'yellow']
 
 const complexArray = [
   { id: 1, name: 'Item 1', active: true },
   { id: 2, name: 'Item 2', active: false },
   { id: 3, name: 'Item 3', active: true },
-];
+]
 ```

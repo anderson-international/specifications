@@ -4,7 +4,7 @@ import React, { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
 import MultiSelectChips from '../controls/MultiSelectChips'
-import { TASTING_NOTES, CURES, TOBACCO_TYPES } from '@/constants/wizardOptions'
+import { useTastingNotes, useCures, useTobaccoTypes } from '../hooks/useEnumData'
 import styles from './TastingProfile.module.css'
 
 interface TastingProfileProps {
@@ -26,99 +26,73 @@ interface TastingProfileFormData {
 const TastingProfile = ({
   stepNumber,
   totalSteps,
-  disabled = false
+  disabled = false,
 }: TastingProfileProps): JSX.Element => {
-  const { 
-    watch, 
-    setValue
-  } = useFormContext<TastingProfileFormData>()
-  
+  const { watch, setValue } = useFormContext<TastingProfileFormData>()
+
+  // Fetch enum data from database
+  const { data: tastingNoteOptions, isLoading: tastingNotesLoading } = useTastingNotes()
+  const { data: cureOptions, isLoading: curesLoading } = useCures()
+  const { data: tobaccoTypeOptions, isLoading: tobaccoTypesLoading } = useTobaccoTypes()
+
+  const isLoadingEnums = tastingNotesLoading || curesLoading || tobaccoTypesLoading
+
   // Watch form values - Optimized with single watch call
-  const {
-    tasting_notes: tastingNotes = [],
-    cures = [],
-    tobacco_types: tobaccoTypes = []
-  } = watch()
-  
+  const { tasting_notes: tastingNotes = [], cures = [], tobacco_types: tobaccoTypes = [] } = watch()
+
   const createMultiSelectHandler = useCallback(
     (fieldName: keyof TastingProfileFormData) => (values: (number | string)[]) => {
-      setValue(fieldName, values.map(Number), { shouldValidate: true });
+      setValue(fieldName, values.map(Number), { shouldValidate: true })
     },
     [setValue]
-  );
+  )
 
-  const handleTastingNotesChange = createMultiSelectHandler('tasting_notes');
-  const handleCuresChange = createMultiSelectHandler('cures');
-  const handleTobaccoTypesChange = createMultiSelectHandler('tobacco_types');
-  
+  const handleTastingNotesChange = createMultiSelectHandler('tasting_notes')
+  const handleCuresChange = createMultiSelectHandler('cures')
+  const handleTobaccoTypesChange = createMultiSelectHandler('tobacco_types')
+
   return (
-    <WizardStepCard
-      title="Tasting Profile"
-      stepNumber={stepNumber}
-      totalSteps={totalSteps}
-    >
-      
+    <WizardStepCard title="Tasting Profile" stepNumber={stepNumber} totalSteps={totalSteps}>
       <div className={styles.container}>
-        <div 
-          className={styles.formGroup}
-          role="group"
-          aria-labelledby="tasting-notes-label"
-        >
-          <label 
-            id="tasting-notes-label"
-            className={styles.label}
-          >
+        <div className={styles.formGroup} role="group" aria-labelledby="tasting-notes-label">
+          <label id="tasting-notes-label" className={styles.label}>
             Tasting Notes
           </label>
 
           <MultiSelectChips
-            options={TASTING_NOTES}
+            options={tastingNoteOptions || []}
             selectedValues={tastingNotes}
             onChange={handleTastingNotesChange}
-            disabled={disabled}
+            disabled={disabled || isLoadingEnums}
             name="tasting-notes"
           />
         </div>
 
         <div className={styles.grid}>
-          <div 
-            className={styles.formGroup}
-            role="group"
-            aria-labelledby="cures-label"
-          >
-            <label 
-              id="cures-label"
-              className={styles.label}
-            >
+          <div className={styles.formGroup} role="group" aria-labelledby="cures-label">
+            <label id="cures-label" className={styles.label}>
               Cures
             </label>
 
             <MultiSelectChips
-              options={CURES}
+              options={cureOptions || []}
               selectedValues={cures}
               onChange={handleCuresChange}
-              disabled={disabled}
+              disabled={disabled || isLoadingEnums}
               name="cures"
             />
           </div>
-          
-          <div 
-            className={styles.formGroup}
-            role="group"
-            aria-labelledby="tobacco-types-label"
-          >
-            <label 
-              id="tobacco-types-label"
-              className={styles.label}
-            >
+
+          <div className={styles.formGroup} role="group" aria-labelledby="tobacco-types-label">
+            <label id="tobacco-types-label" className={styles.label}>
               Tobacco Types
             </label>
 
             <MultiSelectChips
-              options={TOBACCO_TYPES}
+              options={tobaccoTypeOptions || []}
               selectedValues={tobaccoTypes}
               onChange={handleTobaccoTypesChange}
-              disabled={disabled}
+              disabled={disabled || isLoadingEnums}
               name="tobacco-types"
             />
           </div>

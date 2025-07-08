@@ -14,46 +14,37 @@ export interface EnumTableOperations {
     skip?: number
     take?: number
   }) => Promise<EnumValue[]>
-  
+
   findFirst: (args: {
-    where: { 
-      name?: { contains?: string; equals?: string; mode?: 'insensitive' } | string;
-      id?: { not?: number };
+    where: {
+      name?: { contains?: string; equals?: string; mode?: 'insensitive' } | string
+      id?: { not?: number }
       AND?: Array<{
-        name?: { contains?: string; equals?: string; mode?: 'insensitive' } | string;
-        id?: { not?: number };
-      }>;
+        name?: { contains?: string; equals?: string; mode?: 'insensitive' } | string
+        id?: { not?: number }
+      }>
       OR?: Array<{
-        name?: { contains?: string; equals?: string; mode?: 'insensitive' } | string;
-        id?: { not?: number };
-      }>;
+        name?: { contains?: string; equals?: string; mode?: 'insensitive' } | string
+        id?: { not?: number }
+      }>
     }
   }) => Promise<EnumValue | null>
-  
-  findUnique: (args: {
-    where: { id: number }
-  }) => Promise<EnumValue | null>
-  
-  create: (args: {
-    data: { name: string }
-  }) => Promise<EnumValue>
-  
-  update: (args: {
-    where: { id: number }
-    data: { name: string }
-  }) => Promise<EnumValue>
-  
-  delete: (args: {
-    where: { id: number }
-  }) => Promise<EnumValue>
-  
+
+  findUnique: (args: { where: { id: number } }) => Promise<EnumValue | null>
+
+  create: (args: { data: { name: string } }) => Promise<EnumValue>
+
+  update: (args: { where: { id: number }; data: { name: string } }) => Promise<EnumValue>
+
+  delete: (args: { where: { id: number } }) => Promise<EnumValue>
+
   count: (args?: {
     where?: { name?: { contains?: string; mode?: 'insensitive' } }
   }) => Promise<number>
 }
 
 // Define the valid enum table names (matches actual database schema)
-export type EnumTableName = 
+export type EnumTableName =
   | 'enum_product_types'
   | 'enum_product_brands'
   | 'enum_experience_levels'
@@ -88,16 +79,13 @@ export function isValidEnumTableName(name: string): name is EnumTableName {
     'enum_specification_statuses',
     'enum_roles',
     'enum_snuff_types',
-    'enum_statuses'
+    'enum_statuses',
   ]
   return validTables.includes(name as EnumTableName)
 }
 
 // Helper function to get typed enum table access
-export function getEnumTable(
-  prisma: PrismaClient, 
-  tableName: EnumTableName
-): EnumTableOperations {
+export function getEnumTable(prisma: PrismaClient, tableName: EnumTableName): EnumTableOperations {
   return (prisma as unknown as TypedPrismaEnumClient)[tableName]
 }
 

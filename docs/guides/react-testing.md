@@ -1,6 +1,6 @@
 # React Testing
 
-*Anti-patterns, dual fetching issues, and testing strategies for React effects.*
+_Anti-patterns, dual fetching issues, and testing strategies for React effects._
 
 <!-- AI_QUICK_REF
 Overview: React anti-patterns and testing strategies for effect hooks
@@ -28,15 +28,15 @@ This document covers specific anti-patterns that cause React effect loops and te
 ```jsx
 // ❌ WRONG: Both context and component fetch user data
 // In UserContext
-useEffect(() => fetchUserData(userId), [userId]);
+useEffect(() => fetchUserData(userId), [userId])
 // In UserProfile component
-useEffect(() => fetchUserData(userId), [userId]);
+useEffect(() => fetchUserData(userId), [userId])
 
 // ✅ CORRECT: Only context fetches data
 // In UserContext
-useEffect(() => fetchUserData(userId), [userId]);
+useEffect(() => fetchUserData(userId), [userId])
 // In UserProfile component
-const { user } = useUserContext(); // Just consume data
+const { user } = useUserContext() // Just consume data
 ```
 
 ### 2. Unstable References (⚠️ CRITICAL)
@@ -45,19 +45,19 @@ const { user } = useUserContext(); // Just consume data
 
 ```jsx
 // ❌ WRONG: New object/function in dependency array
-useEffect(() => doSomething(), [{ id: userId }]); // New object every render
-useEffect(() => fetchData(), [() => formatData(data)]); // New function every render
+useEffect(() => doSomething(), [{ id: userId }]) // New object every render
+useEffect(() => fetchData(), [() => formatData(data)]) // New function every render
 function MyComponent({ initialData = [] }) {
-  useEffect(() => processData(initialData), [initialData]); // New array reference!
+  useEffect(() => processData(initialData), [initialData]) // New array reference!
 }
 
 // ✅ CORRECT: Use primitive values, memoized objects, or stable constants
-useEffect(() => doSomething(), [userId]); // Stable primitive value
-const formatDataFn = useCallback(() => formatData(data), [data]);
-useEffect(() => fetchData(), [formatDataFn]); // Stable function reference
-const EMPTY_ARRAY = [];
+useEffect(() => doSomething(), [userId]) // Stable primitive value
+const formatDataFn = useCallback(() => formatData(data), [data])
+useEffect(() => fetchData(), [formatDataFn]) // Stable function reference
+const EMPTY_ARRAY = []
 function MyComponent({ initialData = EMPTY_ARRAY }) {
-  useEffect(() => processData(initialData), [initialData]); // Stable reference
+  useEffect(() => processData(initialData), [initialData]) // Stable reference
 }
 ```
 

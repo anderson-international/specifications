@@ -4,7 +4,7 @@ import {
   EnumTableNameSchema,
   type ValidatedEnumTableName,
   type CreateEnumValueInput,
-  type UpdateEnumValueInput
+  type UpdateEnumValueInput,
 } from '@/lib/validations/enums'
 
 /**
@@ -25,7 +25,7 @@ export function validateTableName(table: string): ValidatedEnumTableName {
   const result = EnumTableNameSchema.safeParse(table)
   if (!result.success) {
     throw new ServiceError('Invalid enum table name', 400, {
-      validationErrors: result.error.issues
+      validationErrors: result.error.issues,
     })
   }
   return result.data
@@ -38,17 +38,20 @@ interface ListParams {
   limit: number
 }
 
-export async function listEnums({ table, search, page, limit }: ListParams): Promise<EnumQueryResult> {
+export async function listEnums({
+  table,
+  search,
+  page,
+  limit,
+}: ListParams): Promise<EnumQueryResult> {
   const enumTable = getEnumTable(prisma, table)
   const skip = (page - 1) * limit
 
-  const where = search
-    ? { name: { contains: search, mode: 'insensitive' as const } }
-    : undefined
+  const where = search ? { name: { contains: search, mode: 'insensitive' as const } } : undefined
 
   const [data, total] = await Promise.all([
     enumTable.findMany({ where, orderBy: { name: 'asc' }, skip, take: limit }),
-    enumTable.count({ where })
+    enumTable.count({ where }),
   ])
 
   return {
@@ -56,7 +59,7 @@ export async function listEnums({ table, search, page, limit }: ListParams): Pro
     total,
     page,
     limit,
-    totalPages: Math.ceil(total / limit)
+    totalPages: Math.ceil(total / limit),
   }
 }
 
@@ -64,7 +67,7 @@ export async function createEnum(table: ValidatedEnumTableName, input: CreateEnu
   const enumTable = getEnumTable(prisma, table)
 
   const duplicate = await enumTable.findFirst({
-    where: { name: { equals: input.name, mode: 'insensitive' as const } }
+    where: { name: { equals: input.name, mode: 'insensitive' as const } },
   })
   if (duplicate) {
     throw new ServiceError('Enum value already exists', 409)
@@ -85,9 +88,9 @@ export async function updateEnum(table: ValidatedEnumTableName, input: UpdateEnu
     where: {
       AND: [
         { id: { not: input.id } },
-        { name: { equals: input.name, mode: 'insensitive' as const } }
-      ]
-    }
+        { name: { equals: input.name, mode: 'insensitive' as const } },
+      ],
+    },
   })
   if (duplicate) {
     throw new ServiceError('Enum value name already exists', 409)

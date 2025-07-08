@@ -51,7 +51,6 @@ interface MultiSelectChipsProps {
 }
 
 const MultiSelectChips = ({
-
   options,
   selectedValues,
   onChange,
@@ -59,7 +58,7 @@ const MultiSelectChips = ({
   label,
   placeholder = 'Search...',
   error,
-  disabled = false
+  disabled = false,
 }: MultiSelectChipsProps): JSX.Element => {
   const {
     isOpen,
@@ -76,7 +75,7 @@ const MultiSelectChips = ({
     handleSearchChange,
     handleContainerClick,
     handleKeyDown,
-    handleClearAll
+    handleClearAll,
   } = useMultiSelect({ options, selectedValues, onChange, disabled })
 
   const controlId = useMemo(() => `multiselect-${name}`, [name])
@@ -90,7 +89,7 @@ const MultiSelectChips = ({
   )
 
   return (
-    <div 
+    <div
       className={`${styles.container} ${isOpen ? styles.open : ''}`}
       ref={containerRef}
       onKeyDown={handleKeyDown}
@@ -100,7 +99,7 @@ const MultiSelectChips = ({
           {label}
         </label>
       )}
-      
+
       <div
         className={`${styles.chipContainer} ${disabled ? styles.disabled : ''} ${error ? styles.hasError : ''}`}
         onClick={handleContainerClick}
@@ -111,7 +110,7 @@ const MultiSelectChips = ({
         aria-haspopup="listbox"
       >
         <div className={styles.chipList}>
-          {selectedOptions.map(option => (
+          {selectedOptions.map((option) => (
             <Chip
               key={option.id}
               option={option}
@@ -133,7 +132,7 @@ const MultiSelectChips = ({
             aria-autocomplete="list"
           />
         </div>
-        
+
         <div className={styles.actionsWrapper}>
           {selectedOptions.length > 0 && (
             <button
@@ -142,8 +141,14 @@ const MultiSelectChips = ({
               aria-label="Clear all selections"
               type="button"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+              >
+                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
               </svg>
             </button>
           )}
@@ -163,7 +168,7 @@ const MultiSelectChips = ({
           </div>
         </div>
       </div>
-      
+
       <DropdownMenu
         isOpen={isOpen}
         dropdownRef={dropdownRef}

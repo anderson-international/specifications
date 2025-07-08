@@ -17,7 +17,7 @@ export async function getSpecificationEnumData(): Promise<SpecificationEnumData>
       tastingNotes,
       nicotineLevels,
       moistureLevels,
-      specificationStatuses
+      specificationStatuses,
     ] = await Promise.all([
       prisma.enum_product_types.findMany({ orderBy: { name: 'asc' } }),
       prisma.enum_product_brands.findMany({ orderBy: { name: 'asc' } }),
@@ -28,23 +28,26 @@ export async function getSpecificationEnumData(): Promise<SpecificationEnumData>
       prisma.enum_tasting_notes.findMany({ orderBy: { name: 'asc' } }),
       prisma.enum_nicotine_levels.findMany({ orderBy: { name: 'asc' } }),
       prisma.enum_moisture_levels.findMany({ orderBy: { name: 'asc' } }),
-      prisma.enum_specification_statuses.findMany({ orderBy: { name: 'asc' } })
+      prisma.enum_specification_statuses.findMany({ orderBy: { name: 'asc' } }),
     ])
 
     return {
       productTypes: productTypes.map((item): EnumValue => ({ id: item.id, name: item.name })),
       productBrands: productBrands.map((item): EnumValue => ({ id: item.id, name: item.name })),
-      experienceLevels: experienceLevels.map((item): EnumValue => ({ id: item.id, name: item.name })),
+      experienceLevels: experienceLevels.map(
+        (item): EnumValue => ({ id: item.id, name: item.name })
+      ),
       tobaccoTypes: tobaccoTypes.map((item): EnumValue => ({ id: item.id, name: item.name })),
       cures: cures.map((item): EnumValue => ({ id: item.id, name: item.name })),
       grinds: grinds.map((item): EnumValue => ({ id: item.id, name: item.name })),
       tastingNotes: tastingNotes.map((item): EnumValue => ({ id: item.id, name: item.name })),
       nicotineLevels: nicotineLevels.map((item): EnumValue => ({ id: item.id, name: item.name })),
       moistureLevels: moistureLevels.map((item): EnumValue => ({ id: item.id, name: item.name })),
-      specificationStatuses: specificationStatuses.map((item): EnumValue => ({ id: item.id, name: item.name }))
+      specificationStatuses: specificationStatuses.map(
+        (item): EnumValue => ({ id: item.id, name: item.name })
+      ),
     }
-  } catch (error) {
-    console.error('Error fetching specification enum data:', error)
+  } catch (_error) {
     throw new Error('Failed to fetch enum data for specification form')
   } finally {
     await prisma.$disconnect()
@@ -59,12 +62,15 @@ export async function getSpecificationEnumData(): Promise<SpecificationEnumData>
 export async function getEnumData(tableName: string): Promise<EnumValue[]> {
   try {
     // Use PrismaClient with dynamic table name access
-    const data = await (prisma as unknown as Record<string, { findMany: Function }>)[tableName].findMany({ 
-      orderBy: { name: 'asc' } 
+    const data = await (prisma as unknown as Record<string, { findMany: Function }>)[
+      tableName
+    ].findMany({
+      orderBy: { name: 'asc' },
     })
-    return data.map((item: { id: number; name: string }): EnumValue => ({ id: item.id, name: item.name }))
-  } catch (error) {
-    console.error(`Error fetching enum data for ${tableName}:`, error)
+    return data.map(
+      (item: { id: number; name: string }): EnumValue => ({ id: item.id, name: item.name })
+    )
+  } catch (_error) {
     throw new Error(`Failed to fetch enum data for ${tableName}`)
   } finally {
     await prisma.$disconnect()

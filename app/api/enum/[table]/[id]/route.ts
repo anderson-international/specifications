@@ -58,4 +58,3 @@ export async function DELETE(
     return createApiResponse(null, 'Enum value deleted successfully')
   })
 }
-

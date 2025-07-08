@@ -3,5 +3,5 @@
  * Supports both single and multi-select modes with filtering
  */
 
-export { default } from './ProductSelector';
-export type { ProductSelectorProps, Product } from './product-selector-interfaces';
+export { default } from './ProductSelector'
+export type { ProductSelectorProps, Product } from './product-selector-interfaces'

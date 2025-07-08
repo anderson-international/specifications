@@ -6,9 +6,7 @@ import { ServiceError } from '@/lib/services/enumService'
  * Parse and validate the JSON body of a request using the provided Zod schema.
  * Throws ServiceError on validation failure.
  */
-export async function withJsonBody<T>(
-  request: NextRequest,
-): Promise<T> {
+export async function withJsonBody<T>(request: NextRequest): Promise<T> {
   let body: unknown
   try {
     body = await request.json()
@@ -21,9 +19,7 @@ export async function withJsonBody<T>(
 /**
  * Parse and validate URL query parameters with the given Zod schema.
  */
-export function withQuery<T>(
-  request: NextRequest,
-): T {
+export function withQuery<T>(request: NextRequest): T {
   const url = new URL(request.url)
   const params: Record<string, string | null> = {}
   url.searchParams.forEach((value, key) => {

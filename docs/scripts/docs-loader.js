@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('fs')
+const path = require('path')
 
 /**
  * Minimal Document Loader
@@ -11,47 +11,47 @@ const path = require('path');
 
 function loadDocument(docName) {
   if (!docName || docName === '--help' || docName === '-h') {
-    console.error('Usage: node docs-loader.js <document-name>');
-    console.error('Example: node docs-loader.js code-critical');
-    process.exit(1);
+    console.error('Usage: node docs-loader.js <document-name>')
+    console.error('Example: node docs-loader.js code-critical')
+    process.exit(1)
   }
 
   // Map document name to file path
-  const docsDir = path.join(__dirname, '..');
+  const docsDir = path.join(__dirname, '..')
   const possiblePaths = [
     path.join(docsDir, 'guides', `${docName}.md`),
     path.join(docsDir, 'project', `${docName}.md`),
-    path.join(docsDir, 'ai-reference', `${docName}.md`)
-  ];
+    path.join(docsDir, 'ai-reference', `${docName}.md`),
+  ]
 
   // Find the document file
-  let filePath = null;
+  let filePath = null
   for (const testPath of possiblePaths) {
     if (fs.existsSync(testPath)) {
-      filePath = testPath;
-      break;
+      filePath = testPath
+      break
     }
   }
 
   if (!filePath) {
-    console.error(`Error: Document '${docName}' not found in any docs directory`);
-    process.exit(1);
+    console.error(`Error: Document '${docName}' not found in any docs directory`)
+    process.exit(1)
   }
 
   try {
     // Read and output document content
-    const content = fs.readFileSync(filePath, 'utf8');
-    process.stdout.write(content);
+    const content = fs.readFileSync(filePath, 'utf8')
+    process.stdout.write(content)
   } catch (error) {
-    console.error(`Error reading document '${docName}': ${error.message}`);
-    process.exit(1);
+    console.error(`Error reading document '${docName}': ${error.message}`)
+    process.exit(1)
   }
 }
 
 // Execute if called directly
 if (require.main === module) {
-  const docName = process.argv[2];
-  loadDocument(docName);
+  const docName = process.argv[2]
+  loadDocument(docName)
 }
 
-module.exports = { loadDocument };
+module.exports = { loadDocument }

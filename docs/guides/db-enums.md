@@ -1,6 +1,6 @@
 # Database Enums
 
-*Enum table integration, junction table handling, and field components.*
+_Enum table integration, junction table handling, and field components._
 
 <!-- AI_QUICK_REF
 Overview: Enum integration patterns, junction table handling, and reusable field components
@@ -47,11 +47,11 @@ const useEnumData = (enumType: string) => {
     queryKey: ['enum', enumType],
     queryFn: () => fetchEnumData(enumType),
     staleTime: 10 * 60 * 1000, // 10 minutes - enums rarely change
-  });
-};
+  })
+}
 
 // Usage
-const { data: productTypes } = useEnumData('product_types');
+const { data: productTypes } = useEnumData('product_types')
 ```
 
 ## Junction Table Handling
@@ -97,20 +97,20 @@ const TastingNotesMultiSelect = ({ control }: FormFieldProps): JSX.Element => {
 ```typescript
 // Transform form data for junction table creation
 const transformSpecificationData = (formData: SpecificationFormData) => {
-  const { tasting_note_ids, cure_ids, tobacco_type_ids, ...coreData } = formData;
+  const { tasting_note_ids, cure_ids, tobacco_type_ids, ...coreData } = formData
 
   return {
     // Core specification data
     specification: coreData,
-    
+
     // Junction table data arrays
     junctionData: {
-      spec_tasting_notes: tasting_note_ids?.map(id => ({ tasting_note_id: id })) || [],
-      spec_cures: cure_ids?.map(id => ({ cure_id: id })) || [],
-      spec_tobacco_types: tobacco_type_ids?.map(id => ({ tobacco_type_id: id })) || []
-    }
-  };
-};
+      spec_tasting_notes: tasting_note_ids?.map((id) => ({ tasting_note_id: id })) || [],
+      spec_cures: cure_ids?.map((id) => ({ cure_id: id })) || [],
+      spec_tobacco_types: tobacco_type_ids?.map((id) => ({ tobacco_type_id: id })) || [],
+    },
+  }
+}
 ```
 
 ### Schema Validation for Junction Tables
@@ -119,17 +119,17 @@ const transformSpecificationData = (formData: SpecificationFormData) => {
 // Schema validation with junction table arrays
 const SpecificationFormSchema = z.object({
   // Core fields
-  shopify_handle: z.string().min(1, "Product selection required"),
-  product_type_id: z.number().min(1, "Product type required"),
-  
+  shopify_handle: z.string().min(1, 'Product selection required'),
+  product_type_id: z.number().min(1, 'Product type required'),
+
   // Junction table arrays
-  tasting_note_ids: z.array(z.number()).min(1, "Select at least one tasting note"),
+  tasting_note_ids: z.array(z.number()).min(1, 'Select at least one tasting note'),
   cure_ids: z.array(z.number()).default([]),
-  
+
   // Boolean fields with defaults
   is_fermented: z.boolean().default(false),
-  is_oral_tobacco: z.boolean().default(false)
-});
+  is_oral_tobacco: z.boolean().default(false),
+})
 ```
 
 ## Field Components
@@ -194,28 +194,34 @@ const StarRating = ({ control, name }: RatingFieldProps): JSX.Element => {
 ```typescript
 // Cache enum data globally to prevent repeated fetches
 const useEnumCache = () => {
-  const queryClient = useQueryClient();
-  
+  const queryClient = useQueryClient()
+
   const preloadEnums = useCallback(async (): Promise<void> => {
     const enumTypes = [
-      'product_types', 'grinds', 'nicotine_levels', 
-      'experience_levels', 'moisture_levels', 'product_brands',
-      'tasting_notes', 'cures', 'tobacco_types'
-    ];
+      'product_types',
+      'grinds',
+      'nicotine_levels',
+      'experience_levels',
+      'moisture_levels',
+      'product_brands',
+      'tasting_notes',
+      'cures',
+      'tobacco_types',
+    ]
 
     await Promise.all(
-      enumTypes.map(type => 
+      enumTypes.map((type) =>
         queryClient.prefetchQuery({
           queryKey: ['enum', type],
           queryFn: () => fetchEnumData(type),
-          staleTime: 10 * 60 * 1000 // 10 minutes
+          staleTime: 10 * 60 * 1000, // 10 minutes
         })
       )
-    );
-  }, [queryClient]);
+    )
+  }, [queryClient])
 
-  return { preloadEnums };
-};
+  return { preloadEnums }
+}
 ```
 
-*Database schema annotations are maintained in `docs/project/db-schema.md`. Update annotations when schema changes to maintain form implementation guidance.*
+_Database schema annotations are maintained in `docs/project/db-schema.md`. Update annotations when schema changes to maintain form implementation guidance._

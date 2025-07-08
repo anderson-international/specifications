@@ -13,20 +13,12 @@ interface UseStepValidationProps {
  * Custom hook for step validation logic
  * Returns whether the current step is valid for Next button state
  */
-export const useStepValidation = ({
-  currentStepId,
-  methods
-}: UseStepValidationProps): boolean => {
+export const useStepValidation = ({ currentStepId, methods }: UseStepValidationProps): boolean => {
   const validationFields: Record<string, Path<WizardFormData>[]> = {
     product: ['shopify_handle'],
-    characteristics: [
-      'grind_id',
-      'experience_level_id',
-      'nicotine_level_id',
-      'moisture_level_id'
-    ],
+    characteristics: ['grind_id', 'experience_level_id', 'nicotine_level_id', 'moisture_level_id'],
     tasting: ['tasting_notes', 'cures', 'tobacco_types'],
-    review: ['review', 'star_rating']
+    review: ['review', 'star_rating'],
   }
 
   const fieldsToWatch = validationFields[currentStepId] || []

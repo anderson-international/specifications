@@ -19,14 +19,13 @@ export function useProducts() {
         throw new Error(`Failed to fetch products: ${response.status}`)
       }
       const data = await response.json()
-      
+
       // Handle cache warming state
       if (data.warming) {
-        console.log('Cache is warming, retrying in 2 seconds...')
         setTimeout(() => fetchProducts(), 2000)
         return
       }
-      
+
       setProducts(data.products)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error occurred')
@@ -44,20 +43,20 @@ export function useProducts() {
 
     if (searchTerm) {
       filtered = filtered.filter(
-        product =>
+        (product) =>
           product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           product.brand.toLowerCase().includes(searchTerm.toLowerCase())
       )
     }
 
     if (selectedBrand) {
-      filtered = filtered.filter(product => product.brand === selectedBrand)
+      filtered = filtered.filter((product) => product.brand === selectedBrand)
     }
 
     return filtered
   }, [products, searchTerm, selectedBrand])
 
-  const availableBrands = useMemo(() => [...new Set(products.map(p => p.brand))], [products])
+  const availableBrands = useMemo(() => [...new Set(products.map((p) => p.brand))], [products])
 
   return {
     isLoading,

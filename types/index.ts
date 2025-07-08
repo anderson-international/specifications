@@ -30,7 +30,7 @@ export interface Specification {
   rating_boost: number
   created_at?: Date
   updated_at?: Date
-  
+
   // Relations (when included)
   users?: User
   enum_specification_statuses?: EnumStatus
@@ -69,13 +69,13 @@ export interface PaginationInfo {
 
 // Authentication types
 export interface AuthUser {
-  id: string                    // UUID from database
-  name: string | null          // TEXT, nullable
-  email: string               // TEXT, required (NOT NULL)
-  role_id: number             // INTEGER, required FK to enum_roles.id
-  role_name: string           // Computed from enum_roles.name via relationship
-  created_at?: string         // TIMESTAMP WITH TIME ZONE
-  slack_userid?: string | null // CHARACTER VARYING(30), nullable  
+  id: string // UUID from database
+  name: string | null // TEXT, nullable
+  email: string // TEXT, required (NOT NULL)
+  role_id: number // INTEGER, required FK to enum_roles.id
+  role_name: string // Computed from enum_roles.name via relationship
+  created_at?: string // TIMESTAMP WITH TIME ZONE
+  slack_userid?: string | null // CHARACTER VARYING(30), nullable
   jotform_name?: string | null // CHARACTER VARYING(100), nullable
 }
 
@@ -88,8 +88,8 @@ export interface AuthContextType {
 // User roles mapping
 export const USER_ROLES = {
   1: 'Admin',
-  2: 'Expert', 
-  3: 'Public'
+  2: 'Expert',
+  3: 'Public',
 } as const
 
 export type UserRole = keyof typeof USER_ROLES

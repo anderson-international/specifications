@@ -14,7 +14,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const where = {
       ...(userId && { user_id: userId }),
-      ...(status && { enum_specification_statuses: { name: status } })
+      ...(status && { enum_specification_statuses: { name: status } }),
     }
 
     const [specifications, total] = await Promise.all([
@@ -22,20 +22,20 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         where,
         include: {
           users: {
-            select: { id: true, name: true, email: true }
+            select: { id: true, name: true, email: true },
           },
           enum_specification_statuses: {
-            select: { id: true, name: true }
+            select: { id: true, name: true },
           },
           enum_product_brands: {
-            select: { id: true, name: true }
-          }
+            select: { id: true, name: true },
+          },
         },
         skip,
         take: limit,
-        orderBy: { updated_at: 'desc' }
+        orderBy: { updated_at: 'desc' },
       }),
-      prisma.specifications.count({ where })
+      prisma.specifications.count({ where }),
     ])
 
     return {
@@ -44,8 +44,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         page,
         limit,
         total,
-        totalPages: Math.ceil(total / limit)
-      }
+        totalPages: Math.ceil(total / limit),
+      },
     }
   })
 }
@@ -53,31 +53,114 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 export async function POST(request: NextRequest): Promise<NextResponse> {
   return withErrorHandling(async () => {
     const body = await request.json()
-    
-    // Basic validation - full validation would use Zod schemas
-    const { shopify_handle, user_id, ...specData } = body
-    
-    if (!shopify_handle || !user_id) {
+    const { specification, junctionData } = body
+
+    // Validate required fields
+    if (!specification?.shopify_handle || !specification?.user_id) {
       return createApiError('Missing required fields: shopify_handle, user_id', 400)
     }
 
-    const specification = await prisma.specifications.create({
-      data: {
-        shopify_handle,
-        user_id,
-        ...specData,
-        status_id: 2 // Default to 'Needs Revision'
-      },
-      include: {
-        users: {
-          select: { id: true, name: true, email: true }
+    if (
+      !specification.star_rating ||
+      specification.star_rating < 1 ||
+      specification.star_rating > 5
+    ) {
+      return createApiError('Star rating must be between 1 and 5', 400)
+    }
+
+    if (!junctionData?.tasting_note_ids || junctionData.tasting_note_ids.length === 0) {
+      return createApiError('At least one tasting note is required', 400)
+    }
+
+    // Use atomic transaction to ensure data consistency
+    const result = await prisma.$transaction(async (tx) => {
+      // Create the core specification
+      const newSpecification = await tx.specifications.create({
+        data: {
+          shopify_handle: specification.shopify_handle,
+          product_type_id: specification.product_type_id,
+          is_fermented: specification.is_fermented,
+          is_oral_tobacco: specification.is_oral_tobacco,
+          is_artisan: specification.is_artisan,
+          grind_id: specification.grind_id,
+          nicotine_level_id: specification.nicotine_level_id,
+          experience_level_id: specification.experience_level_id,
+          review: specification.review,
+          star_rating: specification.star_rating,
+          rating_boost: specification.rating_boost,
+          user_id: specification.user_id,
+          moisture_level_id: specification.moisture_level_id,
+          product_brand_id: specification.product_brand_id,
+          status_id: specification.status_id,
         },
-        enum_specification_statuses: {
-          select: { id: true, name: true }
-        }
+      })
+
+      // Create junction table entries
+      if (junctionData.tasting_note_ids.length > 0) {
+        await tx.spec_tasting_notes.createMany({
+          data: junctionData.tasting_note_ids.map((id: number) => ({
+            specification_id: newSpecification.id,
+            enum_tasting_note_id: id,
+          })),
+        })
       }
+
+      if (junctionData.cure_ids.length > 0) {
+        await tx.spec_cures.createMany({
+          data: junctionData.cure_ids.map((id: number) => ({
+            specification_id: newSpecification.id,
+            enum_cure_id: id,
+          })),
+        })
+      }
+
+      if (junctionData.tobacco_type_ids.length > 0) {
+        await tx.spec_tobacco_types.createMany({
+          data: junctionData.tobacco_type_ids.map((id: number) => ({
+            specification_id: newSpecification.id,
+            enum_tobacco_type_id: id,
+          })),
+        })
+      }
+
+      // Return the created specification with relations
+      return await tx.specifications.findUnique({
+        where: { id: newSpecification.id },
+        include: {
+          users: {
+            select: { id: true, name: true, email: true },
+          },
+          enum_specification_statuses: {
+            select: { id: true, name: true },
+          },
+          enum_product_brands: {
+            select: { id: true, name: true },
+          },
+          spec_tasting_notes: {
+            include: {
+              enum_tasting_notes: {
+                select: { id: true, name: true },
+              },
+            },
+          },
+          spec_cures: {
+            include: {
+              enum_cures: {
+                select: { id: true, name: true },
+              },
+            },
+          },
+          spec_tobacco_types: {
+            include: {
+              enum_tobacco_types: {
+                select: { id: true, name: true },
+              },
+            },
+          },
+        },
+      })
     })
 
-    return specification
+    return result
   })
 }

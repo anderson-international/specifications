@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Specification, SpecificationStatus } from '@/types/specification'
+import { Specification } from '@/types/specification'
 
 interface UseSpecificationFiltersReturn {
   statusFilter: string
@@ -18,28 +18,34 @@ interface UseSpecificationFiltersReturn {
   }
 }
 
-export function useSpecificationFilters(specifications: Specification[]): UseSpecificationFiltersReturn {
+export function useSpecificationFilters(
+  specifications: Specification[]
+): UseSpecificationFiltersReturn {
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState<string>('')
 
   // Filter specifications based on search and status - using useMemo to prevent infinite loops
   const filteredSpecs = useMemo((): Specification[] => {
-    return specifications.filter(spec => {
-      const matchesSearch = spec.product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           spec.product.brand.toLowerCase().includes(searchQuery.toLowerCase())
+    return specifications.filter((spec) => {
+      const matchesSearch =
+        spec.product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        spec.product.brand.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesStatus = statusFilter === 'all' || spec.status === statusFilter
       return matchesSearch && matchesStatus
     })
   }, [specifications, searchQuery, statusFilter])
 
   // Group specifications by status - using useMemo for performance
-  const groupedSpecs = useMemo(() => ({
-    draft: filteredSpecs.filter(spec => spec.status === 'draft'),
-    pending_review: filteredSpecs.filter(spec => spec.status === 'pending_review'),
-    approved: filteredSpecs.filter(spec => spec.status === 'approved'),
-    rejected: filteredSpecs.filter(spec => spec.status === 'rejected'),
-    published: filteredSpecs.filter(spec => spec.status === 'published')
-  }), [filteredSpecs])
+  const groupedSpecs = useMemo(
+    () => ({
+      draft: filteredSpecs.filter((spec) => spec.status === 'draft'),
+      pending_review: filteredSpecs.filter((spec) => spec.status === 'pending_review'),
+      approved: filteredSpecs.filter((spec) => spec.status === 'approved'),
+      rejected: filteredSpecs.filter((spec) => spec.status === 'rejected'),
+      published: filteredSpecs.filter((spec) => spec.status === 'published'),
+    }),
+    [filteredSpecs]
+  )
 
   return {
     statusFilter,
@@ -47,6 +53,6 @@ export function useSpecificationFilters(specifications: Specification[]): UseSpe
     setStatusFilter,
     setSearchQuery,
     filteredSpecs,
-    groupedSpecs
+    groupedSpecs,
   }
 }

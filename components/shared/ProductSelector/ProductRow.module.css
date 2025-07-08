@@ -18,12 +18,12 @@
 
 .productRow:focus {
   outline: none;
-  border-color: #1878B9;
+  border-color: #1878b9;
   box-shadow: 0 0 0 2px rgba(24, 120, 185, 0.3);
 }
 
 .productRow.selected {
-  border-color: #1878B9;
+  border-color: #1878b9;
   background-color: #1a2332;
   box-shadow: 0 0 0 1px rgba(24, 120, 185, 0.3);
 }
@@ -68,5 +68,5 @@
 .checkboxInput {
   width: 16px;
   height: 16px;
-  accent-color: #1878B9;
+  accent-color: #1878b9;
 }

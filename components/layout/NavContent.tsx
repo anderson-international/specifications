@@ -1,9 +1,9 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
-import { useDashboardStats } from '@/hooks/useDashboardStats'
+
 import styles from './AppLayout.module.css'
 
 const NavContent = (): JSX.Element => {
@@ -12,12 +12,32 @@ const NavContent = (): JSX.Element => {
   return (
     <div className={styles.navContent}>
       <ul className={styles.navLinks}>
-        <li><Link href="/" className={styles.navLink}>Dashboard</Link></li>
-        <li><Link href="/products" className={styles.navLink}>Products</Link></li>
-        <li><Link href="/specifications" className={styles.navLink}>My Specifications</Link></li>
-        <li><Link href="/specifications/new" className={styles.navLink}>New Specification</Link></li>
+        <li>
+          <Link href="/" className={styles.navLink}>
+            Dashboard
+          </Link>
+        </li>
+        <li>
+          <Link href="/products" className={styles.navLink}>
+            Products
+          </Link>
+        </li>
+        <li>
+          <Link href="/specifications" className={styles.navLink}>
+            My Specifications
+          </Link>
+        </li>
+        <li>
+          <Link href="/specifications/new" className={styles.navLink}>
+            New Specification
+          </Link>
+        </li>
         {isAdmin && (
-          <li><Link href="/admin" className={styles.navLink}>Admin</Link></li>
+          <li>
+            <Link href="/admin" className={styles.navLink}>
+              Admin
+            </Link>
+          </li>
         )}
       </ul>
     </div>

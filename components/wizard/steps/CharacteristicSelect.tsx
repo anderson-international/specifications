@@ -23,18 +23,12 @@ const CharacteristicSelect = ({
   value,
   onChange,
   options,
-  disabled = false
+  disabled = false,
 }: CharacteristicSelectProps): JSX.Element => (
   <div>
-    <select
-      id={id}
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
-      className={styles.select}
-    >
+    <select id={id} value={value} onChange={onChange} disabled={disabled} className={styles.select}>
       <option value="">{label}</option>
-      {options.map(option => (
+      {options.map((option) => (
         <option key={option.id} value={option.id}>
           {option.label}
         </option>

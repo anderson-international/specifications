@@ -2,18 +2,14 @@
 
 import React, { useCallback } from 'react'
 import ProductSelector from '@/components/shared/ProductSelector'
-import { useDashboardStats } from '@/hooks/useDashboardStats'
 import styles from './products.module.css'
 
 // Stable empty array to prevent infinite re-renders
 const EMPTY_SELECTION: string[] = []
 
 export default function ProductsPage(): JSX.Element {
-  const { stats } = useDashboardStats()
-
   const handleProductSelection = useCallback((productIds: string[]) => {
-    // For testing multi-select: log the selected products
-    console.log('Products selected:', productIds)
+    // For testing multi-select: show alert with selected products
     alert(`Selected ${productIds.length} products: ${productIds.join(', ')}`)
   }, [])
 
@@ -33,4 +29,3 @@ export default function ProductsPage(): JSX.Element {
     </div>
   )
 }
-

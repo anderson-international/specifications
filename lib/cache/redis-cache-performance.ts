@@ -37,8 +37,9 @@ export class CachePerformanceMonitor {
 
   static getMetrics(): PerformanceMetrics {
     const totalRequests = CachePerformanceMonitor.cacheHits + CachePerformanceMonitor.cacheMisses
-    const hitRate = totalRequests > 0 ? Math.round((CachePerformanceMonitor.cacheHits / totalRequests) * 100) : 0
-    
+    const hitRate =
+      totalRequests > 0 ? Math.round((CachePerformanceMonitor.cacheHits / totalRequests) * 100) : 0
+
     return {
       cacheHits: CachePerformanceMonitor.cacheHits,
       cacheMisses: CachePerformanceMonitor.cacheMisses,
@@ -46,7 +47,8 @@ export class CachePerformanceMonitor {
       hitRatePercentage: hitRate,
       lastHitTime: CachePerformanceMonitor.lastHitTime?.toISOString() || null,
       lastMissTime: CachePerformanceMonitor.lastMissTime?.toISOString() || null,
-      efficiency: hitRate >= 80 ? 'excellent' : hitRate >= 60 ? 'good' : hitRate >= 40 ? 'fair' : 'poor'
+      efficiency:
+        hitRate >= 80 ? 'excellent' : hitRate >= 60 ? 'good' : hitRate >= 40 ? 'fair' : 'poor',
     }
   }
 
@@ -55,7 +57,6 @@ export class CachePerformanceMonitor {
     CachePerformanceMonitor.cacheMisses = 0
     CachePerformanceMonitor.lastHitTime = null
     CachePerformanceMonitor.lastMissTime = null
-    console.log('📊 Cache performance counters reset')
   }
 
   static getCacheHits(): number {

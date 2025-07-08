@@ -19,8 +19,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Auth Container */
@@ -141,11 +145,11 @@
     gap: 1rem;
     text-align: center;
   }
-  
+
   .userInfo {
     justify-content: center;
   }
-  
+
   .main {
     padding: 1rem;
   }

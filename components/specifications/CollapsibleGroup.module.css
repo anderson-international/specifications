@@ -82,15 +82,15 @@
   .header {
     padding: 1rem;
   }
-  
+
   .title {
     font-size: 1.125rem;
   }
-  
+
   .contentInner {
     padding: 0 1rem 1rem 1rem;
   }
-  
+
   .contentInner > * + * {
     margin-top: 0.75rem;
   }

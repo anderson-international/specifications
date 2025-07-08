@@ -1,13 +1,13 @@
-'use client';
+'use client'
 
-import React, { useState, useCallback, useMemo } from 'react';
-import { FilterControls } from '@/components/shared/FilterControls';
-import ProductRow from './ProductRow';
-import SelectedProductsModal from './SelectedProductsModal';
-import { useProductSelector } from './useProductSelector';
-import { createFilterConfig, shouldShowClearAll } from './product-selector-ui-utils';
-import type { ProductSelectorProps } from './product-selector-interfaces';
-import styles from './ProductSelector.module.css';
+import React, { useState, useCallback, useMemo } from 'react'
+import { FilterControls } from '@/components/shared/FilterControls'
+import ProductRow from './ProductRow'
+import SelectedProductsModal from './SelectedProductsModal'
+import { useProductSelector } from './useProductSelector'
+import { createFilterConfig, shouldShowClearAll } from './product-selector-ui-utils'
+import type { ProductSelectorProps } from './product-selector-interfaces'
+import styles from './ProductSelector.module.css'
 
 const ProductSelector = ({
   mode,
@@ -15,9 +15,9 @@ const ProductSelector = ({
   initialSelection = [],
   title = 'Select Products',
   searchPlaceholder = 'Search products...',
-  disabled = false
+  disabled = false,
 }: ProductSelectorProps): JSX.Element => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const {
     filteredProducts,
@@ -34,47 +34,56 @@ const ProductSelector = ({
     handleRemoveProduct,
     handleClearAll,
     handleConfirmSelection,
-    brandOptions
-  } = useProductSelector({ mode, initialSelection, onSelectionChange });
+    brandOptions,
+  } = useProductSelector({ mode, initialSelection, onSelectionChange })
 
-  const handleOpenModal = useCallback(() => setIsModalOpen(true), []);
-  const handleCloseModal = useCallback(() => setIsModalOpen(false), []);
-  
+  const handleOpenModal = useCallback(() => setIsModalOpen(true), [])
+  const handleCloseModal = useCallback(() => setIsModalOpen(false), [])
+
   const handleModalConfirm = useCallback(() => {
-    handleConfirmSelection();
-    setIsModalOpen(false);
-  }, [handleConfirmSelection]);
+    handleConfirmSelection()
+    setIsModalOpen(false)
+  }, [handleConfirmSelection])
 
   // Wrap state setters in useCallback for performance
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchTerm(value);
-  }, [setSearchTerm]);
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchTerm(value)
+    },
+    [setSearchTerm]
+  )
 
-  const handleBrandChange = useCallback((value: string) => {
-    setSelectedBrand(value);
-  }, [setSelectedBrand]);
+  const handleBrandChange = useCallback(
+    (value: string) => {
+      setSelectedBrand(value)
+    },
+    [setSelectedBrand]
+  )
 
-  const handleFilterChange = useCallback((id: string, value: string) => {
-    if (id === 'brand') handleBrandChange(value);
-  }, [handleBrandChange]);
+  const handleFilterChange = useCallback(
+    (id: string, value: string) => {
+      if (id === 'brand') handleBrandChange(value)
+    },
+    [handleBrandChange]
+  )
 
   // Memoize utility function calls
-  const filterConfig = useMemo(() => 
-    createFilterConfig(selectedBrand, brandOptions), 
+  const filterConfig = useMemo(
+    () => createFilterConfig(selectedBrand, brandOptions),
     [selectedBrand, brandOptions]
-  );
+  )
 
-  const showClearAll = useMemo(() => 
-    shouldShowClearAll(searchTerm, selectedBrand), 
+  const showClearAll = useMemo(
+    () => shouldShowClearAll(searchTerm, selectedBrand),
     [searchTerm, selectedBrand]
-  );
+  )
 
   if (error) {
     return (
       <div className={styles.container}>
         <div className={styles.error}>Error loading products: {error}</div>
       </div>
-    );
+    )
   }
 
   return (
@@ -118,9 +127,9 @@ const ProductSelector = ({
           {filteredProducts.map((product) => {
             // Fail fast: product.handle must exist (no fallback data)
             if (!product.handle) {
-              throw new Error(`Product missing required handle: ${JSON.stringify(product)}`);
+              throw new Error(`Product missing required handle: ${JSON.stringify(product)}`)
             }
-            
+
             return (
               <ProductRow
                 key={product.handle}
@@ -130,7 +139,7 @@ const ProductSelector = ({
                 disabled={disabled}
                 mode={mode}
               />
-            );
+            )
           })}
         </div>
       )}
@@ -155,7 +164,7 @@ const ProductSelector = ({
         onConfirm={handleModalConfirm}
       />
     </div>
-  );
-};
+  )
+}
 
-export default React.memo(ProductSelector);
+export default React.memo(ProductSelector)

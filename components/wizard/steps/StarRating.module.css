@@ -17,9 +17,11 @@
   cursor: pointer;
   padding: 0; /* Remove padding */
   color: #4a5568;
-  transition: transform 0.15s ease, color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease;
   height: 32px; /* Reduce size for alignment */
-  width: 32px;  /* Reduce size for alignment */
+  width: 32px; /* Reduce size for alignment */
   display: flex;
   align-items: center;
   justify-content: center;

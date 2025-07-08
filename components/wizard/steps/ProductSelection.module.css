@@ -15,7 +15,7 @@
   width: 100%;
 }
 
-.filterRow > div[role="group"] {
+.filterRow > div[role='group'] {
   flex: 1;
   min-width: 0;
 }
@@ -27,7 +27,7 @@
   width: 100%;
 }
 
-.searchRow > div[role="group"] {
+.searchRow > div[role='group'] {
   flex: 1;
   min-width: 0;
 }
@@ -41,12 +41,12 @@
   min-width: 0;
 }
 
-.filterSearchContainer > div[role="group"]:first-child {
+.filterSearchContainer > div[role='group']:first-child {
   flex: 0 0 180px;
   max-width: 180px;
 }
 
-.filterSearchContainer > div[role="group"]:nth-child(2) {
+.filterSearchContainer > div[role='group']:nth-child(2) {
   flex: 1;
   min-width: 0;
   width: 100%;
@@ -308,16 +308,16 @@
   .brandButtons {
     justify-content: center;
   }
-  
+
   .brandButton {
     flex: 1;
     min-width: 80px;
   }
-  
+
   .productCard {
     padding: 0.75rem;
   }
-  
+
   .productInfo {
     gap: 0.125rem;
   }
@@ -327,12 +327,12 @@
   .filterSearchContainer {
     flex-direction: column;
   }
-  
-  .filterSearchContainer > div[role="group"]:first-child {
+
+  .filterSearchContainer > div[role='group']:first-child {
     flex: none;
     max-width: none;
   }
-  
+
   .filterRow,
   .searchRow {
     flex-direction: column;

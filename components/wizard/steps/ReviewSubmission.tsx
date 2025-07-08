@@ -24,34 +24,36 @@ interface ReviewSubmissionFormData {
 const ReviewSubmission = ({
   stepNumber,
   totalSteps,
-  disabled = false
+  disabled = false,
 }: ReviewSubmissionProps): JSX.Element => {
-  const { 
-    watch, 
-    setValue
-  } = useFormContext<ReviewSubmissionFormData>()
-  
-  const {
-    review = '',
-    star_rating: starRating = 2,
-    rating_boost: ratingBoost = 0
-  } = watch()
+  const { watch, setValue } = useFormContext<ReviewSubmissionFormData>()
 
-  const handleStarRatingChange = useCallback((value: number) => {
-    setValue('star_rating', value, { shouldValidate: true })
-    if (value === 5) {
-      setValue('rating_boost', 0, { shouldValidate: true })
-    }
-  }, [setValue])
+  const { review = '', star_rating: starRating = 2, rating_boost: ratingBoost = 0 } = watch()
 
-  const handleRatingBoostChange = useCallback((value: number) => {
-    setValue('rating_boost', value, { shouldValidate: true })
-  }, [setValue])
+  const handleStarRatingChange = useCallback(
+    (value: number) => {
+      setValue('star_rating', value, { shouldValidate: true })
+      if (value === 5) {
+        setValue('rating_boost', 0, { shouldValidate: true })
+      }
+    },
+    [setValue]
+  )
 
-  const handleReviewChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setValue('review', e.target.value, { shouldValidate: true })
-  }, [setValue])
-  
+  const handleRatingBoostChange = useCallback(
+    (value: number) => {
+      setValue('rating_boost', value, { shouldValidate: true })
+    },
+    [setValue]
+  )
+
+  const handleReviewChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setValue('review', e.target.value, { shouldValidate: true })
+    },
+    [setValue]
+  )
+
   return (
     <WizardStepCard
       title="Write Your Review"
@@ -80,9 +82,7 @@ const ReviewSubmission = ({
           maxLength={2000}
           disabled={disabled}
         />
-        <div 
-          className={`${styles.charCount} ${review.length < 150 ? styles.error : ''}`}
-        >
+        <div className={`${styles.charCount} ${review.length < 150 ? styles.error : ''}`}>
           {review.length}/150
         </div>
       </div>

@@ -17,7 +17,6 @@ interface SegmentedControlProps {
   label?: string
   error?: string
   disabled?: boolean
-  fullWidth?: boolean
 }
 
 interface SegmentedOptionDisplayProps {
@@ -28,43 +27,44 @@ interface SegmentedOptionDisplayProps {
   onKeyDown: (e: KeyboardEvent, option: SegmentedOption) => void
 }
 
-const SegmentedOptionDisplayComponent = ({ option, isSelected, isDisabled, onClick, onKeyDown }: SegmentedOptionDisplayProps): JSX.Element => {
-    const handleClick = useCallback(() => onClick(option), [onClick, option])
-    const handleKeyDown = useCallback(
-      (e: KeyboardEvent) => onKeyDown(e, option),
-      [onKeyDown, option]
-    )
+const SegmentedOptionDisplayComponent = ({
+  option,
+  isSelected,
+  isDisabled,
+  onClick,
+  onKeyDown,
+}: SegmentedOptionDisplayProps): JSX.Element => {
+  const handleClick = useCallback(() => onClick(option), [onClick, option])
+  const handleKeyDown = useCallback((e: KeyboardEvent) => onKeyDown(e, option), [onKeyDown, option])
 
-    return (
-      <div
-        role="radio"
-        aria-checked={isSelected}
-        tabIndex={isDisabled ? -1 : 0}
-        className={`${styles.option} ${isSelected ? styles.selected : ''}`}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-      >
-        {option.label}
-      </div>
-    )
-  }
-const SegmentedOptionDisplay = React.memo(SegmentedOptionDisplayComponent);
-SegmentedOptionDisplay.displayName = 'SegmentedOptionDisplay';
+  return (
+    <div
+      role="radio"
+      aria-checked={isSelected}
+      tabIndex={isDisabled ? -1 : 0}
+      className={`${styles.option} ${isSelected ? styles.selected : ''}`}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+    >
+      {option.label}
+    </div>
+  )
+}
+const SegmentedOptionDisplay = React.memo(SegmentedOptionDisplayComponent)
+SegmentedOptionDisplay.displayName = 'SegmentedOptionDisplay'
 
 /**
  * A mobile-friendly segmented control component for option selection
  * Designed as a replacement for select/radio inputs for small option sets
  */
 const SegmentedControlComponent = ({
-
-
   options,
   value,
   onChange,
   name,
   label,
   error,
-  disabled = false
+  disabled = false,
 }: SegmentedControlProps): JSX.Element => {
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
 
@@ -74,68 +74,86 @@ const SegmentedControlComponent = ({
   }, [options, value])
 
   // Handle click on an option
-  const handleOptionClick = useCallback((option: SegmentedOption): void => {
-    if (disabled) return
-    onChange(option.value)
-  }, [onChange, disabled])
+  const handleOptionClick = useCallback(
+    (option: SegmentedOption): void => {
+      if (disabled) return
+      onChange(option.value)
+    },
+    [onChange, disabled]
+  )
 
   // Handle keyboard navigation
-  const handleKeyDown = useCallback((e: React.KeyboardEvent, option: SegmentedOption): void => {
-    if (disabled) return
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onChange(option.value)
-    } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-      e.preventDefault()
-      const currentIndex = options.findIndex((opt) => opt.id === value)
-      if (currentIndex === -1) return
-      
-      const nextIndex = e.key === 'ArrowRight'
-        ? (currentIndex + 1) % options.length
-        : (currentIndex - 1 + options.length) % options.length
-        
-      onChange(options[nextIndex].value)
-    }
-  }, [onChange, options, value, disabled])
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent, option: SegmentedOption): void => {
+      if (disabled) return
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        onChange(option.value)
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault()
+        const currentIndex = options.findIndex((opt) => opt.id === value)
+        if (currentIndex === -1) return
+
+        const nextIndex =
+          e.key === 'ArrowRight'
+            ? (currentIndex + 1) % options.length
+            : (currentIndex - 1 + options.length) % options.length
+
+        onChange(options[nextIndex].value)
+      }
+    },
+    [onChange, options, value, disabled]
+  )
 
   // Touch gesture handling for swipe selection
-  const handleTouchStart = useCallback((e: React.TouchEvent): void => {
-    if (disabled) return
-    setTouchStartX(e.touches[0].clientX)
-  }, [disabled])
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent): void => {
+      if (disabled) return
+      setTouchStartX(e.touches[0].clientX)
+    },
+    [disabled]
+  )
 
   const handleTouchMove = useCallback((_: React.TouchEvent): void => {
     // No-op, just to capture the touch event
   }, [])
 
-  const handleTouchEnd = useCallback((e: React.TouchEvent): void => {
-    if (disabled || touchStartX === null) return
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent): void => {
+      if (disabled || touchStartX === null) return
 
-    const touchEndX = e.changedTouches[0].clientX
-    const deltaX = touchEndX - touchStartX
-    const minSwipeDelta = 50 // Minimum px to consider it a swipe
+      const touchEndX = e.changedTouches[0].clientX
+      const deltaX = touchEndX - touchStartX
+      const minSwipeDelta = 50 // Minimum px to consider it a swipe
 
-    if (Math.abs(deltaX) < minSwipeDelta) return
+      if (Math.abs(deltaX) < minSwipeDelta) return
 
-    const currentIndex = options.findIndex((opt) => opt.id === value)
-    if (currentIndex === -1) return
+      const currentIndex = options.findIndex((opt) => opt.id === value)
+      if (currentIndex === -1) return
 
-    // Determine direction based on swipe
-    const nextIndex = deltaX > 0
-      ? Math.max(0, currentIndex - 1) // Swipe right -> previous
-      : Math.min(options.length - 1, currentIndex + 1) // Swipe left -> next
-    
-    onChange(options[nextIndex].value)
-    setTouchStartX(null)
-  }, [disabled, touchStartX, options, value, onChange])
+      // Determine direction based on swipe
+      const nextIndex =
+        deltaX > 0
+          ? Math.max(0, currentIndex - 1) // Swipe right -> previous
+          : Math.min(options.length - 1, currentIndex + 1) // Swipe left -> next
+
+      onChange(options[nextIndex].value)
+      setTouchStartX(null)
+    },
+    [disabled, touchStartX, options, value, onChange]
+  )
 
   // Generate a unique ID for this control instance
   const controlId = useMemo(() => `segmented-${name}`, [name])
 
-  const indicatorStyle = useMemo(() => ({
-    '--indicator-left': `${(selectedIndex / options.length) * 100}%`,
-    '--indicator-width': `${(1 / options.length) * 100}%`,
-  } as React.CSSProperties), [selectedIndex, options.length]);
+  const indicatorStyle = useMemo(
+    () =>
+      ({
+        '--indicator-left': `${(selectedIndex / options.length) * 100}%`,
+        '--indicator-width': `${(1 / options.length) * 100}%`,
+      }) as React.CSSProperties,
+    [selectedIndex, options.length]
+  )
 
   return (
     <div className={styles.container}>
@@ -144,7 +162,7 @@ const SegmentedControlComponent = ({
           {label}
         </label>
       )}
-      
+
       <div
         className={`${styles.segmentedControl} ${disabled ? styles.disabled : ''} ${error ? styles.hasError : ''}`}
         role="radiogroup"
@@ -154,7 +172,7 @@ const SegmentedControlComponent = ({
         onTouchEnd={handleTouchEnd}
         style={indicatorStyle}
       >
-        {options.map(option => (
+        {options.map((option) => (
           <SegmentedOptionDisplay
             key={option.id}
             option={option}
@@ -165,17 +183,15 @@ const SegmentedControlComponent = ({
           />
         ))}
 
-        {selectedIndex >= 0 && (
-          <div className={styles.indicator} />
-        )}
+        {selectedIndex >= 0 && <div className={styles.indicator} />}
       </div>
-      
+
       {error && <div className={styles.error}>{error}</div>}
     </div>
   )
 }
 
 // Export with React.memo for performance optimization
-const SegmentedControl = React.memo(SegmentedControlComponent);
-SegmentedControl.displayName = 'SegmentedControl';
-export default SegmentedControl;
+const SegmentedControl = React.memo(SegmentedControlComponent)
+SegmentedControl.displayName = 'SegmentedControl'
+export default SegmentedControl

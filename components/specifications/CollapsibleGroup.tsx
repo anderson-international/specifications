@@ -14,17 +14,17 @@ export function CollapsibleGroup({
   title,
   count,
   isInitiallyExpanded = true,
-  children
+  children,
 }: CollapsibleGroupProps): JSX.Element {
   const [isExpanded, setIsExpanded] = useState<boolean>(isInitiallyExpanded)
 
   const toggleExpanded = useCallback((): void => {
-    setIsExpanded(prev => !prev)
+    setIsExpanded((prev) => !prev)
   }, [])
 
   return (
     <div className={styles.group}>
-      <button 
+      <button
         onClick={toggleExpanded}
         className={styles.header}
         type="button"
@@ -40,15 +40,13 @@ export function CollapsibleGroup({
           </div>
         </div>
       </button>
-      
-      <div 
+
+      <div
         id={`group-content-${title.toLowerCase()}`}
         className={`${styles.content} ${isExpanded ? styles.show : styles.hide}`}
         aria-hidden={!isExpanded}
       >
-        <div className={styles.contentInner}>
-          {children}
-        </div>
+        <div className={styles.contentInner}>{children}</div>
       </div>
     </div>
   )

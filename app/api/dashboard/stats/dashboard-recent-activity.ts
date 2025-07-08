@@ -1,4 +1,4 @@
-// Recent activity analysis utilities  
+// Recent activity analysis utilities
 // Extracted from route.ts to comply with file size limits
 
 import { prisma } from '@/lib/prisma'
@@ -9,10 +9,11 @@ export class RecentActivityAnalyzer {
     // DEBUG: Extended from 7 days to 30 days to capture more activity
     const oneWeekAgo = new Date()
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 30)
-    console.log('🔍 DEBUG: Weekly cutoff date (extended to 30 days):', oneWeekAgo.toISOString())
-    
+
     // Weekly top reviewers
-    const weeklyActivity = await prisma.$queryRaw<Array<{ user_id: string; name: string | null; recent_specs: number }>>`
+    const weeklyActivity = await prisma.$queryRaw<
+      Array<{ user_id: string; name: string | null; recent_specs: number }>
+    >`
       SELECT 
         u.id as user_id,
         u.name,
@@ -26,11 +27,11 @@ export class RecentActivityAnalyzer {
       ORDER BY recent_specs DESC
       LIMIT 5
     `
-    
+
     // Add ranks to recent activity
     return weeklyActivity.map((user, index) => ({
       ...user,
-      rank: index + 1
+      rank: index + 1,
     }))
   }
 
@@ -38,10 +39,11 @@ export class RecentActivityAnalyzer {
     // DEBUG: Extended from 1 month to 6 months to capture more activity
     const oneMonthAgo = new Date()
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 6)
-    console.log('🔍 DEBUG: Monthly cutoff date (extended to 6 months):', oneMonthAgo.toISOString())
-    
-    // Monthly top reviewers  
-    const monthlyActivity = await prisma.$queryRaw<Array<{ user_id: string; name: string | null; recent_specs: number }>>`
+
+    // Monthly top reviewers
+    const monthlyActivity = await prisma.$queryRaw<
+      Array<{ user_id: string; name: string | null; recent_specs: number }>
+    >`
       SELECT 
         u.id as user_id,
         u.name,
@@ -55,11 +57,11 @@ export class RecentActivityAnalyzer {
       ORDER BY recent_specs DESC
       LIMIT 5
     `
-    
+
     // Add ranks to recent activity
     return monthlyActivity.map((user, index) => ({
       ...user,
-      rank: index + 1
+      rank: index + 1,
     }))
   }
 
@@ -69,7 +71,7 @@ export class RecentActivityAnalyzer {
   }> {
     const [weekly, monthly] = await Promise.all([
       this.getWeeklyTopReviewers(),
-      this.getMonthlyTopReviewers()
+      this.getMonthlyTopReviewers(),
     ])
 
     return { weekly, monthly }

@@ -27,13 +27,16 @@ interface UseProductSelectionReturn {
  */
 export const useProductSelection = ({
   shopifyHandle,
-  onProductSelect
+  onProductSelect,
 }: UseProductSelectionProps): UseProductSelectionReturn => {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [selectedBrandId, setSelectedBrandId] = useState<number | null>(null)
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null)
-  
-  const selectedProduct = useMemo(() => findProductByHandle(MOCK_PRODUCTS as unknown as MockProduct[], shopifyHandle), [shopifyHandle])
+
+  const selectedProduct = useMemo(
+    () => findProductByHandle(MOCK_PRODUCTS as unknown as MockProduct[], shopifyHandle),
+    [shopifyHandle]
+  )
 
   useEffect(() => {
     if (selectedProduct) {
@@ -42,30 +45,42 @@ export const useProductSelection = ({
       setSelectedTypeId(selectedProduct.type_id)
     }
   }, [selectedProduct])
-  
-  const filteredProducts = useMemo(() => filterProducts(MOCK_PRODUCTS as unknown as MockProduct[], selectedBrandId, selectedTypeId, searchTerm), [selectedBrandId, selectedTypeId, searchTerm])
-  
+
+  const filteredProducts = useMemo(
+    () =>
+      filterProducts(
+        MOCK_PRODUCTS as unknown as MockProduct[],
+        selectedBrandId,
+        selectedTypeId,
+        searchTerm
+      ),
+    [selectedBrandId, selectedTypeId, searchTerm]
+  )
+
   const handleBrandFilter = useCallback((brandId: number | null): void => {
     setSelectedBrandId(brandId)
     setSearchTerm('')
   }, [])
-  
+
   const handleTypeFilter = useCallback((typeId: number | null): void => {
     setSelectedTypeId(typeId)
     setSearchTerm('')
   }, [])
-  
+
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchTerm(e.target.value)
   }, [])
-  
-  const handleProductSelect = useCallback((product: MockProduct): void => {
-    setSelectedBrandId(product.brand_id)
-    setSelectedTypeId(product.type_id)
-    setSearchTerm(product.name)
-    onProductSelect(product)
-  }, [onProductSelect])
-  
+
+  const handleProductSelect = useCallback(
+    (product: MockProduct): void => {
+      setSelectedBrandId(product.brand_id)
+      setSelectedTypeId(product.type_id)
+      setSearchTerm(product.name)
+      onProductSelect(product)
+    },
+    [onProductSelect]
+  )
+
   const handleClearFilters = useCallback(() => {
     setSelectedBrandId(null)
     setSelectedTypeId(null)
@@ -82,6 +97,6 @@ export const useProductSelection = ({
     handleTypeFilter,
     handleSearchChange,
     handleProductSelect,
-    handleClearFilters
+    handleClearFilters,
   }
 }

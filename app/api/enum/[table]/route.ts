@@ -5,10 +5,14 @@ import {
   listEnums,
   createEnum,
   updateEnum,
-  ServiceError
+  ServiceError,
 } from '@/lib/services/enumService'
 import { withJsonBody, withQuery } from '@/lib/api/handlerHelpers'
-import { EnumQuerySchema, CreateEnumValueSchema, UpdateEnumValueSchema } from '@/lib/validations/enums'
+import {
+  EnumQuerySchema,
+  CreateEnumValueSchema,
+  UpdateEnumValueSchema,
+} from '@/lib/validations/enums'
 
 // Centralised error handler to convert service errors into API responses
 function handleError(error: unknown): NextResponse {
@@ -68,4 +72,3 @@ export async function PUT(
     return handleError(error)
   }
 }
-

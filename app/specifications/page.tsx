@@ -19,7 +19,7 @@ export default function SpecificationsPage(): JSX.Element {
     handleEdit,
     handleDelete,
     handleDuplicate,
-    handleRetry
+    handleRetry,
   } = useSpecifications()
 
   const {
@@ -28,7 +28,7 @@ export default function SpecificationsPage(): JSX.Element {
     setStatusFilter,
     setSearchQuery,
     filteredSpecs,
-    groupedSpecs
+    groupedSpecs,
   } = useSpecificationFilters(specifications)
 
   if (isLoading) {
@@ -105,7 +105,7 @@ export default function SpecificationsPage(): JSX.Element {
                   count={specs.length}
                   isInitiallyExpanded={status === 'draft'}
                 >
-                  {specs.map(spec => (
+                  {specs.map((spec) => (
                     <SpecificationCard
                       key={spec.id}
                       specification={spec}

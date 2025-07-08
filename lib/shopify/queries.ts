@@ -29,7 +29,7 @@ export const PRODUCTS_QUERY = `
       }
     }
   }
-`;
+`
 
 export const SINGLE_PRODUCT_QUERY = `
   query GetProductByHandle($handle: String!) {
@@ -42,4 +42,4 @@ export const SINGLE_PRODUCT_QUERY = `
       }
     }
   }
-`;
+`

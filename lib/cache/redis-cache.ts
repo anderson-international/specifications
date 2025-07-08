@@ -27,21 +27,17 @@ export class RedisProductCache {
 
   static async ensureReady(): Promise<void> {
     const instance = RedisProductCache.getInstance()
-    
+
     if (await instance.isValid()) {
-      console.log('Redis cache already ready and valid')
       return
     }
 
     if (RedisProductCache.warming) {
-      console.log('Redis cache warming already in progress, waiting...')
-      
       while (RedisProductCache.warming && !(await instance.isValid())) {
-        await new Promise(resolve => setTimeout(resolve, 100)) // Wait 100ms
+        await new Promise((resolve) => setTimeout(resolve, 100)) // Wait 100ms
       }
-      
+
       if (await instance.isValid()) {
-        console.log('Redis cache warming completed while waiting')
         return
       } else {
         throw new Error('Redis cache warming completed but cache is still invalid')
@@ -49,15 +45,15 @@ export class RedisProductCache {
     }
 
     RedisProductCache.warming = true
-    console.log('Starting Redis cache warm-up...')
-    
+
     try {
       await instance.core.refreshCache()
-      console.log('✅ Redis cache warm-up completed successfully')
     } catch (error) {
       RedisProductCache.warming = false
-      console.error('❌ CRITICAL: Redis cache initialization failed - fail-fast mode enabled')
-      throw new Error(`Redis cache initialization failed. Application cannot continue without cache. ${error instanceof Error ? error.message : 'Unknown error'}`)
+
+      throw new Error(
+        `Redis cache initialization failed. Application cannot continue without cache. ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     } finally {
       RedisProductCache.warming = false
     }
@@ -76,12 +72,9 @@ export class RedisProductCache {
   }
 
   async forceRefresh(): Promise<void> {
-    console.log('Forcing Redis cache refresh...')
     try {
       await this.core.refreshCache()
-      console.log('✅ Redis force refresh completed successfully')
     } catch (error) {
-      console.error('❌ CRITICAL: Redis force refresh failed - fail-fast mode enabled')
       throw error // Re-throw to maintain fail-fast behavior
     }
   }
@@ -91,16 +84,15 @@ export class RedisProductCache {
       const exists = await this.core.isValid()
       const products = exists ? await this.core.getAllProducts() : []
       const metrics = CachePerformanceMonitor.getMetrics()
-      
+
       return {
         totalProducts: products.length,
         cacheSize: products.length,
         lastUpdated: new Date().toISOString(),
         isValid: exists,
-        ...metrics
+        ...metrics,
       }
-    } catch (error) {
-      console.error('Redis cache stats error:', error)
+    } catch (_error) {
       return {
         totalProducts: 0,
         cacheSize: 0,
@@ -111,7 +103,7 @@ export class RedisProductCache {
         hitRatePercentage: 0,
         lastHitTime: null,
         lastMissTime: null,
-        efficiency: 'poor'
+        efficiency: 'poor',
       }
     }
   }

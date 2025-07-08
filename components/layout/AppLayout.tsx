@@ -29,7 +29,13 @@ const AppLayout = ({ children }: AppLayoutProps): JSX.Element => {
         <div className={styles.navHeader}>
           <div className={styles.navHeaderLeft} />
           <div className={styles.navHeaderCenter}>
-            <Image src="/site-icon.png" alt="Site Icon" width={56} height={56} className={styles.siteIcon} />
+            <Image
+              src="/site-icon.png"
+              alt="Site Icon"
+              width={56}
+              height={56}
+              className={styles.siteIcon}
+            />
           </div>
           <div className={styles.navHeaderRight}>
             <button
@@ -61,7 +67,13 @@ const AppLayout = ({ children }: AppLayoutProps): JSX.Element => {
             </button>
           </div>
           <div className={styles.headerCenter}>
-            <Image src="/site-icon.png" alt="Site Icon" width={48} height={48} className={styles.siteIcon} />
+            <Image
+              src="/site-icon.png"
+              alt="Site Icon"
+              width={48}
+              height={48}
+              className={styles.siteIcon}
+            />
             <div className={styles.titleContainer}>
               <span className={styles.headerTitle}>Spec</span>
               <span className={styles.headerSubtitle}>Builder</span>
@@ -85,4 +97,3 @@ const AppLayout = ({ children }: AppLayoutProps): JSX.Element => {
 }
 
 export default React.memo(AppLayout)
-

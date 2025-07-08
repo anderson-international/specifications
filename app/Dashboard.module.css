@@ -124,7 +124,7 @@
 
 .leaderboardItem.currentUser {
   background-color: rgba(24, 120, 185, 0.1);
-  border-left: 4px solid #1878B9;
+  border-left: 4px solid #1878b9;
 }
 
 .leaderboardItem.currentUser:hover {
@@ -167,12 +167,10 @@
 }
 
 .youLabel {
-  color: #1878B9;
+  color: #1878b9;
   font-weight: 700;
   font-size: 0.9rem;
 }
-
-
 
 .specCount {
   font-size: 1.5rem;
@@ -209,11 +207,13 @@
   grid-template-rows: auto auto;
   gap: 1rem;
   align-items: center;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .productCard:hover {
-  border-color: #1878B9;
+  border-color: #1878b9;
   box-shadow: 0 2px 8px rgba(24, 120, 185, 0.1);
 }
 
@@ -310,7 +310,7 @@
 }
 
 .reviewButton {
-  background-color: #1878B9;
+  background-color: #1878b9;
   color: white;
   border: none;
   padding: 0.5rem 0.75rem;
@@ -384,7 +384,7 @@
 }
 
 .tabButtonActive {
-  background-color: #1878B9;
+  background-color: #1878b9;
   color: white;
 }
 
@@ -443,7 +443,7 @@
 }
 
 .subTabButtonActive {
-  background-color: #1878B9;
+  background-color: #1878b9;
   color: white;
 }
 
@@ -544,7 +544,7 @@
 }
 
 .brandGapBadge {
-  background-color: #1878B9;
+  background-color: #1878b9;
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
@@ -572,7 +572,7 @@
     padding: 1rem 0.75rem;
     font-size: 0.9rem;
   }
-  
+
   .tabLabel {
     font-size: 0.9rem;
     white-space: normal;
@@ -583,11 +583,11 @@
   .tabNavigation {
     margin-bottom: 2rem;
   }
-  
+
   .tabButton {
     padding: 1.25rem 1rem;
   }
-  
+
   .tabLabel {
     font-size: 1rem;
   }

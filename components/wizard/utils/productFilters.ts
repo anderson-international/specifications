@@ -11,16 +11,13 @@ export const filterProducts = (
   selectedTypeId: number | null,
   searchTerm: string
 ): MockProduct[] => {
-    return products
-    .filter(p => !selectedBrandId || p.brand_id === selectedBrandId)
-    .filter(p => !selectedTypeId || p.type_id === selectedTypeId)
-    .filter(p => {
+  return products
+    .filter((p) => !selectedBrandId || p.brand_id === selectedBrandId)
+    .filter((p) => !selectedTypeId || p.type_id === selectedTypeId)
+    .filter((p) => {
       if (!searchTerm) return true
       const term = searchTerm.toLowerCase()
-      return (
-        p.name.toLowerCase().includes(term) ||
-        p.brand_name.toLowerCase().includes(term)
-      )
+      return p.name.toLowerCase().includes(term) || p.brand_name.toLowerCase().includes(term)
     })
 }
 
@@ -31,5 +28,5 @@ export const findProductByHandle = (
   products: readonly MockProduct[],
   shopifyHandle: string | null
 ): MockProduct | null => {
-  return products.find(p => p.shopify_handle === shopifyHandle) || null
+  return products.find((p) => p.shopify_handle === shopifyHandle) || null
 }

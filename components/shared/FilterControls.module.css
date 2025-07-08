@@ -43,17 +43,19 @@
   padding: 0.75rem 2.5rem 0.75rem 1rem;
   border: 1px solid #343741;
   border-radius: 6px;
-  background-color: #1E2128;
+  background-color: #1e2128;
   color: #e2e8f0;
   font-size: 1rem;
   height: 3rem;
   box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .searchInput:focus {
   outline: none;
-  border-color: #1878B9;
+  border-color: #1878b9;
   box-shadow: 0 0 0 2px rgba(24, 120, 185, 0.3);
 }
 
@@ -75,7 +77,7 @@
   padding: 0.75rem 2.5rem 0.75rem 1rem;
   border: 1px solid #343741;
   border-radius: 6px;
-  background-color: #1E2128;
+  background-color: #1e2128;
   color: #e2e8f0;
   font-size: 1rem;
   height: 3rem;
@@ -86,7 +88,7 @@
 
 .select:focus {
   outline: none;
-  border-color: #1878B9;
+  border-color: #1878b9;
   border-width: 2px;
   box-shadow: 0 0 0 1px rgba(24, 120, 185, 0.3);
 }

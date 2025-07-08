@@ -22,41 +22,43 @@ interface DashboardOverviewTabProps {
   isLoading: boolean
 }
 
-const DashboardOverviewTab: React.FC<DashboardOverviewTabProps> = React.memo(({
-  overviewSubTabs,
-  activeOverviewSubTab,
-  onSubTabClick,
-  systemOverviewStats,
-  productCoverageStats,
-  brandGaps,
-  weeklyActivity,
-  monthlyActivity,
-  isLoading
-}): JSX.Element => {
-  return (
-    <section className={styles.section}>
-      <DashboardSubTabNavigation 
-        subTabs={overviewSubTabs}
-        activeSubTab={activeOverviewSubTab}
-        onSubTabClick={onSubTabClick}
-      />
-      <div className={styles.subTabContent}>
-        {activeOverviewSubTab === 'insights' ? (
-          <DashboardInsightsTab
-            brandGaps={brandGaps}
-            weeklyActivity={weeklyActivity}
-            monthlyActivity={monthlyActivity}
-          />
-        ) : (
-          <DashboardStatsGrid 
-            stats={activeOverviewSubTab === 'system' ? systemOverviewStats : productCoverageStats}
-            isLoading={isLoading}
-          />
-        )}
-      </div>
-    </section>
-  )
-})
+const DashboardOverviewTab: React.FC<DashboardOverviewTabProps> = React.memo(
+  ({
+    overviewSubTabs,
+    activeOverviewSubTab,
+    onSubTabClick,
+    systemOverviewStats,
+    productCoverageStats,
+    brandGaps,
+    weeklyActivity,
+    monthlyActivity,
+    isLoading,
+  }): JSX.Element => {
+    return (
+      <section className={styles.section}>
+        <DashboardSubTabNavigation
+          subTabs={overviewSubTabs}
+          activeSubTab={activeOverviewSubTab}
+          onSubTabClick={onSubTabClick}
+        />
+        <div className={styles.subTabContent}>
+          {activeOverviewSubTab === 'insights' ? (
+            <DashboardInsightsTab
+              brandGaps={brandGaps}
+              weeklyActivity={weeklyActivity}
+              monthlyActivity={monthlyActivity}
+            />
+          ) : (
+            <DashboardStatsGrid
+              stats={activeOverviewSubTab === 'system' ? systemOverviewStats : productCoverageStats}
+              isLoading={isLoading}
+            />
+          )}
+        </div>
+      </section>
+    )
+  }
+)
 
 DashboardOverviewTab.displayName = 'DashboardOverviewTab'
 

@@ -34,13 +34,13 @@ export interface UseSpecificationWizardProps {
 export interface UseSpecificationWizardReturn {
   methods: UseFormReturn<WizardFormData>
   activeStep: number
+  completedSteps: Set<number>
   isSubmitting: boolean
-  isSavingDraft: boolean
   handleNext: () => void
   handlePrevious: () => void
   handleStepClick: (stepIndex: number) => void
   handleFormSubmit: (data: WizardFormData) => Promise<void>
-  saveDraft: () => Promise<void>
+  canNavigateToStep: (stepIndex: number) => boolean
 }
 
 export interface UseSubmissionProps {
@@ -51,7 +51,5 @@ export interface UseSubmissionProps {
 
 export interface UseSpecificationSubmissionReturn {
   isSubmitting: boolean
-  isSavingDraft: boolean
   handleFormSubmit: (formData: WizardFormData) => Promise<void>
-  saveDraft: () => Promise<void>
 }

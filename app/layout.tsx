@@ -29,4 +29,3 @@ export default React.memo(function RootLayout({
     </html>
   )
 })
-

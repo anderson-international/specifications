@@ -12,38 +12,40 @@ interface CreateSpecificationClientProps {
   enumData: SpecificationEnumData
 }
 
-export default function CreateSpecificationClient(_props: CreateSpecificationClientProps): JSX.Element {
+export default function CreateSpecificationClient(
+  _props: CreateSpecificationClientProps
+): JSX.Element {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { user } = useAuth();
+  const { user } = useAuth()
   const [productId, setProductId] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     setProductId(searchParams.get('productId') || undefined)
   }, [searchParams])
 
-  const handleSubmit = useCallback(async (data: Specification): Promise<void> => {
-    try {
-      // TODO: Replace with actual API call
-      console.log('Specification data:', data)
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Navigate to success page or products list
-      router.push('/products')
-    } catch (error) {
-      console.error('Failed to create specification:', error)
-      // TODO: Show error message
-    }
-  }, [router])
+  const handleSubmit = useCallback(
+    async (_data: Specification): Promise<void> => {
+      try {
+        // TODO: Replace with actual API call
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000))
 
+        // Navigate to success page or products list
+        router.push('/products')
+      } catch (error) {
+        // TODO: Show error message to user
+        throw new Error(error instanceof Error ? error.message : 'Failed to create specification')
+      }
+    },
+    [router]
+  )
 
   // Prepare initial data if productId is provided
   const initialData = useMemo(() => {
     if (productId) {
       return {
-        product_id: parseInt(productId, 10) || null
+        product_id: parseInt(productId, 10) || null,
       }
     }
     return {}
