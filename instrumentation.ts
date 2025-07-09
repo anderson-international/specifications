@@ -4,11 +4,14 @@
 export async function register() {
   try {
     // Import Redis cache initialization dynamically
-    const { RedisProductCache } = await import('./lib/cache/redis-cache')
+    const { RedisProductCache } = await import('@/lib/cache/redis-product-cache')
 
-    // Trigger Redis cache warm-up immediately on server startup
+    // Initialize product cache during auth window for performance
     await RedisProductCache.ensureReady()
+    
+    // Enum cache will be lazily initialized on first API request (Edge Runtime compatibility)
+    console.log('Instrumentation: Product cache initialized, enum cache will be lazy loaded')
   } catch (error) {
-    throw new Error(`INSTRUMENTATION: CRITICAL ERROR during Redis cache initialization: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    throw new Error(`INSTRUMENTATION: Product cache initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }

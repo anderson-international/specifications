@@ -1,20 +1,6 @@
 import React from 'react'
 import styles from '../../app/Dashboard.module.css'
-
-interface BrandCoverageGap {
-  brand: string
-  total_products: number
-  products_with_specs: number
-  coverage_percentage: number
-  sample_uncovered_products: any[]
-}
-
-interface RecentActivity {
-  user_id: string
-  name: string | null
-  recent_specs: number
-  rank: number
-}
+import type { BrandCoverageGap, RecentActivity } from '@/app/api/dashboard/stats/types'
 
 interface DashboardInsightsTabProps {
   brandGaps: BrandCoverageGap[]
@@ -33,7 +19,7 @@ const DashboardInsightsTab: React.FC<DashboardInsightsTabProps> = React.memo(
             <p className={styles.insightDescription}>Brands with the least reviewed products</p>
             {brandGaps.length > 0 ? (
               <div className={styles.brandGapsList}>
-                {brandGaps.slice(0, 5).map((brand: any, _index: number) => (
+                {brandGaps.slice(0, 5).map((brand: BrandCoverageGap, _index: number) => (
                   <div key={brand.brand} className={styles.brandGapItem}>
                     <div className={styles.brandGapInfo}>
                       <div className={styles.brandName}>{brand.brand}</div>
@@ -59,7 +45,7 @@ const DashboardInsightsTab: React.FC<DashboardInsightsTabProps> = React.memo(
             <p className={styles.insightDescription}>Most active reviewers in the past 7 days</p>
             {weeklyActivity.length > 0 ? (
               <div className={styles.activityList}>
-                {weeklyActivity.slice(0, 5).map((reviewer: any, index: number) => (
+                {weeklyActivity.slice(0, 5).map((reviewer: RecentActivity, index: number) => (
                   <div key={reviewer.user_id} className={styles.activityItem}>
                     <div className={styles.activityRank}>#{index + 1}</div>
                     <div className={styles.activityInfo}>
@@ -82,7 +68,7 @@ const DashboardInsightsTab: React.FC<DashboardInsightsTabProps> = React.memo(
             <p className={styles.insightDescription}>Most active reviewers in the past 30 days</p>
             {monthlyActivity.length > 0 ? (
               <div className={styles.activityList}>
-                {monthlyActivity.slice(0, 5).map((reviewer: any, index: number) => (
+                {monthlyActivity.slice(0, 5).map((reviewer: RecentActivity, index: number) => (
                   <div key={reviewer.user_id} className={styles.activityItem}>
                     <div className={styles.activityRank}>#{index + 1}</div>
                     <div className={styles.activityInfo}>

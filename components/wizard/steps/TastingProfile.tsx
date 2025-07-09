@@ -4,13 +4,20 @@ import React, { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
 import MultiSelectChips from '../controls/MultiSelectChips'
-import { useTastingNotes, useCures, useTobaccoTypes } from '../hooks/useEnumData'
+import SelectedProductSummary from './SelectedProductSummary'
+import { useTastingProfile } from '../hooks/useTastingProfile'
+import { transformEnumToOptions } from '../hooks/useEnumUtils'
+import { Product } from '@/lib/types/product'
+import { SpecificationEnumData } from '@/types/enum'
 import styles from './TastingProfile.module.css'
 
 interface TastingProfileProps {
   stepNumber: number
   totalSteps: number
   disabled?: boolean
+  selectedProduct?: Product | null
+  enumData?: SpecificationEnumData
+  enumsLoading?: boolean
 }
 
 interface TastingProfileFormData {
@@ -27,15 +34,18 @@ const TastingProfile = ({
   stepNumber,
   totalSteps,
   disabled = false,
+  selectedProduct,
+  enumData,
+  enumsLoading,
 }: TastingProfileProps): JSX.Element => {
   const { watch, setValue } = useFormContext<TastingProfileFormData>()
 
-  // Fetch enum data from database
-  const { data: tastingNoteOptions, isLoading: tastingNotesLoading } = useTastingNotes()
-  const { data: cureOptions, isLoading: curesLoading } = useCures()
-  const { data: tobaccoTypeOptions, isLoading: tobaccoTypesLoading } = useTobaccoTypes()
+  // Use enum data passed from parent to eliminate redundant API calls
+  const tastingNoteOptions = enumData?.tastingNotes ? transformEnumToOptions(enumData.tastingNotes) : undefined
+  const cureOptions = enumData?.cures ? transformEnumToOptions(enumData.cures) : undefined
+  const tobaccoTypeOptions = enumData?.tobaccoTypes ? transformEnumToOptions(enumData.tobaccoTypes) : undefined
 
-  const isLoadingEnums = tastingNotesLoading || curesLoading || tobaccoTypesLoading
+  const isLoadingEnums = enumsLoading || false
 
   // Watch form values - Optimized with single watch call
   const { tasting_notes: tastingNotes = [], cures = [], tobacco_types: tobaccoTypes = [] } = watch()
@@ -53,6 +63,7 @@ const TastingProfile = ({
 
   return (
     <WizardStepCard title="Tasting Profile" stepNumber={stepNumber} totalSteps={totalSteps}>
+      {selectedProduct && <SelectedProductSummary product={selectedProduct} />}
       <div className={styles.container}>
         <div className={styles.formGroup} role="group" aria-labelledby="tasting-notes-label">
           <label id="tasting-notes-label" className={styles.label}>

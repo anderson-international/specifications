@@ -83,7 +83,7 @@ const useSpecificationSubmission = ({
       // Call success callback
       await onSubmit(formData)
     } catch (error) {
-      throw error
+      throw new Error(`Failed to submit specification: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsSubmitting(false)
     }

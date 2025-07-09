@@ -44,9 +44,13 @@ const ProductRow = ({
 
       {mode === 'multi' && (
         <div className={styles.checkbox}>
+          {/* AI_CONTEXT: Intentional no-op onChange for controlled checkbox component */}
+          {/* React requires onChange with checked prop, but parent div handles all interaction */}
           <input
             type="checkbox"
             checked={isSelected}
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onChange={() => {}} // No-op: parent div handles selection logic
             onClick={() => undefined} // Handled by parent click
             className={styles.checkboxInput}
             tabIndex={-1} // Parent handles keyboard interaction

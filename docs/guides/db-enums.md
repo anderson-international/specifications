@@ -46,7 +46,7 @@ const useEnumData = (enumType: string) => {
   return useQuery({
     queryKey: ['enum', enumType],
     queryFn: () => fetchEnumData(enumType),
-    staleTime: 10 * 60 * 1000, // 10 minutes - enums rarely change
+    staleTime: Infinity, // Persistent cache - invalidated only on admin updates
   })
 }
 
@@ -214,7 +214,7 @@ const useEnumCache = () => {
         queryClient.prefetchQuery({
           queryKey: ['enum', type],
           queryFn: () => fetchEnumData(type),
-          staleTime: 10 * 60 * 1000, // 10 minutes
+          staleTime: Infinity, // Persistent cache - invalidated only on admin updates
         })
       )
     )

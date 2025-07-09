@@ -4,12 +4,18 @@ import React, { useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
 import ProductSelector from '@/components/shared/ProductSelector'
+import { findEnumByName } from '../hooks/useEnumUtils'
+import { SpecificationEnumData } from '@/types/enum'
+import { Product } from '@/lib/types/product'
 
 interface ProductSelectionProps {
   stepNumber: number
   totalSteps: number
   disabled?: boolean
-  onProductSelect: () => void
+  onProductSelect?: () => void
+  enumData?: SpecificationEnumData
+  enumsLoading?: boolean
+  filteredProducts?: Product[]
 }
 
 interface ProductSelectionFormData {
@@ -26,8 +32,12 @@ const ProductSelection = ({
   totalSteps,
   disabled = false,
   onProductSelect,
+  enumData,
+  enumsLoading,
+  filteredProducts = [],
 }: ProductSelectionProps): JSX.Element => {
   const { watch, setValue } = useFormContext<ProductSelectionFormData>()
+  const brandEnums = enumData?.productBrands
 
   const shopifyHandle = watch('shopify_handle')
 
@@ -40,17 +50,26 @@ const ProductSelection = ({
       const selectedHandle = productIds[0] || null
       setValue('shopify_handle', selectedHandle, { shouldValidate: true })
 
-      // For now, set default values since ProductSelector doesn't provide full product data
-      // In a real implementation, you'd need to fetch the full product data or enhance ProductSelector
-      setValue('product_brand_id', null, { shouldValidate: true })
-      setValue('product_type_id', 1, { shouldValidate: true }) // Default to Tobacco Snuff
-
-      // Call the parent callback to proceed to next step
       if (selectedHandle) {
-        onProductSelect()
+        // Find product by handle from filtered products
+        const product = filteredProducts.find(p => p.handle === selectedHandle)
+        
+        if (product && brandEnums) {
+          // Map brand name to brand_id using enum data
+          const brandId = findEnumByName(brandEnums, product.brand)
+          setValue('product_brand_id', brandId, { shouldValidate: true })
+        } else {
+          setValue('product_brand_id', null, { shouldValidate: true })
+        }
+        
+        setValue('product_type_id', 1, { shouldValidate: true }) // Default to Tobacco Snuff
+        onProductSelect?.()
+      } else {
+        setValue('product_brand_id', null, { shouldValidate: true })
+        setValue('product_type_id', null, { shouldValidate: true })
       }
     },
-    [setValue, onProductSelect]
+    [setValue, onProductSelect, brandEnums]
   )
 
   return (

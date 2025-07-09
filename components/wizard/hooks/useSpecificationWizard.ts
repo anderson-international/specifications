@@ -1,8 +1,11 @@
 'use client'
 
-import { useState, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
+import { useProducts } from '@/hooks/useProducts'
+import { useSpecificationEnums } from './useSpecificationEnums'
 import useSpecificationSubmission from './useSpecificationSubmission'
+import { useSelectedProduct } from './useSelectedProduct'
+import { useWizardNavigation } from './useWizardNavigation'
 import {
   WizardFormData,
   UseSpecificationWizardReturn,
@@ -37,12 +40,24 @@ export const useSpecificationWizard = ({
   initialData = {},
   userId,
 }: UseSpecificationWizardProps): UseSpecificationWizardReturn => {
-  const [activeStep, setActiveStep] = useState<number>(0)
-  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
-
   const methods = useForm<WizardFormData>({
     defaultValues: { ...defaultValues, ...initialData } as WizardFormData,
   })
+
+  // Single data source: fetch all data here to eliminate redundant API calls
+  const { filteredProducts } = useProducts()
+  const { data: enumData, isLoading: enumsLoading } = useSpecificationEnums()
+  const selectedProduct = useSelectedProduct(methods, filteredProducts)
+
+  // Extract navigation logic to separate hook for file size compliance
+  const {
+    activeStep,
+    completedSteps,
+    handleNext,
+    handlePrevious,
+    handleStepClick,
+    canNavigateToStep,
+  } = useWizardNavigation()
 
   const { isSubmitting, handleFormSubmit } = useSpecificationSubmission({
     onSubmit,
@@ -50,46 +65,15 @@ export const useSpecificationWizard = ({
     userId,
   })
 
-  const handleNext = useCallback(() => {
-    setActiveStep((prev) => {
-      const nextStep = Math.min(prev + 1, 4)
-      // Mark current step as completed when moving forward
-      setCompletedSteps((completed) => new Set(completed).add(prev))
-      return nextStep
-    })
-  }, [])
-
-  const handlePrevious = useCallback(() => {
-    setActiveStep((prev) => Math.max(prev - 1, 0))
-  }, [])
-
-  // Hybrid navigation: allow backward jumps only, forward gated by validation
-  const handleStepClick = useCallback(
-    (stepIndex: number) => {
-      const targetStep = stepIndex - 1
-      const canNavigate = targetStep <= activeStep || completedSteps.has(targetStep)
-
-      if (canNavigate) {
-        setActiveStep(targetStep)
-      }
-    },
-    [activeStep, completedSteps]
-  )
-
-  // Check if user can navigate to a specific step
-  const canNavigateToStep = useCallback(
-    (stepIndex: number) => {
-      const targetStep = stepIndex - 1
-      return targetStep <= activeStep || completedSteps.has(targetStep)
-    },
-    [activeStep, completedSteps]
-  )
-
   return {
     methods,
     activeStep,
     completedSteps,
     isSubmitting,
+    selectedProduct,
+    enumData,
+    enumsLoading,
+    filteredProducts,
     handleNext,
     handlePrevious,
     handleStepClick,

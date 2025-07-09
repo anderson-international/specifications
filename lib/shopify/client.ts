@@ -80,7 +80,7 @@ export class ShopifyGraphQLClient {
 
       return data.data as T
     } catch (error) {
-      throw error
+      throw new Error(`Failed to execute Shopify GraphQL query: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 }

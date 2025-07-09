@@ -4,19 +4,20 @@ import React from 'react'
 import WizardStepCard from '../controls/WizardStepCard'
 import CharacteristicSelect from './CharacteristicSelect'
 import ProductAttributeToggles from './ProductAttributeToggles'
+import SelectedProductSummary from './SelectedProductSummary'
 import { useProductCharacteristics } from '../hooks/useProductCharacteristics'
-import {
-  useGrinds,
-  useExperienceLevels,
-  useNicotineLevels,
-  useMoistureLevels,
-} from '../hooks/useEnumData'
+import { transformEnumToOptions } from '../hooks/useEnumUtils'
+import { Product } from '@/lib/types/product'
+import { SpecificationEnumData } from '@/types/enum'
 import styles from './ProductCharacteristics.module.css'
 
 interface ProductCharacteristicsProps {
   stepNumber: number
   totalSteps: number
   disabled?: boolean
+  selectedProduct?: Product | null
+  enumData?: SpecificationEnumData
+  enumsLoading?: boolean
 }
 
 /**
@@ -26,6 +27,9 @@ const ProductCharacteristics = ({
   stepNumber,
   totalSteps,
   disabled = false,
+  selectedProduct,
+  enumData,
+  enumsLoading,
 }: ProductCharacteristicsProps): JSX.Element => {
   const {
     grindId,
@@ -44,16 +48,23 @@ const ProductCharacteristics = ({
     handleArtisanChange,
   } = useProductCharacteristics()
 
-  // Fetch enum data from database
-  const { data: grinds, isLoading: grindsLoading } = useGrinds()
-  const { data: experienceLevels, isLoading: experienceLoading } = useExperienceLevels()
-  const { data: nicotineLevels, isLoading: nicotineLoading } = useNicotineLevels()
-  const { data: moistureLevels, isLoading: moistureLoading } = useMoistureLevels()
+  // Use enum data passed from parent to eliminate redundant API calls
+  // DEBUG: Check enum data flow
+  console.log('ProductCharacteristics enumData:', enumData)
+  console.log('enumData keys:', enumData ? Object.keys(enumData) : 'enumData is undefined')
+  
+  const grinds = enumData?.grinds ? transformEnumToOptions(enumData.grinds) : undefined
+  const experienceLevels = enumData?.experienceLevels ? transformEnumToOptions(enumData.experienceLevels) : undefined
+  const nicotineLevels = enumData?.nicotineLevels ? transformEnumToOptions(enumData.nicotineLevels) : undefined
+  const moistureLevels = enumData?.moistureLevels ? transformEnumToOptions(enumData.moistureLevels) : undefined
+  
+  console.log('Transformed options:', { grinds, experienceLevels, nicotineLevels, moistureLevels })
 
-  const isLoadingEnums = grindsLoading || experienceLoading || nicotineLoading || moistureLoading
+  const isLoadingEnums = enumsLoading || false
 
   return (
     <WizardStepCard title="Product Characteristics" stepNumber={stepNumber} totalSteps={totalSteps}>
+      {selectedProduct && <SelectedProductSummary product={selectedProduct} />}
       <div className={styles.characteristicsContainer}>
         <div className={styles.characteristicsRow}>
           <CharacteristicSelect

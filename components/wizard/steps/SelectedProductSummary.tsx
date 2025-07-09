@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { Product } from './types'
+import { Product } from '@/lib/types/product'
 import styles from './SelectedProductSummary.module.css'
 
 interface SelectedProductSummaryProps {

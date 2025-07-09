@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { useDashboardStats } from '../hooks/useDashboardStats'
-import DashboardTabNavigation, { TabId } from '../components/dashboard/DashboardTabNavigation'
-import DashboardStatsGrid from '../components/dashboard/DashboardStatsGrid'
-import DashboardOverviewTab from '../components/dashboard/DashboardOverviewTab'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { ReviewerLeaderboard } from '../app/api/dashboard/stats/types'
 import DashboardActionsTab from '../components/dashboard/DashboardActionsTab'
+import DashboardOverviewTab from '../components/dashboard/DashboardOverviewTab'
+import DashboardStatsGrid from '../components/dashboard/DashboardStatsGrid'
+import DashboardTabNavigation, { TabId } from '../components/dashboard/DashboardTabNavigation'
+import { useDashboardStats } from '../hooks/useDashboardStats'
 import styles from './Dashboard.module.css'
 
 type OverviewSubTabId = 'system' | 'coverage' | 'insights'
@@ -39,7 +40,7 @@ const DashboardClient: React.FC = (): JSX.Element => {
   }, [])
 
   const renderReviewer = useCallback(
-    (reviewer: any) => {
+    (reviewer: ReviewerLeaderboard) => {
       const isCurrentUser = reviewer.user_id === currentUserId
       return (
         <div
@@ -221,7 +222,6 @@ const DashboardClient: React.FC = (): JSX.Element => {
         tabs={tabs}
         activeTab={activeTab}
         onTabClick={handleTabClick}
-        currentUserRank={stats?.userStats.leaderboard_rank}
       />
 
       <div className={styles.tabContent}>{renderActiveTabContent()}</div>

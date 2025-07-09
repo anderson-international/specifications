@@ -11,8 +11,6 @@
  */
 
 const { Client } = require('pg')
-const fs = require('fs')
-const path = require('path')
 require('dotenv').config()
 
 // Configuration
@@ -143,7 +141,7 @@ class SchemaQueryTool {
       const result = await this.client.query(query)
       return result.rows
     } catch (error) {
-      return []
+      throw new Error(`Failed to fetch enum values from table '${tableName}': ${error.message}`)
     }
   }
 

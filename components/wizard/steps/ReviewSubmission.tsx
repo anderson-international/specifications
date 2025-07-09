@@ -4,12 +4,18 @@ import React, { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
 import Ratings from './Ratings'
+import SelectedProductSummary from './SelectedProductSummary'
+import { Product } from '@/lib/types/product'
+import { SpecificationEnumData } from '@/types/enum'
 import styles from './ReviewSubmission.module.css'
 
 interface ReviewSubmissionProps {
   stepNumber: number
   totalSteps: number
   disabled?: boolean
+  selectedProduct?: Product | null
+  enumData?: SpecificationEnumData
+  enumsLoading?: boolean
 }
 
 interface ReviewSubmissionFormData {
@@ -25,6 +31,9 @@ const ReviewSubmission = ({
   stepNumber,
   totalSteps,
   disabled = false,
+  selectedProduct,
+  enumData,
+  enumsLoading,
 }: ReviewSubmissionProps): JSX.Element => {
   const { watch, setValue } = useFormContext<ReviewSubmissionFormData>()
 
@@ -56,11 +65,11 @@ const ReviewSubmission = ({
 
   return (
     <WizardStepCard
-      title="Write Your Review"
+      title="Review & Submit"
       stepNumber={stepNumber}
       totalSteps={totalSteps}
-      disabled={disabled}
     >
+      {selectedProduct && <SelectedProductSummary product={selectedProduct} />}
       <Ratings
         starRating={starRating}
         ratingBoost={ratingBoost}

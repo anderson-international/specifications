@@ -2,18 +2,6 @@
 
 import type { Product } from './product-selector-interfaces'
 
-// Transform raw products to our Product interface
-export const transformProducts = (rawProducts: any[]): Product[] => {
-  return rawProducts.map((product) => ({
-    id: product.id,
-    handle: product.handle,
-    title: product.title,
-    brand: product.brand,
-    image_url: product.image_url,
-    spec_count_total: product.spec_count_total,
-  }))
-}
-
 // Filter products based on search and brand criteria
 export const filterProducts = (
   products: Product[],

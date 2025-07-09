@@ -26,8 +26,12 @@ const SpecificationWizard = ({
   const {
     methods,
     activeStep,
-    _completedSteps,
+    completedSteps,
     isSubmitting,
+    selectedProduct,
+    enumData,
+    enumsLoading,
+    filteredProducts,
     handleNext,
     handlePrevious,
     handleStepClick,
@@ -62,7 +66,16 @@ const SpecificationWizard = ({
 
         <form onSubmit={methods.handleSubmit(handleFormSubmit)} className={styles.form}>
           <div className={styles.stepContent}>
-            {currentStep.component(activeStep + 1, totalSteps, isSubmitting, handleNext)}
+            {currentStep.component(
+              activeStep + 1,
+              totalSteps,
+              isSubmitting,
+              handleNext,
+              selectedProduct,
+              enumData,
+              enumsLoading,
+              filteredProducts
+            )}
           </div>
 
           <div className={styles.wizardFooter}>

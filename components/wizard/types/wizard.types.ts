@@ -5,6 +5,8 @@
 
 import { Specification } from '@/types'
 import { UseFormReturn } from 'react-hook-form'
+import { Product } from '@/lib/types/product'
+import { SpecificationEnumData } from '@/types/enum'
 
 export interface WizardFormData {
   shopify_handle: string | null
@@ -36,6 +38,10 @@ export interface UseSpecificationWizardReturn {
   activeStep: number
   completedSteps: Set<number>
   isSubmitting: boolean
+  selectedProduct: Product | null
+  enumData: SpecificationEnumData | undefined
+  enumsLoading: boolean
+  filteredProducts: Product[]
   handleNext: () => void
   handlePrevious: () => void
   handleStepClick: (stepIndex: number) => void

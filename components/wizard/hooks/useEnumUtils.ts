@@ -6,10 +6,28 @@ import type { EnumOption, EnumHookResult } from './types'
 import { useSpecificationEnums } from './useSpecificationEnums'
 
 /**
+ * Find enum ID by name (case-insensitive)
+ * Returns null if not found
+ */
+export const findEnumByName = (
+  enumValues: EnumValue[] | undefined,
+  name: string
+): number | null => {
+  if (!enumValues || !Array.isArray(enumValues) || !name) {
+    return null
+  }
+
+  const match = enumValues.find(
+    (item) => item?.name?.toLowerCase() === name.toLowerCase()
+  )
+  return match ? match.id : null
+}
+
+/**
  * Transform enum values to option format for form controls
  * Filters out "None" values for required fields
  */
-const transformEnumToOptions = (
+export const transformEnumToOptions = (
   enumValues: EnumValue[] | undefined,
   filterNone: boolean = true
 ): EnumOption[] => {
