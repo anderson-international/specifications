@@ -9,6 +9,7 @@ import redis from '@/lib/redis'
 export class RedisEnumCache extends RedisCacheBase<SpecificationEnumData> {
   private static instance: RedisEnumCache
   protected readonly cacheKey = 'specification:enums'
+  protected readonly TTL_SECONDS = null // Static cache - no TTL
 
   private constructor() {
     super('enums')

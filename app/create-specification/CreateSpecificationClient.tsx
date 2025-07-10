@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import SpecificationWizard from '@/components/wizard/SpecificationWizard'
-import { Specification } from '@/lib/schemas/specification'
+import { WizardFormData } from '@/components/wizard/types/wizard.types'
 import { SpecificationEnumData } from '@/types/enum'
 import { useAuth } from '@/lib/auth-context'
 
@@ -25,7 +25,7 @@ export default function CreateSpecificationClient(
   }, [searchParams])
 
   const handleSubmit = useCallback(
-    async (_data: Specification): Promise<void> => {
+    async (_data: WizardFormData): Promise<void> => {
       try {
         // TODO: Replace with actual API call
         // Simulate API call

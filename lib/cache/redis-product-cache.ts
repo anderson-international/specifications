@@ -7,7 +7,7 @@ import { CachePerformanceMonitor } from './base/cache-performance'
 export class RedisProductCache extends RedisCacheBase<Product[]> {
   private static instance: RedisProductCache
   protected readonly cacheKey = 'shopify:products:all'
-  private readonly TTL_SECONDS = 30 * 60 // 30 minutes
+  protected readonly TTL_SECONDS = 30 * 60 // 30 minutes
 
   private constructor() {
     super('products')
@@ -40,6 +40,12 @@ export class RedisProductCache extends RedisCacheBase<Product[]> {
 
   // Product-specific data validation
   protected validateData(data: unknown): data is Product[] {
+    // Handle new cache structure: { data: Product[], _cached: string }
+    if (data && typeof data === 'object' && 'data' in data) {
+      const cacheData = data as { data: unknown; _cached: string }
+      return Array.isArray(cacheData.data) && cacheData.data.length > 0
+    }
+    // Fallback for direct array (backwards compatibility)
     return Array.isArray(data) && data.length > 0
   }
 

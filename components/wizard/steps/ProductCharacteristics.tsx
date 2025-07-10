@@ -49,16 +49,10 @@ const ProductCharacteristics = ({
   } = useProductCharacteristics()
 
   // Use enum data passed from parent to eliminate redundant API calls
-  // DEBUG: Check enum data flow
-  console.log('ProductCharacteristics enumData:', enumData)
-  console.log('enumData keys:', enumData ? Object.keys(enumData) : 'enumData is undefined')
-  
   const grinds = enumData?.grinds ? transformEnumToOptions(enumData.grinds) : undefined
   const experienceLevels = enumData?.experienceLevels ? transformEnumToOptions(enumData.experienceLevels) : undefined
   const nicotineLevels = enumData?.nicotineLevels ? transformEnumToOptions(enumData.nicotineLevels) : undefined
   const moistureLevels = enumData?.moistureLevels ? transformEnumToOptions(enumData.moistureLevels) : undefined
-  
-  console.log('Transformed options:', { grinds, experienceLevels, nicotineLevels, moistureLevels })
 
   const isLoadingEnums = enumsLoading || false
 

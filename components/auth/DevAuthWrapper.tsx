@@ -10,7 +10,7 @@ interface DevAuthWrapperProps {
   children: React.ReactNode
 }
 
-const DevAuthWrapper = ({ children }: DevAuthWrapperProps): JSX.Element => {
+const DevAuthWrapper = ({ children }: DevAuthWrapperProps): React.ReactNode => {
   const { user, isLoading, signIn, signOut } = useAuth()
 
   const handleUserSelect = useCallback(

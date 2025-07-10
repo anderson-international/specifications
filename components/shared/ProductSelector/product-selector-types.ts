@@ -6,6 +6,7 @@ export interface UseProductSelectorProps {
   mode: 'single' | 'multi'
   initialSelection?: string[]
   onSelectionChange: (productIds: string[]) => void
+  products?: Product[] // Optional external products to eliminate redundant API calls
 }
 
 export interface UseProductSelectorReturn {

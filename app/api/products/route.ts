@@ -27,10 +27,20 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     })
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
+    const errorStack = error instanceof Error ? error.stack : 'No stack trace'
+    
+    // Log detailed error for debugging
+    console.error('Products API Error:', {
+      message: errorMessage,
+      stack: errorStack,
+      timestamp: new Date().toISOString(),
+    })
+    
     return NextResponse.json(
       {
         error: 'Redis API operation failed',
         details: errorMessage,
+        stack: errorStack,
       },
       { status: 500 }
     )

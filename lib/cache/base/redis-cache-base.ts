@@ -1,4 +1,5 @@
 // Generic Redis cache base class - eliminates duplication between product and enum caches
+// Supports both TTL-based caches (products) and static caches (enums)
 import redis from '@/lib/redis'
 
 export abstract class RedisCacheBase<T> {
@@ -6,6 +7,7 @@ export abstract class RedisCacheBase<T> {
   private static instances: Map<string, RedisCacheBase<any>> = new Map()
   
   protected abstract readonly cacheKey: string
+  protected abstract readonly TTL_SECONDS: number | null // null = no TTL (static cache)
   protected abstract fetchFreshData(): Promise<T>
   protected abstract validateData(data: unknown): data is T
 
@@ -41,12 +43,26 @@ export abstract class RedisCacheBase<T> {
     }
   }
 
-  // Generic cache retrieval
+  // Generic cache retrieval - supports both TTL and static patterns
   async getData(): Promise<T> {
     try {
-      const cached = await redis.get(this.cacheKey)
+      let cached: T | null = null
+      
+      if (this.TTL_SECONDS !== null) {
+        // TTL-based cache: use canonical getex for atomic sliding expiration
+        cached = await redis.getex(this.cacheKey, { ex: this.TTL_SECONDS })
+      } else {
+        // Static cache: use simple get
+        cached = await redis.get(this.cacheKey)
+      }
       
       if (cached && this.validateData(cached)) {
+        // Extract actual data from new cache structure
+        if (cached && typeof cached === 'object' && 'data' in cached) {
+          const cacheData = cached as unknown as { data: T; _cached: string }
+          return cacheData.data
+        }
+        // Fallback for direct data (backwards compatibility)
         return cached
       }
       
@@ -56,15 +72,23 @@ export abstract class RedisCacheBase<T> {
     }
   }
 
-  // Generic cache refresh
+  // Generic cache refresh - supports both TTL and static patterns
   async refreshCache(): Promise<void> {
     try {
       const freshData = await this.fetchFreshData()
+      // Store the data directly (preserving array structure) with timestamp
       const cachedData = {
-        ...freshData,
+        data: freshData,
         _cached: new Date().toISOString()
       }
-      await redis.set(this.cacheKey, cachedData)
+      
+      if (this.TTL_SECONDS !== null) {
+        // TTL-based cache: use setex with expiration
+        await redis.setex(this.cacheKey, this.TTL_SECONDS, cachedData)
+      } else {
+        // Static cache: use simple set (no expiration)
+        await redis.set(this.cacheKey, cachedData)
+      }
     } catch (error) {
       throw new Error(`Failed to refresh cache: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }

@@ -16,6 +16,7 @@ const ProductSelector = ({
   title = 'Select Products',
   searchPlaceholder = 'Search products...',
   disabled = false,
+  products,
 }: ProductSelectorProps): JSX.Element => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -35,7 +36,7 @@ const ProductSelector = ({
     handleClearAll,
     handleConfirmSelection,
     brandOptions,
-  } = useProductSelector({ mode, initialSelection, onSelectionChange })
+  } = useProductSelector({ mode, initialSelection, onSelectionChange, products })
 
   const handleOpenModal = useCallback(() => setIsModalOpen(true), [])
   const handleCloseModal = useCallback(() => setIsModalOpen(false), [])

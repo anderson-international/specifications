@@ -81,6 +81,7 @@ const ProductSelection = ({
         title="Choose a Product to Review"
         searchPlaceholder="Search products..."
         disabled={disabled}
+        products={filteredProducts}
       />
     </WizardStepCard>
   )

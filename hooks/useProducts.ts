@@ -9,10 +9,12 @@ export function useProducts() {
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [selectedBrand, setSelectedBrand] = useState<string>('')
+  const [retryCount, setRetryCount] = useState<number>(0)
 
   const fetchProducts = useCallback(async (): Promise<void> => {
     setIsLoading(true)
     setError(null)
+    
     try {
       const response = await fetch('/api/products')
       if (!response.ok) {
@@ -20,11 +22,21 @@ export function useProducts() {
       }
       const data = await response.json()
 
-      // Handle cache warming state
+      // Handle cache warming state with retry limit
       if (data.warming) {
-        setTimeout(() => fetchProducts(), 2000)
-        return
+        if (retryCount < 5) { // Max 5 retries for warming
+          setTimeout(() => {
+            setRetryCount(prev => prev + 1)
+            fetchProducts()
+          }, 2000)
+          return
+        } else {
+          throw new Error('Cache warming timeout - exceeded retry limit')
+        }
       }
+      
+      // Reset retry count on success
+      setRetryCount(0)
 
       setProducts(data.products)
     } catch (err) {
@@ -32,7 +44,7 @@ export function useProducts() {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [retryCount])
 
   useEffect(() => {
     fetchProducts()

@@ -23,7 +23,7 @@ export interface WizardFormData {
   cures: number[]
   tobacco_types: number[]
   review: string
-  star_rating: number
+  star_rating: number | null
   rating_boost: number
 }
 

@@ -13,6 +13,7 @@ export interface ProductSelectorProps {
   title?: string
   searchPlaceholder?: string
   disabled?: boolean
+  products?: Product[] // Optional external products to eliminate redundant API calls
 }
 
 export interface ProductRowProps {

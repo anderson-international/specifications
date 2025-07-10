@@ -11,6 +11,43 @@
   margin-bottom: 2rem;
 }
 
+.errorMessage {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text);
+}
+
+.errorMessage p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.errorDismiss {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.errorDismiss:hover {
+  opacity: 1;
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -22,51 +59,59 @@
 }
 
 .wizardFooter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
+  /* Remove footer styling - navigation now floating */
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
 }
 
 .navigationButtons {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
   display: flex;
-  gap: 0.75rem;
-  align-items: center;
+  gap: 12px;
+  z-index: 100;
+  flex-direction: column-reverse;
 }
 
-/* Shared button foundation */
+/* Floating Action Button foundation */
 .backButton,
 .nextButton,
-.submitButton,
-.draftButton {
-  height: 44px;
-  padding: 0 1.5rem;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
+.submitButton {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 100px;
   border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Hidden draft button in FAB mode */
+.draftButton {
+  display: none;
 }
 
 .backButton:disabled,
 .nextButton:disabled,
-.submitButton:disabled,
-.draftButton:disabled {
-  opacity: 0.5;
+.submitButton:disabled {
+  opacity: 0.4;
   cursor: not-allowed;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Button variants */
+/* FAB Button variants */
 .backButton {
-  background-color: transparent;
+  background-color: var(--card);
   border: 1px solid var(--border);
   color: var(--text-secondary);
 }
@@ -74,18 +119,21 @@
 .backButton:hover:not(:disabled) {
   background-color: var(--background-hover);
   color: var(--text);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
 .nextButton,
 .submitButton {
   background-color: var(--btn-primary);
   color: var(--text-on-accent);
-  font-weight: 600;
 }
 
 .nextButton:hover:not(:disabled),
 .submitButton:hover:not(:disabled) {
   background-color: var(--btn-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
 .draftButton {
@@ -106,23 +154,23 @@
 @media (max-width: 768px) {
   .wizardContainer {
     padding: 1rem 0;
-  }
-
-  .wizardFooter {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+    /* Add bottom padding to prevent content from hiding behind FABs */
+    padding-bottom: 120px;
   }
 
   .navigationButtons {
-    width: 100%;
-    justify-content: center;
+    /* Adjust position for mobile */
+    bottom: 16px;
+    right: 16px;
+    gap: 10px;
   }
 
   .backButton,
   .nextButton,
-  .submitButton,
-  .draftButton {
-    width: 100%;
+  .submitButton {
+    /* Slightly smaller on mobile */
+    width: 48px;
+    height: 48px;
+    font-size: 1rem;
   }
 }

@@ -54,6 +54,12 @@ export async function withErrorHandling<T>(
 ): Promise<NextResponse<ApiResponse<T>> | NextResponse<ApiResponse>> {
   try {
     const result = await operation()
+    
+    // Check if result is already a NextResponse (error response)
+    if (result instanceof NextResponse) {
+      return result  // Return error response as-is
+    }
+    
     return createApiResponse(result)
   } catch (error) {
     return handleApiError(error)

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { Specification } from '@/lib/schemas/specification'
 import WizardProgress from './controls/WizardProgress'
@@ -23,6 +23,8 @@ const SpecificationWizard = ({
   initialData = {},
   userId,
 }: SpecificationWizardProps): JSX.Element => {
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  
   const {
     methods,
     activeStep,
@@ -64,7 +66,27 @@ const SpecificationWizard = ({
           />
         </div>
 
-        <form onSubmit={methods.handleSubmit(handleFormSubmit)} className={styles.form}>
+        {submitError && (
+          <div className={styles.errorMessage}>
+            <p><strong>Error:</strong> {submitError}</p>
+            <button 
+              type="button" 
+              onClick={() => setSubmitError(null)}
+              className={styles.errorDismiss}
+            >
+              ×
+            </button>
+          </div>
+        )}
+
+        <form onSubmit={methods.handleSubmit(async (data) => {
+          try {
+            setSubmitError(null)
+            await handleFormSubmit(data)
+          } catch (error) {
+            setSubmitError(error instanceof Error ? error.message : 'Failed to submit specification')
+          }
+        })} className={styles.form}>
           <div className={styles.stepContent}>
             {currentStep.component(
               activeStep + 1,
@@ -86,8 +108,9 @@ const SpecificationWizard = ({
                   onClick={handlePrevious}
                   className={styles.backButton}
                   disabled={isSubmitting}
+                  title="Previous Step"
                 >
-                  Back
+                  ←
                 </button>
               )}
               {activeStep < steps.length - 1 ? (
@@ -96,16 +119,18 @@ const SpecificationWizard = ({
                   onClick={handleNext}
                   className={styles.nextButton}
                   disabled={isSubmitting || !isCurrentStepValid}
+                  title="Next Step"
                 >
-                  Next
+                  →
                 </button>
               ) : (
                 <button
                   type="submit"
                   className={styles.submitButton}
                   disabled={isSubmitting || !isCurrentStepValid}
+                  title={isSubmitting ? 'Submitting...' : 'Submit'}
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit'}
+                  {isSubmitting ? '⏳' : '✓'}
                 </button>
               )}
             </div>
