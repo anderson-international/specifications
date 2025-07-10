@@ -13,21 +13,29 @@ import {
 } from '../types/wizard.types'
 
 const defaultValues: Partial<WizardFormData> = {
-  shopify_handle: 'gid://shopify/Product/8675309519157',
-  product_brand_id: null,
-  product_type_id: null,
-  grind_id: null,
-  experience_level_id: null,
+  // System fields (populated at initialization)
+  user_id: '', // Will be set from props
+  created_at: new Date(),
+  updated_at: new Date(),
+  status_id: 1, // Default to "published"
+  submission_id: undefined, // Legacy field - ignore
+  
+  // Form fields with proper Specification interface names
+  shopify_handle: '',
+  product_brand_id: 0,
+  product_type_id: 0,
+  grind_id: 0,
+  experience_level_id: 0,
   is_fermented: false,
   is_oral_tobacco: false,
   is_artisan: false,
-  nicotine_level_id: null,
-  moisture_level_id: null,
-  tasting_notes: [],
-  cures: [],
-  tobacco_types: [],
+  nicotine_level_id: 0,
+  moisture_level_id: 0,
+  tasting_note_ids: [],
+  cure_type_ids: [],
+  tobacco_type_ids: [],
   review: '',
-  star_rating: null,
+  star_rating: 1, // Minimum allowed by schema
   rating_boost: 0,
 }
 
@@ -41,7 +49,11 @@ export const useSpecificationWizard = ({
   userId,
 }: UseSpecificationWizardProps): UseSpecificationWizardReturn => {
   const methods = useForm<WizardFormData>({
-    defaultValues: { ...defaultValues, ...initialData } as WizardFormData,
+    defaultValues: { 
+      ...defaultValues, 
+      user_id: userId, // Set user_id from props
+      ...initialData 
+    } as WizardFormData,
   })
 
   // Single data source: fetch all data here to eliminate redundant API calls

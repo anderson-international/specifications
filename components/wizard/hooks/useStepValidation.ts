@@ -17,7 +17,7 @@ export const useStepValidation = ({ currentStepId, methods }: UseStepValidationP
   const validationFields: Record<string, Path<WizardFormData>[]> = {
     product: ['shopify_handle'],
     characteristics: ['grind_id', 'experience_level_id', 'nicotine_level_id', 'moisture_level_id'],
-    tasting: ['tasting_notes', 'cures', 'tobacco_types'],
+    tasting: ['tasting_note_ids', 'cure_type_ids', 'tobacco_type_ids'],
     review: ['review', 'star_rating'],
   }
 

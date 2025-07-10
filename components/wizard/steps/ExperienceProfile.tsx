@@ -73,7 +73,6 @@ const ExperienceProfile = ({
           onChange={handleExperienceChange}
           disabled={disabled}
           name="experience-level"
-          fullWidth
           aria-labelledby="experience-level-label"
         />
       </div>
@@ -89,7 +88,6 @@ const ExperienceProfile = ({
           onChange={handleNicotineChange}
           disabled={disabled}
           name="nicotine-level"
-          fullWidth
         />
       </div>
 
@@ -104,7 +102,6 @@ const ExperienceProfile = ({
           onChange={handleMoistureChange}
           disabled={disabled}
           name="moisture-level"
-          fullWidth
         />
       </div>
     </WizardStepCard>

@@ -42,6 +42,9 @@ export const transformEnumToOptions = (
     filteredValues = enumValues.filter((item) => item.name.toLowerCase() !== 'none')
   }
 
+  // Sort by ID ascending to ensure proper dropdown ordering
+  filteredValues.sort((a, b) => a.id - b.id)
+
   return filteredValues.map((item) => ({
     id: item.id,
     value: item.id,

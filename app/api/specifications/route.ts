@@ -30,6 +30,28 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           enum_product_brands: {
             select: { id: true, name: true },
           },
+          // Junction tables with their related enum data
+          spec_tasting_notes: {
+            include: {
+              enum_tasting_notes: {
+                select: { id: true, name: true },
+              },
+            },
+          },
+          spec_cures: {
+            include: {
+              enum_cures: {
+                select: { id: true, name: true },
+              },
+            },
+          },
+          spec_tobacco_types: {
+            include: {
+              enum_tobacco_types: {
+                select: { id: true, name: true },
+              },
+            },
+          },
         },
         skip,
         take: limit,

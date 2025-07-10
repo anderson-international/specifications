@@ -21,9 +21,9 @@ interface TastingProfileProps {
 }
 
 interface TastingProfileFormData {
-  tasting_notes: number[]
-  cures: number[]
-  tobacco_types: number[]
+  tasting_note_ids: number[]
+  cure_type_ids: number[]
+  tobacco_type_ids: number[]
 }
 
 /**
@@ -48,7 +48,7 @@ const TastingProfile = ({
   const isLoadingEnums = enumsLoading || false
 
   // Watch form values - Optimized with single watch call
-  const { tasting_notes: tastingNotes = [], cures = [], tobacco_types: tobaccoTypes = [] } = watch()
+  const { tasting_note_ids: tastingNotes = [], cure_type_ids: cures = [], tobacco_type_ids: tobaccoTypes = [] } = watch()
 
   const createMultiSelectHandler = useCallback(
     (fieldName: keyof TastingProfileFormData) => (values: (number | string)[]) => {
@@ -57,9 +57,9 @@ const TastingProfile = ({
     [setValue]
   )
 
-  const handleTastingNotesChange = createMultiSelectHandler('tasting_notes')
-  const handleCuresChange = createMultiSelectHandler('cures')
-  const handleTobaccoTypesChange = createMultiSelectHandler('tobacco_types')
+  const handleTastingNotesChange = createMultiSelectHandler('tasting_note_ids')
+  const handleCuresChange = createMultiSelectHandler('cure_type_ids')
+  const handleTobaccoTypesChange = createMultiSelectHandler('tobacco_type_ids')
 
   return (
     <WizardStepCard title="Tasting Profile" stepNumber={stepNumber} totalSteps={totalSteps}>
