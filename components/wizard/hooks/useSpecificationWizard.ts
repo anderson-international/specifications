@@ -19,7 +19,6 @@ const defaultValues: Partial<WizardFormData> = {
   updated_at: new Date(),
   status_id: 1, // Default to "published"
   submission_id: undefined, // Legacy field - ignore
-  
   // Form fields with proper Specification interface names
   shopify_handle: '',
   product_brand_id: 0,
@@ -48,6 +47,9 @@ export const useSpecificationWizard = ({
   initialData = {},
   userId,
 }: UseSpecificationWizardProps): UseSpecificationWizardReturn => {
+  // Detect if we're in edit mode (initialData provided and not empty)
+  const isEditMode = Object.keys(initialData).length > 0
+  
   const methods = useForm<WizardFormData>({
     defaultValues: { 
       ...defaultValues, 
@@ -62,6 +64,7 @@ export const useSpecificationWizard = ({
   const selectedProduct = useSelectedProduct(methods, filteredProducts)
 
   // Extract navigation logic to separate hook for file size compliance
+  // Start at step 2 (index 1) for edit mode, step 1 (index 0) for create mode
   const {
     activeStep,
     completedSteps,
@@ -69,7 +72,7 @@ export const useSpecificationWizard = ({
     handlePrevious,
     handleStepClick,
     canNavigateToStep,
-  } = useWizardNavigation()
+  } = useWizardNavigation(isEditMode ? 1 : 0)
 
   const { isSubmitting, handleFormSubmit } = useSpecificationSubmission({
     onSubmit,
@@ -91,5 +94,6 @@ export const useSpecificationWizard = ({
     handleStepClick,
     handleFormSubmit,
     canNavigateToStep,
+    isEditMode,
   }
 }

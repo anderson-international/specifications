@@ -19,7 +19,7 @@ interface UseSpecificationSubmissionReturn {
 const useSpecificationSubmission = ({
   onSubmit,
   methods,
-  userId,
+  userId: _userId,
 }: UseSpecificationSubmissionProps): UseSpecificationSubmissionReturn => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 

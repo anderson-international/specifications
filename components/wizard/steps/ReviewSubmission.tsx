@@ -32,8 +32,8 @@ const ReviewSubmission = ({
   totalSteps,
   disabled = false,
   selectedProduct,
-  enumData,
-  enumsLoading,
+  enumData: _enumData,
+  enumsLoading: _enumsLoading,
 }: ReviewSubmissionProps): JSX.Element => {
   const { watch, setValue } = useFormContext<ReviewSubmissionFormData>()
 

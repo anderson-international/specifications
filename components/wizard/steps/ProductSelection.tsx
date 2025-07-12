@@ -33,7 +33,7 @@ const ProductSelection = ({
   disabled = false,
   onProductSelect,
   enumData,
-  enumsLoading,
+  enumsLoading: _enumsLoading,
   filteredProducts = [],
 }: ProductSelectionProps): JSX.Element => {
   const { watch, setValue } = useFormContext<ProductSelectionFormData>()
@@ -69,7 +69,7 @@ const ProductSelection = ({
         setValue('product_type_id', null, { shouldValidate: true })
       }
     },
-    [setValue, onProductSelect, brandEnums]
+    [setValue, onProductSelect, brandEnums, filteredProducts]
   )
 
   return (

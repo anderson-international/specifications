@@ -17,8 +17,6 @@ export default function SpecificationsPage(): JSX.Element {
     isLoading,
     error,
     handleEdit,
-    handleDelete,
-    handleDuplicate,
     handleRetry,
   } = useSpecifications()
 
@@ -73,9 +71,8 @@ export default function SpecificationsPage(): JSX.Element {
               value: statusFilter,
               options: [
                 { value: 'all', label: 'All Specifications' },
-                { value: 'draft', label: 'Drafts' },
-                { value: 'submitted', label: 'Submitted' },
-                { value: 'reviewed', label: 'Reviewed' },
+                { value: 'published', label: 'Published' },
+                { value: 'needs_revision', label: 'Needs Revision' },
               ],
             },
           ]}
@@ -110,8 +107,6 @@ export default function SpecificationsPage(): JSX.Element {
                       key={spec.id}
                       specification={spec}
                       onEdit={handleEdit}
-                      onDelete={handleDelete}
-                      onDuplicate={handleDuplicate}
                     />
                   ))}
                 </CollapsibleGroup>

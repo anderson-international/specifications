@@ -1,81 +1,80 @@
 'use client'
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react'
-import { MOCK_PRODUCTS, type MockProduct } from '@/constants/wizardOptions'
+import { Product } from '@/lib/types/product'
+import { useProducts } from '@/hooks/useProducts'
 import { filterProducts, findProductByHandle } from '../utils/productFilters'
 
 interface UseProductSelectionProps {
   shopifyHandle: string | null
-  onProductSelect: (product: MockProduct) => void
+  onProductSelect: (product: Product) => void
 }
 
 interface UseProductSelectionReturn {
   searchTerm: string
-  selectedBrandId: number | null
+  selectedBrandId: string | null
   selectedTypeId: number | null
-  selectedProduct: MockProduct | null
-  filteredProducts: MockProduct[]
-  handleBrandFilter: (brandId: number | null) => void
+  selectedProduct: Product | null
+  filteredProducts: Product[]
+  handleBrandFilter: (brandId: string | null) => void
   handleTypeFilter: (typeId: number | null) => void
   handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  handleProductSelect: (product: MockProduct) => void
+  handleProductSelect: (product: Product) => void
   handleClearFilters: () => void
 }
 
-/**
- * Custom hook for product selection state management and filtering
- */
 export const useProductSelection = ({
   shopifyHandle,
   onProductSelect,
 }: UseProductSelectionProps): UseProductSelectionReturn => {
   const [searchTerm, setSearchTerm] = useState<string>('')
-  const [selectedBrandId, setSelectedBrandId] = useState<number | null>(null)
+  const [selectedBrandId, setSelectedBrandId] = useState<string | null>(null)
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null)
 
+  // Use real product data instead of mock data
+  const { filteredProducts: allProducts } = useProducts()
+
   const selectedProduct = useMemo(
-    () => findProductByHandle(MOCK_PRODUCTS as unknown as MockProduct[], shopifyHandle),
-    [shopifyHandle]
+    () => findProductByHandle(allProducts, shopifyHandle),
+    [allProducts, shopifyHandle]
   )
 
   useEffect(() => {
     if (selectedProduct) {
-      setSearchTerm(selectedProduct.name)
-      setSelectedBrandId(selectedProduct.brand_id)
-      setSelectedTypeId(selectedProduct.type_id)
+      setSearchTerm(selectedProduct.title)
+      setSelectedBrandId(selectedProduct.brand)
+      // Note: type_id not available in Product - needs separate lookup if required
+      setSelectedTypeId(null)
     }
   }, [selectedProduct])
 
   const filteredProducts = useMemo(
-    () =>
-      filterProducts(
-        MOCK_PRODUCTS as unknown as MockProduct[],
-        selectedBrandId,
-        selectedTypeId,
-        searchTerm
-      ),
-    [selectedBrandId, selectedTypeId, searchTerm]
+    () => filterProducts(
+      allProducts,
+      selectedBrandId, // string | null - matches Product.brand
+      selectedTypeId,  // number | null - not used in filtering since Product lacks type_id
+      searchTerm
+    ),
+    [allProducts, selectedBrandId, selectedTypeId, searchTerm]
   )
 
-  const handleBrandFilter = useCallback((brandId: number | null): void => {
+  const handleBrandFilter = useCallback((brandId: string | null): void => {
     setSelectedBrandId(brandId)
     setSearchTerm('')
   }, [])
-
   const handleTypeFilter = useCallback((typeId: number | null): void => {
     setSelectedTypeId(typeId)
     setSearchTerm('')
   }, [])
-
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchTerm(e.target.value)
   }, [])
 
   const handleProductSelect = useCallback(
-    (product: MockProduct): void => {
-      setSelectedBrandId(product.brand_id)
-      setSelectedTypeId(product.type_id)
-      setSearchTerm(product.name)
+    (product: Product): void => {
+      setSelectedBrandId(product.brand)
+      setSelectedTypeId(null) // type_id not available in Product
+      setSearchTerm(product.title)
       onProductSelect(product)
     },
     [onProductSelect]

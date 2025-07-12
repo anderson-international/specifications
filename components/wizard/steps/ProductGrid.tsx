@@ -1,14 +1,14 @@
 'use client'
 
 import React, { useCallback } from 'react'
-import { type MockProduct } from '@/constants/wizardOptions'
+import { type Product } from '@/lib/types/product'
 import ProductCard from './ProductCard'
 import styles from './ProductGrid.module.css'
 
 interface ProductGridProps {
-  products: MockProduct[]
+  products: Product[]
   selectedHandle: string | null
-  onProductSelect: (product: MockProduct) => void
+  onProductSelect: (product: Product) => void
   disabled?: boolean
 }
 
@@ -23,7 +23,7 @@ const ProductGrid = ({
 }: ProductGridProps): JSX.Element => {
   const handleSelect = useCallback(
     (handle: string) => {
-      const selectedProduct = products.find((p) => p.shopify_handle === handle)
+      const selectedProduct = products.find((p) => p.handle === handle)
       if (selectedProduct) {
         onProductSelect(selectedProduct)
       }
@@ -38,21 +38,12 @@ const ProductGrid = ({
   return (
     <div className={styles.productGrid}>
       {products.map((product) => {
-        const cardProduct = {
-          id: product.id,
-          title: product.name,
-          handle: product.shopify_handle,
-          brand_id: product.brand_id,
-          brand_name: product.brand_name,
-          image_url: product.image_url,
-          is_reviewed: product.reviewed,
-        }
-
+        // Product already has correct format - no mapping needed
         return (
           <ProductCard
             key={product.id}
-            product={cardProduct}
-            isSelected={product.shopify_handle === selectedHandle}
+            product={product}
+            isSelected={product.handle === selectedHandle}
             onSelect={handleSelect}
             disabled={disabled}
           />

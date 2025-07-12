@@ -1,13 +1,12 @@
 'use client'
 
-import React, { useState, useCallback, useMemo, useRef } from 'react'
-import { useDropdownPosition } from './useDropdownPosition'
-import { useClickOutside } from './useClickOutside'
-export interface Option {
-  id: number | string
-  label: string
-  value: number | string | boolean | null
-}
+import React from 'react'
+import { useMultiSelectState, Option } from './useMultiSelectState'
+import { useMultiSelectActions } from './useMultiSelectActions'
+import { useMultiSelectInteractions } from './useMultiSelectInteractions'
+
+// Re-export Option for convenience
+export type { Option }
 
 interface UseMultiSelectProps {
   options: Option[]
@@ -46,85 +45,33 @@ export const useMultiSelect = ({
   onChange,
   disabled = false,
 }: UseMultiSelectProps): UseMultiSelectReturn => {
-  const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [searchTerm, setSearchTerm] = useState<string>('')
-  const containerRef = useRef<HTMLDivElement>(null)
-  const dropdownRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  // State management
+  const {
+    isOpen,
+    setIsOpen,
+    searchTerm,
+    setSearchTerm,
+    containerRef,
+    dropdownRef,
+    inputRef,
+    filteredOptions,
+    selectedOptions,
+  } = useMultiSelectState({ options, selectedValues })
 
-  const filteredOptions = useMemo((): Option[] => {
-    if (!searchTerm) return options
-    const lowerSearchTerm = searchTerm.toLowerCase()
-    return options.filter((option) => option.label.toLowerCase().includes(lowerSearchTerm))
-  }, [options, searchTerm])
+  // Action handlers
+  const {
+    handleOptionToggle,
+    handleRemoveOption,
+    handleSearchChange,
+    handleClearAll,
+  } = useMultiSelectActions({ selectedValues, onChange, disabled, setSearchTerm })
 
-  const selectedOptions = useMemo((): Option[] => {
-    return options.filter((option) => selectedValues.includes(option.id))
-  }, [options, selectedValues])
-
-  const handleOptionToggle = useCallback(
-    (optionId: number | string): void => {
-      if (disabled) return
-
-      const newSelectedValues = selectedValues.includes(optionId)
-        ? selectedValues.filter((id) => id !== optionId)
-        : [...selectedValues, optionId]
-
-      onChange(newSelectedValues)
-      setSearchTerm('')
-    },
-    [selectedValues, onChange, disabled]
-  )
-
-  const handleRemoveOption = useCallback(
-    (optionId: number | string): void => {
-      if (disabled) return
-      onChange(selectedValues.filter((id) => id !== optionId))
-    },
-    [selectedValues, onChange, disabled]
-  )
-
-  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>): void => {
-    setSearchTerm(e.target.value)
-  }, [])
-
-  const handleClearAll = useCallback((): void => {
-    if (disabled) return
-    onChange([])
-  }, [onChange, disabled])
-
-  const handleContainerClick = useCallback((): void => {
-    if (disabled) return
-    setIsOpen((prev) => !prev)
-
-    if (!isOpen && inputRef.current) {
-      setTimeout(() => {
-        inputRef.current?.focus()
-      }, 0)
-    }
-  }, [isOpen, disabled])
-
-  const dropdownPosition = useDropdownPosition(containerRef, isOpen)
-
-  useClickOutside([containerRef, dropdownRef], () => {
-    setIsOpen(false)
-  })
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent): void => {
-      if (disabled) return
-
-      if (e.key === 'Escape') {
-        setIsOpen(false)
-      }
-
-      if (e.key === 'Enter' && document.activeElement !== inputRef.current) {
-        e.preventDefault()
-        setIsOpen((prev) => !prev)
-      }
-    },
-    [disabled]
-  )
+  // UI interactions
+  const {
+    dropdownPosition,
+    handleContainerClick,
+    handleKeyDown,
+  } = useMultiSelectInteractions({ isOpen, setIsOpen, containerRef, dropdownRef, inputRef, disabled })
 
   return {
     isOpen,

@@ -109,6 +109,27 @@
   gap: 0.75rem;
 }
 
+/* Status indicator for needs_revision specifications */
+.statusIndicator {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: var(--color-warning);
+  color: var(--color-text-on-warning, #000);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+.statusLabel {
+  margin: 0;
+  line-height: 1;
+}
+
+/* Legacy status styles - kept for backward compatibility but updated for actual database statuses */
 .status {
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
@@ -118,24 +139,13 @@
   text-transform: uppercase;
 }
 
-.status--draft {
+.status--needs_revision {
   background-color: var(--color-warning);
-}
-
-.status--pending_review {
-  background-color: var(--color-info);
-}
-
-.status--approved {
-  background-color: var(--color-success);
-}
-
-.status--rejected {
-  background-color: var(--color-danger);
+  color: var(--color-text-on-warning, #000);
 }
 
 .status--published {
-  background-color: var(--color-primary);
+  background-color: var(--color-success);
 }
 
 .status--default {

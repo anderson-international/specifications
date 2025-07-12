@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useCallback } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { Specification } from '@/lib/schemas/specification'
 import WizardProgress from './controls/WizardProgress'
+import WizardNavigationFooter from './controls/WizardNavigationFooter'
 import { useSpecificationWizard } from './hooks/useSpecificationWizard'
 import { useStepValidation } from './hooks/useStepValidation'
 import { createWizardSteps } from './constants/wizardSteps'
@@ -28,7 +29,6 @@ const SpecificationWizard = ({
   const {
     methods,
     activeStep,
-    completedSteps,
     isSubmitting,
     selectedProduct,
     enumData,
@@ -39,6 +39,7 @@ const SpecificationWizard = ({
     handleStepClick,
     handleFormSubmit,
     canNavigateToStep,
+    isEditMode,
   } = useSpecificationWizard({ onSubmit, initialData, userId })
 
   const steps = useMemo(() => createWizardSteps(), [])
@@ -50,15 +51,45 @@ const SpecificationWizard = ({
     methods,
   })
 
+  // Memoized steps mapping to prevent creating new array/objects on every render
+  const progressSteps = useMemo(
+    () => steps.map((step, index) => ({
+      id: index + 1,
+      title: step.title,
+    })),
+    [steps]
+  )
+
+  // Memoized form submit handler to prevent creating new function on every render
+  const handleFormSubmitWithError = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+      e.preventDefault()
+      try {
+        setSubmitError(null)
+        await methods.handleSubmit(handleFormSubmit)()
+      } catch (error) {
+        setSubmitError(error instanceof Error ? error.message : 'Failed to submit specification')
+      }
+    },
+    [handleFormSubmit, methods, setSubmitError]
+  )
+
+  // Separate handler for WizardNavigationFooter (parameterless)
+  const handleNavigationSubmit = useCallback(async (): Promise<void> => {
+    try {
+      setSubmitError(null)
+      await methods.handleSubmit(handleFormSubmit)()
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Failed to submit specification')
+    }
+  }, [handleFormSubmit, methods, setSubmitError])
+
   return (
     <FormProvider {...methods}>
       <div className={styles.wizardContainer}>
         <div className={styles.progress}>
           <WizardProgress
-            steps={steps.map((step, index) => ({
-              id: index + 1,
-              title: step.title,
-            }))}
+            steps={progressSteps}
             currentStepId={activeStep + 1}
             onStepClick={handleStepClick}
             allowNavigation={true}
@@ -79,19 +110,12 @@ const SpecificationWizard = ({
           </div>
         )}
 
-        <form onSubmit={methods.handleSubmit(async (data) => {
-          try {
-            setSubmitError(null)
-            await handleFormSubmit(data)
-          } catch (error) {
-            setSubmitError(error instanceof Error ? error.message : 'Failed to submit specification')
-          }
-        })} className={styles.form}>
+        <form onSubmit={handleFormSubmitWithError} className={styles.form}>
           <div className={styles.stepContent}>
             {currentStep.component(
               activeStep + 1,
               totalSteps,
-              isSubmitting,
+              isSubmitting || (isEditMode && activeStep === 0), // Disable product selection in edit mode
               handleNext,
               selectedProduct,
               enumData,
@@ -100,45 +124,21 @@ const SpecificationWizard = ({
             )}
           </div>
 
-          <div className={styles.wizardFooter}>
-            <div className={styles.navigationButtons}>
-              {activeStep > 0 && (
-                <button
-                  type="button"
-                  onClick={handlePrevious}
-                  className={styles.backButton}
-                  disabled={isSubmitting}
-                  title="Previous Step"
-                >
-                  ←
-                </button>
-              )}
-              {activeStep < steps.length - 1 ? (
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className={styles.nextButton}
-                  disabled={isSubmitting || !isCurrentStepValid}
-                  title="Next Step"
-                >
-                  →
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  className={styles.submitButton}
-                  disabled={isSubmitting || !isCurrentStepValid}
-                  title={isSubmitting ? 'Submitting...' : 'Submit'}
-                >
-                  {isSubmitting ? '⏳' : '✓'}
-                </button>
-              )}
-            </div>
-          </div>
+          <WizardNavigationFooter
+            activeStep={activeStep}
+            totalSteps={totalSteps}
+            isSubmitting={isSubmitting}
+            isCurrentStepValid={isCurrentStepValid}
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+            onSubmit={handleNavigationSubmit}
+          />
         </form>
       </div>
     </FormProvider>
   )
 }
 
+// Export both default and named export for flexibility
+export { SpecificationWizard }
 export default React.memo(SpecificationWizard)

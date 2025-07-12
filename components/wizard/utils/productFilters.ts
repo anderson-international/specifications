@@ -1,23 +1,23 @@
 'use client'
 
-import { type MockProduct } from '@/constants/wizardOptions'
+import { type Product } from '@/lib/types/product'
 
 /**
  * Filter products by brand, type and search term
  */
 export const filterProducts = (
-  products: readonly MockProduct[],
-  selectedBrandId: number | null,
+  products: readonly Product[],
+  selectedBrandId: string | null,
   selectedTypeId: number | null,
   searchTerm: string
-): MockProduct[] => {
+): Product[] => {
   return products
-    .filter((p) => !selectedBrandId || p.brand_id === selectedBrandId)
-    .filter((p) => !selectedTypeId || p.type_id === selectedTypeId)
+    .filter((p) => !selectedBrandId || p.brand === selectedBrandId)
+    // Note: type_id not available in Product - skip type filtering for now
     .filter((p) => {
       if (!searchTerm) return true
       const term = searchTerm.toLowerCase()
-      return p.name.toLowerCase().includes(term) || p.brand_name.toLowerCase().includes(term)
+      return p.title.toLowerCase().includes(term) || p.brand.toLowerCase().includes(term)
     })
 }
 
@@ -25,8 +25,8 @@ export const filterProducts = (
  * Find product by shopify handle
  */
 export const findProductByHandle = (
-  products: readonly MockProduct[],
+  products: readonly Product[],
   shopifyHandle: string | null
-): MockProduct | null => {
-  return products.find((p) => p.shopify_handle === shopifyHandle) || null
+): Product | null => {
+  return products.find((p) => p.handle === shopifyHandle) || null
 }

@@ -55,7 +55,7 @@ export const transformEnumToOptions = (
 /**
  * Helper hook to create memoized enum hook with proper return types
  */
-export const createEnumHook = (
+export const useCreateEnumHook = (
   selector: (data: SpecificationEnumData) => EnumValue[]
 ): EnumHookResult => {
   const { data: allEnums, isLoading, error } = useSpecificationEnums()
@@ -74,3 +74,6 @@ export const createEnumHook = (
     [transformedData, isLoading, error]
   )
 }
+
+// Export alias for backward compatibility
+export const createEnumHook = useCreateEnumHook

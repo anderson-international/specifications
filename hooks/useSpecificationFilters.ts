@@ -10,11 +10,8 @@ interface UseSpecificationFiltersReturn {
   setSearchQuery: (query: string) => void
   filteredSpecs: Specification[]
   groupedSpecs: {
-    draft: Specification[]
-    pending_review: Specification[]
-    approved: Specification[]
-    rejected: Specification[]
     published: Specification[]
+    needs_revision: Specification[]
   }
 }
 
@@ -38,11 +35,8 @@ export function useSpecificationFilters(
   // Group specifications by status - using useMemo for performance
   const groupedSpecs = useMemo(
     () => ({
-      draft: filteredSpecs.filter((spec) => spec.status === 'draft'),
-      pending_review: filteredSpecs.filter((spec) => spec.status === 'pending_review'),
-      approved: filteredSpecs.filter((spec) => spec.status === 'approved'),
-      rejected: filteredSpecs.filter((spec) => spec.status === 'rejected'),
       published: filteredSpecs.filter((spec) => spec.status === 'published'),
+      needs_revision: filteredSpecs.filter((spec) => spec.status === 'needs_revision'),
     }),
     [filteredSpecs]
   )

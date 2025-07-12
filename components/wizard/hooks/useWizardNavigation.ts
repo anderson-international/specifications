@@ -15,8 +15,8 @@ export interface UseWizardNavigationReturn {
  * Hook for managing wizard step navigation and validation
  * Extracted from useSpecificationWizard to comply with file size limits
  */
-export const useWizardNavigation = (): UseWizardNavigationReturn => {
-  const [activeStep, setActiveStep] = useState<number>(0)
+export const useWizardNavigation = (initialStep: number = 0): UseWizardNavigationReturn => {
+  const [activeStep, setActiveStep] = useState<number>(initialStep)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
 
   const handleNext = useCallback(() => {

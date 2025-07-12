@@ -1,7 +1,8 @@
 /**
  * Specification status enum for UI display
+ * Matches database enum_specification_statuses table
  */
-export type SpecificationStatus = 'draft' | 'pending_review' | 'approved' | 'rejected' | 'published'
+export type SpecificationStatus = 'published' | 'needs_revision'
 
 /**
  * Specification interface for UI components
@@ -126,9 +127,10 @@ export interface SpecificationDraft {
 
 /**
  * Type guards for specification status
+ * Validates against actual database enum values
  */
 export const isValidSpecificationStatus = (status: string): status is SpecificationStatus => {
-  return ['draft', 'pending_review', 'approved', 'rejected', 'published'].includes(status)
+  return ['published', 'needs_revision'].includes(status)
 }
 
 /**

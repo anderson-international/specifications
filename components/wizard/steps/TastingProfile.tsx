@@ -5,7 +5,7 @@ import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
 import MultiSelectChips from '../controls/MultiSelectChips'
 import SelectedProductSummary from './SelectedProductSummary'
-import { useTastingProfile } from '../hooks/useTastingProfile'
+
 import { transformEnumToOptions } from '../hooks/useEnumUtils'
 import { Product } from '@/lib/types/product'
 import { SpecificationEnumData } from '@/types/enum'

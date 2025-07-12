@@ -2,18 +2,18 @@
 
 import { Specification } from '@/types/specification'
 import { useCallback, useEffect, useState } from 'react'
+import { useAuth } from '@/lib/auth-context'
 
 interface UseSpecificationsReturn {
   specifications: Specification[]
   isLoading: boolean
   error: string | null
   handleEdit: (id: string) => void
-  handleDelete: (id: string) => void
-  handleDuplicate: (id: string) => void
   handleRetry: () => void
 }
 
 export function useSpecifications(): UseSpecificationsReturn {
+  const { user } = useAuth()
   const [specifications, setSpecifications] = useState<Specification[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -25,19 +25,28 @@ export function useSpecifications(): UseSpecificationsReturn {
         setIsLoading(true)
         setError(null)
 
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 500))
-
-        setSpecifications([])
-      } catch (_err) {
-        setError('Failed to load specifications')
+        if (!user?.id) {
+          throw new Error('User not authenticated')
+        }
+        
+        const response = await fetch(`/api/specifications?userId=${user.id}`)
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch specifications: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        setSpecifications(data.specifications || [])
+      } catch (err) {
+        console.error('Error loading specifications:', err)
+        setError(err instanceof Error ? err.message : 'Failed to load specifications')
       } finally {
         setIsLoading(false)
       }
     }
 
     loadSpecifications()
-  }, [])
+  }, [user?.id])
 
   const handleRetry = useCallback((): void => {
     setSpecifications([])
@@ -53,49 +62,14 @@ export function useSpecifications(): UseSpecificationsReturn {
 
   const handleEdit = useCallback((id: string): void => {
     // Navigate to edit specification
-    window.location.href = `/create-specification?draft=${id}`
+    window.location.href = `/edit-specification/${id}`
   }, [])
-
-  const handleDelete = useCallback((id: string): void => {
-    setSpecifications((prev) => prev.filter((spec) => spec.id !== id))
-  }, [])
-
-  const handleDuplicate = useCallback(
-    (id: string): void => {
-      const specToDuplicate = specifications.find((spec) => spec.id === id)
-      if (specToDuplicate) {
-        const newId = Date.now().toString()
-        // Create a new specification with review removed
-        const { review: _review, ...specWithoutReview } = specToDuplicate
-
-        const newSpec: Specification = {
-          ...specWithoutReview,
-          id: newId,
-          status: 'draft',
-          progress: 0, // Reset progress for new draft
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          lastModified: new Date().toISOString(),
-          product: {
-            ...specToDuplicate.product,
-            title: `${specToDuplicate.product.title} (Copy)`,
-          },
-          // Reset review status to undefined
-          review: undefined,
-        }
-        setSpecifications((prev) => [newSpec, ...prev])
-      }
-    },
-    [specifications]
-  )
 
   return {
     specifications,
     isLoading,
     error,
     handleEdit,
-    handleDelete,
-    handleDuplicate,
     handleRetry,
   }
 }
