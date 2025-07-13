@@ -60,7 +60,7 @@ This document provides strategic guidance for authentication decisions and patte
 ### Core Principles
 
 - **Fail-Fast**: Surface authentication failures immediately (see `api-errors.md`)
-- **No Silent Failures**: Never hide authentication errors or use fallback states
+- **No Silent Failures**: Never hide errors or use fallback states
 - **Clear Messages**: Use `ErrorResponse` format from `api-errors.md` for authentication issues
 - **Redirect Strategy**: Handle authentication failures with appropriate redirects
 

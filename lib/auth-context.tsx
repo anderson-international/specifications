@@ -24,10 +24,19 @@ export const AuthProvider = React.memo(function AuthProvider({
   const [user, setUser] = useState<AuthUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Initialize loading state without auto-loading user
+  // Initialize loading state and restore stored user
   useEffect(() => {
-    // Clear any existing stored user to ensure fresh authentication
-    localStorage.removeItem('dev-user')
+    // Load any existing stored user for development
+    const storedUser = localStorage.getItem('dev-user')
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser)
+        setUser(user)
+      } catch {
+        // Clear invalid stored data
+        localStorage.removeItem('dev-user')
+      }
+    }
     setIsLoading(false)
   }, [])
 

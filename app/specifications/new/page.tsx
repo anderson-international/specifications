@@ -12,9 +12,6 @@ export default function NewSpecificationPage(): JSX.Element {
 
   const handleSubmit = useCallback(async (_data: Specification): Promise<void> => {
     // Wizard handles API call internally, this just handles success
-    console.log('Specification created successfully!')
-    
-    // Redirect to specifications list
     router.push('/specifications')
   }, [router])
 

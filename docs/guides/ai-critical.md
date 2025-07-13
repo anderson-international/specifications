@@ -14,8 +14,17 @@ Avoid: Exceeding file size limits, React infinite loops, Missing context
 - **Hooks**: Max 100 lines
 - **Utils**: Max 50 lines
 - **Types**: Max 100 lines
+- **API Routes**: Max 100 lines (thin controllers)
+- **Services**: Max 100 lines (business logic)
+- **Repositories**: Max 100 lines (data access)
 
-**When exceeded**: Extract to custom hooks, utilities, sub-components, or separate type files.
+**When exceeded**: Extract to custom hooks, services, repositories, or separate type files. Minimise all comments.
+
+## Thin Controller Pattern
+
+- Route files: Pure HTTP handling (request/response, validation, status codes)
+- Services: Business logic and orchestration
+- Repositories: Database queries and data access
 
 ## React Loop Prevention (CRITICAL)
 

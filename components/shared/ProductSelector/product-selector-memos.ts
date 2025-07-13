@@ -10,7 +10,7 @@ import {
 
 // Hook for filtered products
 export const useFilteredProducts = (
-  products: Product[],
+  products: Product[] | undefined,
   searchTerm: string,
   selectedBrand: string
 ): Product[] => {
@@ -22,7 +22,7 @@ export const useFilteredProducts = (
 
 // Hook for selected products
 export const useSelectedProducts = (
-  products: Product[],
+  products: Product[] | undefined,
   selectedProductIds: string[]
 ): Product[] => {
   return useMemo(() => getSelectedProducts(products, selectedProductIds), [products, selectedProductIds])

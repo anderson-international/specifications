@@ -11,7 +11,10 @@ export function useProductFilters() {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [selectedBrand, setSelectedBrand] = useState<string>('')
 
-  const filterProducts = useMemo(() => (products: Product[]) => {
+  const filterProducts = useMemo(() => (products: Product[] | undefined) => {
+    if (!products || products.length === 0) {
+      return []
+    }
     let filtered = products
 
     if (searchTerm) {
@@ -29,7 +32,10 @@ export function useProductFilters() {
     return filtered
   }, [searchTerm, selectedBrand])
 
-  const getAvailableBrands = useMemo(() => (products: Product[]) => {
+  const getAvailableBrands = useMemo(() => (products: Product[] | undefined) => {
+    if (!products || products.length === 0) {
+      return []
+    }
     return Array.from(new Set(products.map((p) => p.brand)))
   }, [])
 

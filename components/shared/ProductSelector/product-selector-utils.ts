@@ -4,10 +4,14 @@ import type { Product } from './product-selector-interfaces'
 
 // Filter products based on search and brand criteria
 export const filterProducts = (
-  products: Product[],
+  products: Product[] | undefined,
   searchTerm: string,
   selectedBrand: string
 ): Product[] => {
+  if (!products) {
+    return []
+  }
+  
   return products.filter((product) => {
     const matchesSearch =
       !searchTerm ||
@@ -30,6 +34,9 @@ export const createBrandOptions = (
 }
 
 // Get selected products by IDs (using ref for stability)
-export const getSelectedProducts = (products: Product[], selectedIds: string[]): Product[] => {
+export const getSelectedProducts = (products: Product[] | undefined, selectedIds: string[]): Product[] => {
+  if (!products) {
+    return []
+  }
   return products.filter((product) => selectedIds.includes(product.id))
 }

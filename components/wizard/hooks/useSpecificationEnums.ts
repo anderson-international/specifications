@@ -29,7 +29,6 @@ export const useSpecificationEnums = (): EnumDataState => {
         const result = await response.json()
         setData(result.data)
       } catch (error) {
-        console.error('Failed to fetch enums:', error)
         setError(error as Error)
       } finally {
         setIsLoading(false)

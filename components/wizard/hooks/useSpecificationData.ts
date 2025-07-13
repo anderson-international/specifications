@@ -63,7 +63,6 @@ export const useSpecificationData = (specificationId: string): SpecificationData
 
         setData(formData)
       } catch (err) {
-        console.error('Error loading specification:', err)
         setError(err instanceof Error ? err : new Error('Failed to load specification'))
       } finally {
         setIsLoading(false)

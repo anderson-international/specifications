@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback } from 'react'
+import React, { useCallback, use } from 'react'
 import { SpecificationWizard } from '@/components/wizard/SpecificationWizard'
 import { notFound, useRouter } from 'next/navigation'
 import { Specification } from '@/lib/schemas/specification'
@@ -8,15 +8,15 @@ import { useAuth } from '@/lib/auth-context'
 import { useSpecificationData } from '@/components/wizard/hooks/useSpecificationData'
 
 interface EditSpecificationPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function EditSpecificationPage({
   params,
 }: EditSpecificationPageProps): JSX.Element {
-  const { id } = params
+  const { id } = use(params)
   const router = useRouter()
   const { user } = useAuth()
   
@@ -47,7 +47,7 @@ export default function EditSpecificationPage({
   if (error) {
     return (
       <div style={{ padding: '20px', textAlign: 'center' }}>
-        <p>Error loading specification: {error}</p>
+        <p>Error loading specification: {error?.message || 'Unknown error'}</p>
         <button onClick={() => router.push('/specifications')}>
           Return to Specifications
         </button>
@@ -83,12 +83,10 @@ export default function EditSpecificationPage({
       }
 
       const result = await response.json()
-      console.log('Specification updated successfully:', result)
       
       // After successful update, return to specifications list
       router.push('/specifications')
     } catch (error) {
-      console.error('Failed to update specification:', error)
       throw error
     }
   }, [id, router, user.id])
@@ -97,7 +95,7 @@ export default function EditSpecificationPage({
     <div className="min-h-screen bg-gray-900">
       <SpecificationWizard
         onSubmit={handleSubmit}
-        initialData={specificationData}
+        initialData={specificationData as unknown as Record<string, unknown>}
         userId={user.id}
       />
     </div>

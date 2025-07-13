@@ -2,13 +2,12 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { SpecificationCard } from '@/components/specifications/SpecificationCard'
+import { SpecificationRow } from '@/components/specifications/SpecificationRow'
 import { FilterControls } from '@/components/shared/FilterControls'
-import { CollapsibleGroup } from '@/components/specifications/CollapsibleGroup'
+
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { useSpecifications } from '@/hooks/useSpecifications'
 import { useSpecificationFilters } from '@/hooks/useSpecificationFilters'
-import { getStatusTitle } from '@/lib/utils'
 import styles from './specifications.module.css'
 
 export default function SpecificationsPage(): JSX.Element {
@@ -26,7 +25,6 @@ export default function SpecificationsPage(): JSX.Element {
     setStatusFilter,
     setSearchQuery,
     filteredSpecs,
-    groupedSpecs,
   } = useSpecificationFilters(specifications)
 
   if (isLoading) {
@@ -94,22 +92,13 @@ export default function SpecificationsPage(): JSX.Element {
               </Link>
             </div>
           ) : (
-            <div className={styles.groups}>
-              {Object.entries(groupedSpecs).map(([status, specs]) => (
-                <CollapsibleGroup
-                  key={status}
-                  title={getStatusTitle(status)}
-                  count={specs.length}
-                  isInitiallyExpanded={status === 'draft'}
-                >
-                  {specs.map((spec) => (
-                    <SpecificationCard
-                      key={spec.id}
-                      specification={spec}
-                      onEdit={handleEdit}
-                    />
-                  ))}
-                </CollapsibleGroup>
+            <div className={styles.specificationsList}>
+              {filteredSpecs.map((spec) => (
+                <SpecificationRow
+                  key={spec.id}
+                  specification={spec}
+                  onEdit={handleEdit}
+                />
               ))}
             </div>
           )}

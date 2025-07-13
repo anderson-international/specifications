@@ -7,6 +7,8 @@ export function useProducts() {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  
+
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [selectedBrand, setSelectedBrand] = useState<string>('')
   const [retryCount, setRetryCount] = useState<number>(0)
@@ -27,7 +29,6 @@ export function useProducts() {
         if (retryCount < 5) { // Max 5 retries for warming
           setTimeout(() => {
             setRetryCount(prev => prev + 1)
-            fetchProducts()
           }, 2000)
           return
         } else {
@@ -38,17 +39,29 @@ export function useProducts() {
       // Reset retry count on success
       setRetryCount(0)
 
-      setProducts(data.products)
+      setProducts(data.products || [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error occurred')
+      setProducts([]) // Clear products on error
     } finally {
       setIsLoading(false)
     }
-  }, [retryCount])
+  }, [])
 
+  // Initial load
   useEffect(() => {
     fetchProducts()
-  }, [fetchProducts])
+  }, [])
+
+  // Handle retries
+  useEffect(() => {
+    if (retryCount > 0) {
+      const timer = setTimeout(() => {
+        fetchProducts()
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [retryCount])
 
   const filteredProducts = useMemo((): Product[] => {
     let filtered = products
@@ -71,14 +84,15 @@ export function useProducts() {
   const availableBrands = useMemo(() => [...new Set(products.map((p) => p.brand))], [products])
 
   return {
+    products,
     isLoading,
     error,
-    filteredProducts,
-    availableBrands,
     searchTerm,
     setSearchTerm,
     selectedBrand,
     setSelectedBrand,
+    filteredProducts,
+    availableBrands,
     retryFetch: fetchProducts,
   }
 }

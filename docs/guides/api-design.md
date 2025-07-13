@@ -99,6 +99,11 @@ export default async function handler(
 }
 ```
 
+### Next.js 15 Route Parameters
+
+- **API Routes**: `params: Promise<{id: string}>` + `await params`
+- **Client Pages**: `params: Promise<{id: string}>` + `use(params)`
+
 ### Authentication Strategy
 
 - **Session-Based**: Use Next.js built-in session handling
@@ -107,10 +112,7 @@ export default async function handler(
 - **Token Management**: Secure token storage and validation
 
 ### API Documentation
-
+- **Minimise comments**: Do not use JSDoc comments.
 - **Self-Documenting**: Use TypeScript interfaces as documentation
-- **Inline Comments**: Document complex business logic
-- **Example Requests**: Provide clear request/response examples
-- **Error Codes**: Document all possible error codes and scenarios
 
 By following these design principles, we ensure our API is consistent, maintainable, and scalable for the project's needs.

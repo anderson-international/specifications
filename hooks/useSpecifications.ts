@@ -36,9 +36,10 @@ export function useSpecifications(): UseSpecificationsReturn {
         }
         
         const data = await response.json()
-        setSpecifications(data.specifications || [])
+        // Handle canonical API response format: { data: { specifications, pagination }, timestamp }
+        const responseData = data.data || data // Support both formats during transition
+        setSpecifications(responseData.specifications || [])
       } catch (err) {
-        console.error('Error loading specifications:', err)
         setError(err instanceof Error ? err.message : 'Failed to load specifications')
       } finally {
         setIsLoading(false)
