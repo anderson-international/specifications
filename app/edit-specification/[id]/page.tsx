@@ -4,8 +4,9 @@ import React, { useCallback, use } from 'react'
 import { SpecificationWizard } from '@/components/wizard/SpecificationWizard'
 import { notFound, useRouter } from 'next/navigation'
 import { Specification } from '@/lib/schemas/specification'
-import { useAuth } from '@/lib/auth-context'
+import { useAuthenticatedUser } from '@/lib/auth-context'
 import { useSpecificationData } from '@/components/wizard/hooks/useSpecificationData'
+import { LoadingState, ErrorState, NotFoundState } from './EditPageStates'
 
 interface EditSpecificationPageProps {
   params: Promise<{
@@ -18,78 +19,44 @@ export default function EditSpecificationPage({
 }: EditSpecificationPageProps): JSX.Element {
   const { id } = use(params)
   const router = useRouter()
-  const { user } = useAuth()
+  const user = useAuthenticatedUser()
   
-  // Load existing specification data for editing
   const { data: specificationData, isLoading, error } = useSpecificationData(id)
 
-  // Validate that we have an ID and authenticated user
+  const handleSubmit = useCallback(async (data: Specification) => {
+    const response = await fetch(`/api/specifications/${id}?userId=${user.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || 'Failed to update specification')
+    }
+
+    const result = await response.json()
+
+    if (result.error || !result.success) {
+      throw new Error(result.error || result.message || 'Update failed')
+    }
+
+    router.push('/specifications')
+  }, [id, router, user.id])
+
   if (!id || id === 'undefined') {
     notFound()
   }
   
-  if (!user?.id) {
-    // Redirect to auth if no user - this should be handled by auth wrapper
-    router.push('/auth')
-    return <div>Redirecting to authentication...</div>
-  }
 
-  // Show loading state while fetching specification data
-  if (isLoading) {
-    return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <p>Loading specification data...</p>
-      </div>
-    )
-  }
 
-  // Show error state if failed to load
-  if (error) {
-    return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <p>Error loading specification: {error?.message || 'Unknown error'}</p>
-        <button onClick={() => router.push('/specifications')}>
-          Return to Specifications
-        </button>
-      </div>
-    )
-  }
+  if (isLoading) return <LoadingState />
+  if (error) return <ErrorState error={error} />
+  if (!specificationData) return <NotFoundState />
 
-  // Don't render wizard until we have data
-  if (!specificationData) {
-    return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <p>Specification not found</p>
-        <button onClick={() => router.push('/specifications')}>
-          Return to Specifications
-        </button>
-      </div>
-    )
-  }
 
-  const handleSubmit = useCallback(async (data: Specification) => {
-    try {
-      const response = await fetch(`/api/specifications/${id}?userId=${user.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Failed to update specification')
-      }
-
-      const result = await response.json()
-      
-      // After successful update, return to specifications list
-      router.push('/specifications')
-    } catch (error) {
-      throw error
-    }
-  }, [id, router, user.id])
 
   return (
     <div className="min-h-screen bg-gray-900">

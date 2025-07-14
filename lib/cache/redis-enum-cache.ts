@@ -35,12 +35,25 @@ export class RedisEnumCache extends RedisCacheBase<SpecificationEnumData> {
 
   // Enum-specific data validation
   protected validateData(data: unknown): data is SpecificationEnumData {
+    // Check if this is the wrapped cache structure
+    if (data && typeof data === 'object' && 'data' in data) {
+      const nestedData = (data as Record<string, unknown>).data;
+      // Validate the actual enum data
+      return (
+        typeof nestedData === 'object' &&
+        nestedData !== null &&
+        'productTypes' in nestedData &&
+        'productBrands' in nestedData
+      );
+    }
+    
+    // Fallback: direct validation (backwards compatibility)
     return (
       typeof data === 'object' &&
       data !== null &&
       'productTypes' in data &&
       'productBrands' in data
-    )
+    );
   }
 
   // Enum-specific methods

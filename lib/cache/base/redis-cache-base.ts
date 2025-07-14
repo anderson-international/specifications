@@ -4,7 +4,7 @@ import redis from '@/lib/redis'
 
 export abstract class RedisCacheBase<T> {
   private static warmingStates: Map<string, boolean> = new Map()
-  private static instances: Map<string, RedisCacheBase<any>> = new Map()
+  private static instances: Map<string, RedisCacheBase<unknown>> = new Map()
   
   protected abstract readonly cacheKey: string
   protected abstract readonly TTL_SECONDS: number | null // null = no TTL (static cache)
@@ -14,7 +14,7 @@ export abstract class RedisCacheBase<T> {
   protected constructor(private readonly instanceKey: string) {}
 
   // Generic singleton pattern - store in static map
-  protected static getInstanceFromMap<U extends RedisCacheBase<any>>(
+  protected static getInstanceFromMap<U extends RedisCacheBase<unknown>>(
     instanceKey: string,
     createInstance: () => U
   ): U {
@@ -44,9 +44,9 @@ export abstract class RedisCacheBase<T> {
   }
 
   // Generic cache retrieval - supports both TTL and static patterns
-  async getData(): Promise<T> {
+  protected async getData(): Promise<T> {
     try {
-      let cached: T | null = null
+      let cached: unknown
       
       if (this.TTL_SECONDS !== null) {
         // TTL-based cache: use canonical getex for atomic sliding expiration

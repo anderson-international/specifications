@@ -76,3 +76,15 @@ export const useAuth = (): AuthContextType => {
   }
   return context
 }
+
+/**
+ * Hook for components that should only render in authenticated contexts
+ * Throws error if user is null, eliminating TypeScript null checks
+ */
+export const useAuthenticatedUser = (): AuthUser => {
+  const { user } = useAuth()
+  if (!user) {
+    throw new Error('useAuthenticatedUser called outside authenticated context - user is null')
+  }
+  return user
+}

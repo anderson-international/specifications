@@ -6,9 +6,10 @@ import { WizardFormData } from '../types/wizard.types'
 import { Specification } from '@/lib/schemas/specification'
 
 interface UseSpecificationSubmissionProps {
-  onSubmit: (data: Specification) => void
   methods: UseFormReturn<WizardFormData>
   userId: string
+  initialData?: Record<string, unknown>
+  onSubmit: (data: Specification) => void
 }
 
 interface UseSpecificationSubmissionReturn {
@@ -19,7 +20,8 @@ interface UseSpecificationSubmissionReturn {
 const useSpecificationSubmission = ({
   onSubmit,
   methods,
-  userId: _userId,
+  userId,
+  initialData,
 }: UseSpecificationSubmissionProps): UseSpecificationSubmissionReturn => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
@@ -47,13 +49,25 @@ const useSpecificationSubmission = ({
         tobacco_type_ids: tobacco_type_ids || [],
       }
 
-      // Submit to database via API in expected format
-      const response = await fetch('/api/specifications', {
-        method: 'POST',
+      // Determine if this is edit mode (has existing ID) or create mode
+      const specificationId = initialData?.id
+      const isEditMode = Boolean(specificationId)
+      
+      // Submit to appropriate API endpoint based on mode
+      const apiUrl = isEditMode 
+        ? `/api/specifications/${specificationId}?userId=${userId}`
+        : '/api/specifications'
+      
+      const requestBody = isEditMode
+        ? specification  // Edit mode: send specification data directly
+        : { specification, junctionData }  // Create mode: send wrapped format
+      
+      const response = await fetch(apiUrl, {
+        method: isEditMode ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ specification, junctionData }),
+        body: JSON.stringify(requestBody),
       })
 
       if (!response.ok) {
@@ -74,7 +88,7 @@ const useSpecificationSubmission = ({
     } finally {
       setIsSubmitting(false)
     }
-  }, [methods, onSubmit])
+  }, [methods, onSubmit, initialData?.id, userId])
 
   return {
     isSubmitting,

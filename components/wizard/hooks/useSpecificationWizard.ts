@@ -11,32 +11,7 @@ import {
   UseSpecificationWizardReturn,
   UseSpecificationWizardProps,
 } from '../types/wizard.types'
-
-const defaultValues: Partial<WizardFormData> = {
-  // System fields (populated at initialization)
-  user_id: '', // Will be set from props
-  created_at: new Date(),
-  updated_at: new Date(),
-  status_id: 1, // Default to "published"
-  submission_id: undefined, // Legacy field - ignore
-  // Form fields with proper Specification interface names
-  shopify_handle: '',
-  product_brand_id: 0,
-  product_type_id: 0,
-  grind_id: 0,
-  experience_level_id: 0,
-  is_fermented: false,
-  is_oral_tobacco: false,
-  is_artisan: false,
-  nicotine_level_id: 0,
-  moisture_level_id: 0,
-  tasting_note_ids: [],
-  cure_type_ids: [],
-  tobacco_type_ids: [],
-  review: '',
-  star_rating: 1, // Minimum allowed by schema
-  rating_boost: 0,
-}
+import { WIZARD_DEFAULT_VALUES } from '../wizard-defaults'
 
 /**
  * Main wizard hook for managing multi-step specification creation
@@ -52,7 +27,7 @@ export const useSpecificationWizard = ({
   
   const methods = useForm<WizardFormData>({
     defaultValues: { 
-      ...defaultValues, 
+      ...WIZARD_DEFAULT_VALUES, 
       user_id: userId, // Set user_id from props
       ...initialData 
     } as WizardFormData,
@@ -78,6 +53,7 @@ export const useSpecificationWizard = ({
     onSubmit,
     methods,
     userId,
+    initialData,
   })
 
   return {

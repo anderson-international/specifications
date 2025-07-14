@@ -16,6 +16,7 @@ export interface UseWizardNavigationReturn {
  * Extracted from useSpecificationWizard to comply with file size limits
  */
 export const useWizardNavigation = (initialStep: number = 0): UseWizardNavigationReturn => {
+  const isEditMode = initialStep > 0
   const [activeStep, setActiveStep] = useState<number>(initialStep)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
 
@@ -36,22 +37,34 @@ export const useWizardNavigation = (initialStep: number = 0): UseWizardNavigatio
   const handleStepClick = useCallback(
     (stepIndex: number) => {
       const targetStep = stepIndex - 1
+      
+      // In edit mode, prevent navigation to step 1 (product selection)
+      if (isEditMode && targetStep === 0) {
+        return
+      }
+      
       const canNavigate = targetStep <= activeStep || completedSteps.has(targetStep)
 
       if (canNavigate) {
         setActiveStep(targetStep)
       }
     },
-    [activeStep, completedSteps]
+    [activeStep, completedSteps, isEditMode]
   )
 
   // Check if user can navigate to a specific step
   const canNavigateToStep = useCallback(
     (stepIndex: number) => {
       const targetStep = stepIndex - 1
+      
+      // In edit mode, prevent navigation to step 1 (product selection)
+      if (isEditMode && targetStep === 0) {
+        return false
+      }
+      
       return targetStep <= activeStep || completedSteps.has(targetStep)
     },
-    [activeStep, completedSteps]
+    [activeStep, completedSteps, isEditMode]
   )
 
   return {

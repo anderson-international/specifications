@@ -1,14 +1,9 @@
-/**
- * Specification status enum for UI display
- * Matches database enum_specification_statuses table
- */
 export type SpecificationStatus = 'published' | 'needs_revision'
 
-/**
- * Specification interface for UI components
- * Extends the form data with database and UI-specific fields
- */
 export interface SpecificationFormData {
+  // Optional ID for edit mode detection
+  id?: string
+  
   // Product Selection
   shopify_handle: string
   product_brand_id: number
@@ -31,7 +26,7 @@ export interface SpecificationFormData {
   moisture_level_id: number
 
   // Review & Rating
-  review_text?: string
+  review?: string
   star_rating: number
   rating_boost?: number
 
@@ -49,8 +44,6 @@ export interface Specification extends SpecificationFormData {
   createdAt: string // ISO date string
   updatedAt: string // ISO date string
   lastModified: string // ISO date string for UI display
-  reviewedAt?: string // ISO date string
-  publishedAt?: string // ISO date string
 
   // Product information for display
   product: {
@@ -65,30 +58,8 @@ export interface Specification extends SpecificationFormData {
       price?: number
     }>
   }
-
-  // Review information when available
-  review?: {
-    reviewerId: string
-    reviewerName: string
-    comments?: string
-    reviewedAt: string
-  }
 }
 
-/**
- * Filtered and grouped specifications for UI display
- */
-export interface SpecificationGroup {
-  status: SpecificationStatus
-  title: string
-  count: number
-  specifications: Specification[]
-  isExpanded: boolean
-}
-
-/**
- * Specification filters for search and filtering
- */
 export interface SpecificationFilters {
   search: string
   status: SpecificationStatus | 'all'
@@ -96,55 +67,6 @@ export interface SpecificationFilters {
   sortOrder: 'asc' | 'desc'
 }
 
-/**
- * Specification summary for dashboard stats
- */
-export interface SpecificationSummary {
-  total: number
-  byStatus: Record<SpecificationStatus, number>
-  averageProgress: number
-  averageScore?: number
-  recentActivity: Array<{
-    id: string
-    productTitle: string
-    status: SpecificationStatus
-    updatedAt: string
-  }>
-}
-
-/**
- * Draft specification for auto-save functionality
- */
-export interface SpecificationDraft {
-  id: string
-  userId: string
-  formData: Partial<SpecificationFormData>
-  currentStep: number
-  totalSteps: number
-  lastSaved: string // ISO date string
-  isAutoSaved: boolean
-}
-
-/**
- * Type guards for specification status
- * Validates against actual database enum values
- */
-export const isValidSpecificationStatus = (status: string): status is SpecificationStatus => {
-  return ['published', 'needs_revision'].includes(status)
-}
-
-/**
- * Helper type for specification status colors (for UI components)
- */
-export type SpecificationStatusColor = {
-  background: string
-  text: string
-  border: string
-}
-
-/**
- * Specification API response types
- */
 export interface SpecificationListResponse {
   specifications: Specification[]
   pagination: {
@@ -156,25 +78,4 @@ export interface SpecificationListResponse {
   filters: SpecificationFilters
 }
 
-export interface SpecificationResponse {
-  specification: Specification
-  success: boolean
-  message?: string
-}
 
-/**
- * Specification action types for state management
- */
-export type SpecificationAction =
-  | 'create'
-  | 'edit'
-  | 'delete'
-  | 'submit_for_review'
-  | 'approve'
-  | 'reject'
-  | 'publish'
-  | 'archive'
-
-/**
- * Export commonly used types for convenience
- */

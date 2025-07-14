@@ -37,7 +37,7 @@ const ReviewSubmission = ({
 }: ReviewSubmissionProps): JSX.Element => {
   const { watch, setValue } = useFormContext<ReviewSubmissionFormData>()
 
-  const { review = '', star_rating: starRating = 2, rating_boost: ratingBoost = 0 } = watch()
+  const { review: reviewText = '', star_rating: starRating = 2, rating_boost: ratingBoost = 0 } = watch()
 
   const handleStarRatingChange = useCallback(
     (value: number) => {
@@ -84,15 +84,15 @@ const ReviewSubmission = ({
         <textarea
           id="review-text"
           className={styles.textarea}
-          value={review}
+          value={reviewText}
           onChange={handleReviewChange}
           placeholder="Write your detailed review here... (minimum 150 characters)"
           rows={5}
           maxLength={2000}
           disabled={disabled}
         />
-        <div className={`${styles.charCount} ${review.length < 150 ? styles.error : ''}`}>
-          {review.length}/150
+        <div className={`${styles.charCount} ${reviewText.length < 150 ? styles.error : ''}`}>
+          {reviewText.length}/150
         </div>
       </div>
     </WizardStepCard>

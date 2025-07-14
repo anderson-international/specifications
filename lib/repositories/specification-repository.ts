@@ -25,7 +25,7 @@ export type SpecificationWithRelations = Prisma.specificationsGetPayload<{
   include: typeof SPECIFICATION_INCLUDE
 }>
 
-interface CreateSpecificationData {
+export interface CreateSpecificationData {
   shopify_handle: string
   product_type_id: number
   is_fermented?: boolean
@@ -43,7 +43,7 @@ interface CreateSpecificationData {
   status_id: number
 }
 
-interface JunctionData {
+export interface JunctionData {
   tasting_note_ids: number[]
   cure_ids: number[]
   tobacco_type_ids: number[]

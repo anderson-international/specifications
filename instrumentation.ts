@@ -7,24 +7,19 @@ export async function register() {
     const { RedisProductCache } = await import('@/lib/cache/redis-product-cache')
     const redis = (await import('@/lib/redis')).default
 
-    console.log('🔄 INSTRUMENTATION: Starting cache initialization...')
-    
     // Initialize product cache during auth window for performance
     await RedisProductCache.ensureReady()
     
-    // Check what was actually created
+    // Check cache status and report concisely
     const hashExists = await redis.exists('shopify:products:by_handle')
-    const hashLength = hashExists === 1 ? await redis.hlen('shopify:products:by_handle') : 0
-
-    console.log('📋 INSTRUMENTATION: Cache status after initialization:')
-    console.log(`  - Hash cache (shopify:products:by_handle): ${hashExists === 1 ? '✅ EXISTS' : '❌ MISSING'}`)
-    console.log(`  - Hash contains ${hashLength} products`)
-    console.log('🎯 INSTRUMENTATION: Hash cache initialized successfully!')
-    
-    // Enum cache will be lazily initialized on first API request (Edge Runtime compatibility)
-    console.log('📝 INSTRUMENTATION: Enum cache will be lazy loaded on first request')
+    if (hashExists) {
+      const hashData = await redis.hgetall('shopify:products:by_handle')
+      const _productCount = Object.keys(hashData || {}).length
+      // Cache initialized successfully
+    } else {
+      // Cache is empty - will be populated on first request
+    }
   } catch (error) {
-    console.error('❌ INSTRUMENTATION ERROR:', error instanceof Error ? error.message : 'Unknown error')
     throw new Error(`INSTRUMENTATION: Product cache initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }

@@ -10,10 +10,6 @@ interface SpecificationDataState {
   error: Error | null
 }
 
-/**
- * Hook to load existing specification data for editing
- * Transforms database format to SpecificationFormData (canonical type reuse)
- */
 export const useSpecificationData = (specificationId: string): SpecificationDataState => {
   const [data, setData] = useState<SpecificationFormData | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(false)
@@ -39,8 +35,9 @@ export const useSpecificationData = (specificationId: string): SpecificationData
         const result = await response.json()
         const specification = result.specification
 
-        // Transform to SpecificationFormData (reusing canonical type)
+        // Transform to SpecificationFormData with ID for edit mode detection
         const formData: SpecificationFormData = {
+          id: String(specification.id), // Convert to string for type compatibility
           shopify_handle: specification.shopify_handle,
           product_brand_id: specification.product_brand_id,
           product_type_id: specification.product_type_id,
@@ -54,7 +51,7 @@ export const useSpecificationData = (specificationId: string): SpecificationData
           tasting_note_ids: specification.tasting_note_ids,
           nicotine_level_id: specification.nicotine_level_id,
           moisture_level_id: specification.moisture_level_id,
-          review_text: specification.review_text,
+          review: specification.review,
           star_rating: specification.star_rating,
           rating_boost: specification.rating_boost,
           status_id: specification.status_id,
