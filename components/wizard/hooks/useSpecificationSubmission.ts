@@ -1,9 +1,10 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useMemo } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { WizardFormData } from '../types/wizard.types'
 import { Specification } from '@/lib/schemas/specification'
+import { transformFormData, buildApiRequest } from './specification-submission-utils'
 
 interface UseSpecificationSubmissionProps {
   methods: UseFormReturn<WizardFormData>
@@ -32,38 +33,15 @@ const useSpecificationSubmission = ({
 
     try {
       const formData = methods.getValues()
-      
-      // Transform form data to match API's expected format
-      const { tasting_note_ids, cure_type_ids, tobacco_type_ids, ...coreData } = formData
-      
-      const specification = {
-        ...coreData,
-        // Ensure all required fields are present
-        created_at: new Date(),
-        updated_at: new Date(),
-      }
-      
-      const junctionData = {
-        tasting_note_ids: tasting_note_ids || [],
-        cure_ids: cure_type_ids || [],
-        tobacco_type_ids: tobacco_type_ids || [],
-      }
-
-      // Determine if this is edit mode (has existing ID) or create mode
-      const specificationId = initialData?.id
-      const isEditMode = Boolean(specificationId)
-      
-      // Submit to appropriate API endpoint based on mode
-      const apiUrl = isEditMode 
-        ? `/api/specifications/${specificationId}?userId=${userId}`
-        : '/api/specifications'
-      
-      const requestBody = isEditMode
-        ? specification  // Edit mode: send specification data directly
-        : { specification, junctionData }  // Create mode: send wrapped format
+      const transformedData = transformFormData(formData)
+      const { url: apiUrl, method, body: requestBody } = buildApiRequest(
+        transformedData,
+        userId,
+        initialData?.id as string | number | undefined
+      )
       
       const response = await fetch(apiUrl, {
-        method: isEditMode ? 'PUT' : 'POST',
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -75,12 +53,11 @@ const useSpecificationSubmission = ({
         throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`)
       }
 
-      // Call success callback with complete specification data
       const completeSpecification: Specification = {
-        ...specification,
-        tasting_note_ids,
-        cure_type_ids,
-        tobacco_type_ids,
+        ...transformedData.specification,
+        tasting_note_ids: transformedData.junctionData.tasting_note_ids,
+        cure_type_ids: transformedData.junctionData.cure_ids,
+        tobacco_type_ids: transformedData.junctionData.tobacco_type_ids,
       }
       await onSubmit(completeSpecification)
     } catch (error) {
@@ -90,10 +67,13 @@ const useSpecificationSubmission = ({
     }
   }, [methods, onSubmit, initialData?.id, userId])
 
-  return {
-    isSubmitting,
-    handleFormSubmit,
-  }
+  return useMemo(
+    () => ({
+      isSubmitting,
+      handleFormSubmit,
+    }),
+    [isSubmitting, handleFormSubmit]
+  )
 }
 
 export default useSpecificationSubmission

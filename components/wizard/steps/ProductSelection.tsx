@@ -12,7 +12,7 @@ interface ProductSelectionProps {
   stepNumber: number
   totalSteps: number
   disabled?: boolean
-  onProductSelect?: () => void
+  onProductSelect?: (e: React.MouseEvent<HTMLButtonElement>) => void
   enumData?: SpecificationEnumData
   enumsLoading?: boolean
   filteredProducts?: Product[]
@@ -24,9 +24,6 @@ interface ProductSelectionFormData {
   product_type_id: number | null
 }
 
-/**
- * Step 1: Product selection with brand filtering and search
- */
 const ProductSelection = ({
   stepNumber,
   totalSteps,
@@ -51,19 +48,17 @@ const ProductSelection = ({
       setValue('shopify_handle', selectedHandle, { shouldValidate: true })
 
       if (selectedHandle) {
-        // Find product by handle from filtered products
         const product = filteredProducts.find(p => p.handle === selectedHandle)
         
         if (product && brandEnums) {
-          // Map brand name to brand_id using enum data
           const brandId = findEnumByName(brandEnums, product.brand)
           setValue('product_brand_id', brandId, { shouldValidate: true })
         } else {
           setValue('product_brand_id', null, { shouldValidate: true })
         }
         
-        setValue('product_type_id', 1, { shouldValidate: true }) // Default to Tobacco Snuff
-        onProductSelect?.()
+        setValue('product_type_id', 1, { shouldValidate: true })
+        onProductSelect?.({} as React.MouseEvent<HTMLButtonElement>)
       } else {
         setValue('product_brand_id', null, { shouldValidate: true })
         setValue('product_type_id', null, { shouldValidate: true })

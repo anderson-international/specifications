@@ -15,7 +15,7 @@ export interface WizardStep {
     stepNumber: number,
     totalSteps: number,
     disabled: boolean,
-    onNext: () => void,
+    onNext: (e: React.MouseEvent<HTMLButtonElement>) => void,
     selectedProduct?: Product | null,
     enumData?: SpecificationEnumData,
     enumsLoading?: boolean,

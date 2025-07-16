@@ -9,14 +9,9 @@ interface WizardNavigationFooterProps {
   isSubmitting: boolean
   isCurrentStepValid: boolean
   onPrevious: () => void
-  onNext: () => void
-  onSubmit: () => void
+  onNext: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
-/**
- * Wizard navigation footer with previous, next, and submit buttons
- * Handles conditional rendering based on current step and validation state
- */
 const WizardNavigationFooter = ({
   activeStep,
   totalSteps,
@@ -24,7 +19,6 @@ const WizardNavigationFooter = ({
   isCurrentStepValid,
   onPrevious,
   onNext,
-  onSubmit,
 }: WizardNavigationFooterProps): JSX.Element => {
   return (
     <div className={styles.wizardFooter}>
@@ -56,7 +50,6 @@ const WizardNavigationFooter = ({
             className={styles.submitButton}
             disabled={isSubmitting || !isCurrentStepValid}
             title={isSubmitting ? 'Submitting...' : 'Submit'}
-            onClick={onSubmit}
           >
             {isSubmitting ? '⏳' : '✓'}
           </button>

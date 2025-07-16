@@ -1,29 +1,25 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 
 export interface UseWizardNavigationReturn {
   activeStep: number
   completedSteps: Set<number>
-  handleNext: () => void
+  handleNext: (e: React.MouseEvent<HTMLButtonElement>) => void
   handlePrevious: () => void
   handleStepClick: (stepIndex: number) => void
   canNavigateToStep: (stepIndex: number) => boolean
 }
 
-/**
- * Hook for managing wizard step navigation and validation
- * Extracted from useSpecificationWizard to comply with file size limits
- */
 export const useWizardNavigation = (initialStep: number = 0): UseWizardNavigationReturn => {
   const isEditMode = initialStep > 0
   const [activeStep, setActiveStep] = useState<number>(initialStep)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
 
-  const handleNext = useCallback(() => {
+  const handleNext = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
     setActiveStep((prev) => {
       const nextStep = Math.min(prev + 1, 4)
-      // Mark current step as completed when moving forward
       setCompletedSteps((completed) => new Set(completed).add(prev))
       return nextStep
     })
@@ -33,12 +29,10 @@ export const useWizardNavigation = (initialStep: number = 0): UseWizardNavigatio
     setActiveStep((prev) => Math.max(prev - 1, 0))
   }, [])
 
-  // Hybrid navigation: allow backward jumps only, forward gated by validation
   const handleStepClick = useCallback(
     (stepIndex: number) => {
       const targetStep = stepIndex - 1
       
-      // In edit mode, prevent navigation to step 1 (product selection)
       if (isEditMode && targetStep === 0) {
         return
       }
@@ -52,12 +46,10 @@ export const useWizardNavigation = (initialStep: number = 0): UseWizardNavigatio
     [activeStep, completedSteps, isEditMode]
   )
 
-  // Check if user can navigate to a specific step
   const canNavigateToStep = useCallback(
     (stepIndex: number) => {
       const targetStep = stepIndex - 1
       
-      // In edit mode, prevent navigation to step 1 (product selection)
       if (isEditMode && targetStep === 0) {
         return false
       }

@@ -108,5 +108,10 @@ cmd /c node script.js --pattern "spec_*" # Quoted patterns
 - **// FORM: annotations**: Follow inline field guidance
 - **Atomic transactions**: All related data in single transaction
 
+## Ultra Minimalist Comments Policy
+
+- **Always**: Remove all comments before starting a task
+- **Never**: Add comments to code
+
 ⚠️ **AI ACTION REQUIRED**: Before starting any task, assess if you need additional context.
 **Execute immediately**: Ask for specific context using: "I need context for [forms/API/React patterns/database/etc]"

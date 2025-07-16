@@ -1,6 +1,4 @@
-// Minimal stub to resolve TypeScript compilation error
-export const useTastingProfile = () => {
+export const useTastingProfile = (): Record<string, unknown> => {
   return {
-    // Stub implementation
   }
 }

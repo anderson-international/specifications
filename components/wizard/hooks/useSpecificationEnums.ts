@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import type { SpecificationEnumData } from '@/types/enum'
 
 interface EnumDataState {
@@ -9,17 +9,13 @@ interface EnumDataState {
   error: Error | null
 }
 
-/**
- * Core hook to fetch all enum data required for the specification wizard
- * Fixed version that properly handles API response data
- */
 export const useSpecificationEnums = (): EnumDataState => {
   const [data, setData] = useState<SpecificationEnumData | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
-    const fetchEnums = async () => {
+    const fetchEnums = async (): Promise<void> => {
       try {
         setIsLoading(true)
         const response = await fetch('/api/enums')
@@ -38,5 +34,5 @@ export const useSpecificationEnums = (): EnumDataState => {
     fetchEnums()
   }, [])
 
-  return { data, isLoading, error }
+  return useMemo(() => ({ data, isLoading, error }), [data, isLoading, error])
 }

@@ -3,87 +3,76 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Product } from '@/lib/types/product'
 
-export function useProducts() {
+interface UseProductsReturn {
+  products: Product[]
+  isLoading: boolean
+  error: string | null
+  searchTerm: string
+  setSearchTerm: (term: string) => void
+  selectedBrand: string
+  setSelectedBrand: (brand: string) => void
+  filteredProducts: Product[]
+  availableBrands: string[]
+  retryFetch: () => void
+}
+
+export const useProducts = (): UseProductsReturn => {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-  
-
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [selectedBrand, setSelectedBrand] = useState<string>('')
   const [retryCount, setRetryCount] = useState<number>(0)
 
-  const fetchProducts = useCallback(async (): Promise<void> => {
+  const fetchProducts = useCallback(async (isCancelled: { value: boolean }) => {
     setIsLoading(true)
     setError(null)
-    
     try {
       const response = await fetch('/api/products')
-      if (!response.ok) {
-        throw new Error(`Failed to fetch products: ${response.status}`)
-      }
+      if (!response.ok) throw new Error(`API Error: ${response.status}`)
       const data = await response.json()
 
-      // Handle cache warming state with retry limit
-      if (data.warming) {
-        if (retryCount < 5) { // Max 5 retries for warming
-          setTimeout(() => {
-            setRetryCount(prev => prev + 1)
-          }, 2000)
-          return
-        } else {
-          throw new Error('Cache warming timeout - exceeded retry limit')
-        }
+      if (isCancelled.value) return
+
+      if (data.warming && retryCount < 5) {
+        setTimeout(() => setRetryCount(prev => prev + 1), 2000)
+      } else if (data.warming) {
+        throw new Error('Cache warming timeout.')
+      } else {
+        setProducts(data.products || [])
+        if (retryCount > 0) setRetryCount(0)
       }
-      
-      // Reset retry count on success
-      setRetryCount(0)
-
-      setProducts(data.products || [])
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error occurred')
-      setProducts([]) // Clear products on error
+      if (!isCancelled.value) {
+        setError(err instanceof Error ? err.message : 'Unknown error')
+      }
     } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
-  // Initial load
-  useEffect(() => {
-    fetchProducts()
-  }, [])
-
-  // Handle retries
-  useEffect(() => {
-    if (retryCount > 0) {
-      const timer = setTimeout(() => {
-        fetchProducts()
-      }, 2000)
-      return () => clearTimeout(timer)
+      if (!isCancelled.value) setIsLoading(false)
     }
   }, [retryCount])
 
-  const filteredProducts = useMemo((): Product[] => {
-    let filtered = products
+  useEffect(() => {
+    const isCancelled = { value: false }
+    fetchProducts(isCancelled)
+    return () => { isCancelled.value = true }
+  }, [fetchProducts])
 
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (product) =>
-          product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.brand.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    }
-
-    if (selectedBrand) {
-      filtered = filtered.filter((product) => product.brand === selectedBrand)
-    }
-
-    return filtered
+  const filteredProducts = useMemo(() => {
+    return products.filter(p =>
+      (p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       p.brand.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      (selectedBrand ? p.brand === selectedBrand : true)
+    )
   }, [products, searchTerm, selectedBrand])
 
-  const availableBrands = useMemo(() => [...new Set(products.map((p) => p.brand))], [products])
+  const availableBrands = useMemo(() => 
+    [...new Set(products.map(p => p.brand))],
+    [products]
+  )
 
-  return {
+  const retryFetch = useCallback(() => setRetryCount(prev => prev + 1), [])
+
+  return useMemo(() => ({
     products,
     isLoading,
     error,
@@ -93,6 +82,9 @@ export function useProducts() {
     setSelectedBrand,
     filteredProducts,
     availableBrands,
-    retryFetch: fetchProducts,
-  }
+    retryFetch,
+  }), [
+    products, isLoading, error, searchTerm, selectedBrand, 
+    filteredProducts, availableBrands, retryFetch
+  ])
 }

@@ -1,3 +1,5 @@
+import { TransformedFormData } from '@/components/wizard/hooks/specification-submission-utils'
+
 export class SpecificationValidator {
   static validateUserId(userId: string | null): string | null {
     if (!userId) return 'User ID is required'
@@ -14,7 +16,7 @@ export class SpecificationValidator {
     return { id, error: null }
   }
 
-  static validateCreateRequest(body: any): string | null {
+  static validateCreateRequest(body: TransformedFormData): string | null {
     const { specification, junctionData } = body
 
     if (!specification?.shopify_handle || !specification?.user_id) {

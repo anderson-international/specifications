@@ -16,9 +16,6 @@ interface SpecificationWizardProps {
   userId: string
 }
 
-/**
- * Main wizard component for creating a specification
- */
 const SpecificationWizard = ({
   onSubmit,
   initialData = {},
@@ -51,7 +48,6 @@ const SpecificationWizard = ({
     methods,
   })
 
-  // Memoized steps mapping to prevent creating new array/objects on every render
   const progressSteps = useMemo(
     () => steps.map((step, index) => ({
       id: index + 1,
@@ -60,7 +56,6 @@ const SpecificationWizard = ({
     [steps]
   )
 
-  // Memoized form submit handler to prevent creating new function on every render
   const handleFormSubmitWithError = useCallback(
     async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
       e.preventDefault()
@@ -74,15 +69,7 @@ const SpecificationWizard = ({
     [handleFormSubmit, methods, setSubmitError]
   )
 
-  // Separate handler for WizardNavigationFooter (parameterless)
-  const handleNavigationSubmit = useCallback(async (): Promise<void> => {
-    try {
-      setSubmitError(null)
-      await methods.handleSubmit(handleFormSubmit)()
-    } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : 'Failed to submit specification')
-    }
-  }, [handleFormSubmit, methods, setSubmitError])
+
 
   return (
     <FormProvider {...methods}>
@@ -115,7 +102,7 @@ const SpecificationWizard = ({
             {currentStep.component(
               activeStep + 1,
               totalSteps,
-              isSubmitting || (isEditMode && activeStep === 0), // Disable product selection in edit mode
+              isSubmitting || (isEditMode && activeStep === 0),
               handleNext,
               selectedProduct,
               enumData,
@@ -131,7 +118,6 @@ const SpecificationWizard = ({
             isCurrentStepValid={isCurrentStepValid}
             onPrevious={handlePrevious}
             onNext={handleNext}
-            onSubmit={handleNavigationSubmit}
           />
         </form>
       </div>
@@ -139,6 +125,5 @@ const SpecificationWizard = ({
   )
 }
 
-// Export both default and named export for flexibility
 export { SpecificationWizard }
 export default React.memo(SpecificationWizard)
