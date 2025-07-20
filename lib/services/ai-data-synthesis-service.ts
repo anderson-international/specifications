@@ -1,72 +1,76 @@
 import { type SpecificationWithRelations } from '@/lib/repositories/types/specification-types'
+import { type SynthesizedSpecificationData } from '@/lib/repositories/types/ai-synth-types'
+import { ClaudeSynthesisService } from './claude-synthesis-service'
 
-export interface SynthesizedSpecificationData {
-  specification: {
-    shopify_handle: string
-    product_type_id: number
-    product_brand_id: number
-    grind_id: number
-    nicotine_level_id: number
-    moisture_level_id: number
-    experience_level_id: number
-    is_fermented: boolean
-    is_oral_tobacco: boolean
-    is_artisan: boolean
-    star_rating: number
-    rating_boost: number
-    review: string
-    user_id: string
-    status_id: number
-  }
-  junctionData: {
-    tasting_note_ids: number[]
-    cure_ids: number[]
-    tobacco_type_ids: number[]
-  }
-}
+
 
 export class AIDataSynthesisService {
-  static async synthesizeSpecificationData(
-    sources: Array<SpecificationWithRelations>,
-    aiUserId: string
+  static async synthesizeSpecifications(
+    sources: SpecificationWithRelations[]
   ): Promise<SynthesizedSpecificationData> {
-    const firstSource = sources[0]
-    
-    const avgStarRating = Math.round(
-      sources.reduce((sum, spec) => sum + (spec.star_rating || 0), 0) / sources.length
-    )
-
-    const mostCommonValue = <T>(values: T[]): T => {
-      const counts = values.reduce((acc, val) => {
-        acc[val as string] = (acc[val as string] || 0) + 1
-        return acc
-      }, {} as Record<string, number>)
-      
-      return Object.entries(counts).reduce((a, b) => counts[a[0]] > counts[b[0]] ? a : b)[0] as T
+    if (sources.length === 0) {
+      throw new Error('No specifications provided for synthesis')
     }
 
+    if (sources.length === 1) {
+      return this.extractSingleSpecification(sources[0])
+    }
+
+    try {
+      const claudeResult = await ClaudeSynthesisService.synthesizeSpecifications(sources)
+      
+      return {
+        specification: {
+          shopify_handle: sources[0].shopify_handle,
+          product_type_id: sources[0].product_type_id,
+          product_brand_id: sources[0].product_brand_id,
+          grind_id: claudeResult.grind_id,
+          nicotine_level_id: claudeResult.nicotine_level_id,
+          moisture_level_id: claudeResult.moisture_level_id,
+          experience_level_id: claudeResult.experience_level_id,
+          is_fermented: claudeResult.is_fermented,
+          is_oral_tobacco: claudeResult.is_oral_tobacco,
+          is_artisan: claudeResult.is_artisan,
+          star_rating: claudeResult.star_rating,
+          rating_boost: 0,
+          review: claudeResult.review,
+          user_id: 'ai-user-id', // Replace with actual AI user ID
+          status_id: 1,
+        },
+        junctionData: {
+          tasting_note_ids: claudeResult.tasting_note_ids,
+          cure_ids: claudeResult.cure_ids,
+          tobacco_type_ids: claudeResult.tobacco_type_ids,
+        },
+      }
+    } catch (error) {
+      throw new Error(`AI synthesis failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  private static extractSingleSpecification(source: SpecificationWithRelations): SynthesizedSpecificationData {
     return {
       specification: {
-        shopify_handle: firstSource.shopify_handle,
-        product_type_id: mostCommonValue(sources.map(s => s.product_type_id)),
-        product_brand_id: mostCommonValue(sources.map(s => s.product_brand_id)),
-        grind_id: mostCommonValue(sources.map(s => s.grind_id)),
-        nicotine_level_id: mostCommonValue(sources.map(s => s.nicotine_level_id)),
-        moisture_level_id: mostCommonValue(sources.map(s => s.moisture_level_id)),
-        experience_level_id: mostCommonValue(sources.map(s => s.experience_level_id)),
-        is_fermented: sources.filter(s => s.is_fermented).length > sources.length / 2,
-        is_oral_tobacco: sources.filter(s => s.is_oral_tobacco).length > sources.length / 2,
-        is_artisan: sources.filter(s => s.is_artisan).length > sources.length / 2,
-        star_rating: avgStarRating,
+        shopify_handle: source.shopify_handle,
+        product_type_id: source.product_type_id,
+        product_brand_id: source.product_brand_id,
+        grind_id: source.grind_id,
+        nicotine_level_id: source.nicotine_level_id,
+        moisture_level_id: source.moisture_level_id,
+        experience_level_id: source.experience_level_id,
+        is_fermented: source.is_fermented ?? false,
+        is_oral_tobacco: source.is_oral_tobacco ?? false,
+        is_artisan: source.is_artisan ?? false,
+        star_rating: source.star_rating ?? 1,
         rating_boost: 0,
-        review: `AI-synthesized from ${sources.length} user specifications`,
-        user_id: aiUserId,
-        status_id: 1,
+        review: source.review || 'No review available',
+        user_id: source.user_id,
+        status_id: source.status_id,
       },
       junctionData: {
-        tasting_note_ids: [...new Set(sources.flatMap(s => s.spec_junction_tasting_notes?.map(tn => tn.spec_enum_tasting_notes.id) || []))],
-        cure_ids: [...new Set(sources.flatMap(s => s.spec_junction_cures?.map(c => c.spec_enum_cures.id) || []))],
-        tobacco_type_ids: [...new Set(sources.flatMap(s => s.spec_junction_tobacco_types?.map(tt => tt.spec_enum_tobacco_types.id) || []))],
+        tasting_note_ids: source.spec_junction_tasting_notes?.map(tn => tn.spec_enum_tasting_notes.id) || [],
+        cure_ids: source.spec_junction_cures?.map(c => c.spec_enum_cures.id) || [],
+        tobacco_type_ids: source.spec_junction_tobacco_types?.map(tt => tt.spec_enum_tobacco_types.id) || [],
       },
     }
   }

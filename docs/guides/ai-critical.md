@@ -20,6 +20,9 @@ Avoid: Exceeding file size limits, React infinite loops, Missing context
 
 **When exceeded**: Extract to custom hooks, services, repositories, or separate type files. Minimise all comments.
 
+**Immediate Verification Required**: After creating or modifying any file, immediately run:
+`cmd /c node docs/scripts/count-lines.js [filename]` to verify size compliance
+
 ## Thin Controller Pattern
 
 - Route files: Pure HTTP handling (request/response, validation, status codes)
@@ -86,6 +89,11 @@ cmd /c node script.js --pattern "spec_*" # Quoted patterns
 - **Never use**: 'any' type - use specific types or unions
 - **React components**: Must return JSX.Element
 - **Async functions**: Must return Promise<Type>
+
+**Type Creation Protocol**: Before creating new types, analyze existing canonical types first:
+- Search codebase for similar interfaces/types that can be reused or extended
+- Prefer extending existing types over creating duplicates
+- Use type composition patterns when possible
 
 ## React Anti-Patterns (CRITICAL)
 

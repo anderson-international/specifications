@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { AI_SYNTH_INCLUDE } from '../includes/ai-synth-include'
+import { type CreateSpecificationData, type JunctionData } from './specification-types'
 
 export type AISynthWithRelations = Prisma.ai_spec_metadataGetPayload<{
   include: typeof AI_SYNTH_INCLUDE
@@ -22,4 +23,9 @@ export interface AISynthFilterOptions {
   shopify_handle?: string
   confidence?: number
   ai_model?: string
+}
+
+export interface SynthesizedSpecificationData {
+  specification: CreateSpecificationData
+  junctionData: JunctionData
 }

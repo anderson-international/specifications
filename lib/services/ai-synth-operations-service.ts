@@ -14,7 +14,9 @@ export class AISynthOperationsService {
     confidence?: number
   ): Promise<AISynthWithRelations> {
     const aiUserId = await AIUserService.getAIUser()
-    const synthData = await AIDataSynthesisService.synthesizeSpecificationData(sources, aiUserId)
+    const synthData = await AIDataSynthesisService.synthesizeSpecifications(sources)
+    
+    synthData.specification.user_id = aiUserId
 
     const newSpec = await SpecificationWriteRepository.create(synthData.specification, synthData.junctionData)
 
@@ -42,7 +44,9 @@ export class AISynthOperationsService {
     }
 
     const aiUserId = await AIUserService.getAIUser()
-    const synthData = await AIDataSynthesisService.synthesizeSpecificationData(sources, aiUserId)
+    const synthData = await AIDataSynthesisService.synthesizeSpecifications(sources)
+    
+    synthData.specification.user_id = aiUserId
 
     await SpecificationWriteRepository.update(
       existing.specification_id,

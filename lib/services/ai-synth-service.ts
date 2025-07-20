@@ -22,17 +22,26 @@ export class AISynthService {
   ): Promise<AISynthResponse> {
     const { shopify_handle, ai_model, confidence } = request
 
-    await AISynthValidationService.validateForGeneration(shopify_handle)
     const sources = await AISynthSourcesService.fetchAndFilterSources(shopify_handle)
     const sourceData = AISynthSourcesService.mapSourcesToData(sources)
 
-    const aiSynth = await AISynthOperationsService.createAISynthesis(
-      shopify_handle,
-      sources,
-      sourceData,
-      ai_model,
-      confidence
-    )
+    const existing = await AISynthRepository.findByShopifyHandle(shopify_handle)
+    
+    const aiSynth = existing
+      ? await AISynthOperationsService.updateAISynthesis(
+          shopify_handle,
+          sources,
+          sourceData,
+          ai_model,
+          confidence
+        )
+      : await AISynthOperationsService.createAISynthesis(
+          shopify_handle,
+          sources,
+          sourceData,
+          ai_model,
+          confidence
+        )
 
     return AIResponseTransformer.transformToResponse(aiSynth)
   }

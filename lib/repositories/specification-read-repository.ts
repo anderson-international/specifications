@@ -9,7 +9,7 @@ export class SpecificationReadRepository {
   }): Promise<SpecificationWithRelations[]> {
     const where = {
       ...(filters.userId && { user_id: filters.userId }),
-      ...(filters.status && { enum_specification_statuses: { name: filters.status } }),
+      ...(filters.status && { spec_enum_statuses: { name: filters.status } }),
     }
 
     return prisma.specifications.findMany({

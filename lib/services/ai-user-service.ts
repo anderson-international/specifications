@@ -1,15 +1,22 @@
 import { prisma } from '@/lib/prisma'
 
 export class AIUserService {
-  private static readonly AI_USER_EMAIL = 'ai@ail.im'
+  private static readonly AI_ROLE_NAME = 'AI'
 
   static async getAIUser(): Promise<string> {
-    const aiUser = await prisma.system_users.findUnique({
-      where: { email: this.AI_USER_EMAIL },
+    const aiUser = await prisma.system_users.findFirst({
+      where: {
+        system_enum_roles: {
+          name: this.AI_ROLE_NAME
+        }
+      },
+      include: {
+        system_enum_roles: true
+      }
     })
 
     if (!aiUser) {
-      throw new Error('AI user not found')
+      throw new Error(`User with role '${this.AI_ROLE_NAME}' not found`)
     }
 
     return aiUser.id

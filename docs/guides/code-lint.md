@@ -137,6 +137,84 @@ console.warn('Validation warning:', errors)
 console.error('API Error:', error)
 ```
 
+### 5. No-Useless-Catch Errors
+
+**Problem:** ESLint flags catch blocks as "useless" when they simply re-throw.
+
+**Rule:** **NEVER DELETE** catch blocks - apply error composition instead.
+
+**Solutions:**
+
+```typescript
+// ❌ WRONG: Useless catch
+try {
+  await riskyOperation()
+} catch (error) {
+  throw error // Flagged by ESLint
+}
+
+// ✅ CORRECT: Error composition by context
+// Service layer
+try {
+  await riskyOperation()
+} catch (error) {
+  throw new Error(`Service operation failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+}
+
+// API route
+try {
+  await riskyOperation()
+} catch (error) {
+  return handleApiError(error)
+}
+
+// Utility function
+try {
+  await riskyOperation()
+} catch (error) {
+  throw new Error(`Utility operation failed: ${error instanceof Error ? error.message : String(error)}`)
+}
+```
+
+### 6. No-Console with Fail-Fast
+
+**Problem:** `console.warn` statements mask data integrity violations.
+
+**Rule:** Replace silent failures with explicit error throwing.
+
+**Solutions:**
+
+```typescript
+// ❌ WRONG: Silent failure masks problems
+try {
+  const result = await fetchProducts()
+  return result
+} catch (error) {
+  console.warn('Product lookup failed, continuing without data:', error)
+  return []
+}
+
+// ✅ CORRECT: Fail-fast error composition
+try {
+  const result = await fetchProducts()
+  return result
+} catch (error) {
+  throw new Error(`Product lookup failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+}
+```
+
+**Exception:** Keep `console.error()` for actual logging before throwing:
+
+```typescript
+// ✅ ACCEPTABLE: Log then throw
+try {
+  return await operation()
+} catch (error) {
+  console.error('Critical operation failed:', error)
+  throw error
+}
+```
+
 ## React Issues
 
 ### 1. Missing Hook Dependencies
