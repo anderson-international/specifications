@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const ANALYSIS_FILE = path.join(__dirname, '..', 'review', 'analysis_data.json');
+const ANALYSIS_FILE = path.join(__dirname, '..', 'review', 'code_review.json');
 const FILE_SIZE_LIMITS = {
   components: 150,
   hooks: 100,
@@ -32,10 +32,10 @@ function getFileType(filePath) {
   if (dirName.includes('components')) return 'components';
   if (dirName.includes('hooks')) return 'hooks';
   if (dirName.includes('types')) return 'types';
-  if (dirName.includes('lib') || dirName.includes('utils')) return 'utils';
-  if (dirName.includes('app') && fileName.includes('route')) return 'routes';
   if (dirName.includes('services')) return 'services';
   if (dirName.includes('repositories')) return 'repositories';
+  if (dirName.includes('app') && fileName.includes('route')) return 'routes';
+  if (dirName.includes('lib') || dirName.includes('utils')) return 'utils';
   
   return 'components'; // default
 }

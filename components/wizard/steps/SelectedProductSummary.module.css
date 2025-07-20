@@ -2,8 +2,8 @@
   background-color: #1a1d24;
   border: 1px solid #343741;
   border-radius: 8px;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
 }
 
 .heading {
@@ -15,12 +15,13 @@
 
 .summary {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .imageWrapper {
-  width: 80px;
-  height: 80px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
   background-color: #252831;
   border-radius: 4px;
@@ -42,7 +43,7 @@
   background-color: #252831;
   color: #718096;
   font-weight: 600;
-  font-size: 1.25rem;
+  font-size: 0.875rem;
 }
 
 .details {

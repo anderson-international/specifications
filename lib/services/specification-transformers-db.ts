@@ -1,4 +1,4 @@
-import type { CreateSpecificationData, JunctionData } from '@/lib/repositories/specification-repository'
+import type { CreateSpecificationData, JunctionData } from '@/lib/repositories/types/specification-types'
 
 export function transformSpecificationForCreate(specification: Record<string, unknown>): CreateSpecificationData {
   return {

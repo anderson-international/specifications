@@ -58,7 +58,10 @@ const ProductSelection = ({
         }
         
         setValue('product_type_id', 1, { shouldValidate: true })
-        onProductSelect?.({} as React.MouseEvent<HTMLButtonElement>)
+        
+        setTimeout(() => {
+          onProductSelect?.({} as React.MouseEvent<HTMLButtonElement>)
+        }, 0)
       } else {
         setValue('product_brand_id', null, { shouldValidate: true })
         setValue('product_type_id', null, { shouldValidate: true })

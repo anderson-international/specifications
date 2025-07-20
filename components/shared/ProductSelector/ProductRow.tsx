@@ -39,7 +39,6 @@ const ProductRow = ({
     >
       <div className={styles.productInfo}>
         <h3 className={styles.title}>{product.title}</h3>
-        <p className={styles.brand}>{product.brand}</p>
       </div>
 
       {mode === 'multi' && (
@@ -49,8 +48,7 @@ const ProductRow = ({
           <input
             type="checkbox"
             checked={isSelected}
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            onChange={() => {}} // No-op: parent div handles selection logic
+            onChange={() => {}}
             onClick={() => undefined} // Handled by parent click
             className={styles.checkboxInput}
             tabIndex={-1} // Parent handles keyboard interaction

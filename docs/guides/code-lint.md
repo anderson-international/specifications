@@ -68,6 +68,42 @@ function processData(data: DataType): string {
 }
 ```
 
+#### Junction Relation Access Patterns
+
+**Problem:** Using `any` type when accessing Prisma junction relations.
+
+**Root Cause:** Incorrectly accessing junction properties instead of using nested include structure.
+
+**Critical Rule:** ALWAYS examine existing codebase patterns before creating types.
+
+```typescript
+// ❌ WRONG: Creating any types for non-existent properties
+sources.flatMap(s => s.spec_junction_tasting_notes.map((tn: any) => tn.enum_tasting_note_id))
+
+// ✅ CORRECT: Use proper nested include structure from existing patterns
+sources.flatMap(s => s.spec_junction_tasting_notes?.map(tn => tn.spec_enum_tasting_notes.id) || [])
+```
+
+**How to Fix Junction `any` Types:**
+
+1. **Find similar usage**: Search codebase for same junction table access
+2. **Check include structure**: Review Prisma include configuration  
+3. **Use existing pattern**: Copy the correct nested access pattern
+4. **Never create new types**: Use established Prisma-generated types
+
+**Common Junction Patterns:**
+
+```typescript
+// Tasting notes junction
+specification.spec_junction_tasting_notes?.map(tn => tn.spec_enum_tasting_notes.id)
+
+// Cures junction  
+specification.spec_junction_cures?.map(c => c.spec_enum_cures.id)
+
+// Tobacco types junction
+specification.spec_junction_tobacco_types?.map(tt => tt.spec_enum_tobacco_types.id)
+```
+
 ### 3. Unused Variables
 
 **Problem:** Variables, imports, or parameters declared but never used.

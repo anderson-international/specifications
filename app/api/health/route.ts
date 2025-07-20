@@ -3,18 +3,16 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
-    // Test database connection with a simple query
     const [userCount, specCount, statusCount] = await Promise.all([
-      prisma.users.count(),
+      prisma.system_users.count(),
       prisma.specifications.count(),
-      prisma.enum_specification_statuses.count(),
+      prisma.spec_enum_statuses.count(),
     ])
 
-    // Test a relationship query
     await prisma.specifications.findFirst({
       include: {
-        users: true,
-        enum_specification_statuses: true,
+        system_users: true,
+        spec_enum_statuses: true,
       },
     })
 

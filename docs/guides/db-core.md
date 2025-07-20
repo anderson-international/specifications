@@ -25,6 +25,7 @@ Project Context: technical-stack.md (Technology configuration)
 ### Query Philosophy
 
 - **Validation First**: Always validate data before database operations
+- **Prisma First**: Use Prisma queries over raw SQL for type safety and schema consistency
 - **Efficient Queries**: Use Prisma's select/include features for performance
 - **Transaction Support**: Use Prisma transactions for atomic operations
 

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createApiError, withErrorHandling } from '@/lib/api/utils'
 import { SpecificationService } from '@/lib/services/specification-service'
 import { SpecificationValidator } from '@/lib/validators/specification-validator'
-import { SpecificationRepository } from '@/lib/repositories/specification-repository'
+import { SpecificationReadRepository } from '@/lib/repositories/specification-read-repository'
+
 
 interface GetParams {
   params: Promise<{
@@ -48,7 +49,7 @@ export async function PUT(
     const userValidationError = SpecificationValidator.validateUserId(userId)
     if (userValidationError) return createApiError(userValidationError, 400)
 
-    const existingSpec = await SpecificationRepository.findById(id, userId!)
+    const existingSpec = await SpecificationReadRepository.findById(id, userId!)
     if (!existingSpec) return createApiError('Specification not found or unauthorized', 404)
 
     const result = await SpecificationService.updateSpecification(id, body)

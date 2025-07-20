@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(_request: NextRequest): Promise<NextResponse> {
-  // Only allow in development
   if (process.env.NODE_ENV !== 'development') {
     return NextResponse.json(
       { error: 'Development endpoints not available in production' },
@@ -11,9 +10,9 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const users = await prisma.users.findMany({
+    const users = await prisma.system_users.findMany({
       include: {
-        enum_roles: true,
+        system_enum_roles: true,
       },
       orderBy: {
         name: 'asc',
@@ -25,7 +24,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       name: user.name,
       email: user.email || '',
       role_id: user.role_id,
-      role_name: user.enum_roles?.name || 'Unknown Role',
+      role_name: user.system_enum_roles?.name || 'Unknown Role',
       created_at: user.created_at?.toISOString(),
       slack_userid: user.slack_userid,
       jotform_name: user.jotform_name,

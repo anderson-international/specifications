@@ -1,34 +1,44 @@
-// Recent activity analysis utilities
-// Extracted from route.ts to comply with file size limits
-
 import { prisma } from '@/lib/prisma'
 import { RecentActivity } from '@/app/api/dashboard/stats/types'
 
 export class RecentActivityAnalyzer {
   static async getWeeklyTopReviewers(): Promise<RecentActivity[]> {
-    // DEBUG: Extended from 7 days to 30 days to capture more activity
     const oneWeekAgo = new Date()
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 30)
 
-    // Weekly top reviewers
-    const weeklyActivity = await prisma.$queryRaw<
-      Array<{ user_id: string; name: string | null; recent_specs: number }>
-    >`
-      SELECT 
-        u.id as user_id,
-        u.name,
-        COUNT(s.id)::int as recent_specs
-      FROM users u
-      LEFT JOIN specifications s ON u.id = s.user_id 
-        AND s.status_id = 1 
-        AND s.created_at >= ${oneWeekAgo}
-      GROUP BY u.id, u.name
-      HAVING COUNT(s.id) > 0
-      ORDER BY recent_specs DESC
-      LIMIT 5
-    `
+    const rawWeeklyActivity = await prisma.system_users.findMany({
+      select: {
+        id: true,
+        name: true,
+        _count: {
+          select: {
+            specifications: {
+              where: {
+                status_id: 1,
+                created_at: {
+                  gte: oneWeekAgo
+                }
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        specifications: {
+          _count: 'desc'
+        }
+      },
+      take: 5
+    })
 
-    // Add ranks to recent activity
+    const weeklyActivity = rawWeeklyActivity
+      .filter((user) => user._count.specifications > 0)
+      .map((user) => ({
+        user_id: user.id,
+        name: user.name,
+        recent_specs: user._count.specifications
+      }))
+
     return weeklyActivity.map((user, index) => ({
       ...user,
       rank: index + 1,
@@ -36,29 +46,42 @@ export class RecentActivityAnalyzer {
   }
 
   static async getMonthlyTopReviewers(): Promise<RecentActivity[]> {
-    // DEBUG: Extended from 1 month to 6 months to capture more activity
     const oneMonthAgo = new Date()
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 6)
 
-    // Monthly top reviewers
-    const monthlyActivity = await prisma.$queryRaw<
-      Array<{ user_id: string; name: string | null; recent_specs: number }>
-    >`
-      SELECT 
-        u.id as user_id,
-        u.name,
-        COUNT(s.id)::int as recent_specs
-      FROM users u
-      LEFT JOIN specifications s ON u.id = s.user_id 
-        AND s.status_id = 1 
-        AND s.created_at >= ${oneMonthAgo}
-      GROUP BY u.id, u.name
-      HAVING COUNT(s.id) > 0
-      ORDER BY recent_specs DESC
-      LIMIT 5
-    `
+    const rawMonthlyActivity = await prisma.system_users.findMany({
+      select: {
+        id: true,
+        name: true,
+        _count: {
+          select: {
+            specifications: {
+              where: {
+                status_id: 1,
+                created_at: {
+                  gte: oneMonthAgo
+                }
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        specifications: {
+          _count: 'desc'
+        }
+      },
+      take: 5
+    })
 
-    // Add ranks to recent activity
+    const monthlyActivity = rawMonthlyActivity
+      .filter((user) => user._count.specifications > 0)
+      .map((user) => ({
+        user_id: user.id,
+        name: user.name,
+        recent_specs: user._count.specifications
+      }))
+
     return monthlyActivity.map((user, index) => ({
       ...user,
       rank: index + 1,

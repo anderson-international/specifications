@@ -223,3 +223,47 @@ interface UseFormReturn<T> {
   isValid: boolean;
 }
 ```
+
+## Prisma Repository Type Safety
+
+### CRITICAL: Reference Canonical Types First
+
+**Before writing repository/service code:**
+1. Examine existing type patterns in codebase
+2. Use established Prisma types not generic `any`
+3. Reference specific model types from schema
+
+### ✅ Correct: Prisma Types
+
+```typescript
+// Use specific Prisma model types
+function createUser(tx: Prisma.TransactionClient, data: Prisma.usersCreateInput): Promise<User> {
+  return tx.users.create({ data })
+}
+
+// Use existing type aliases
+type SpecWithRelations = Prisma.specificationsGetPayload<{ include: typeof SPEC_INCLUDE }>
+
+// Specific junction table types
+interface SpecTastingNoteData {
+  specification_id: number
+  enum_tasting_note_id: number
+}
+
+function createTastingNotes(tx: Prisma.TransactionClient, data: SpecTastingNoteData[]): Promise<Prisma.BatchPayload> {
+  return tx.spec_tasting_notes.createMany({ data, skipDuplicates: true })
+}
+```
+
+### ❌ Incorrect: Any Types
+
+```typescript
+// ❌ Using 'any' instead of Prisma types
+function createUser(tx: any, data: any): Promise<any> {
+  return tx.users.create({ data })
+}
+
+function updateRecord(tx: Prisma.TransactionClient, model: any, id: number, data: any): Promise<any> {
+  return model.update({ where: { id }, data })
+}
+```

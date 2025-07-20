@@ -16,10 +16,10 @@ export const useWizardNavigation = (initialStep: number = 0): UseWizardNavigatio
   const [activeStep, setActiveStep] = useState<number>(initialStep)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
 
-  const handleNext = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
+  const handleNext = useCallback((e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.preventDefault?.()
     setActiveStep((prev) => {
-      const nextStep = Math.min(prev + 1, 4)
+      const nextStep = Math.min(prev + 1, 3)
       setCompletedSteps((completed) => new Set(completed).add(prev))
       return nextStep
     })

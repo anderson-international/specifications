@@ -11,7 +11,7 @@
  */
 
 const { Client } = require('pg')
-require('dotenv').config()
+require('dotenv').config({ quiet: true })
 
 // Configuration
 const MAX_OUTPUT_BYTES = 7800
@@ -146,11 +146,11 @@ class SchemaQueryTool {
   }
 
   generateIndex(tables) {
+    const enumTables = tables.filter((t) => t.table_name.includes('_enum_'))
+    const junctionTables = tables.filter((t) => t.table_name.startsWith('spec_junction_'))
     const coreTables = tables.filter(
-      (t) => !t.table_name.startsWith('enum_') && !t.table_name.startsWith('spec_')
+      (t) => !t.table_name.includes('_enum_') && !t.table_name.startsWith('spec_junction_')
     )
-    const enumTables = tables.filter((t) => t.table_name.startsWith('enum_'))
-    const junctionTables = tables.filter((t) => t.table_name.startsWith('spec_'))
 
     const enumPages = Math.ceil(enumTables.length / ITEMS_PER_PAGE)
     const junctionPages = Math.ceil(junctionTables.length / ITEMS_PER_PAGE)
@@ -176,8 +176,8 @@ ${
 ### Junction Tables (${junctionTables.length} tables)
 ${
   junctionTables.length <= ITEMS_PER_PAGE
-    ? '- All tables: --pattern "spec_*"'
-    : `- ${junctionPages} pages available: --pattern "spec_*" --page 1`
+    ? '- All tables: --pattern "spec_junction_*"'
+    : `- ${junctionPages} pages available: --pattern "spec_junction_*" --page 1`
 }
 
 ## Usage Examples
@@ -194,7 +194,7 @@ cmd /c node docs/scripts/schema-query.js --enums --page 1
 
 ### Load tables by pattern:
 \`\`\`bash
-cmd /c node docs/scripts/schema-query.js --pattern "enum_*" --page 1
+cmd /c node docs/scripts/schema-query.js --pattern "*_enum_*" --page 1
 \`\`\`
 
 ## AI Instructions
@@ -257,7 +257,7 @@ Each command respects the 7,800 byte output limit and provides navigation for ad
     if (foreignKeys.length > 0) {
       doc += `**Relationships:**\n`
       foreignKeys.forEach((fk) => {
-        doc += `- ${fk.column_name} → ${fk.foreign_table_name}.${fk.foreign_column_name}\n`
+        doc += `- ${fk.column_name} → ${fk.foreign_table_name}.${fk.foreign_column_name} (constraint: ${fk.constraint_name})\n`
       })
       doc += `\n`
     }
@@ -338,7 +338,7 @@ Each command respects the 7,800 byte output limit and provides navigation for ad
   async queryEnums(page = 1) {
     await this.connect()
     const allTables = await this.getAllTables()
-    const enumTables = allTables.filter((t) => t.table_name.startsWith('enum_'))
+    const enumTables = allTables.filter((t) => t.table_name.includes('_enum_'))
 
     const startIndex = (page - 1) * ITEMS_PER_PAGE
     const endIndex = startIndex + ITEMS_PER_PAGE
@@ -362,6 +362,40 @@ Each command respects the 7,800 byte output limit and provides navigation for ad
       } else if (page > 1) {
         // Final page - just reference to previous
         output += `\n**Previous page**: cmd /c node docs/scripts/schema-query.js --enums --page ${page - 1}\n`
+      }
+    }
+
+    this.validateOutputSize(output)
+    return output
+  }
+
+  async queryJunctions(page = 1) {
+    await this.connect()
+    const allTables = await this.getAllTables()
+    const junctionTables = allTables.filter((t) => t.table_name.startsWith('spec_junction_'))
+
+    const startIndex = (page - 1) * ITEMS_PER_PAGE
+    const endIndex = startIndex + ITEMS_PER_PAGE
+    const pageJunctions = junctionTables.slice(startIndex, endIndex)
+
+    const totalPages = Math.ceil(junctionTables.length / ITEMS_PER_PAGE)
+
+    let output = `# Junction Tables - Page ${page} of ${totalPages}\n\n`
+
+    for (const table of pageJunctions) {
+      const tableData = await this.getTableData(table.table_name)
+      output += this.generateTableDocumentation(tableData) + '\n'
+    }
+
+    // Add navigation only if there are multiple pages
+    if (totalPages > 1) {
+      if (page < totalPages) {
+        // Action required - more data to load
+        output += `\n⚠️ **AI ACTION REQUIRED**: This output was truncated due to size limits.\n`
+        output += `**Execute immediately**: cmd /c node docs/scripts/schema-query.js --junctions --page ${page + 1}\n`
+      } else if (page > 1) {
+        // Final page - just reference to previous
+        output += `\n**Previous page**: cmd /c node docs/scripts/schema-query.js --junctions --page ${page - 1}\n`
       }
     }
 
@@ -431,6 +465,10 @@ async function main() {
       const pageIndex = args.indexOf('--page')
       const page = pageIndex !== -1 ? parseInt(args[pageIndex + 1]) || 1 : 1
       output = await tool.queryEnums(page)
+    } else if (args.includes('--junctions')) {
+      const pageIndex = args.indexOf('--page')
+      const page = pageIndex !== -1 ? parseInt(args[pageIndex + 1]) || 1 : 1
+      output = await tool.queryJunctions(page)
     } else if (args.includes('--pattern')) {
       const patternIndex = args.indexOf('--pattern')
       const pattern = args[patternIndex + 1]
@@ -464,6 +502,7 @@ Options:
   --index              Show table index and navigation (default)
   --table <name>       Show detailed information for specific table
   --enums [--page N]   Show enum tables (paginated)
+  --junctions [--page N] Show junction tables (paginated)
   --pattern <pattern>  Show tables matching pattern (supports *)
   --page <N>           Page number for paginated results
 
@@ -471,8 +510,9 @@ Examples:
   node schema-query.js --index
   node schema-query.js --table specifications
   node schema-query.js --enums --page 1
-  node schema-query.js --pattern "enum_*"
-  node schema-query.js --pattern "spec_*" --page 1
+  node schema-query.js --junctions --page 1
+  node schema-query.js --pattern "*_enum_*"
+  node schema-query.js --pattern "spec_junction_*" --page 1
 
 Output limit: ${MAX_OUTPUT_BYTES} bytes (auto-paginated)
 `)

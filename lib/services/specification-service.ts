@@ -1,4 +1,6 @@
-import { SpecificationRepository, type SpecificationWithRelations } from '@/lib/repositories/specification-repository'
+import { SpecificationReadRepository } from '@/lib/repositories/specification-read-repository'
+import { SpecificationWriteRepository } from '@/lib/repositories/specification-write-repository'
+import { type SpecificationWithRelations } from '@/lib/repositories/types/specification-types'
 import { ProductLookupService } from '@/lib/services/product-lookup-service'
 import { transformSpecificationToApiResponse } from './specification-transformers-api'
 import {
@@ -17,7 +19,7 @@ export class SpecificationService {
       userId: filters.userId || undefined,
       status: filters.status || undefined,
     }
-    const specifications = await SpecificationRepository.findMany(cleanFilters)
+    const specifications = await SpecificationReadRepository.findMany(cleanFilters)
     return ProductLookupService.populateProductsInSpecs(specifications)
   }
 
@@ -25,7 +27,7 @@ export class SpecificationService {
     id: number,
     userId?: string | null
   ): Promise<Record<string, unknown> | null> {
-    const specification = await SpecificationRepository.findById(id, userId || undefined)
+    const specification = await SpecificationReadRepository.findById(id, userId || undefined)
     if (!specification) return null
     return transformSpecificationToApiResponse(specification)
   }
@@ -34,7 +36,7 @@ export class SpecificationService {
     specification: Record<string, unknown>,
     junctionData: Record<string, unknown>
   ): Promise<SpecificationWithRelations> {
-    return SpecificationRepository.create(
+    return SpecificationWriteRepository.create(
       transformSpecificationForCreate(specification),
       transformJunctionDataForCreate(junctionData)
     )
@@ -44,7 +46,7 @@ export class SpecificationService {
     id: number,
     body: Record<string, unknown>
   ): Promise<{ id: number; user_id: string; updated_at: Date | null }> {
-    return SpecificationRepository.update(
+    return SpecificationWriteRepository.update(
       id,
       transformSpecificationForUpdate(body),
       transformJunctionDataForUpdate(body)
