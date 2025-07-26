@@ -39,7 +39,12 @@ export const useProducts = (): UseProductsReturn => {
       } else if (data.warming) {
         throw new Error('Cache warming timeout.')
       } else {
-        setProducts(data.products || [])
+        const sortedProducts = (data.products || []).sort((a: Product, b: Product) => {
+          const titleComparison = a.title.localeCompare(b.title)
+          if (titleComparison !== 0) return titleComparison
+          return a.brand.localeCompare(b.brand)
+        })
+        setProducts(sortedProducts)
         if (retryCount > 0) setRetryCount(0)
       }
     } catch (err) {
@@ -66,7 +71,7 @@ export const useProducts = (): UseProductsReturn => {
   }, [products, searchTerm, selectedBrand])
 
   const availableBrands = useMemo(() => 
-    [...new Set(products.map(p => p.brand))],
+    [...new Set(products.map(p => p.brand))].sort(),
     [products]
   )
 

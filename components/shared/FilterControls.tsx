@@ -42,17 +42,19 @@ export const FilterControls: React.FC<FilterControlsProps> = React.memo(
   }) => {
     return (
       <div className={styles.container}>
-        <div className={styles.controls}>
+        <div className={styles.searchRow}>
           <SearchInput
             searchQuery={searchQuery}
             onSearchChange={onSearchChange}
             searchPlaceholder={searchPlaceholder}
           />
+        </div>
 
+        <div className={styles.filtersRow}>
           {filters.map((filter) => (
             <FilterGroup key={filter.id} filter={filter} onFilterChange={onFilterChange} />
           ))}
-
+          
           <button
             onClick={onClearAll}
             className={styles.clearAllButton}

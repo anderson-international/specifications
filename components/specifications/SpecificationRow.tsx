@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useCallback } from 'react'
+import Image from 'next/image'
 import type { Specification } from '@/types/specification'
 import styles from './SpecificationRow.module.css'
 
@@ -38,13 +39,28 @@ const SpecificationRowComponent = ({
       role="button"
       aria-label={`${isAI ? 'View' : 'Edit'} specification for ${specification.product?.title || specification.shopify_handle}`}
     >
+      <div className={styles.imageWrapper}>
+        {specification.product?.image_url ? (
+          <Image
+            src={specification.product.image_url}
+            alt={specification.product.title || specification.shopify_handle}
+            className={styles.productImage}
+            width={40}
+            height={40}
+            priority={false}
+            loading="lazy"
+          />
+        ) : (
+          <div className={styles.imagePlaceholder}>
+            <span>{(specification.product?.title || specification.shopify_handle).substring(0, 2).toUpperCase()}</span>
+          </div>
+        )}
+      </div>
       <div className={styles.specificationInfo}>
         <h3 className={styles.title}>
           {specification.product?.title || specification.shopify_handle}
         </h3>
-        <p className={styles.brand}>
-          {specification.product?.brand || 'Unknown Brand'}
-        </p>
+
         {specification.star_rating && (
           <div className={styles.rating}>
             {Array.from({ length: 5 }, (_, i) => (
@@ -53,10 +69,9 @@ const SpecificationRowComponent = ({
                 className={i < specification.star_rating ? styles.starFilled : styles.starEmpty}
                 aria-hidden="true"
               >
-                {i < specification.star_rating ? '●' : '○'}
+                {i < specification.star_rating ? '★' : '☆'}
               </span>
             ))}
-            <span className={styles.ratingText}>({specification.star_rating}/5)</span>
           </div>
         )}
       </div>

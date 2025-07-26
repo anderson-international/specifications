@@ -14,8 +14,7 @@ export default function SpecificationsPage(): JSX.Element {
         createButtonText: '+ New Specification',
         createButtonHref: '/create-specification',
         aiGenerated: false,
-        navigateTo: 'edit',
-        showAIIndicators: false
+        navigateTo: 'edit'
       }}
     />
   )

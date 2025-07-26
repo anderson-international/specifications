@@ -175,6 +175,38 @@ function runEslint(filePath) {
   }
 }
 
+function runTypeScriptCompiler(files) {
+  try {
+    execSync(`npx tsc --noEmit --project tsconfig.json`, { stdio: 'pipe' });
+    return { errors: [], status: 'PASS' };
+  } catch (error) {
+    const output = error.stdout?.toString() || error.stderr?.toString() || '';
+    const errors = [];
+    
+    // Parse TypeScript compiler output
+    // Format: filename(line,col): error TSxxxx: message
+    const errorRegex = /([^(]+)\((\d+),(\d+)\): error TS(\d+): (.+)/g;
+    let match;
+    
+    while ((match = errorRegex.exec(output)) !== null) {
+      const [, filePath, line, col, errorCode, message] = match;
+      
+      // Only include errors for files we're analyzing
+      if (files.some(f => filePath.includes(path.basename(f)))) {
+        errors.push({
+          filePath: filePath.trim(),
+          line: parseInt(line),
+          column: parseInt(col),
+          errorCode: `TS${errorCode}`,
+          message: message.trim()
+        });
+      }
+    }
+    
+    return { errors, status: errors.length > 0 ? 'FAIL' : 'PASS' };
+  }
+}
+
 function analyzeTypeScript(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
@@ -254,6 +286,7 @@ function analyzeFile(filePath) {
   const reactAnalysis = analyzeReactPatterns(filePath);
   const eslintAnalysis = runEslint(filePath);
   const typeScriptAnalysis = analyzeTypeScript(filePath);
+  const compilationAnalysis = runTypeScriptCompiler([filePath]);
   
   return {
     filePath,
@@ -261,7 +294,11 @@ function analyzeFile(filePath) {
     comments: commentAnalysis,
     react: reactAnalysis,
     eslint: eslintAnalysis,
-    typescript: typeScriptAnalysis
+    typescript: typeScriptAnalysis,
+    compilation: {
+      errors: compilationAnalysis.errors,
+      status: compilationAnalysis.status
+    }
   };
 }
 
@@ -271,7 +308,8 @@ function generateCompactSummary(results) {
     r.eslint.errors.length > 0 || r.eslint.warnings.length > 0 || 
     r.comments.status === 'FAIL' || 
     r.size.status === 'FAIL' || 
-    r.typescript.status === 'FAIL'
+    r.typescript.status === 'FAIL' ||
+    r.compilation.status === 'FAIL'
   );
   const passingFiles = totalFiles - failedFiles.length;
   
@@ -303,6 +341,13 @@ function generateCompactSummary(results) {
         summary += `${fileName}: Add ${file.typescript.missingReturnTypes} return types\n`;
       }
       
+      // TypeScript compilation violations (all blocking)
+      if (file.compilation.status === 'FAIL') {
+        file.compilation.errors.forEach(error => {
+          summary += `${fileName}:${error.line} - ${error.message}\n`;
+        });
+      }
+      
       // ESLint violations (all blocking)
       const allViolations = [...file.eslint.errors, ...file.eslint.warnings];
       if (allViolations.length > 0) {
@@ -331,8 +376,8 @@ function generateCompactSummary(results) {
 
 function generateBatchSummary(results) {
   const totalFiles = results.length;
-  const passedFiles = results.filter(r => r.comments.status === 'PASS' && r.size.status === 'PASS' && r.typescript.status === 'PASS' && r.eslint.errors.length === 0);
-  const failedFiles = results.filter(r => r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL' || r.eslint.errors.length > 0);
+  const passedFiles = results.filter(r => r.comments.status === 'PASS' && r.size.status === 'PASS' && r.typescript.status === 'PASS' && r.eslint.errors.length === 0 && r.compilation.status === 'PASS');
+  const failedFiles = results.filter(r => r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL' || r.eslint.errors.length > 0 || r.compilation.status === 'FAIL');
   
   let summary = `=== BATCH TEST SUMMARY ===\n`;
   summary += `Total Files: ${totalFiles} | Passed: ${passedFiles.length} | Failed: ${failedFiles.length}\n\n`;
@@ -345,6 +390,7 @@ function generateBatchSummary(results) {
       if (file.comments.status === 'FAIL') issues.push('comments');
       if (file.size.status === 'FAIL') issues.push('size');
       if (file.typescript.status === 'FAIL') issues.push(`typescript (${file.typescript.missingReturnTypes} missing)`);
+      if (file.compilation.status === 'FAIL') issues.push(`compilation (${file.compilation.errors.length} errors)`);
       if (file.eslint.errors.length > 0) issues.push(`eslint (${file.eslint.errors.length} errors)`);
       summary += `- ${fileName}: ${issues.join(', ')}\n`;
     });

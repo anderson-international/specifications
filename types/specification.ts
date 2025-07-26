@@ -22,6 +22,8 @@ export interface SpecificationFormData {
   user_id: string
 }
 
+import type { Product } from '@/lib/types/product'
+
 export interface Specification extends SpecificationFormData {
   id: string
   userId: string
@@ -37,18 +39,7 @@ export interface Specification extends SpecificationFormData {
   aiCreatedAt?: string
   aiUpdatedAt?: string
 
-  product: {
-    id: string
-    handle: string
-    title: string
-    brand: string
-    imageUrl?: string
-    variants?: Array<{
-      id: string
-      title: string
-      price?: number
-    }>
-  }
+  product: Product | null
 }
 
 export interface SpecificationFilters {

@@ -1,19 +1,14 @@
-/**
- * Types for ProductSelector Component Interfaces
- */
 import type { Product } from '@/lib/types/product'
 
-// Re-export Product type for backward compatibility
 export type { Product }
 
 export interface ProductSelectorProps {
   mode: 'single' | 'multi'
   onSelectionChange: (productIds: string[]) => void
   initialSelection?: string[]
-  title?: string
   searchPlaceholder?: string
   disabled?: boolean
-  products?: Product[] // Optional external products to eliminate redundant API calls
+  products?: Product[]
 }
 
 export interface ProductRowProps {

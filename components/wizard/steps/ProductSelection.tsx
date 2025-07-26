@@ -76,7 +76,6 @@ const ProductSelection = ({
         mode="single"
         onSelectionChange={handleProductSelection}
         initialSelection={initialSelection}
-        title="Choose a Product to Review"
         searchPlaceholder="Search products..."
         disabled={disabled}
         products={filteredProducts}

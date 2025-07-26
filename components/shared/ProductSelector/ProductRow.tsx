@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useCallback } from 'react'
+import Image from 'next/image'
 import type { ProductRowProps } from './product-selector-interfaces'
 import styles from './ProductRow.module.css'
 
@@ -37,6 +38,23 @@ const ProductRow = ({
       aria-checked={mode === 'multi' ? isSelected : undefined}
       aria-disabled={disabled}
     >
+      <div className={styles.imageWrapper}>
+        {product.image_url ? (
+          <Image
+            src={product.image_url}
+            alt={product.title}
+            className={styles.productImage}
+            width={40}
+            height={40}
+            priority={false}
+            loading="lazy"
+          />
+        ) : (
+          <div className={styles.imagePlaceholder}>
+            <span>{product.title.substring(0, 2).toUpperCase()}</span>
+          </div>
+        )}
+      </div>
       <div className={styles.productInfo}>
         <h3 className={styles.title}>{product.title}</h3>
       </div>
@@ -48,7 +66,7 @@ const ProductRow = ({
           <input
             type="checkbox"
             checked={isSelected}
-            onChange={undefined}
+            onChange={() => undefined} // No-op: parent div handles interaction
             onClick={() => undefined} // Handled by parent click
             className={styles.checkboxInput}
             tabIndex={-1} // Parent handles keyboard interaction

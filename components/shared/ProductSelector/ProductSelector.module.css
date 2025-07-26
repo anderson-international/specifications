@@ -11,12 +11,7 @@
   margin-bottom: 1rem;
 }
 
-.title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #e2e8f0;
-  margin: 0;
-}
+
 
 .selectedBadge {
   background-color: #1878b9;
@@ -33,96 +28,9 @@
   background-color: #2b6cb0;
 }
 
-.productList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  max-height: 60vh;
-  overflow-y: auto;
-  padding-right: 0.25rem;
-}
 
-.productList::-webkit-scrollbar {
-  width: 4px;
-}
 
-.productList::-webkit-scrollbar-track {
-  background: #343741;
-  border-radius: 2px;
-}
 
-.productList::-webkit-scrollbar-thumb {
-  background: #4a5568;
-  border-radius: 2px;
-}
-
-.productList::-webkit-scrollbar-thumb:hover {
-  background: #718096;
-}
-
-.loading {
-  position: relative;
-  text-align: center;
-  color: #a0aec0;
-  font-size: 0.875rem;
-  padding: 2rem 1rem;
-}
-
-.loadingOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(30, 33, 40, 0.8);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  z-index: 10;
-}
-
-.spinner {
-  width: 2rem;
-  height: 2rem;
-  border: 3px solid #343741;
-  border-top: 3px solid #1878b9;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.loadingText {
-  color: #e2e8f0;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.error {
-  background-color: #742a2a;
-  border: 1px solid #e53e3e;
-  border-radius: 6px;
-  padding: 1rem;
-  color: #fed7d7;
-  font-size: 0.875rem;
-}
-
-.emptyState {
-  text-align: center;
-  color: #a0aec0;
-  font-size: 0.875rem;
-  padding: 2rem 1rem;
-}
 
 .nextButton {
   background-color: #1878b9;
