@@ -6,35 +6,37 @@ import styles from './SpecificationRow.module.css'
 
 interface SpecificationRowProps {
   specification: Specification
-  onEdit: (id: string) => void
+  onClick: (id: string) => void
+  isAI?: boolean
 }
 
 const SpecificationRowComponent = ({
   specification,
-  onEdit,
+  onClick,
+  isAI = false,
 }: SpecificationRowProps): JSX.Element => {
-  const handleEdit = useCallback(() => {
-    onEdit(specification.id)
-  }, [onEdit, specification.id])
+  const handleClick = useCallback(() => {
+    onClick(specification.id)
+  }, [onClick, specification.id])
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault()
-        handleEdit()
+        handleClick()
       }
     },
-    [handleEdit]
+    [handleClick]
   )
 
   return (
     <div
       className={styles.specificationRow}
-      onClick={handleEdit}
+      onClick={handleClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      aria-label={`Edit specification for ${specification.product?.title || specification.shopify_handle}`}
+      aria-label={`${isAI ? 'View' : 'Edit'} specification for ${specification.product?.title || specification.shopify_handle}`}
     >
       <div className={styles.specificationInfo}>
         <h3 className={styles.title}>
@@ -45,13 +47,22 @@ const SpecificationRowComponent = ({
         </p>
         {specification.star_rating && (
           <div className={styles.rating}>
-            {'★'.repeat(specification.star_rating)}{'☆'.repeat(5 - specification.star_rating)}
+            {Array.from({ length: 5 }, (_, i) => (
+              <span
+                key={i}
+                className={i < specification.star_rating ? styles.starFilled : styles.starEmpty}
+                aria-hidden="true"
+              >
+                {i < specification.star_rating ? '●' : '○'}
+              </span>
+            ))}
+            <span className={styles.ratingText}>({specification.star_rating}/5)</span>
           </div>
         )}
       </div>
 
       <div className={styles.editButton}>
-        Edit
+        {isAI ? 'View' : 'Edit'}
       </div>
     </div>
   )

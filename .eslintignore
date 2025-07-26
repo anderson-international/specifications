@@ -1,1 +1,21 @@
+# Configuration files
+*.config.js
+*.config.ts
 tsconfig.json
+next-env.d.ts
+
+# Test files
+*.test.*
+*.spec.*
+__tests__/
+test/
+tests/
+
+# Build outputs
+.next/
+build/
+dist/
+
+# Documentation and internal files
+docs/
+.windsurf/

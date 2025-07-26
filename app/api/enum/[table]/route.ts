@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createApiResponse, createApiError } from '@/lib/api/utils'
+import { createApiResponse } from '@/lib/api/api-responses'
+import { createApiError } from '@/lib/api/api-errors'
 import {
   validateTableName,
   listEnums,

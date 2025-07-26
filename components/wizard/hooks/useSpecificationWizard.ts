@@ -13,33 +13,25 @@ import {
 } from '../types/wizard.types'
 import { WIZARD_DEFAULT_VALUES } from '../wizard-defaults'
 
-/**
- * Main wizard hook for managing multi-step specification creation
- * Simplified to use React Hook Form without Zod validation
- */
 export const useSpecificationWizard = ({
   onSubmit,
   initialData = {},
   userId,
 }: UseSpecificationWizardProps): UseSpecificationWizardReturn => {
-  // Detect if we're in edit mode (initialData provided and not empty)
   const isEditMode = Object.keys(initialData).length > 0
   
   const methods = useForm<WizardFormData>({
     defaultValues: { 
       ...WIZARD_DEFAULT_VALUES, 
-      user_id: userId, // Set user_id from props
+      user_id: userId,
       ...initialData 
     } as WizardFormData,
   })
 
-  // Single data source: fetch all data here to eliminate redundant API calls
   const { filteredProducts } = useProducts()
   const { data: enumData, isLoading: enumsLoading } = useSpecificationEnums()
   const selectedProduct = useSelectedProduct(methods, filteredProducts)
 
-  // Extract navigation logic to separate hook for file size compliance
-  // Start at step 2 (index 1) for edit mode, step 1 (index 0) for create mode
   const {
     activeStep,
     completedSteps,

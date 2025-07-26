@@ -3,14 +3,14 @@
 import { useCallback, useState, useMemo } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { WizardFormData } from '../types/wizard.types'
-import { Specification } from '@/lib/schemas/specification'
+import { SpecificationFormData } from '@/types'
 import { transformFormData, buildApiRequest } from './specification-submission-utils'
 
 interface UseSpecificationSubmissionProps {
   methods: UseFormReturn<WizardFormData>
   userId: string
   initialData?: Record<string, unknown>
-  onSubmit: (data: Specification) => void
+  onSubmit: (data: SpecificationFormData) => void
 }
 
 interface UseSpecificationSubmissionReturn {
@@ -53,7 +53,7 @@ const useSpecificationSubmission = ({
         throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`)
       }
 
-      const completeSpecification: Specification = {
+      const completeSpecification: SpecificationFormData = {
         ...transformedData.specification,
         tasting_note_ids: transformedData.junctionData.tasting_note_ids,
         cure_type_ids: transformedData.junctionData.cure_ids,

@@ -1,36 +1,23 @@
 export type SpecificationStatus = 'published' | 'needs_revision'
 
 export interface SpecificationFormData {
-  // Optional ID for edit mode detection
   id?: string
-  
-  // Product Selection
   shopify_handle: string
   product_brand_id: number
-
-  // Characteristics 1
   product_type_id: number
   experience_level_id: number
   tobacco_type_ids: number[]
-
-  // Characteristics 2
   cure_type_ids: number[]
   grind_id: number
   is_fermented: boolean
   is_oral_tobacco: boolean
   is_artisan: boolean
-
-  // Sensory Profile
   tasting_note_ids: number[]
   nicotine_level_id: number
   moisture_level_id: number
-
-  // Review & Rating
   review?: string
   star_rating: number
   rating_boost?: number
-
-  // Metadata
   status_id: number
   user_id: string
 }
@@ -39,13 +26,17 @@ export interface Specification extends SpecificationFormData {
   id: string
   userId: string
   status: SpecificationStatus
-  progress: number // 0-100
-  score?: number // Overall quality score when reviewed
-  createdAt: string // ISO date string
-  updatedAt: string // ISO date string
-  lastModified: string // ISO date string for UI display
+  progress: number
+  score?: number
+  createdAt: string
+  updatedAt: string
+  lastModified: string
 
-  // Product information for display
+  aiModel?: string
+  confidence?: number
+  aiCreatedAt?: string
+  aiUpdatedAt?: string
+
   product: {
     id: string
     handle: string

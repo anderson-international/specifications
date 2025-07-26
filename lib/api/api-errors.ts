@@ -1,26 +1,6 @@
 import { NextResponse } from 'next/server'
-
-export interface ApiResponse<T = unknown> {
-  data?: T
-  error?: string
-  message?: string
-  details?: unknown
-  timestamp: string
-}
-
-export interface ApiError {
-  message: string
-  status: number
-  details?: unknown
-}
-
-export function createApiResponse<T>(data?: T, message?: string): NextResponse<ApiResponse<T>> {
-  return NextResponse.json({
-    data,
-    message,
-    timestamp: new Date().toISOString(),
-  })
-}
+import { ApiResponse } from '@/types'
+import { createApiResponse } from './api-responses'
 
 export function createApiError(
   error: string | Error,
@@ -31,6 +11,7 @@ export function createApiError(
 
   const response: ApiResponse = {
     error: message,
+    message: message,
     timestamp: new Date().toISOString(),
   }
 
@@ -55,9 +36,8 @@ export async function withErrorHandling<T>(
   try {
     const result = await operation()
     
-    // Check if result is already a NextResponse (error response)
     if (result instanceof NextResponse) {
-      return result  // Return error response as-is
+      return result
     }
     
     return createApiResponse(result)

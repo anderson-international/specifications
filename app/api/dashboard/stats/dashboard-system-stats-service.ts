@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { productCache } from '@/lib/cache'
 import { BrandCoverageAnalyzer } from './dashboard-brand-analysis'
 import { RecentActivityAnalyzer } from './dashboard-recent-activity'
-import { ProductInsight } from './types'
+import { ProductInsight, BrandCoverageGap, RecentActivity } from './types'
 
 export interface SystemStatsResult {
   total_products: number
@@ -13,9 +13,9 @@ export interface SystemStatsResult {
   products_partial_coverage: number
   products_needing_attention: ProductInsight[]
   products_needing_coverage: ProductInsight[]
-  brand_coverage_gaps: any[]
-  recent_activity_weekly: any[]
-  recent_activity_monthly: any[]
+  brand_coverage_gaps: BrandCoverageGap[]
+  recent_activity_weekly: RecentActivity[]
+  recent_activity_monthly: RecentActivity[]
 }
 
 export class DashboardSystemStatsService {

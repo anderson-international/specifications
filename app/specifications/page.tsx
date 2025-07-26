@@ -1,109 +1,22 @@
 'use client'
 
 import React from 'react'
-import Link from 'next/link'
-import { SpecificationRow } from '@/components/specifications/SpecificationRow'
-import { FilterControls } from '@/components/shared/FilterControls'
-
-import ErrorBoundary from '@/components/common/ErrorBoundary'
-import { useSpecifications } from '@/hooks/useSpecifications'
-import { useSpecificationFilters } from '@/hooks/useSpecificationFilters'
-import styles from './specifications.module.css'
+import SpecificationsList from '@/components/specifications/SpecificationsList'
 
 export default function SpecificationsPage(): JSX.Element {
-  const {
-    specifications,
-    isLoading,
-    error,
-    handleEdit,
-    handleRetry,
-  } = useSpecifications()
-
-  const {
-    statusFilter,
-    searchQuery,
-    setStatusFilter,
-    setSearchQuery,
-    filteredSpecs,
-  } = useSpecificationFilters(specifications)
-
-  if (isLoading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>Loading specifications...</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.error}>
-          <p>{error}</p>
-          <button onClick={handleRetry} className={styles.retryButton} type="button">
-            Try Again
-          </button>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <ErrorBoundary>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>My Specifications</h1>
-          <Link href="/create-specification" className={styles.createButton}>
-            + New Specification
-          </Link>
-        </div>
-
-        <FilterControls
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          searchPlaceholder="Search by product or brand..."
-          filters={[
-            {
-              id: 'status',
-              label: 'Filter by Status:',
-              value: statusFilter,
-              options: [
-                { value: 'all', label: 'All Specifications' },
-                { value: 'published', label: 'Published' },
-                { value: 'needs_revision', label: 'Needs Revision' },
-              ],
-            },
-          ]}
-          onFilterChange={(id, value) => setStatusFilter(value)}
-          onClearAll={() => {
-            setSearchQuery('')
-            setStatusFilter('all')
-          }}
-          showClearAll={searchQuery !== '' || statusFilter !== 'all'}
-          summaryText={`${filteredSpecs.length} of ${specifications.length} specification${specifications.length !== 1 ? 's' : ''}`}
-        />
-
-        <div className={styles.content}>
-          {filteredSpecs.length === 0 ? (
-            <div className={styles.empty}>
-              <p>No specifications found.</p>
-              <Link href="/create-specification" className={styles.createButton}>
-                Create Your First Specification
-              </Link>
-            </div>
-          ) : (
-            <div className={styles.specificationsList}>
-              {filteredSpecs.map((spec) => (
-                <SpecificationRow
-                  key={spec.id}
-                  specification={spec}
-                  onEdit={handleEdit}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </ErrorBoundary>
+    <SpecificationsList
+      config={{
+        title: 'My Specifications',
+        searchPlaceholder: 'Search by product or brand...',
+        emptyStateText: 'No specifications found.',
+        showCreateButton: true,
+        createButtonText: '+ New Specification',
+        createButtonHref: '/create-specification',
+        aiGenerated: false,
+        navigateTo: 'edit',
+        showAIIndicators: false
+      }}
+    />
   )
 }

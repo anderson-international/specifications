@@ -31,4 +31,42 @@ export class SpecificationReadRepository {
       include: SPECIFICATION_INCLUDE,
     })
   }
+
+  static async findManyWithAI(filters: {
+    userId?: string
+    status?: string
+  }): Promise<SpecificationWithRelations[]> {
+    const where = {
+      ...(filters.userId && { user_id: filters.userId }),
+      ...(filters.status && { spec_enum_statuses: { name: filters.status } }),
+      ai_spec_metadata: {
+        isNot: null
+      }
+    }
+
+    return prisma.specifications.findMany({
+      where,
+      include: SPECIFICATION_INCLUDE,
+      orderBy: { updated_at: 'desc' },
+    })
+  }
+
+  static async findManyWithoutAI(filters: {
+    userId?: string
+    status?: string
+  }): Promise<SpecificationWithRelations[]> {
+    const where = {
+      ...(filters.userId && { user_id: filters.userId }),
+      ...(filters.status && { spec_enum_statuses: { name: filters.status } }),
+      ai_spec_metadata: {
+        is: null
+      }
+    }
+
+    return prisma.specifications.findMany({
+      where,
+      include: SPECIFICATION_INCLUDE,
+      orderBy: { updated_at: 'desc' },
+    })
+  }
 }

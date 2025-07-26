@@ -14,12 +14,23 @@ export class SpecificationService {
   static async getSpecifications(filters: {
     userId?: string | null
     status?: string | null
+    aiGenerated?: boolean | null
   }): Promise<SpecificationWithRelations[]> {
     const cleanFilters = {
       userId: filters.userId || undefined,
       status: filters.status || undefined,
     }
-    const specifications = await SpecificationReadRepository.findMany(cleanFilters)
+    
+    let specifications: SpecificationWithRelations[]
+    
+    if (filters.aiGenerated === true) {
+      specifications = await SpecificationReadRepository.findManyWithAI(cleanFilters)
+    } else if (filters.aiGenerated === false) {
+      specifications = await SpecificationReadRepository.findManyWithoutAI(cleanFilters)
+    } else {
+      specifications = await SpecificationReadRepository.findMany(cleanFilters)
+    }
+    
     return ProductLookupService.populateProductsInSpecs(specifications)
   }
 

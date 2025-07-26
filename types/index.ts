@@ -1,4 +1,3 @@
-// Core application types
 export interface User {
   id: string
   name: string | null
@@ -8,7 +7,7 @@ export interface User {
   updated_at: Date
 }
 
-export interface Specification {
+export interface SpecificationFormData {
   id?: number
   shopify_handle: string
   product_type_id: number
@@ -32,7 +31,6 @@ export interface Specification {
   submission_id?: string
   status_id: number
 
-  // Relations (when included)
   users?: User
   enum_specification_statuses?: EnumStatus
   enum_product_brands?: EnumBrand
@@ -52,13 +50,12 @@ export interface EnumBrand {
   updated_at: Date
 }
 
-// API Response types
 export interface ApiResponse<T = unknown> {
   data?: T
   error?: string
   message?: string
+  details?: unknown
   timestamp: string
-  pagination?: PaginationInfo
 }
 
 export interface PaginationInfo {
@@ -68,7 +65,6 @@ export interface PaginationInfo {
   totalPages: number
 }
 
-// Authentication types
 export interface AuthUser {
   id: string // UUID from database
   name: string | null // TEXT, nullable
@@ -86,7 +82,6 @@ export interface AuthContextType {
   isAuthenticated: boolean
 }
 
-// User roles mapping
 export const USER_ROLES = {
   1: 'Admin',
   2: 'Expert',

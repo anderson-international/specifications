@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import SpecificationWizard from '@/components/wizard/SpecificationWizard'
-import { WizardFormData } from '@/components/wizard/types/wizard.types'
+import { SpecificationFormData } from '@/types'
 import { SpecificationEnumData } from '@/types/enum'
 import { useAuth } from '@/lib/auth-context'
 
@@ -25,23 +25,17 @@ export default function CreateSpecificationClient(
   }, [searchParams])
 
   const handleSubmit = useCallback(
-    async (_data: WizardFormData): Promise<void> => {
+    async (_data: SpecificationFormData): Promise<void> => {
       try {
-        // TODO: Replace with actual API call
-        // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1000))
-
-        // Navigate to success page or products list
         router.push('/products')
       } catch (error) {
-        // TODO: Show error message to user
         throw new Error(error instanceof Error ? error.message : 'Failed to create specification')
       }
     },
     [router]
   )
 
-  // Prepare initial data if productId is provided
   const initialData = useMemo(() => {
     if (productId) {
       return {

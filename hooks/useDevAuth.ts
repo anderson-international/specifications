@@ -3,7 +3,14 @@
 import { useState, useEffect, useCallback } from 'react'
 import { AuthUser } from '@/types'
 
-export function useDevAuth() {
+interface UseDevAuthReturn {
+  users: AuthUser[]
+  loading: boolean
+  error: string | null
+  retry: () => void
+}
+
+export function useDevAuth(): UseDevAuthReturn {
   const [users, setUsers] = useState<AuthUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

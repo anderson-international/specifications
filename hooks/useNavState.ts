@@ -3,7 +3,13 @@
 import { useState, useCallback, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 
-export function useNavState() {
+interface UseNavStateReturn {
+  isNavOpen: boolean
+  toggleNav: () => void
+  closeNav: () => void
+}
+
+export function useNavState(): UseNavStateReturn {
   const [isNavOpen, setIsNavOpen] = useState(false)
 
   const toggleNav = useCallback(() => setIsNavOpen((prev) => !prev), [])

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createApiError, withErrorHandling } from '@/lib/api/utils'
+import { createApiError, withErrorHandling } from '@/lib/api/api-errors'
 import { SpecificationService } from '@/lib/services/specification-service'
 import { SpecificationValidator } from '@/lib/validators/specification-validator'
 import { SpecificationReadRepository } from '@/lib/repositories/specification-read-repository'

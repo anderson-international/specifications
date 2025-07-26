@@ -21,7 +21,7 @@ Avoid: Exceeding file size limits, React infinite loops, Missing context
 **When exceeded**: Extract to custom hooks, services, repositories, or separate type files. Minimise all comments.
 
 **Immediate Verification Required**: After creating or modifying any file, immediately run:
-`cmd /c node docs/scripts/count-lines.js [filename]` to verify size compliance
+`cmd /c node docs/scripts/code-size.js [filename]` to verify size compliance
 
 ## Thin Controller Pattern
 
@@ -90,10 +90,28 @@ cmd /c node script.js --pattern "spec_*" # Quoted patterns
 - **React components**: Must return JSX.Element
 - **Async functions**: Must return Promise<Type>
 
-**Type Creation Protocol**: Before creating new types, analyze existing canonical types first:
-- Search codebase for similar interfaces/types that can be reused or extended
-- Prefer extending existing types over creating duplicates
-- Use type composition patterns when possible
+**Type Creation Protocol - MANDATORY VERIFICATION**: Before creating ANY new interface or type:
+
+1. **Search for Existing Types** (REQUIRED):
+   ```bash
+   cmd /c npx grep-search "interface.*ApiResponse|type.*ApiResponse" --include="*.ts" --include="*.tsx"
+   cmd /c npx grep-search "interface.*[YourTypeName]|type.*[YourTypeName]" --include="*.ts" --include="*.tsx"
+   ```
+
+2. **Check Canonical Locations** (REQUIRED):
+   - `types/index.ts` - Global type definitions
+   - `lib/api/utils.ts` - API utility types  
+   - `types/specification.ts` - Domain-specific types
+   - Service files in `lib/services/` - Service-specific types
+
+3. **Verification Checklist** (ALL MUST PASS):
+   - [ ] Searched codebase with specific grep commands
+   - [ ] Reviewed canonical type locations  
+   - [ ] Confirmed no existing type matches functionality
+   - [ ] Confirmed no existing type can be extended/composed
+   - [ ] If similar type exists, documented why extension isn't viable
+
+4. **FAIL-FAST Rule**: If ANY existing type covers >70% of your use case, you MUST extend it rather than create duplicate.
 
 ## React Anti-Patterns (CRITICAL)
 

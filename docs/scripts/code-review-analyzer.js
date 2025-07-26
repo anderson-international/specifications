@@ -267,41 +267,64 @@ function analyzeFile(filePath) {
 
 function generateCompactSummary(results) {
   const totalFiles = results.length;
-  const criticalIssues = results.filter(r => r.eslint.errors.length > 0).length;
-  const qualityIssues = results.filter(r => r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL').length;
-  const passingFiles = totalFiles - criticalIssues - qualityIssues;
+  const failedFiles = results.filter(r => 
+    r.eslint.errors.length > 0 || r.eslint.warnings.length > 0 || 
+    r.comments.status === 'FAIL' || 
+    r.size.status === 'FAIL' || 
+    r.typescript.status === 'FAIL'
+  );
+  const passingFiles = totalFiles - failedFiles.length;
   
-  let summary = `=== CODE REVIEW SUMMARY ===\n`;
-  summary += `Files: ${totalFiles} | Critical: ${criticalIssues} | Quality: ${qualityIssues} | Passing: ${passingFiles}\n`;
+  let summary = `CODE REVIEW: ${totalFiles} files | ${passingFiles} passed | ${failedFiles.length} failed\n`;
   summary += `\n`;
   
-  // Critical issues (deployment blockers)
-  const criticalFiles = results.filter(r => r.eslint.errors.length > 0);
-  if (criticalFiles.length > 0) {
-    summary += `CRITICAL (Deployment Blockers):\n`;
-    criticalFiles.forEach(file => {
+  // All violations are blocking and must be fixed
+  if (failedFiles.length > 0) {
+    summary += `VIOLATIONS (blocking):\n`;
+    
+    failedFiles.forEach(file => {
       const fileName = path.basename(file.filePath);
-      file.eslint.errors.forEach(error => {
-        summary += `- ${fileName}: ${error.message} (line ${error.line})\n`;
-      });
+
+      
+      // File size violations  
+      if (file.size.status === 'FAIL') {
+        const fileType = getFileType(file.filePath);
+        const limit = FILE_SIZE_LIMITS[fileType];
+        summary += `${fileName}: File too large (${file.size.lines}/${limit}) - split into modules\n`;
+      }
+      
+      // Comment violations
+      if (file.comments.status === 'FAIL') {
+        summary += `${fileName}: Remove ${file.comments.count} comments\n`;
+      }
+      
+      // TypeScript violations
+      if (file.typescript.status === 'FAIL') {
+        summary += `${fileName}: Add ${file.typescript.missingReturnTypes} return types\n`;
+      }
+      
+      // ESLint violations (all blocking)
+      const allViolations = [...file.eslint.errors, ...file.eslint.warnings];
+      if (allViolations.length > 0) {
+        allViolations.forEach(violation => {
+          // Terse message for common violations
+          let message = violation.message;
+          if (message.includes('Unexpected any')) {
+            message = 'Replace any type';
+          } else if (message.includes('Missing semicolon')) {
+            message = 'Add semicolon';
+          } else if (message.includes('Unused variable')) {
+            message = 'Remove unused variable';
+          }
+          summary += `${fileName}:${violation.line} - ${message}\n`;
+        });
+      }
+      
     });
-    summary += `\n`;
+    summary += `\nACTION REQUIRED: Fix all violations above.\n`;
+  } else {
+    summary += `✅ All files passed code review standards.\n`;
   }
-  
-  // Quality issues
-  const qualityFiles = results.filter(r => r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL');
-  if (qualityFiles.length > 0) {
-    summary += `QUALITY (Code Standards):\n`;
-    const commentFiles = qualityFiles.filter(r => r.comments.status === 'FAIL').length;
-    const sizeFiles = qualityFiles.filter(r => r.size.status === 'FAIL').length;
-    const typeScriptFiles = qualityFiles.filter(r => r.typescript.status === 'FAIL').length;
-    summary += `- ${commentFiles} files: comment violations\n`;
-    summary += `- ${sizeFiles} files: size limit violations\n`;
-    summary += `- ${typeScriptFiles} files: missing return types\n`;
-    summary += `\n`;
-  }
-  
-  summary += `Detailed analysis written to: ${path.relative(process.cwd(), ANALYSIS_FILE)}\n`;
   
   return summary;
 }
@@ -315,7 +338,7 @@ function generateBatchSummary(results) {
   summary += `Total Files: ${totalFiles} | Passed: ${passedFiles.length} | Failed: ${failedFiles.length}\n\n`;
   
   if (failedFiles.length > 0) {
-    summary += `FAILED FILES:\n`;
+    summary += `⚠️  FAILED FILES - ALL VIOLATIONS MUST BE FIXED:\n`;
     failedFiles.forEach(file => {
       const fileName = path.basename(file.filePath);
       const issues = [];
@@ -326,10 +349,13 @@ function generateBatchSummary(results) {
       summary += `- ${fileName}: ${issues.join(', ')}\n`;
     });
     summary += `\n`;
+    summary += `🔧 ACTION REQUIRED: Every failed file must be corrected.\n`;
+    summary += `   No violations are acceptable - fix all issues above.\n`;
+    summary += `\n`;
   }
   
   if (passedFiles.length > 0) {
-    summary += `PASSED FILES:\n`;
+    summary += `✅ PASSED FILES:\n`;
     passedFiles.forEach(file => {
       const fileName = path.basename(file.filePath);
       summary += `- ${fileName}: All checks passed\n`;

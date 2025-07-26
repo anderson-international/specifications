@@ -1,13 +1,13 @@
 import React from 'react'
-import { Specification } from '@/types'
+import { SpecificationFormData } from '@/types'
 import { UseFormReturn } from 'react-hook-form'
 import { Product } from '@/lib/types/product'
 import { SpecificationEnumData } from '@/types/enum'
 
-export type WizardFormData = Omit<Specification, 'id'>
+export type WizardFormData = Omit<SpecificationFormData, 'id'>
 
 export interface UseSpecificationWizardProps {
-  onSubmit: (data: Specification) => void | Promise<void>
+  onSubmit: (data: SpecificationFormData) => void | Promise<void>
   initialData?: Record<string, unknown>
   userId: string
 }
@@ -30,7 +30,7 @@ export interface UseSpecificationWizardReturn {
 }
 
 export interface UseSubmissionProps {
-  onSubmit: (data: Specification) => void | Promise<void>
+  onSubmit: (data: SpecificationFormData) => void | Promise<void>
   methods: UseFormReturn<WizardFormData>
   userId: string
 }

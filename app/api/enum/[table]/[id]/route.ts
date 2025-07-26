@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { createApiResponse, createApiError, withErrorHandling } from '@/lib/api/utils'
+import { createApiResponse } from '@/lib/api/api-responses'
+import { createApiError, withErrorHandling } from '@/lib/api/api-errors'
 import { EnumTableNameSchema, type ValidatedEnumTableName } from '@/lib/validations/enums'
 import { getEnumTable } from '@/types/enum'
 import { checkEnumReferences } from '@/lib/api/enumUtils'

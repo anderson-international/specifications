@@ -48,7 +48,7 @@ const ProductRow = ({
           <input
             type="checkbox"
             checked={isSelected}
-            onChange={() => {}}
+            onChange={undefined}
             onClick={() => undefined} // Handled by parent click
             className={styles.checkboxInput}
             tabIndex={-1} // Parent handles keyboard interaction

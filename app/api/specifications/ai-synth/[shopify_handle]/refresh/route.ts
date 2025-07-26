@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createApiError, withErrorHandling } from '@/lib/api/utils'
+import { createApiError, withErrorHandling } from '@/lib/api/api-errors'
 import { AISynthService } from '@/lib/services/ai-synth-service'
 
 interface PutParams {

@@ -7,6 +7,7 @@ export const SPECIFICATION_INCLUDE = {
   spec_enum_grinds: { select: { id: true, name: true } },
   spec_enum_moisture: { select: { id: true, name: true } },
   spec_enum_nicotine: { select: { id: true, name: true } },
+  ai_spec_metadata: { select: { ai_model: true, confidence: true, created_at: true, updated_at: true } },
   spec_junction_cures: {
     include: {
       spec_enum_cures: { select: { id: true, name: true } },

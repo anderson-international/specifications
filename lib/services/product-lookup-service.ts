@@ -16,13 +16,10 @@ export class ProductLookupService {
     }
 
     try {
-      // Extract unique handles for batch lookup
       const handles = [...new Set(specifications.map(spec => spec.shopify_handle))]
       
-      // O(1) batch lookup from Redis hash
       const products = await redisProductCache.getProductsByHandles(handles)
       
-      // Create handle-to-product map for efficient assignment
       const productMap = new Map<string, Product>()
       for (const product of products) {
         if (product && product.handle) {
@@ -30,19 +27,17 @@ export class ProductLookupService {
         }
       }
       
-      // Validate ALL specifications have products - fail fast on missing data
       const missingProducts: string[] = []
       
       const populatedSpecs = specifications.map(spec => {
         const product = productMap.get(spec.shopify_handle)
         if (!product) {
           missingProducts.push(spec.shopify_handle)
-          return { ...spec, product: null } // Temporary for batch validation
+          return { ...spec, product: null }
         }
         return { ...spec, product }
       })
       
-      // Fail fast if ANY products are missing - this is a data integrity violation
       if (missingProducts.length > 0) {
         throw new Error(
           `Data integrity violation: Specifications reference non-existent products. ` +
