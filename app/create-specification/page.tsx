@@ -3,6 +3,9 @@ import { getSpecificationEnumData } from '@/lib/data/enums'
 import { SpecificationEnumData } from '@/types/enum'
 import CreateSpecificationClient from './CreateSpecificationClient'
 
+// Force dynamic rendering to prevent static generation during build
+export const dynamic = 'force-dynamic'
+
 /**
  * Server component that fetches enum data and renders the client component
  */
