@@ -61,6 +61,26 @@
   color: var(--color-error);
 }
 
+.charCount {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  text-align: left;
+  margin-top: 0.25rem;
+}
+
+.charCount.error {
+  color: var(--error-color);
+}
+
+.charCount.success {
+  color: var(--color-text-secondary);
+}
+
+.checkmark {
+  color: #10b981;
+  font-weight: bold;
+}
+
 .ratingSection {
   display: flex;
   flex-direction: column;

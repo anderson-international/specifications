@@ -24,9 +24,6 @@ interface ReviewSubmissionFormData {
   rating_boost: number
 }
 
-/**
- * Step 5: Review submission with text review and star rating
- */
 const ReviewSubmission = ({
   stepNumber,
   totalSteps,
@@ -88,11 +85,13 @@ const ReviewSubmission = ({
           onChange={handleReviewChange}
           placeholder="Write your detailed review here... (minimum 150 characters)"
           rows={5}
-          maxLength={2000}
           disabled={disabled}
         />
-        <div className={`${styles.charCount} ${reviewText.length < 150 ? styles.error : ''}`}>
-          {reviewText.length}/150
+        <div className={`${styles.charCount} ${reviewText.length < 150 ? styles.error : styles.success}`}>
+          {reviewText.length < 150 
+            ? `${reviewText.length} / 150 minimum required`
+            : <>{reviewText.length} characters <span className={styles.checkmark}>✓</span></>
+          }
         </div>
       </div>
     </WizardStepCard>

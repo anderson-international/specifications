@@ -1,52 +1,15 @@
 {
-  "timestamp": "2025-07-26T17:20:20.489Z",
-  "totalFiles": 4,
+  "timestamp": "2025-07-31T21:19:01.167Z",
+  "totalFiles": 2,
   "results": {
-    "components\\specifications\\SpecificationRow.tsx": {
-      "filePath": "components\\specifications\\SpecificationRow.tsx",
+    "app/api/auth/dev-users/route.ts": {
+      "filePath": "app/api/auth/dev-users/route.ts",
       "size": {
-        "lines": 88,
-        "limit": 150,
-        "type": "components",
-        "status": "PASS",
-        "percentage": 59
-      },
-      "comments": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "react": {
-        "hasReactImport": true,
-        "hasUseCallback": true,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": true,
-        "issues": []
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 1,
-        "missingReturnTypes": 0,
-        "hasExplicitTypes": true,
-        "status": "PASS"
-      },
-      "compilation": {
-        "errors": [],
-        "status": "PASS"
-      }
-    },
-    "types\\specification.ts": {
-      "filePath": "types\\specification.ts",
-      "size": {
-        "lines": 64,
+        "lines": 39,
         "limit": 100,
-        "type": "types",
+        "type": "routes",
         "status": "PASS",
-        "percentage": 64
+        "percentage": 39
       },
       "comments": {
         "violations": [],
@@ -61,66 +24,30 @@
         "hasHooks": false,
         "issues": []
       },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 0,
-        "missingReturnTypes": 0,
-        "hasExplicitTypes": true,
-        "status": "PASS"
-      },
-      "compilation": {
-        "errors": [],
-        "status": "PASS"
-      }
-    },
-    "components\\specifications\\SpecificationsListAdapter.tsx": {
-      "filePath": "components\\specifications\\SpecificationsListAdapter.tsx",
-      "size": {
-        "lines": 119,
-        "limit": 150,
-        "type": "components",
-        "status": "PASS",
-        "percentage": 79
-      },
-      "comments": {
+      "consoleErrors": {
         "violations": [],
         "count": 0,
         "status": "PASS"
       },
-      "react": {
-        "hasReactImport": true,
-        "hasUseCallback": true,
-        "hasUseMemo": true,
-        "hasUseEffect": false,
-        "hasHooks": true,
-        "issues": []
-      },
       "eslint": {
         "errors": [],
         "warnings": []
       },
       "typescript": {
-        "totalFunctions": 1,
+        "totalFunctions": 3,
         "missingReturnTypes": 0,
         "hasExplicitTypes": true,
         "status": "PASS"
-      },
-      "compilation": {
-        "errors": [],
-        "status": "PASS"
       }
     },
-    "hooks\\useSpecificationFilters.ts": {
-      "filePath": "hooks\\useSpecificationFilters.ts",
+    "hooks/useDevAuth.ts": {
+      "filePath": "hooks/useDevAuth.ts",
       "size": {
-        "lines": 48,
+        "lines": 43,
         "limit": 100,
         "type": "hooks",
         "status": "PASS",
-        "percentage": 48
+        "percentage": 43
       },
       "comments": {
         "violations": [],
@@ -129,24 +56,25 @@
       },
       "react": {
         "hasReactImport": false,
-        "hasUseCallback": false,
-        "hasUseMemo": true,
-        "hasUseEffect": false,
+        "hasUseCallback": true,
+        "hasUseMemo": false,
+        "hasUseEffect": true,
         "hasHooks": true,
         "issues": []
+      },
+      "consoleErrors": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
       },
       "eslint": {
         "errors": [],
         "warnings": []
       },
       "typescript": {
-        "totalFunctions": 1,
+        "totalFunctions": 5,
         "missingReturnTypes": 0,
         "hasExplicitTypes": true,
-        "status": "PASS"
-      },
-      "compilation": {
-        "errors": [],
         "status": "PASS"
       }
     }

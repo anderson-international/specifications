@@ -217,42 +217,94 @@ function analyzeTypeScript(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
     
-    // Comprehensive regex to capture various TypeScript function patterns
-    const patterns = [
-      // export const func = (): Type => {} (including multi-line)
-      /(?:export\s+)?const\s+\w+\s*=\s*(?:async\s+)?\([^)]*\)\s*(?::\s*[^=]+)?\s*=>/gm,
-      // export function func<T>(): Type {}
-      /(?:export\s+)?function\s+\w+(?:<[^>]*>)?\s*\([^)]*\)\s*(?::\s*[^{]+)?\s*\{/g,
-      // const func = async (): Type => {}
-      /const\s+\w+\s*=\s*async\s+\([^)]*\)\s*(?::\s*[^=]+)?\s*=>/g
-    ];
+    // Function to extract complete function signatures by parsing carefully
+    function extractCompleteFunctions(content) {
+      const functions = [];
+      const lines = content.split('\n');
+      
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        
+        // Check for function/const declarations
+        if (/(?:export\s+)?(?:async\s+)?function\s+\w+|(?:export\s+)?const\s+\w+\s*=/.test(line)) {
+          let funcText = line;
+          let j = i + 1;
+          let parenLevel = 0;
+          let foundOpeningBrace = false;
+          
+          // Count parentheses to find complete parameter list
+          for (let char of line) {
+            if (char === '(') parenLevel++;
+            else if (char === ')') parenLevel--;
+            else if (char === '{' && parenLevel === 0) {
+              foundOpeningBrace = true;
+              break;
+            }
+          }
+          
+          // If we haven't found the opening brace, continue to next lines
+          while (j < lines.length && (!foundOpeningBrace || parenLevel > 0)) {
+            funcText += '\n' + lines[j];
+            
+            for (let char of lines[j]) {
+              if (char === '(') parenLevel++;
+              else if (char === ')') parenLevel--;
+              else if (char === '{' && parenLevel === 0) {
+                foundOpeningBrace = true;
+                break;
+              }
+            }
+            
+            if (foundOpeningBrace && parenLevel === 0) break;
+            j++;
+          }
+          
+          if (foundOpeningBrace) {
+            functions.push(funcText);
+          }
+        }
+      }
+      
+      return functions;
+    }
     
-    const functions = [];
-    patterns.forEach(pattern => {
-      const matches = content.match(pattern) || [];
-      functions.push(...matches);
-    });
-    
+    const functions = extractCompleteFunctions(content);
     const missingReturnTypes = [];
     
     functions.forEach(func => {
-      // Check if function has explicit return type annotation
-      // Handle various patterns:
-      // 1. Simple: ) : Type => or ) : Type {
-      // 2. Complex: ) : Record<string, boolean> => 
-      // 3. Curried: ) : (param: Type) => ReturnType => 
-      // 4. Generic: ) : Promise<T> => 
-      // 5. Multi-line curried: )\n: (param: Type) => ReturnType => 
-      const hasReturnType = /\)\s*:\s*[^=>{]+(?:=>|\{)/.test(func) || 
-                           /\)\s*:\s*[A-Z][\w<>\[\],\s]*(?:=>|\{)/.test(func) ||
-                           /\)\s*:\s*\([^)]+\)\s*=>/.test(func); // Any curried function pattern
+      // Clean up the function text for analysis
+      const cleanFunc = func.replace(/\s+/g, ' ').trim();
+      
+      // Check if it's a function/const declaration we care about
+      const isFunctionDeclaration = 
+        /(?:export\s+)?(?:async\s+)?function\s+\w+/.test(cleanFunc) ||
+        /(?:export\s+)?const\s+\w+\s*=\s*(?:async\s+)?\(/.test(cleanFunc);
+        
+      if (!isFunctionDeclaration) return;
+      
+      // Check for return type annotation: ): Type => or ): Type {
+      const hasReturnType = 
+        // Pattern 1: Basic types
+        /\)\s*:\s*[^=>{]+(?:=>|\{)/.test(cleanFunc) ||
+        // Pattern 2: Complex types with generics, objects, arrays
+        /\)\s*:\s*[^=>{]*(?:\{[^}]*\}|<[^>]*>|\[[^\]]*\])[^=>{]*(?:=>|\{)/.test(cleanFunc) ||
+        // Pattern 3: Union types (improved to handle nested generics)
+        /\)\s*:\s*.*\|.*(?:=>|\{)/.test(cleanFunc) ||
+        // Pattern 4: Multi-line return types
+        /\)\s*:\s*[\s\S]*?(?:=>|\{)/.test(cleanFunc)
       
       if (!hasReturnType) {
-        // Skip void functions, constructors, and common patterns that don't need return types
-        if (!func.includes('constructor') && 
-            !func.includes('(): void') && 
-            !func.includes('Promise<void>') &&
-            !func.trim().endsWith('=> {')) {
+        // Skip patterns that legitimately don't need return types
+        const shouldSkip = 
+          cleanFunc.includes('constructor') ||
+          cleanFunc.includes('(): void') ||
+          cleanFunc.includes(': void') ||
+          cleanFunc.includes('Promise<void>') ||
+          /function\s+\w+\s*\(\)\s*\{/.test(cleanFunc) || // Empty parameter functions
+          cleanFunc.includes('set ') || // Setter methods
+          cleanFunc.includes('get ') // Getter methods
+        
+        if (!shouldSkip) {
           missingReturnTypes.push(func.trim());
         }
       }
