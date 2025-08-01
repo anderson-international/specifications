@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-08-01T00:09:48.267Z",
-  "totalFiles": 2,
+  "timestamp": "2025-08-01T18:40:01.697Z",
+  "totalFiles": 1,
   "results": {
     "app\\specifications\\page.tsx": {
       "filePath": "app\\specifications\\page.tsx",
       "size": {
-        "lines": 97,
+        "lines": 131,
         "limit": 150,
         "type": "components",
         "status": "PASS",
-        "percentage": 65
+        "percentage": 87
       },
       "comments": {
         "violations": [],
@@ -21,49 +21,6 @@
         "hasUseCallback": true,
         "hasUseMemo": false,
         "hasUseEffect": false,
-        "hasHooks": true,
-        "issues": []
-      },
-      "consoleErrors": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 6,
-        "missingReturnTypes": 0,
-        "hasExplicitTypes": true,
-        "status": "PASS"
-      },
-      "fallbackData": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      }
-    },
-    "hooks\\useUserProducts.ts": {
-      "filePath": "hooks\\useUserProducts.ts",
-      "size": {
-        "lines": 81,
-        "limit": 100,
-        "type": "hooks",
-        "status": "PASS",
-        "percentage": 81
-      },
-      "comments": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "react": {
-        "hasReactImport": false,
-        "hasUseCallback": true,
-        "hasUseMemo": true,
-        "hasUseEffect": true,
         "hasHooks": true,
         "issues": []
       },

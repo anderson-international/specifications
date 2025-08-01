@@ -4,6 +4,7 @@ import React, { useCallback } from 'react'
 import Image from 'next/image'
 import type { ProductRowProps } from './product-selector-interfaces'
 import styles from './ProductRow.module.css'
+import buttonStyles from '../Button/Button.module.css'
 
 const ProductRow = ({
   product,
@@ -91,7 +92,7 @@ const ProductRow = ({
 
       {userHasSpec !== undefined && (
         <button
-          className={userHasSpec ? styles.editButton : styles.createButton}
+          className={userHasSpec ? buttonStyles.editButton : buttonStyles.createButton}
           onClick={userHasSpec ? handleEditClick : handleCreateClick}
           disabled={disabled}
           type="button"

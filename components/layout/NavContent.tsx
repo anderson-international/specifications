@@ -24,17 +24,17 @@ const NavContent = (): JSX.Element => {
         </li>
         <li>
           <Link href="/specifications" className={styles.navLink}>
-            My Specifications
+            My Specs
           </Link>
         </li>
         <li>
           <Link href="/ai-specifications" className={styles.navLink}>
-            AI Specifications
+            AI Specs
           </Link>
         </li>
         <li>
           <Link href="/specifications/new" className={styles.navLink}>
-            New Specification
+            New Spec
           </Link>
         </li>
         {isAdmin && (

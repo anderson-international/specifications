@@ -50,7 +50,7 @@ const AISpecificationMarkdownViewerComponent = ({
           href="/ai-specifications" 
           className="inline-block mt-4 text-blue-600 hover:text-blue-800 underline"
         >
-          ← Back to AI Specifications
+          ← Back to AI Specs
         </Link>
       </div>
     )
@@ -71,7 +71,7 @@ const AISpecificationMarkdownViewerComponent = ({
           href="/ai-specifications"
           className="text-blue-600 hover:text-blue-800 underline"
         >
-          ← Back to AI Specifications
+          ← Back to AI Specs
         </Link>
         <div className="flex items-center space-x-2">
           <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">

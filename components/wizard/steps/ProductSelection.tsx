@@ -76,7 +76,7 @@ const ProductSelection = ({
         mode="single"
         onSelectionChange={handleProductSelection}
         initialSelection={initialSelection}
-        searchPlaceholder="Search products..."
+        searchPlaceholder="Search by product or brand..."
         disabled={disabled}
         products={filteredProducts}
       />

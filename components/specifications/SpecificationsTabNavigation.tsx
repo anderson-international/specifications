@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback } from 'react'
-import styles from '../../styles/TabNavigation.module.css'
+import styles from '../shared/TabNavigation/TabNavigation.module.css'
 
 export type SpecTabId = 'my-specs' | 'to-do'
 

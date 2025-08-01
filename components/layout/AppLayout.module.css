@@ -12,13 +12,13 @@
 
 .main {
   flex-grow: 1;
-  padding: 1rem 0;
+  padding: 0;
   padding-top: 96px; /* 80px header + 16px margin */
 }
 
 @media (min-width: 769px) {
   .main {
-    padding: 2rem;
+    padding: 0;
     padding-top: 80px; /* 60px header + 20px margin */
   }
 }
@@ -70,6 +70,22 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 768px) {
+  .headerLeft {
+    flex: 0 0 auto;
+    min-width: auto;
+  }
+  
+  .headerCenter {
+    flex: 1;
+    justify-content: flex-start;
+  }
+  
+  .headerRight {
+    flex: 0 0 auto;
+  }
+}
+
 .siteIcon {
   border-radius: 50%;
 }
@@ -104,6 +120,21 @@
   font-weight: 600;
   font-size: 1rem;
   white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .headerTitle,
+  .headerSubtitle {
+    font-size: 1.1rem;
+  }
+  
+  .headerUserName {
+    font-size: 0.9rem;
+  }
+  
+  .headerUserRole {
+    font-size: 0.65rem;
+  }
 }
 
 .headerUserRole {
