@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-07-31T21:19:01.167Z",
+  "timestamp": "2025-08-01T00:09:48.267Z",
   "totalFiles": 2,
   "results": {
-    "app/api/auth/dev-users/route.ts": {
-      "filePath": "app/api/auth/dev-users/route.ts",
+    "app\\specifications\\page.tsx": {
+      "filePath": "app\\specifications\\page.tsx",
       "size": {
-        "lines": 39,
-        "limit": 100,
-        "type": "routes",
+        "lines": 97,
+        "limit": 150,
+        "type": "components",
         "status": "PASS",
-        "percentage": 39
+        "percentage": 65
       },
       "comments": {
         "violations": [],
@@ -17,11 +17,11 @@
         "status": "PASS"
       },
       "react": {
-        "hasReactImport": false,
-        "hasUseCallback": false,
+        "hasReactImport": true,
+        "hasUseCallback": true,
         "hasUseMemo": false,
         "hasUseEffect": false,
-        "hasHooks": false,
+        "hasHooks": true,
         "issues": []
       },
       "consoleErrors": {
@@ -34,20 +34,25 @@
         "warnings": []
       },
       "typescript": {
-        "totalFunctions": 3,
+        "totalFunctions": 6,
         "missingReturnTypes": 0,
         "hasExplicitTypes": true,
         "status": "PASS"
+      },
+      "fallbackData": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
       }
     },
-    "hooks/useDevAuth.ts": {
-      "filePath": "hooks/useDevAuth.ts",
+    "hooks\\useUserProducts.ts": {
+      "filePath": "hooks\\useUserProducts.ts",
       "size": {
-        "lines": 43,
+        "lines": 81,
         "limit": 100,
         "type": "hooks",
         "status": "PASS",
-        "percentage": 43
+        "percentage": 81
       },
       "comments": {
         "violations": [],
@@ -57,7 +62,7 @@
       "react": {
         "hasReactImport": false,
         "hasUseCallback": true,
-        "hasUseMemo": false,
+        "hasUseMemo": true,
         "hasUseEffect": true,
         "hasHooks": true,
         "issues": []
@@ -72,9 +77,14 @@
         "warnings": []
       },
       "typescript": {
-        "totalFunctions": 5,
+        "totalFunctions": 6,
         "missingReturnTypes": 0,
         "hasExplicitTypes": true,
+        "status": "PASS"
+      },
+      "fallbackData": {
+        "violations": [],
+        "count": 0,
         "status": "PASS"
       }
     }

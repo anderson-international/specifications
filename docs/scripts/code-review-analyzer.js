@@ -321,6 +321,138 @@ function analyzeTypeScript(filePath) {
   }
 }
 
+// Helper functions to identify legitimate patterns vs fallback violations
+function isValidBooleanLogic(line) {
+  // Boolean logic operations (not fallback data)
+  return /\|\|\s*(true|false|\w+\.\w+|\w+\(\)|\w+)\s*$/.test(line) ||
+         /const\s+\w+\s*=\s*\w+\s*\|\|\s*\w+/.test(line);
+}
+
+function isValidHtmlAttribute(line) {
+  // HTML attributes: disabled={condition ? true : false}
+  return /(disabled|checked|selected|required|readOnly|autoFocus)\s*=\s*\{.*?\?.*?:.*?(true|false|undefined)\s*\}/.test(line);
+}
+
+function isValidCssClass(line) {
+  // CSS class selection: className={variant === 'primary' ? 'btn-primary' : 'btn-secondary'}
+  return /(className|class)\s*=\s*\{.*?\?\s*['`"].*?['`"]\s*:\s*['`"]/.test(line);
+}
+
+function isValidAriaAttribute(line) {
+  // Aria attributes: aria-expanded={isOpen ? 'true' : 'false'}
+  return /aria-\w+\s*=\s*\{.*?\?\s*['`"](true|false|menu)['`"]\s*:\s*['`"](true|false)['`"]/.test(line) ||
+         /\{\.\.\.\(.*?&&.*?\{\s*['"]aria-/.test(line); // Conditional aria spreading
+}
+
+function isCommentLine(line) {
+  // Comments and strings containing patterns
+  return /^\s*\/\//.test(line) || /^\s*\/\*/.test(line) || /^\s*\*/.test(line);
+}
+
+function analyzeFallbackData(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    const lines = content.split('\n');
+    const violations = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const lineNum = i + 1;
+      const trimmedLine = line.trim();
+      
+      // Pattern 1: Return null/undefined
+      if (/return\s+(null|undefined);?$/.test(trimmedLine)) {
+        violations.push({
+          type: 'return_null',
+          line: lineNum,
+          content: trimmedLine,
+          advice: 'Throw composed error instead of null return. Null returns mask invalid states and prevent proper error handling. Consider: What upstream validation failed? Why is this data missing?'
+        });
+      }
+      
+      // Pattern 2: Logical OR fallbacks with literals (exclude boolean logic)
+      const orFallbackMatch = /\|\|\s*(['"`].*?['"`]|\[.*?\]|\{.*?\})/.exec(trimmedLine);
+      if (orFallbackMatch && 
+          !isValidBooleanLogic(trimmedLine) && 
+          !isCommentLine(trimmedLine)) {
+        violations.push({
+          type: 'or_fallback',
+          line: lineNum,
+          content: trimmedLine,
+          advice: 'Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?'
+        });
+      }
+      
+      // Pattern 3: Optional chaining with fallbacks  
+      if (/\?\.\w+.*?\|\|/.test(trimmedLine)) {
+        violations.push({
+          type: 'optional_chaining_fallback',
+          line: lineNum,
+          content: trimmedLine,
+          advice: 'Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?'
+        });
+      }
+      
+      // Pattern 4: Ternary with default values (exclude HTML attributes and CSS classes)
+      const ternaryFallbackMatch = /\?\s*\w+\s*:\s*(['"`].*?['"`]|\[.*?\]|\{.*?\})/.exec(trimmedLine);
+      if (ternaryFallbackMatch && 
+          !isValidHtmlAttribute(trimmedLine) && 
+          !isValidCssClass(trimmedLine) && 
+          !isValidAriaAttribute(trimmedLine) &&
+          !isCommentLine(trimmedLine)) {
+        violations.push({
+          type: 'ternary_fallback',
+          line: lineNum,
+          content: trimmedLine,
+          advice: 'Throw composed error instead of default value. Ternary fallbacks mask validation failures. Consider: What makes this condition invalid? Should upstream code prevent this state?'
+        });
+      }
+      
+      // Pattern 5: Empty catch blocks with returns (multi-line detection)
+      if (trimmedLine.includes('catch')) {
+        // Look ahead for empty catch blocks with returns
+        let catchContent = '';
+        let j = i;
+        let braceCount = 0;
+        let inCatch = false;
+        
+        while (j < lines.length) {
+          const currentLine = lines[j].trim();
+          if (currentLine.includes('catch')) inCatch = true;
+          if (inCatch) {
+            catchContent += currentLine + ' ';
+            braceCount += (currentLine.match(/\{/g) || []).length;
+            braceCount -= (currentLine.match(/\}/g) || []).length;
+            if (braceCount === 0 && inCatch) break;
+          }
+          j++;
+        }
+        
+        if (/catch\s*\([^)]*\)\s*\{[^}]*return\s+[^;]+;?\s*\}/.test(catchContent.replace(/\s+/g, ' '))) {
+          violations.push({
+            type: 'empty_catch_return',
+            line: lineNum,
+            content: trimmedLine,
+            advice: 'Throw composed error instead of swallowing exceptions. Silent error suppression violates fail-fast methodology. Consider: Should this error propagate up? What context should be preserved?'
+          });
+        }
+      }
+    }
+    
+    return {
+      violations,
+      count: violations.length,
+      status: violations.length === 0 ? 'PASS' : 'FAIL'
+    };
+  } catch (error) {
+    return {
+      violations: [],
+      count: 0,
+      status: 'PASS'
+    };
+  }
+}
+
 function analyzeFile(filePath) {
   const fileType = getFileType(filePath);
   const lines = countLines(filePath);
@@ -345,6 +477,7 @@ function analyzeFile(filePath) {
   const consoleErrorAnalysis = analyzeConsoleErrors(filePath);
   const eslintAnalysis = runEslint(filePath);
   const typeScriptAnalysis = analyzeTypeScript(filePath);
+  const fallbackDataAnalysis = analyzeFallbackData(filePath);
   
   return {
     filePath,
@@ -353,7 +486,8 @@ function analyzeFile(filePath) {
     react: reactAnalysis,
     consoleErrors: consoleErrorAnalysis,
     eslint: eslintAnalysis,
-    typescript: typeScriptAnalysis
+    typescript: typeScriptAnalysis,
+    fallbackData: fallbackDataAnalysis
   };
 }
 
@@ -364,7 +498,8 @@ function generateCompactSummary(results) {
     r.comments.status === 'FAIL' || 
     r.size.status === 'FAIL' || 
     r.typescript.status === 'FAIL' ||
-    r.consoleErrors.status === 'FAIL'
+    r.consoleErrors.status === 'FAIL' ||
+    r.fallbackData.status === 'FAIL'
   );
   const passingFiles = totalFiles - failedFiles.length;
   
@@ -403,6 +538,13 @@ function generateCompactSummary(results) {
         });
       }
       
+      // Fallback data violations (blocking - violates fail-fast principle)
+      if (file.fallbackData.status === 'FAIL') {
+        file.fallbackData.violations.forEach(violation => {
+          summary += `${fileName}:${violation.line} - FALLBACK DATA VIOLATION: ${violation.advice}\n`;
+        });
+      }
+      
       // ESLint violations (all blocking)
       const allViolations = [...file.eslint.errors, ...file.eslint.warnings];
       if (allViolations.length > 0) {
@@ -431,8 +573,8 @@ function generateCompactSummary(results) {
 
 function generateBatchSummary(results) {
   const totalFiles = results.length;
-  const passedFiles = results.filter(r => r.comments.status === 'PASS' && r.size.status === 'PASS' && r.typescript.status === 'PASS' && r.eslint.errors.length === 0 && r.consoleErrors.status === 'PASS');
-  const failedFiles = results.filter(r => r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL' || r.eslint.errors.length > 0 || r.consoleErrors.status === 'FAIL');
+  const passedFiles = results.filter(r => r.comments.status === 'PASS' && r.size.status === 'PASS' && r.typescript.status === 'PASS' && r.eslint.errors.length === 0 && r.consoleErrors.status === 'PASS' && r.fallbackData.status === 'PASS');
+  const failedFiles = results.filter(r => r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL' || r.eslint.errors.length > 0 || r.consoleErrors.status === 'FAIL' || r.fallbackData.status === 'FAIL');
   
   let summary = `=== BATCH TEST SUMMARY ===\n`;
   summary += `Total Files: ${totalFiles} | Passed: ${passedFiles.length} | Failed: ${failedFiles.length}\n\n`;
@@ -446,6 +588,7 @@ function generateBatchSummary(results) {
       if (file.size.status === 'FAIL') issues.push('size');
       if (file.typescript.status === 'FAIL') issues.push(`typescript (${file.typescript.missingReturnTypes} missing)`);
       if (file.consoleErrors.status === 'FAIL') issues.push(`console-errors (${file.consoleErrors.count} fail-fast violations)`);
+      if (file.fallbackData.status === 'FAIL') issues.push(`fallback-data (${file.fallbackData.count} violations)`);
       if (file.eslint.errors.length > 0) issues.push(`eslint (${file.eslint.errors.length} errors)`);
       summary += `- ${fileName}: ${issues.join(', ')}\n`;
     });
@@ -494,6 +637,16 @@ function main() {
   
   console.log(summary);
   
+  // Check if any files failed and exit with appropriate code
+  const hasFailures = results.some(r => 
+    r.eslint.errors.length > 0 || r.eslint.warnings.length > 0 || 
+    r.comments.status === 'FAIL' || 
+    r.size.status === 'FAIL' || 
+    r.typescript.status === 'FAIL' ||
+    r.consoleErrors.status === 'FAIL' ||
+    r.fallbackData.status === 'FAIL'
+  );
+  
   // Write detailed analysis to file
   const detailedAnalysis = {
     timestamp: new Date().toISOString(),
@@ -514,6 +667,11 @@ function main() {
     fs.writeFileSync(ANALYSIS_FILE, JSON.stringify(detailedAnalysis, null, 2));
   } catch (error) {
     console.error(`Error writing analysis file: ${error.message}`);
+    process.exit(1);
+  }
+  
+  // Exit with error code if any violations found
+  if (hasFailures) {
     process.exit(1);
   }
 }

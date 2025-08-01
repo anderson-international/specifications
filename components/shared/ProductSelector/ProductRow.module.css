@@ -99,3 +99,46 @@
   font-weight: 600;
   font-size: 0.875rem;
 }
+
+/* Spec mode styles */
+.userSpecIndicator {
+  color: #10b981;
+  font-weight: bold;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.specCount {
+  color: #dc2626;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+  min-width: 20px;
+  text-align: center;
+}
+
+.createButton {
+  display: flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  background: #1878b9;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.createButton:hover {
+  background: #1565a0;
+}
+
+.createButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #1878b9;
+}

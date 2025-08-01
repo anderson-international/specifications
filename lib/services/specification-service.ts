@@ -2,6 +2,9 @@ import { SpecificationReadRepository } from '@/lib/repositories/specification-re
 import { SpecificationWriteRepository } from '@/lib/repositories/specification-write-repository'
 import { type SpecificationWithRelations } from '@/lib/repositories/types/specification-types'
 import { ProductLookupService } from '@/lib/services/product-lookup-service'
+import { productCache } from '@/lib/cache'
+import { type Product } from '@/lib/types/product'
+
 import { transformSpecificationToApiResponse } from './specification-transformers-api'
 import {
   transformSpecificationForCreate,
@@ -37,9 +40,11 @@ export class SpecificationService {
   static async getSpecificationById(
     id: number,
     userId?: string | null
-  ): Promise<Record<string, unknown> | null> {
+  ): Promise<Record<string, unknown>> {
     const specification = await SpecificationReadRepository.findById(id, userId || undefined)
-    if (!specification) return null
+    if (!specification) {
+      throw new Error(`Specification not found: id=${id}, userId=${userId}`)
+    }
     return transformSpecificationToApiResponse(specification)
   }
 
@@ -62,5 +67,24 @@ export class SpecificationService {
       transformSpecificationForUpdate(body),
       transformJunctionDataForUpdate(body)
     )
+  }
+
+  static async getUserProducts(userId: string, userHasSpec: boolean): Promise<Array<Product & { userHasSpec: boolean; specCount: number }>> {
+    const allProducts = await productCache.getAllProducts()
+    const userSpecs = await SpecificationReadRepository.findMany({ userId })
+    const userShopifyHandles = new Set(userSpecs.map(spec => spec.shopify_handle))
+    
+    const filtered = allProducts.filter(product => userShopifyHandles.has(product.handle) === userHasSpec)
+    
+    return filtered
+      .map(product => ({
+        ...product,
+        userHasSpec,
+        specCount: product.spec_count_total || 0
+      }))
+      .sort((a, b) => {
+        const titleComparison = a.title.localeCompare(b.title)
+        return titleComparison !== 0 ? titleComparison : a.brand.localeCompare(b.brand)
+      })
   }
 }

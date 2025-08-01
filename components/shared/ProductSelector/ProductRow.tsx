@@ -11,9 +11,13 @@ const ProductRow = ({
   onSelect,
   disabled = false,
   mode,
+  userHasSpec,
+  specCount,
+  onCreateClick,
+  onEditClick,
 }: ProductRowProps): JSX.Element => {
   const handleClick = useCallback(() => {
-    if (!disabled) {
+    if (!disabled && onSelect) {
       onSelect(product)
     }
   }, [disabled, onSelect, product])
@@ -27,7 +31,27 @@ const ProductRow = ({
     },
     [handleClick]
   )
-
+  
+  const handleCreateClick = useCallback(
+    (event: React.MouseEvent) => {
+      event.stopPropagation()
+      if (!disabled && onCreateClick) {
+        onCreateClick(product.id)
+      }
+    },
+    [disabled, onCreateClick, product.id]
+  )
+  
+  const handleEditClick = useCallback(
+    (event: React.MouseEvent) => {
+      event.stopPropagation()
+      if (!disabled && onEditClick) {
+        onEditClick(product.id)
+      }
+    },
+    [disabled, onEditClick, product.id]
+  )
+  
   return (
     <div
       className={`${styles.productRow} ${isSelected ? styles.selected : ''} ${disabled ? styles.disabled : ''}`}
@@ -35,7 +59,7 @@ const ProductRow = ({
       onKeyDown={handleKeyDown}
       tabIndex={disabled ? -1 : 0}
       role={mode === 'multi' ? 'checkbox' : 'button'}
-      aria-checked={mode === 'multi' ? isSelected : undefined}
+      {...(mode === 'multi' && { 'aria-checked': isSelected })}
       aria-disabled={disabled}
     >
       <div className={styles.imageWrapper}>
@@ -59,17 +83,33 @@ const ProductRow = ({
         <h3 className={styles.title}>{product.title}</h3>
       </div>
 
+      {specCount !== undefined && (
+        <div className={styles.specCount}>
+          {specCount}
+        </div>
+      )}
+
+      {userHasSpec !== undefined && (
+        <button
+          className={userHasSpec ? styles.editButton : styles.createButton}
+          onClick={userHasSpec ? handleEditClick : handleCreateClick}
+          disabled={disabled}
+          type="button"
+          aria-label={userHasSpec ? `Edit specification for ${product.title}` : `Create specification for ${product.title}`}
+        >
+          {userHasSpec ? 'Edit' : 'Create'}
+        </button>
+      )}
+
       {mode === 'multi' && (
         <div className={styles.checkbox}>
-          {/* AI_CONTEXT: Intentional no-op onChange for controlled checkbox component */}
-          {/* React requires onChange with checked prop, but parent div handles all interaction */}
           <input
             type="checkbox"
             checked={isSelected}
-            onChange={() => undefined} // No-op: parent div handles interaction
-            onClick={() => undefined} // Handled by parent click
+            onChange={() => undefined}
+            onClick={() => undefined}
             className={styles.checkboxInput}
-            tabIndex={-1} // Parent handles keyboard interaction
+            tabIndex={-1}
             aria-hidden="true"
           />
         </div>
