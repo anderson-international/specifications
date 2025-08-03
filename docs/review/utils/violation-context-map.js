@@ -58,6 +58,13 @@ const violationContextMap = {
     contextNotes: 'Remove unnecessary comments, ensure code is self-documenting'
   },
 
+  // Code Duplication Violations
+  'code-duplication': {
+    workflows: ['/code-dupes', '/tech-code-quality'],
+    description: 'Code duplication detection and refactoring guidance',
+    contextNotes: 'Extract duplicated code into reusable functions, components, or utilities'
+  },
+
   // ESLint/Generic Violations (fallback)
   'eslint-violations': {
     workflows: ['/tech-code-quality', '/code-rules'],

@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { getEnumTable, type EnumQueryResult } from '@/types/enum'
+import { getEnumTable, type EnumQueryResult, type EnumValue } from '@/types/enum'
 import {
   EnumTableNameSchema,
   type ValidatedEnumTableName,
@@ -14,7 +14,7 @@ export class ServiceError extends Error {
   public readonly status: number
   public readonly details?: unknown
 
-  constructor(message: string, status = 400, details?: unknown) {
+  constructor(message: string, status: number = 400, details?: unknown) {
     super(message)
     this.status = status
     this.details = details
@@ -45,11 +45,11 @@ export async function listEnums({
   limit,
 }: ListParams): Promise<EnumQueryResult> {
   const enumTable = getEnumTable(prisma, table)
-  const skip = (page - 1) * limit
+  const skip: number = (page - 1) * limit
 
   const where = search ? { name: { contains: search, mode: 'insensitive' as const } } : undefined
 
-  const [data, total] = await Promise.all([
+  const [data, total]: [any[], number] = await Promise.all([
     enumTable.findMany({ where, orderBy: { name: 'asc' }, skip, take: limit }),
     enumTable.count({ where }),
   ])
@@ -63,7 +63,7 @@ export async function listEnums({
   }
 }
 
-export async function createEnum(table: ValidatedEnumTableName, input: CreateEnumValueInput) {
+export async function createEnum(table: ValidatedEnumTableName, input: CreateEnumValueInput): Promise<EnumValue> {
   const enumTable = getEnumTable(prisma, table)
 
   const duplicate = await enumTable.findFirst({
@@ -76,7 +76,7 @@ export async function createEnum(table: ValidatedEnumTableName, input: CreateEnu
   return enumTable.create({ data: { name: input.name } })
 }
 
-export async function updateEnum(table: ValidatedEnumTableName, input: UpdateEnumValueInput) {
+export async function updateEnum(table: ValidatedEnumTableName, input: UpdateEnumValueInput): Promise<EnumValue> {
   const enumTable = getEnumTable(prisma, table)
 
   const existing = await enumTable.findUnique({ where: { id: input.id } })

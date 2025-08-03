@@ -3,7 +3,7 @@
 import React, { useCallback, use } from 'react'
 import { SpecificationWizard } from '@/components/wizard/SpecificationWizard'
 import { notFound, useRouter } from 'next/navigation'
-import { Specification } from '@/types/specification'
+import { Specification, SpecificationFormData } from '@/types/specification'
 import { useAuthenticatedUser } from '@/lib/auth-context'
 import { useSpecificationData } from '@/components/wizard/hooks/useSpecificationData'
 import { LoadingState, ErrorState, NotFoundState } from './EditPageStates'
@@ -23,7 +23,7 @@ export default function EditSpecificationPage({
   
   const { data: specificationData, isLoading, error } = useSpecificationData(id)
 
-  const handleSubmit = useCallback(async (data: Specification) => {
+  const handleSubmit = useCallback(async (data: SpecificationFormData) => {
     const response = await fetch(`/api/specifications/${id}?userId=${user.id}`, {
       method: 'PUT',
       headers: {
@@ -62,7 +62,7 @@ export default function EditSpecificationPage({
     <div className="min-h-screen bg-gray-900">
       <SpecificationWizard
         onSubmit={handleSubmit}
-        initialData={specificationData as unknown as Record<string, unknown>}
+        initialData={{ ...specificationData, mode: 'edit' } as unknown as Record<string, unknown>}
         userId={user.id}
       />
     </div>

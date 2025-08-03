@@ -8,7 +8,7 @@ export interface User {
 }
 
 export interface SpecificationFormData {
-  id?: number
+  id?: string
   shopify_handle: string
   is_fermented?: boolean
   is_oral_tobacco?: boolean

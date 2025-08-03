@@ -5,7 +5,7 @@
 export const createFilterConfig = (
   selectedBrand: string,
   brandOptions: Array<{ value: string; label: string }>
-) => [
+): Array<{ id: string; label: string; value: string; options: Array<{ value: string; label: string }> }> => [
   {
     id: 'brand',
     label: '',

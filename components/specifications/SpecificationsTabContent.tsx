@@ -88,7 +88,7 @@ export default function SpecificationsTabContent({
                 userHasSpec={product.userHasSpec}
                 specCount={product.specCount}
                 onCreateClick={activeTab === 'to-do' ? () => onCreateClick(product.id) : undefined}
-                onEditClick={() => onEditClick(product.id)}
+                onEditClick={() => onEditClick((product as any).specification_id)}
               />
             ))}
           </div>

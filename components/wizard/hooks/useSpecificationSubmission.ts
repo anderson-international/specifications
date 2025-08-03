@@ -65,7 +65,7 @@ const useSpecificationSubmission = ({
     } finally {
       setIsSubmitting(false)
     }
-  }, [methods, onSubmit, initialData?.id, userId])
+  }, [onSubmit, initialData?.id, userId]) // Removed methods to prevent infinite loop
 
   return useMemo(
     () => ({

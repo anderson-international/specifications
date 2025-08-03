@@ -6,7 +6,7 @@ import { productCache } from '@/lib/cache'
 import { type Product } from '@/lib/types/product'
 import { getAllSpecCountsMap } from '@/lib/shopify/database'
 
-import { transformSpecificationToApiResponse } from './specification-transformers-api'
+import { transformSpecificationToApiResponse, type ApiResponse } from './specification-transformers-api'
 import {
   transformSpecificationForCreate,
   transformSpecificationForUpdate,
@@ -41,7 +41,7 @@ export class SpecificationService {
   static async getSpecificationById(
     id: number,
     userId?: string | null
-  ): Promise<Record<string, unknown>> {
+  ): Promise<ApiResponse> {
     const specification = await SpecificationReadRepository.findById(id, userId || undefined)
     if (!specification) {
       throw new Error(`Specification not found: id=${id}, userId=${userId}`)
@@ -70,7 +70,7 @@ export class SpecificationService {
     )
   }
 
-  static async getUserProducts(userId: string, userHasSpec: boolean): Promise<Array<Product & { userHasSpec: boolean; specCount: number }>> {
+  static async getUserProducts(userId: string, userHasSpec: boolean): Promise<Array<Product & { userHasSpec: boolean; specCount: number; specification_id?: string }>> {
     // Get products with spec counts (not from cache)
     const cachedProducts = await productCache.getAllProducts()
     const specCountsMap = await getAllSpecCountsMap()
@@ -84,13 +84,17 @@ export class SpecificationService {
     const userSpecs = await SpecificationReadRepository.findMany({ userId })
     const userShopifyHandles = new Set(userSpecs.map(spec => spec.shopify_handle))
     
+    // Create a map of shopify_handle -> specification_id for quick lookup
+    const specIdMap = new Map(userSpecs.map(spec => [spec.shopify_handle, spec.id.toString()]))
+    
     const filtered = allProducts.filter(product => userShopifyHandles.has(product.handle) === userHasSpec)
     
     return filtered
       .map(product => ({
         ...product,
         userHasSpec,
-        specCount: product.spec_count_total || 0
+        specCount: product.spec_count_total || 0,
+        specification_id: specIdMap.get(product.handle)
       }))
       .sort((a, b) => {
         const titleComparison = a.title.localeCompare(b.title)

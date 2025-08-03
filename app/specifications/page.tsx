@@ -42,8 +42,8 @@ export default function SpecificationsPage(): JSX.Element {
     router.push(`/create-specification?productId=${encodeURIComponent(productId)}&mode=createFromProduct`)
   }, [router])
 
-  const handleEditClick = useCallback((productId: string): void => {
-    router.push(`/create-specification?productId=${encodeURIComponent(productId)}&mode=edit`)
+  const handleEditClick = useCallback((specificationId: string): void => {
+    router.push(`/edit-specification/${encodeURIComponent(specificationId)}`)
   }, [router])
 
   const tabs = [

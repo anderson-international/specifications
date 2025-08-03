@@ -38,6 +38,7 @@
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.3.3",
     "eslint-plugin-react": "^7.37.5",
+    "jscpd": "^4.0.5",
     "knip": "^5.61.3",
     "prettier": "^3.3.3",
     "prisma": "^6.12.0",

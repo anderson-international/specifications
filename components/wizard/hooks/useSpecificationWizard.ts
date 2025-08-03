@@ -1,7 +1,7 @@
 'use client'
 
 import { useForm } from 'react-hook-form'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useProducts } from '@/hooks/useProducts'
 import { useSpecificationEnums } from './useSpecificationEnums'
 import useSpecificationSubmission from './useSpecificationSubmission'
@@ -43,19 +43,23 @@ export const useSpecificationWizard = ({
   const { data: enumData, isLoading: enumsLoading } = useSpecificationEnums()
   const selectedProduct = useSelectedProduct(methods, filteredProducts)
 
+  // Stabilize productBrands array reference to prevent useEffect re-runs
+  const productBrandsLength = enumData?.productBrands?.length || 0
 
-  useEffect(() => {
-    if (mode === 'createFromProduct' && selectedProduct && enumData?.productBrands) {
-      const currentBrandId = methods.getValues('product_brand_id')
-      
-      if (!currentBrandId || currentBrandId === 0) {
-        const brandId = findEnumByName(enumData.productBrands, selectedProduct.brand)
-        if (brandId) {
-          methods.setValue('product_brand_id', brandId, { shouldValidate: true })
-        }
-      }
-    }
-  }, [mode, selectedProduct, enumData?.productBrands, methods])
+  // DISABLED: This useEffect was causing infinite loops due to unstable dependencies
+  // It's only needed for 'createFromProduct' mode, not for 'edit' mode
+  // useEffect(() => {
+  //   if (mode === 'createFromProduct' && selectedProduct && enumData?.productBrands) {
+  //     const currentBrandId = methods.getValues('product_brand_id')
+  //     
+  //     if (!currentBrandId || currentBrandId === 0) {
+  //       const brandId = findEnumByName(enumData.productBrands, selectedProduct.brand)
+  //       if (brandId) {
+  //         methods.setValue('product_brand_id', brandId, { shouldValidate: true })
+  //       }
+  //     }
+  //   }
+  // }, [mode, selectedProduct, productBrandsLength])
 
   const {
     activeStep,

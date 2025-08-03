@@ -20,7 +20,7 @@ export interface ProductRowProps {
   userHasSpec?: boolean
   specCount?: number
   onCreateClick?: (productId: string) => void
-  onEditClick?: (productId: string) => void
+  onEditClick?: (specificationId: string) => void
 }
 
 export interface SelectedProductsModalProps {

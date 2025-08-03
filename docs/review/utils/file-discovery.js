@@ -99,22 +99,40 @@ function getFilesRecursively(dir) {
 /**
  * Resolve files based on arguments and mode
  * @param {string[]} args - Command line arguments
- * @returns {Object} - { files: string[], mode: string }
+ * @returns {Object} - { files: string[], mode: string, violations: string[] }
  */
 function resolveFiles(args) {
+  // Parse violation flags
+  const violationFlags = ['--typescript', '--eslint', '--comments', '--console', '--fallback', '--size', '--duplication'];
+  const selectedViolations = [];
+  const nonFlagArgs = [];
+  
+  // Separate flags from file arguments
+  for (const arg of args) {
+    if (violationFlags.includes(arg)) {
+      selectedViolations.push(arg.substring(2)); // Remove '--' prefix
+    } else {
+      nonFlagArgs.push(arg);
+    }
+  }
+  
+  // If no violation flags specified, run all checks
+  const violations = selectedViolations.length > 0 ? selectedViolations : ['typescript', 'eslint', 'comments', 'console', 'fallback', 'size', 'duplication'];
+  
   // Check for full-review mode
-  if (args.length > 0 && args[0] === '--mode=full-review') {
+  if (nonFlagArgs.length > 0 && nonFlagArgs[0] === '--mode=full-review') {
     const files = getFullReviewFiles();
     return {
       files,
-      mode: 'full-review'
+      mode: 'full-review',
+      violations
     };
   }
   
   // If files provided explicitly, use them
-  if (args.length > 0) {
+  if (nonFlagArgs.length > 0) {
     // Validate that all provided files exist
-    const validFiles = args.filter(file => {
+    const validFiles = nonFlagArgs.filter(file => {
       if (!fs.existsSync(file)) {
         console.warn(`Warning: File not found: ${file}`);
         return false;
@@ -124,7 +142,8 @@ function resolveFiles(args) {
     
     return {
       files: validFiles,
-      mode: 'manual'
+      mode: 'manual',
+      violations
     };
   }
   
@@ -135,13 +154,15 @@ function resolveFiles(args) {
     console.warn('No recent changes found. Use --mode=full-review or specify files explicitly.');
     return {
       files: [],
-      mode: 'recent'
+      mode: 'recent',
+      violations
     };
   }
   
   return {
     files: recentFiles,
-    mode: 'recent'
+    mode: 'recent',
+    violations
   };
 }
 

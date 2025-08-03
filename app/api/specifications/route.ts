@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createApiError, withErrorHandling } from '@/lib/api/api-errors'
 import { SpecificationService } from '@/lib/services/specification-service'
 import { SpecificationValidator } from '@/lib/validators/specification-validator'
+import type { SpecificationWithRelations } from '@/lib/repositories/types/specification-types'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  return withErrorHandling(async () => {
+  return withErrorHandling(async (): Promise<{ specifications: SpecificationWithRelations[] } | NextResponse> => {
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('userId')
     const status = searchParams.get('status')
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  return withErrorHandling(async () => {
+  return withErrorHandling(async (): Promise<SpecificationWithRelations | NextResponse> => {
     const body = await request.json()
     
     const validationError = SpecificationValidator.validateCreateRequest(body)

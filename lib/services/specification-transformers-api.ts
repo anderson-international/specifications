@@ -1,6 +1,6 @@
 import type { SpecificationWithRelations } from '@/lib/repositories/types/specification-types'
 
-interface ApiResponse {
+export interface ApiResponse {
   id: number
   userId: string
   status: string
