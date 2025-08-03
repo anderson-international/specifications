@@ -1,4 +1,6 @@
-.specificationRow {
+/* Shared styles for row components (ProductRow, SpecificationRow) */
+
+.baseRow {
   background-color: #252831;
   border: 1px solid #343741;
   border-radius: 6px;
@@ -11,25 +13,30 @@
   justify-content: space-between;
 }
 
-.specificationRow:hover {
+.baseRow:hover {
   background-color: #2d323c;
   border-color: #4a5568;
 }
 
-.specificationRow:focus {
+.baseRow:focus {
   outline: none;
   border-color: #1878b9;
   box-shadow: 0 0 0 2px rgba(24, 120, 185, 0.3);
 }
 
-.specificationInfo {
+.rowSelected {
+  background-color: #2d323c;
+  border-color: #1878b9;
+}
+
+.rowInfo {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   min-width: 0;
 }
 
-.title {
+.rowTitle {
   font-size: 0.875rem;
   font-weight: 500;
   color: #e2e8f0;
@@ -38,45 +45,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-
-
-.rating {
-  display: flex;
-  align-items: center;
-  gap: 0.125rem;
-  margin-top: 0.25rem;
-}
-
-.starFilled {
-  font-size: 0.875rem;
-  color: #fbbf24;
-  transition: color 0.2s;
-}
-
-.starEmpty {
-  font-size: 0.875rem;
-  color: #4a5568;
-  transition: color 0.2s;
-}
-
-
-
-.editButton {
-  display: flex;
-  align-items: center;
-  padding: 0.375rem 0.75rem;
-  background: #1878b9;
-  color: white;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.editButton:hover {
-  background: #1565a0;
 }
 
 /* Image styles - reused from wizard components */
@@ -110,20 +78,17 @@
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
-  .specificationRow {
+  .baseRow {
     padding: 0.5rem;
   }
   
-  .title {
+  .rowTitle {
     font-size: 0.8rem;
   }
   
-  .brand {
-    font-size: 0.7rem;
-  }
-  
-  .editButton {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.7rem;
+  .imageWrapper {
+    width: 35px;
+    height: 35px;
+    margin-right: 0.5rem;
   }
 }

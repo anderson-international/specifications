@@ -1,12 +1,17 @@
 // Canonical Product Type Definition
 // This is the single source of truth for Product types across the entire application
 
-export interface Product {
+// Static product data suitable for caching (no dynamic counts)
+export interface CacheableProduct {
   id: string
   handle: string
   title: string
   brand: string
-  image_url: string | null
+  image_url: string
+}
+
+// Full product with dynamic spec count (not cached)
+export interface Product extends CacheableProduct {
   spec_count_total: number
 }
 

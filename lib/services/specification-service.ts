@@ -4,6 +4,7 @@ import { type SpecificationWithRelations } from '@/lib/repositories/types/specif
 import { ProductLookupService } from '@/lib/services/product-lookup-service'
 import { productCache } from '@/lib/cache'
 import { type Product } from '@/lib/types/product'
+import { getAllSpecCountsMap } from '@/lib/shopify/database'
 
 import { transformSpecificationToApiResponse } from './specification-transformers-api'
 import {
@@ -70,7 +71,16 @@ export class SpecificationService {
   }
 
   static async getUserProducts(userId: string, userHasSpec: boolean): Promise<Array<Product & { userHasSpec: boolean; specCount: number }>> {
-    const allProducts = await productCache.getAllProducts()
+    // Get products with spec counts (not from cache)
+    const cachedProducts = await productCache.getAllProducts()
+    const specCountsMap = await getAllSpecCountsMap()
+    
+    // Merge cached products with spec counts
+    const allProducts = cachedProducts.map(product => ({
+      ...product,
+      spec_count_total: specCountsMap.get(product.handle) ?? 0
+    }))
+    
     const userSpecs = await SpecificationReadRepository.findMany({ userId })
     const userShopifyHandles = new Set(userSpecs.map(spec => spec.shopify_handle))
     

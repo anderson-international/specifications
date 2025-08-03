@@ -7,7 +7,6 @@ export type SpecificationWithRelations = Prisma.specificationsGetPayload<{
 
 export interface CreateSpecificationData {
   shopify_handle: string
-  product_type_id: number
   is_fermented?: boolean
   is_oral_tobacco?: boolean
   is_artisan?: boolean

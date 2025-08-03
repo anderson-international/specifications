@@ -1,7 +1,5 @@
-// Shopify product types - re-export canonical Product type
-export type { Product } from '@/lib/types/product'
 
-// Shopify GraphQL response types
+export type { Product } from '@/lib/types/product'
 export interface ShopifyMetafield {
   key: string
   value: string
@@ -14,6 +12,7 @@ export interface ShopifyMetafieldEdge {
 export interface ShopifyProduct {
   handle: string
   title: string
+  productType: string
   vendor: string
   featuredImage?: {
     url: string

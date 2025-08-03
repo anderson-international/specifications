@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { SpecificationRow } from '@/components/specifications/SpecificationRow'
+import ProductRow from '@/components/shared/ProductSelector/ProductRow'
 import { Specification } from '@/types/specification'
 import styles from '../../app/specifications/specifications.module.css'
 
@@ -16,13 +16,23 @@ export default function AISpecificationItem({
   onClick, 
   showAIIndicators 
 }: AISpecificationItemProps): JSX.Element {
+  const handleClick = () => {
+    onClick(specification.id)
+  }
+
+  if (!specification.product) {
+    return <div>Product not found</div>
+  }
+
   if (showAIIndicators) {
     return (
       <div className={styles.aiSpecWrapper}>
-        <SpecificationRow
-          specification={specification}
-          onClick={onClick}
-          isAI={true}
+        <ProductRow
+          product={specification.product}
+          onEditClick={handleClick}
+          mode="single"
+          userHasSpec={true}
+          specCount={1}
         />
         <div className={styles.aiIndicator}>
           <span className={styles.aiTag}>AI Generated</span>
@@ -36,9 +46,12 @@ export default function AISpecificationItem({
   }
 
   return (
-    <SpecificationRow
-      specification={specification}
-      onClick={onClick}
+    <ProductRow
+      product={specification.product}
+      onEditClick={handleClick}
+      mode="single"
+      userHasSpec={true}
+      specCount={1}
     />
   )
 }

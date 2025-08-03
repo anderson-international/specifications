@@ -15,7 +15,9 @@ export const useSelectedProduct = (
     if (!shopifyHandle || !filteredProducts.length) {
       return null
     }
-    return filteredProducts.find(p => p.handle === shopifyHandle) || null
+    
+    const found = filteredProducts.find(p => p.handle === shopifyHandle)
+    return found || null
   }, [shopifyHandle, filteredProducts])
 
   return selectedProduct

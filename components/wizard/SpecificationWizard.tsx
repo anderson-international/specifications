@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useCallback } from 'react'
 import { FormProvider } from 'react-hook-form'
-import { Specification } from '@/lib/schemas/specification'
+import { Specification } from '@/types/specification'
 import WizardProgress from './controls/WizardProgress'
 import WizardNavigationFooter from './controls/WizardNavigationFooter'
 import { useSpecificationWizard } from './hooks/useSpecificationWizard'

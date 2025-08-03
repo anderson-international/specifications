@@ -19,10 +19,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const products = await SpecificationService.getUserProducts(userId, false)
     
-    return {
-      products,
-      total: products.length,
-      tab: 'to-do'
-    }
+    return NextResponse.json({
+      data: {
+        products,
+        total: products.length,
+        tab: 'to-do'
+      }
+    })
   })
 }

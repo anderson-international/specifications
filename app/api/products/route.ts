@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { productCache, RedisProductCache } from '@/lib/cache'
+import { getAllSpecCountsMap } from '@/lib/shopify/database'
 
 export async function GET(_request: NextRequest): Promise<NextResponse> {
-  try {
-    // Check if Redis cache is still warming up
+  try {
     const isWarming = RedisProductCache.isWarming()
 
     if (isWarming) {
@@ -13,11 +13,17 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
           message: 'Redis cache is initializing, please wait...',
         },
         { status: 202 }
-      ) // 202 Accepted - processing
+      )
     }
 
-    // Fetch all products from Redis cache
-    const products = await productCache.getAllProducts()
+    const cachedProducts = await productCache.getAllProducts()
+    const specCountsMap = await getAllSpecCountsMap()
+
+    const products = cachedProducts.map(product => ({
+      ...product,
+      spec_count_total: specCountsMap.get(product.handle) ?? 0
+    }))
+    
     const withSpecs = products.filter((p) => p.spec_count_total > 0).length
 
     return NextResponse.json({

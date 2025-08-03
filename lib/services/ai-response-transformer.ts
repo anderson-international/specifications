@@ -25,7 +25,6 @@ export class AIResponseTransformer {
       specification: {
         id: aiSynth.specifications.id,
         shopify_handle: aiSynth.specifications.shopify_handle,
-        product_type: aiSynth.specifications.product_enum_types,
         product_brand: aiSynth.specifications.product_enum_brands,
         grind: aiSynth.specifications.spec_enum_grinds,
         nicotine_level: aiSynth.specifications.spec_enum_nicotine,

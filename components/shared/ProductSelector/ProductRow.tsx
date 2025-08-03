@@ -2,9 +2,11 @@
 
 import React, { useCallback } from 'react'
 import Image from 'next/image'
+import { FileText } from 'lucide-react'
 import type { ProductRowProps } from './product-selector-interfaces'
 import styles from './ProductRow.module.css'
-import buttonStyles from '../Button/Button.module.css'
+import rowStyles from '@/components/shared/RowStyles/RowStyles.module.css'
+import buttonStyles from '@/components/shared/Button/Button.module.css'
 
 const ProductRow = ({
   product,
@@ -17,6 +19,11 @@ const ProductRow = ({
   onCreateClick,
   onEditClick,
 }: ProductRowProps): JSX.Element => {
+  const getBadgeStyle = useCallback((count: number): string => {
+    if (count <= 4) return styles.specCountBadgeRed
+    if (count <= 9) return styles.specCountBadgeYellow
+    return styles.specCountBadgeGreen
+  }, [])
   const handleClick = useCallback(() => {
     if (!disabled && onSelect) {
       onSelect(product)
@@ -55,7 +62,7 @@ const ProductRow = ({
   
   return (
     <div
-      className={`${styles.productRow} ${isSelected ? styles.selected : ''} ${disabled ? styles.disabled : ''}`}
+      className={`${rowStyles.baseRow} ${isSelected ? rowStyles.rowSelected : ''} ${disabled ? styles.disabled : ''}`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       tabIndex={disabled ? -1 : 0}
@@ -63,32 +70,33 @@ const ProductRow = ({
       {...(mode === 'multi' && { 'aria-checked': isSelected })}
       aria-disabled={disabled}
     >
-      <div className={styles.imageWrapper}>
+      <div className={rowStyles.imageWrapper}>
         {product.image_url ? (
           <Image
             src={product.image_url}
             alt={product.title}
-            className={styles.productImage}
+            className={rowStyles.productImage}
             width={40}
             height={40}
             priority={false}
             loading="lazy"
           />
         ) : (
-          <div className={styles.imagePlaceholder}>
+          <div className={rowStyles.imagePlaceholder}>
             <span>{product.title.substring(0, 2).toUpperCase()}</span>
           </div>
         )}
       </div>
-      <div className={styles.productInfo}>
-        <h3 className={styles.title}>{product.title}</h3>
+      <div className={rowStyles.rowInfo}>
+        <h3 className={rowStyles.rowTitle}>{product.title}</h3>
       </div>
 
-      {specCount !== undefined && (
-        <div className={styles.specCount}>
-          {specCount}
-        </div>
-      )}
+      <div className={styles.specCountContainer}>
+        <FileText size={16} className={styles.specIcon} />
+        <span className={`${styles.specCountBadge} ${getBadgeStyle(specCount ?? 0)}`}>
+          {specCount ?? 0}
+        </span>
+      </div>
 
       {userHasSpec !== undefined && (
         <button

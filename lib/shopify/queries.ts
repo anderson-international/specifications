@@ -1,12 +1,13 @@
-// Shopify GraphQL queries
+
 
 export const PRODUCTS_QUERY = `
   query GetProducts($first: Int!, $after: String) {
-    products(first: $first, after: $after, query: "status:active") {
+    products(first: $first, after: $after, query: "status:active AND product_type:Tobacco Snuff") {
       edges {
         node {
           handle
           title
+          productType
           vendor
           featuredImage {
             url
@@ -36,6 +37,7 @@ export const SINGLE_PRODUCT_QUERY = `
     productByHandle(handle: $handle) {
       handle
       title
+      productType
       vendor
       featuredImage {
         url

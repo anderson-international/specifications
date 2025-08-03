@@ -42,8 +42,8 @@
 }
 
 .tabButton:hover {
-  background-color: var(--bg-hover);
-  color: var(--text-primary);
+  background-color: var(--bg-content);
+  color: var(--text);
 }
 
 .tabButtonActive {

@@ -3,7 +3,6 @@ import type { CreateSpecificationData, JunctionData } from '@/lib/repositories/t
 export function transformSpecificationForCreate(specification: Record<string, unknown>): CreateSpecificationData {
   return {
     shopify_handle: specification.shopify_handle as string,
-    product_type_id: specification.product_type_id as number,
     is_fermented: specification.is_fermented as boolean,
     is_oral_tobacco: specification.is_oral_tobacco as boolean,
     is_artisan: specification.is_artisan as boolean,
@@ -24,7 +23,6 @@ export function transformSpecificationForUpdate(body: Record<string, unknown>): 
   return {
     shopify_handle: body.shopify_handle as string,
     product_brand_id: body.product_brand_id as number,
-    product_type_id: body.product_type_id as number,
     experience_level_id: body.experience_level_id as number,
     grind_id: body.grind_id as number,
     nicotine_level_id: body.nicotine_level_id as number,

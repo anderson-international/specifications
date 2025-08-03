@@ -14,10 +14,8 @@ export function transformSpecificationToApiResponse(specification: Specification
     shopify_handle: specification.shopify_handle,
     status: specification.spec_enum_statuses?.name || 'Unknown',
     product_brand: specification.product_enum_brands?.name || 'Unknown',
-    product_type: specification.product_enum_types?.name || 'Unknown',
     experience_level: specification.spec_enum_experience?.name || 'Unknown',
     product_brand_id: specification.product_brand_id,
-    product_type_id: specification.product_type_id,
     experience_level_id: specification.experience_level_id,
     tobacco_type_ids: specification.spec_junction_tobacco_types?.map(stt => stt.spec_enum_tobacco_types.id) || [],
     cure_type_ids: specification.spec_junction_cures?.map(sc => sc.spec_enum_cures.id) || [],
@@ -36,7 +34,6 @@ export function transformSpecificationToApiResponse(specification: Specification
     enums: {
       status: specification.spec_enum_statuses || null,
       productBrand: specification.product_enum_brands || null,
-      productType: specification.product_enum_types || null,
       experienceLevel: specification.spec_enum_experience || null,
       grind: specification.spec_enum_grinds || null,
       nicotineLevel: specification.spec_enum_nicotine || null,

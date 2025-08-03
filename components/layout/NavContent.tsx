@@ -1,8 +1,8 @@
 'use client'
 
-import React from 'react'
-import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
+import Link from 'next/link'
+import React from 'react'
 
 import styles from './AppLayout.module.css'
 
@@ -15,11 +15,6 @@ const NavContent = (): JSX.Element => {
         <li>
           <Link href="/" className={styles.navLink}>
             Dashboard
-          </Link>
-        </li>
-        <li>
-          <Link href="/products" className={styles.navLink}>
-            Products
           </Link>
         </li>
         <li>
@@ -37,6 +32,11 @@ const NavContent = (): JSX.Element => {
             New Spec
           </Link>
         </li>
+        <li>
+          <Link href="/products" className={styles.navLink}>
+            Products
+          </Link>
+        </li>        
         {isAdmin && (
           <li>
             <Link href="/admin" className={styles.navLink}>

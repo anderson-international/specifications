@@ -54,7 +54,7 @@ export const useProducts = (): UseProductsReturn => {
     } finally {
       if (!isCancelled.value) setIsLoading(false)
     }
-  }, [retryCount])
+  }, [])
 
   useEffect(() => {
     const isCancelled = { value: false }

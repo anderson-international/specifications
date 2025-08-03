@@ -40,7 +40,6 @@ export const useSpecificationData = (specificationId: string): SpecificationData
           id: String(specification.id), // Convert to string for type compatibility
           shopify_handle: specification.shopify_handle,
           product_brand_id: specification.product_brand_id,
-          product_type_id: specification.product_type_id,
           experience_level_id: specification.experience_level_id,
           tobacco_type_ids: specification.tobacco_type_ids,
           cure_type_ids: specification.cure_type_ids,
