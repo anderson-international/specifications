@@ -4,7 +4,6 @@ export const AI_SYNTH_INCLUDE = {
       system_users: { select: { id: true, name: true, email: true } },
       spec_enum_statuses: { select: { id: true, name: true } },
       product_enum_brands: { select: { id: true, name: true } },
-      product_enum_types: { select: { id: true, name: true } },
       spec_enum_experience: { select: { id: true, name: true } },
       spec_enum_grinds: { select: { id: true, name: true } },
       spec_enum_nicotine: { select: { id: true, name: true } },

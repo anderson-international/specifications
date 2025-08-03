@@ -106,7 +106,6 @@ export interface EnumQueryResult {
 
 // Specification form enum data interface
 export interface SpecificationEnumData {
-  productTypes: EnumValue[]
   productBrands: EnumValue[]
   experienceLevels: EnumValue[]
   tobaccoTypes: EnumValue[]

@@ -23,6 +23,9 @@
     "JSX": "readonly"
   },
   "rules": {
+    // Disable Next.js pages directory rule (not applicable to this project)
+    "@next/next/no-html-link-for-pages": "off",
+    
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
 

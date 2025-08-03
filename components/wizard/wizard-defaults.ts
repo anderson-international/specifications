@@ -5,7 +5,6 @@ export const WIZARD_DEFAULT_VALUES: Partial<WizardFormData> = {
   status_id: 1,
   shopify_handle: '',
   product_brand_id: 0,
-  product_type_id: 0,
   grind_id: 0,
   experience_level_id: 0,
   is_fermented: false,

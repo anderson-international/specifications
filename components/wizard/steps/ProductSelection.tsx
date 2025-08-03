@@ -21,7 +21,6 @@ interface ProductSelectionProps {
 interface ProductSelectionFormData {
   shopify_handle: string | null
   product_brand_id: number | null
-  product_type_id: number | null
 }
 
 const ProductSelection = ({
@@ -57,14 +56,11 @@ const ProductSelection = ({
           setValue('product_brand_id', null, { shouldValidate: true })
         }
         
-        setValue('product_type_id', 1, { shouldValidate: true })
-        
         setTimeout(() => {
           onProductSelect?.({} as React.MouseEvent<HTMLButtonElement>)
         }, 0)
       } else {
         setValue('product_brand_id', null, { shouldValidate: true })
-        setValue('product_type_id', null, { shouldValidate: true })
       }
     },
     [setValue, onProductSelect, brandEnums, filteredProducts]
@@ -76,7 +72,7 @@ const ProductSelection = ({
         mode="single"
         onSelectionChange={handleProductSelection}
         initialSelection={initialSelection}
-        searchPlaceholder="Search products..."
+        searchPlaceholder="Search by product or brand..."
         disabled={disabled}
         products={filteredProducts}
       />

@@ -4,6 +4,7 @@
   padding: 2rem;
 }
 
+/* Legacy header class */
 .header {
   display: flex;
   align-items: center;
@@ -12,7 +13,25 @@
   gap: 1rem;
 }
 
+/* Shared page header class */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+/* Legacy title class */
 .title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Shared page title class */
+.pageTitle {
   font-size: 2rem;
   font-weight: 700;
   color: var(--color-text-primary);

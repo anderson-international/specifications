@@ -2,13 +2,11 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { FilterControls, FilterConfig } from '@/components/shared/FilterControls'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
+import { FilterControls, FilterConfig } from '@/components/shared/FilterControls'
 import styles from './ItemList.module.css'
 
 export interface ItemListConfig {
-  title?: string
-  subtitle?: string
   searchPlaceholder: string
   emptyStateText: string
   emptySubtext?: string
@@ -72,24 +70,6 @@ export default function ItemList<T>({
   return (
     <ErrorBoundary>
       <div className={styles.container}>
-        {(config.title || config.subtitle || (config.showCreateButton && config.createButtonHref)) && (
-          <div className={styles.header}>
-            {config.title && (
-              <h1 className={styles.title}>{config.title}</h1>
-            )}
-            {config.subtitle && (
-              <div className={styles.subtitle}>
-                {config.subtitle}
-              </div>
-            )}
-            {config.showCreateButton && config.createButtonHref && (
-              <Link href={config.createButtonHref} className={styles.createButton}>
-                {config.createButtonText || '+ New Item'}
-              </Link>
-            )}
-          </div>
-        )}
-
         <FilterControls
           searchQuery={searchQuery}
           onSearchChange={onSearchChange}
@@ -117,7 +97,7 @@ export default function ItemList<T>({
               )}
               {config.showCreateButton && config.createButtonHref && (
                 <Link href={config.createButtonHref} className={styles.createButton}>
-                  {config.createButtonText || 'Create Your First Item'}
+                  {config.createButtonText || (() => { throw new Error('createButtonText is required when showCreateButton is true') })()}
                 </Link>
               )}
             </div>

@@ -20,7 +20,6 @@ export class EnumRepository {
   }
 
   static async getAllEnumTables(): Promise<{
-    productTypes: EnumValue[]
     productBrands: EnumValue[]
     experienceLevels: EnumValue[]
     tobaccoTypes: EnumValue[]
@@ -33,7 +32,6 @@ export class EnumRepository {
   }> {
     try {
       const [
-        productTypes,
         productBrands,
         experienceLevels,
         tobaccoTypes,
@@ -44,7 +42,6 @@ export class EnumRepository {
         moistureLevels,
         specificationStatuses,
       ] = await Promise.all([
-        prisma.product_enum_types.findMany({ orderBy: { name: 'asc' } }),
         prisma.product_enum_brands.findMany({ orderBy: { name: 'asc' } }),
         prisma.spec_enum_experience.findMany({ orderBy: { name: 'asc' } }),
         prisma.spec_enum_tobacco_types.findMany({ orderBy: { name: 'asc' } }),
@@ -57,7 +54,6 @@ export class EnumRepository {
       ])
 
       return {
-        productTypes: productTypes.map((item): EnumValue => ({ id: item.id, name: item.name })),
         productBrands: productBrands.map((item): EnumValue => ({ id: item.id, name: item.name })),
         experienceLevels: experienceLevels.map(
           (item): EnumValue => ({ id: item.id, name: item.name })

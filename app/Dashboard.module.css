@@ -337,71 +337,7 @@
   border-radius: 8px;
 }
 
-/* Mobile-First Tab Navigation */
-.tabNavigation {
-  display: flex;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.tabButton {
-  flex: 1;
-  min-width: 0;
-  padding: 0.75rem 0.5rem;
-  border: none;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  background: none;
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0;
-  position: relative;
-}
-
-.tabButton:first-child {
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
-}
-
-.tabButton:last-child {
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-  border-right: none;
-}
-
-.tabButton:hover {
-  background-color: var(--bg-hover);
-  color: var(--text-primary);
-}
-
-.tabButtonActive {
-  background-color: #1878b9;
-  color: white;
-}
-
-.tabButtonActive:hover {
-  background-color: #2b6cb0;
-}
-
-.tabLabel {
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-align: center;
-  line-height: 1.2;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-}
+/* Tab content area for Dashboard layout */
 
 .tabContent {
   min-height: 60vh;

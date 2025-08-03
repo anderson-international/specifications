@@ -13,10 +13,14 @@ export interface ProductSelectorProps {
 
 export interface ProductRowProps {
   product: Product
-  isSelected: boolean
-  onSelect: (product: Product) => void
+  isSelected?: boolean
+  onSelect?: (product: Product) => void
   disabled?: boolean
   mode: 'single' | 'multi'
+  userHasSpec?: boolean
+  specCount?: number
+  onCreateClick?: (productId: string) => void
+  onEditClick?: (productId: string) => void
 }
 
 export interface SelectedProductsModalProps {

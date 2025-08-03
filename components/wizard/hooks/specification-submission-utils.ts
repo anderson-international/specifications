@@ -1,5 +1,5 @@
 import { WizardFormData } from '../types/wizard.types'
-import { Specification } from '@/lib/schemas/specification'
+import { Specification } from '@/types/specification'
 
 export interface TransformedFormData {
   specification: Omit<Specification, 'tasting_note_ids' | 'cure_type_ids' | 'tobacco_type_ids'>

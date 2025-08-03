@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import styles from '../../app/Dashboard.module.css'
+import styles from '../shared/TabNavigation/TabNavigation.module.css'
 
 export type TabId = 'overview' | 'activity' | 'leaderboard' | 'actions'
 

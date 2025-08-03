@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Specification } from '@/lib/schemas/specification'
+import { Specification } from '@/types/specification'
 import SpecificationWizard from '@/components/wizard/SpecificationWizard'
 import { useAuth } from '@/lib/auth-context'
 

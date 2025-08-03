@@ -1,14 +1,10 @@
 import { redisProductCache } from '@/lib/cache/redis-product-cache'
-import { Product } from '@/lib/types/product'
-
-interface SpecificationWithProduct {
-  id: number
-  shopify_handle: string
-  product?: Product | null
-}
+import type { Product } from '@/lib/types/product'
+import type { Specification } from '@/types/specification'
+import { getAllSpecCountsMap } from '@/lib/shopify/database'
 
 export class ProductLookupService {
-  static async populateProductsInSpecs<T extends SpecificationWithProduct>(
+  static async populateProductsInSpecs<T extends Specification>(
     specifications: T[]
   ): Promise<T[]> {
     if (specifications.length === 0) {
@@ -18,10 +14,15 @@ export class ProductLookupService {
     try {
       const handles = [...new Set(specifications.map(spec => spec.shopify_handle))]
       
-      const products = await redisProductCache.getProductsByHandles(handles)
+      const cachedProducts = await redisProductCache.getProductsByHandles(handles)
+      const specCountsMap = await getAllSpecCountsMap()
+      const productsWithFreshCounts = cachedProducts.map(product => ({
+        ...product,
+        spec_count_total: specCountsMap.get(product.handle) ?? 0
+      }))
       
       const productMap = new Map<string, Product>()
-      for (const product of products) {
+      for (const product of productsWithFreshCounts) {
         if (product && product.handle) {
           productMap.set(product.handle, product)
         }
@@ -49,20 +50,6 @@ export class ProductLookupService {
       }
       
       return populatedSpecs
-    } catch (error) {
-      throw new Error(`Product lookup failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
-    }
-  }
-
-  static async populateProductInSpec<T extends SpecificationWithProduct>(
-    specification: T
-  ): Promise<T> {
-    try {
-      const product = await redisProductCache.getProductByHandle(specification.shopify_handle)
-      return {
-        ...specification,
-        product
-      }
     } catch (error) {
       throw new Error(`Product lookup failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }

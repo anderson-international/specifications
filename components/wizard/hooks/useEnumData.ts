@@ -7,7 +7,7 @@
 export { useSpecificationEnums } from './useSpecificationEnums'
 
 // Product-related enums
-export { useProductTypes, useProductBrands } from './useProductEnums'
+export { useProductBrands } from './useProductEnums'
 
 // Characteristic enums
 export {

@@ -6,7 +6,6 @@ export const validateRequiredFields = (
 ): void => {
   const requiredFields = [
     'shopify_handle',
-    'product_type_id',
     'grind_id',
     'nicotine_level_id',
     'experience_level_id',

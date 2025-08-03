@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import SpecificationWizard from '@/components/wizard/SpecificationWizard'
@@ -18,11 +18,17 @@ export default function CreateSpecificationClient(
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useAuth()
-  const [productId, setProductId] = useState<string | undefined>(undefined)
+  if (!user?.id) {
+    throw new Error('User authentication required for specification creation')
+  }
 
-  useEffect(() => {
-    setProductId(searchParams.get('productId') || undefined)
-  }, [searchParams])
+  // Read params directly instead of using state to prevent infinite loops
+  const productId = searchParams.get('productId') || undefined
+  const mode = searchParams.get('mode') || undefined
+  
+  if ((mode === 'edit' || mode === 'createFromProduct') && !productId) {
+    throw new Error(`${mode} mode requires productId parameter`)
+  }
 
   const handleSubmit = useCallback(
     async (_data: SpecificationFormData): Promise<void> => {
@@ -39,17 +45,18 @@ export default function CreateSpecificationClient(
   const initialData = useMemo(() => {
     if (productId) {
       return {
-        product_id: parseInt(productId, 10) || null,
+        shopify_handle: productId,
+        mode,
       }
     }
     return {}
-  }, [productId])
+  }, [productId, mode])
 
   return (
     <SpecificationWizard
       onSubmit={handleSubmit}
       initialData={initialData}
-      userId={user?.id || ''}
+      userId={user.id}
     />
   )
 }

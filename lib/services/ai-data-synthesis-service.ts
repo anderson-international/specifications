@@ -22,7 +22,6 @@ export class AIDataSynthesisService {
       return {
         specification: {
           shopify_handle: sources[0].shopify_handle,
-          product_type_id: sources[0].product_type_id,
           product_brand_id: sources[0].product_brand_id,
           grind_id: claudeResult.grind_id,
           nicotine_level_id: claudeResult.nicotine_level_id,
@@ -52,7 +51,6 @@ export class AIDataSynthesisService {
     return {
       specification: {
         shopify_handle: source.shopify_handle,
-        product_type_id: source.product_type_id,
         product_brand_id: source.product_brand_id,
         grind_id: source.grind_id,
         nicotine_level_id: source.nicotine_level_id,
