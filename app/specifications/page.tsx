@@ -4,8 +4,8 @@ import buttonStyles from '@/components/shared/Button/Button.module.css'
 import containerStyles from '@/components/shared/PageContainer/PageContainer.module.css'
 import pageTitleStyles from '@/components/shared/PageTitle/PageTitle.module.css'
 
-import SpecificationsTabNavigation, { type SpecTabId } from '@/components/specifications/SpecificationsTabNavigation'
 import SpecificationsTabContent from '@/components/specifications/SpecificationsTabContent'
+import SpecificationsTabNavigation, { type SpecTabId } from '@/components/specifications/SpecificationsTabNavigation'
 import { useToDoFilters } from '@/hooks/useToDoFilters'
 import { useUserProducts } from '@/hooks/useUserProducts'
 import { useAuth } from '@/lib/auth-context'
@@ -54,7 +54,7 @@ export default function SpecificationsPage(): JSX.Element {
   return (
     <div className={containerStyles.pageContainer}>
       <div className={pageTitleStyles.pageHeader}>
-        <h1 className={pageTitleStyles.pageTitle}>Done</h1>
+        <h1 className={pageTitleStyles.pageTitle}>My Specs</h1>
         <button
           className={buttonStyles.createButton}
           onClick={() => router.push('/create-specification')}
