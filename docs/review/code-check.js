@@ -12,6 +12,9 @@ const { analyzeTypeScript } = require('./utils/violation-detectors/hybrid/typesc
 const { getFileType, countLines } = require('./utils/file-analysis');
 const { runEslint } = require('./utils/eslint-runner');
 
+// Import context mapping system
+const { generateContextInstructions } = require('./utils/violation-context-map');
+
 const FILE_SIZE_LIMITS = {
   components: 150,
   hooks: 100,
@@ -194,6 +197,37 @@ function generateCompleteViolationOutput(violations) {
   
   // ALL VIOLATIONS MUST BE FIXED
   output += `ALL VIOLATIONS MUST BE FIXED\n${'='.repeat(60)}\n\n`;
+  
+  // Generate context loading instructions based on detected violations
+  const allViolations = [];
+  
+  // Collect all violations with their types for context mapping
+  violations.fallbackData.forEach(item => {
+    allViolations.push({ type: 'fallback-data', file: item.file, count: item.count });
+  });
+  
+  violations.consoleErrors.forEach(item => {
+    allViolations.push({ type: 'console-errors', file: item.file, count: item.count });
+  });
+  
+  violations.eslintErrors.forEach(item => {
+    allViolations.push({ type: 'eslint-violations', file: item.file, count: item.count });
+  });
+  
+  violations.typescriptTypes.forEach(item => {
+    allViolations.push({ type: 'typescript-violations', file: item.file, count: item.count });
+  });
+  
+  violations.comments.forEach(item => {
+    allViolations.push({ type: 'comment-violations', file: item.file, count: item.count });
+  });
+  
+  // Generate context instructions if violations exist
+  if (allViolations.length > 0) {
+    const contextInstructions = generateContextInstructions(allViolations);
+    output += `${contextInstructions.loadingInstructions}\n\n`;
+    output += `${'='.repeat(60)}\n\n`;
+  }
   
   // Fallback data violations
   if (violations.fallbackData.length > 0) {
