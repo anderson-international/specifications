@@ -37,11 +37,7 @@
 }
 
 .ratingText {
-  font-size: 0.875rem;
-  color: #f6ad55; /* Yellow to match filled stars */
-  min-width: 80px; /* Reserve space for longer text */
-  font-style: italic;
-  text-align: left;
+  display: none;
 }
 
 .disabled {
@@ -60,3 +56,5 @@
 .star:focus {
   outline: none; /* Remove default focus outline */
 }
+
+

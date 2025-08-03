@@ -106,10 +106,6 @@
 
 /* Responsive adjustments */
 @media (max-width: 480px) {
-  .summary {
-    flex-direction: column;
-  }
-
   .imageWrapper {
     width: 60px;
     height: 60px;
