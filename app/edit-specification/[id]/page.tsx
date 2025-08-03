@@ -3,7 +3,7 @@
 import React, { useCallback, use } from 'react'
 import { SpecificationWizard } from '@/components/wizard/SpecificationWizard'
 import { notFound, useRouter } from 'next/navigation'
-import { Specification, SpecificationFormData } from '@/types/specification'
+import { SpecificationFormData } from '@/types/specification'
 import { useAuthenticatedUser } from '@/lib/auth-context'
 import { useSpecificationData } from '@/components/wizard/hooks/useSpecificationData'
 import { LoadingState, ErrorState, NotFoundState } from './EditPageStates'

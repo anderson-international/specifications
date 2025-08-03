@@ -1,14 +1,12 @@
 'use client'
 
 import { useForm } from 'react-hook-form'
-import React, { useEffect } from 'react'
 import { useProducts } from '@/hooks/useProducts'
 import { useSpecificationEnums } from './useSpecificationEnums'
 import useSpecificationSubmission from './useSpecificationSubmission'
 import { useSelectedProduct } from './useSelectedProduct'
 import { useWizardNavigation } from './useWizardNavigation'
 
-import { findEnumByName } from './useEnumUtils'
 import {
   WizardFormData,
   UseSpecificationWizardReturn,
@@ -42,9 +40,6 @@ export const useSpecificationWizard = ({
   const { filteredProducts } = useProducts()
   const { data: enumData, isLoading: enumsLoading } = useSpecificationEnums()
   const selectedProduct = useSelectedProduct(methods, filteredProducts)
-
-  // Stabilize productBrands array reference to prevent useEffect re-runs
-  const productBrandsLength = enumData?.productBrands?.length || 0
 
   // DISABLED: This useEffect was causing infinite loops due to unstable dependencies
   // It's only needed for 'createFromProduct' mode, not for 'edit' mode
