@@ -75,9 +75,20 @@ const ReviewSubmission = ({
       />
 
       <div className={styles.formGroup}>
-        <label className={styles.label} htmlFor="review-text">
-          Your Review
-        </label>
+        <div className={styles.reviewHeader}>
+          <label className={styles.label} htmlFor="review-text">
+            Your Review
+          </label>
+          <span className={styles.mobileRatingText}>
+            {starRating > 0 ? (
+              starRating === 1 ? 'Poor' :
+              starRating === 2 ? 'Fair' :
+              starRating === 3 ? 'Good' :
+              starRating === 4 ? 'Very Good' :
+              'Excellent'
+            ) : ''}
+          </span>
+        </div>
         <textarea
           id="review-text"
           className={styles.textarea}
