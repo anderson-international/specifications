@@ -53,11 +53,11 @@ const ProductRow = ({
   const handleEditClick = useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation()
-      if (!disabled && onEditClick) {
-        onEditClick(product.id)
+      if (!disabled && onEditClick && (product as any).specification_id) {
+        onEditClick((product as any).specification_id)
       }
     },
-    [disabled, onEditClick, product.id]
+    [disabled, onEditClick, product]
   )
   
   return (

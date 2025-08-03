@@ -16,7 +16,7 @@ export default function AISpecificationItem({
   onClick, 
   showAIIndicators 
 }: AISpecificationItemProps): JSX.Element {
-  const handleClick = () => {
+  const handleClick = (): void => {
     onClick(specification.id)
   }
 

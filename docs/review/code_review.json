@@ -1,0 +1,66 @@
+{
+  "timestamp": "2025-08-03T16:00:16.002Z",
+  "totalFiles": 1,
+  "results": {
+    "lib/services/enumService.ts": {
+      "filePath": "lib/services/enumService.ts",
+      "size": {
+        "lines": 101,
+        "limit": 100,
+        "type": "services",
+        "status": "FAIL",
+        "percentage": 101
+      },
+      "comments": {
+        "violations": [
+          {
+            "type": "jsdoc",
+            "line": 10,
+            "content": "/**"
+          },
+          {
+            "type": "jsdoc",
+            "line": 11,
+            "content": "* Local service-layer error with HTTP status mapping"
+          }
+        ],
+        "count": 2,
+        "status": "FAIL"
+      },
+      "react": {
+        "hasReactImport": false,
+        "hasUseCallback": false,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": false,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": [
+          {
+            "line": 52,
+            "column": 25,
+            "message": "Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any"
+          }
+        ]
+      },
+      "typescript": {
+        "totalFunctions": 12,
+        "missingReturnTypes": 0,
+        "hasExplicitTypes": true,
+        "status": "PASS"
+      },
+      "fallbackData": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      }
+    }
+  }
+}

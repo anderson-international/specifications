@@ -24,7 +24,7 @@ export const useProducts = (): UseProductsReturn => {
   const [selectedBrand, setSelectedBrand] = useState<string>('')
   const [retryCount, setRetryCount] = useState<number>(0)
 
-  const fetchProducts = useCallback(async (isCancelled: { value: boolean }) => {
+  const fetchProducts = useCallback(async (isCancelled: { value: boolean }): Promise<void> => {
     setIsLoading(true)
     setError(null)
     try {
@@ -39,7 +39,7 @@ export const useProducts = (): UseProductsReturn => {
       } else if (data.warming) {
         throw new Error('Cache warming timeout.')
       } else {
-        const sortedProducts = (data.products || []).sort((a: Product, b: Product) => {
+        const sortedProducts = (data.products || []).sort((a: Product, b: Product): number => {
           const titleComparison = a.title.localeCompare(b.title)
           if (titleComparison !== 0) return titleComparison
           return a.brand.localeCompare(b.brand)
@@ -54,28 +54,28 @@ export const useProducts = (): UseProductsReturn => {
     } finally {
       if (!isCancelled.value) setIsLoading(false)
     }
-  }, [])
+  }, [retryCount])
 
   useEffect(() => {
     const isCancelled = { value: false }
     fetchProducts(isCancelled)
-    return () => { isCancelled.value = true }
+    return (): void => { isCancelled.value = true }
   }, [fetchProducts])
 
   const filteredProducts = useMemo(() => {
-    return products.filter(p =>
+    return products.filter((p): boolean =>
       (p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
        p.brand.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (selectedBrand ? p.brand === selectedBrand : true)
     )
   }, [products, searchTerm, selectedBrand])
 
-  const availableBrands = useMemo(() => 
-    [...new Set(products.map(p => p.brand))].sort(),
+  const availableBrands = useMemo((): string[] => 
+    [...new Set(products.map((p): string => p.brand))].sort(),
     [products]
   )
 
-  const retryFetch = useCallback(() => setRetryCount(prev => prev + 1), [])
+  const retryFetch = useCallback((): void => setRetryCount(prev => prev + 1), [])
 
   return useMemo(() => ({
     products,

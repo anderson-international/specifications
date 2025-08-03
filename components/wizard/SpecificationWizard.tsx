@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useCallback } from 'react'
 import { FormProvider } from 'react-hook-form'
-import { Specification } from '@/types/specification'
+import type { SpecificationFormData } from '@/types/specification'
 import WizardProgress from './controls/WizardProgress'
 import WizardNavigationFooter from './controls/WizardNavigationFooter'
 import { useSpecificationWizard } from './hooks/useSpecificationWizard'
@@ -11,7 +11,7 @@ import { createWizardSteps } from './constants/wizardSteps'
 import styles from './SpecificationWizard.module.css'
 
 interface SpecificationWizardProps {
-  onSubmit: (data: Specification) => void | Promise<void>
+  onSubmit: (data: SpecificationFormData) => void | Promise<void>
   initialData?: Record<string, unknown>
   userId: string
 }

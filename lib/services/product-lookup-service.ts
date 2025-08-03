@@ -1,10 +1,10 @@
 import { redisProductCache } from '@/lib/cache/redis-product-cache'
 import type { Product } from '@/lib/types/product'
-import type { Specification } from '@/types/specification'
+import type { SpecificationWithRelations } from '@/lib/repositories/types/specification-types'
 import { getAllSpecCountsMap } from '@/lib/shopify/database'
 
 export class ProductLookupService {
-  static async populateProductsInSpecs<T extends Specification>(
+  static async populateProductsInSpecs<T extends SpecificationWithRelations>(
     specifications: T[]
   ): Promise<T[]> {
     if (specifications.length === 0) {

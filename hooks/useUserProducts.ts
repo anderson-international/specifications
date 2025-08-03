@@ -8,6 +8,7 @@ export type SpecTabId = 'my-specs' | 'to-do'
 interface UserProduct extends Product {
   userHasSpec: boolean
   specCount: number
+  specification_id?: string
 }
 
 interface UseUserProductsResult {
