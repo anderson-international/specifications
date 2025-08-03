@@ -12,13 +12,11 @@ export interface UseWizardNavigationReturn {
 }
 
 export const useWizardNavigation = (initialStep: number = 0): UseWizardNavigationReturn => {
-  console.log('useWizardNavigation - initialStep:', initialStep)
   const isEditMode = initialStep > 0
   const [activeStep, setActiveStep] = useState<number>(initialStep)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
 
   useEffect(() => {
-    console.log('useWizardNavigation - updating activeStep to:', initialStep)
     setActiveStep(initialStep)
   }, [initialStep])
 

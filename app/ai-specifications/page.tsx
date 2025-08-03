@@ -20,7 +20,7 @@ export default function AISpecificationsPage(): JSX.Element {
   const loadingMessage = 'Loading AI specifications...'
   const errorMessage = 'Error loading AI specifications:'
 
-  const handleFilterChange = (id: string, value: string): void => {
+  const handleFilterChange = (_id: string, _value: string): void => {
     // Placeholder - implement filtering logic
   }
 
