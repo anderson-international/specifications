@@ -7,6 +7,7 @@ import { useSpecificationEnums } from './useSpecificationEnums'
 import useSpecificationTransform from './useSpecificationTransform'
 import { useSelectedProduct } from './useSelectedProduct'
 import { useWizardNavigation } from './useWizardNavigation'
+import { useWizardAutoSave } from './useWizardAutoSave'
 
 import {
   WizardFormData,
@@ -53,9 +54,24 @@ export const useSpecificationWizard = ({
     initialData,
   })
 
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const productHandle = ((): string => {
+    if (selectedProduct?.handle) return selectedProduct.handle
+    if (initialData.shopify_handle) return initialData.shopify_handle as string
+    const formHandle = methods.getValues('shopify_handle')
+    if (formHandle) return formHandle
+    throw new Error('Product handle unavailable - selectedProduct, initialData, and form values all undefined')
+  })()
+  const { clearDraft, forceSave } = useWizardAutoSave({
+    methods,
+    userId,
+    productHandle,
+    currentStep: activeStep + 1,
+    isEnabled: !isEditMode && (activeStep + 1) >= 2,
+    isSubmitting,
+  })
 
-  const handleFormSubmit = useCallback(async (): Promise<void> => {
+  const handleFormSubmit = useCallback(async (_data: WizardFormData): Promise<void> => {
     setIsSubmitting(true)
     try {
       const transformedData = getTransformedData()
@@ -65,13 +81,14 @@ export const useSpecificationWizard = ({
         cure_type_ids: transformedData.junctionData.cure_ids,
         tobacco_type_ids: transformedData.junctionData.tobacco_type_ids,
       }
-      await onSubmit(completeSpecification)
+      await onSubmit(completeSpecification)
+      clearDraft()
     } catch (error) {
       throw new Error(`Failed to submit specification: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsSubmitting(false)
     }
-  }, [onSubmit, getTransformedData])
+  }, [onSubmit, getTransformedData, clearDraft])
 
   return {
     methods,
@@ -87,6 +104,9 @@ export const useSpecificationWizard = ({
     handleStepClick,
     handleFormSubmit,
     canNavigateToStep,
-    isEditMode,
+    isEditMode,
+    clearDraft,
+    forceSave,
+    productHandle,
   }
 }

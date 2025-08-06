@@ -26,7 +26,10 @@ export interface UseSpecificationWizardReturn {
   handleStepClick: (stepIndex: number) => void
   handleFormSubmit: (data: WizardFormData) => Promise<void>
   canNavigateToStep: (stepIndex: number) => boolean
-  isEditMode: boolean
+  isEditMode: boolean
+  clearDraft: () => void
+  forceSave: () => void
+  productHandle: string | null
 }
 
 export interface UseSubmissionProps {
