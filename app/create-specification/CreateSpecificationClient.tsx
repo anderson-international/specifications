@@ -20,9 +20,7 @@ export default function CreateSpecificationClient(
   const { user } = useAuth()
   if (!user?.id) {
     throw new Error('User authentication required for specification creation')
-  }
-
-  // Read params directly instead of using state to prevent infinite loops
+  }
   const productId = searchParams.get('productId') || undefined
   const mode = searchParams.get('mode') || undefined
   
@@ -31,9 +29,35 @@ export default function CreateSpecificationClient(
   }
 
   const handleSubmit = useCallback(
-    async (_data: SpecificationFormData): Promise<void> => {
+    async (data: SpecificationFormData): Promise<void> => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        const response = await fetch('/api/specifications', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ message: 'Unknown error' }))
+          if (errorData.message) {
+            throw new Error(errorData.message)
+          }
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        }
+
+        const result = await response.json()
+        if (result.error || !result.success) {
+          if (result.error) {
+            throw new Error(result.error)
+          }
+          if (result.message) {
+            throw new Error(result.message)
+          }
+          throw new Error('Create failed')
+        }
+
         router.push('/products')
       } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'Failed to create specification')

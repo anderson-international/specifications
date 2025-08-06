@@ -3,7 +3,6 @@ import { EnumTableName } from '@/types/enum'
 
 // Valid enum table names (matches database schema)
 const ENUM_TABLE_NAMES: EnumTableName[] = [
-  'enum_product_types',
   'enum_product_brands',
   'enum_grinds',
   'enum_experience_levels',

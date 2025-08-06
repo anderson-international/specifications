@@ -7,7 +7,6 @@ export async function checkEnumReferences(
 ): Promise<{ isReferenced: boolean; count: number }> {
   try {
     const fieldMappings: Partial<Record<ValidatedEnumTableName, string>> = {
-      enum_product_types: 'product_type_id',
       enum_product_brands: 'brand_id',
       enum_experience_levels: 'experience_level_id',
       enum_tobacco_types: 'tobacco_type_id',

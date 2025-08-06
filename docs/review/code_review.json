@@ -1,31 +1,20 @@
 {
-  "timestamp": "2025-08-03T16:00:16.002Z",
-  "totalFiles": 1,
+  "timestamp": "2025-08-06T21:47:08.305Z",
+  "totalFiles": 4,
   "results": {
-    "lib/services/enumService.ts": {
-      "filePath": "lib/services/enumService.ts",
+    "lib\\cache\\redis-enum-cache.ts": {
+      "filePath": "lib\\cache\\redis-enum-cache.ts",
       "size": {
-        "lines": 101,
-        "limit": 100,
-        "type": "services",
-        "status": "FAIL",
-        "percentage": 101
+        "lines": 50,
+        "limit": 50,
+        "type": "utils",
+        "status": "PASS",
+        "percentage": 100
       },
       "comments": {
-        "violations": [
-          {
-            "type": "jsdoc",
-            "line": 10,
-            "content": "/**"
-          },
-          {
-            "type": "jsdoc",
-            "line": 11,
-            "content": "* Local service-layer error with HTTP status mapping"
-          }
-        ],
-        "count": 2,
-        "status": "FAIL"
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
       },
       "react": {
         "hasReactImport": false,
@@ -42,16 +31,152 @@
       },
       "eslint": {
         "errors": [],
-        "warnings": [
-          {
-            "line": 52,
-            "column": 25,
-            "message": "Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any"
-          }
-        ]
+        "warnings": []
       },
       "typescript": {
-        "totalFunctions": 12,
+        "totalFunctions": 1,
+        "missingReturnTypes": 0,
+        "hasExplicitTypes": true,
+        "status": "PASS"
+      },
+      "fallbackData": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      }
+    },
+    "lib\\repositories\\enum-repository.ts": {
+      "filePath": "lib\\repositories\\enum-repository.ts",
+      "size": {
+        "lines": 49,
+        "limit": 100,
+        "type": "repositories",
+        "status": "PASS",
+        "percentage": 49
+      },
+      "comments": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": false,
+        "hasUseCallback": false,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": false,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": []
+      },
+      "typescript": {
+        "totalFunctions": 2,
+        "missingReturnTypes": 0,
+        "hasExplicitTypes": true,
+        "status": "PASS"
+      },
+      "fallbackData": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      }
+    },
+    "lib\\validators\\specification-validator.ts": {
+      "filePath": "lib\\validators\\specification-validator.ts",
+      "size": {
+        "lines": 45,
+        "limit": 50,
+        "type": "utils",
+        "status": "PASS",
+        "percentage": 90
+      },
+      "comments": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": false,
+        "hasUseCallback": false,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": false,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": []
+      },
+      "typescript": {
+        "totalFunctions": 1,
+        "missingReturnTypes": 0,
+        "hasExplicitTypes": true,
+        "status": "PASS"
+      },
+      "fallbackData": {
+        "violations": [
+          {
+            "type": "return_null",
+            "line": 9,
+            "content": "return null",
+            "advice": "Throw composed error instead of null return. Null returns mask invalid states and prevent proper error handling. Consider: What upstream validation failed? Why is this data missing?"
+          },
+          {
+            "type": "return_null",
+            "line": 42,
+            "content": "return null",
+            "advice": "Throw composed error instead of null return. Null returns mask invalid states and prevent proper error handling. Consider: What upstream validation failed? Why is this data missing?"
+          }
+        ],
+        "count": 2,
+        "status": "FAIL"
+      }
+    },
+    "types\\enum.ts": {
+      "filePath": "types\\enum.ts",
+      "size": {
+        "lines": 18,
+        "limit": 100,
+        "type": "types",
+        "status": "PASS",
+        "percentage": 18
+      },
+      "comments": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": false,
+        "hasUseCallback": false,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": false,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": []
+      },
+      "typescript": {
+        "totalFunctions": 0,
         "missingReturnTypes": 0,
         "hasExplicitTypes": true,
         "status": "PASS"
