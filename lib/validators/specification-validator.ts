@@ -1,4 +1,4 @@
-import { TransformedFormData } from '@/components/wizard/hooks/specification-submission-utils'
+import { TransformedFormData } from '@/components/wizard/hooks/specification-transform-utils'
 
 export class SpecificationValidator {
   static validateUserId(userId: string | null): string | null {
@@ -19,7 +19,11 @@ export class SpecificationValidator {
   static validateCreateRequest(body: TransformedFormData): string | null {
     const { specification, junctionData } = body
 
-    if (!specification?.shopify_handle || !specification?.user_id) {
+    if (!specification) {
+      throw new Error('Validation failed: specification object is required but missing from request body')
+    }
+
+    if (!specification.shopify_handle || !specification.user_id) {
       return 'Missing required fields: shopify_handle, user_id'
     }
 
@@ -27,7 +31,11 @@ export class SpecificationValidator {
       return 'Star rating must be between 1 and 5'
     }
 
-    if (!junctionData?.tasting_note_ids || junctionData.tasting_note_ids.length === 0) {
+    if (!junctionData) {
+      throw new Error('Validation failed: junctionData object is required but missing from request body')
+    }
+
+    if (!junctionData.tasting_note_ids || junctionData.tasting_note_ids.length === 0) {
       return 'At least one tasting note is required'
     }
 

@@ -94,6 +94,7 @@ model spec_enum_cures {
   name                String                @unique @db.VarChar(255)
   created_at          DateTime?             @default(now()) @db.Timestamp(6)
   updated_at          DateTime?             @default(now()) @db.Timestamp(6)
+  sort_order          Int?
   spec_junction_cures spec_junction_cures[]
 }
 
@@ -102,6 +103,7 @@ model spec_enum_experience {
   name           String           @unique @db.VarChar(255)
   created_at     DateTime?        @default(now()) @db.Timestamp(6)
   updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  sort_order     Int?
   specifications specifications[]
 }
 
@@ -110,6 +112,7 @@ model spec_enum_grinds {
   name           String           @unique @db.VarChar(255)
   created_at     DateTime?        @default(now()) @db.Timestamp(6)
   updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  sort_order     Int?
   specifications specifications[]
 }
 
@@ -118,6 +121,7 @@ model spec_enum_moisture {
   name           String           @unique @db.VarChar(255)
   created_at     DateTime?        @default(now()) @db.Timestamp(6)
   updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  sort_order     Int?
   specifications specifications[]
 }
 
@@ -126,6 +130,7 @@ model spec_enum_nicotine {
   name           String           @unique @db.VarChar(255)
   created_at     DateTime?        @default(now()) @db.Timestamp(6)
   updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  sort_order     Int?
   specifications specifications[]
 }
 
@@ -149,6 +154,7 @@ model spec_enum_tasting_notes {
   name                        String                        @unique @db.VarChar(255)
   created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
   updated_at                  DateTime?                     @default(now()) @db.Timestamp(6)
+  sort_order                  Int?
   spec_junction_tasting_notes spec_junction_tasting_notes[]
 }
 
@@ -157,6 +163,7 @@ model spec_enum_tobacco_types {
   name                        String                        @unique @db.VarChar(255)
   created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
   updated_at                  DateTime?                     @default(now()) @db.Timestamp(6)
+  sort_order                  Int?
   spec_junction_tobacco_types spec_junction_tobacco_types[]
 }
 

@@ -22,9 +22,9 @@ export const transformFormData = (formData: WizardFormData): TransformedFormData
   return {
     specification: { ...coreData, created_at: new Date(), updated_at: new Date() },
     junctionData: {
-      tasting_note_ids: tasting_note_ids || [],
-      cure_ids: cure_type_ids || [],
-      tobacco_type_ids: tobacco_type_ids || [],
+      tasting_note_ids: tasting_note_ids ?? [],
+      cure_ids: cure_type_ids ?? [],
+      tobacco_type_ids: tobacco_type_ids ?? [],
     },
   }
 }

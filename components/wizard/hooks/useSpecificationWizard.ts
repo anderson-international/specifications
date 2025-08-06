@@ -1,9 +1,10 @@
 'use client'
 
 import { useForm } from 'react-hook-form'
+import { useCallback, useState } from 'react'
 import { useProducts } from '@/hooks/useProducts'
 import { useSpecificationEnums } from './useSpecificationEnums'
-import useSpecificationSubmission from './useSpecificationSubmission'
+import useSpecificationTransform from './useSpecificationTransform'
 import { useSelectedProduct } from './useSelectedProduct'
 import { useWizardNavigation } from './useWizardNavigation'
 
@@ -22,39 +23,20 @@ export const useSpecificationWizard = ({
   const mode = initialData.mode as string | undefined
   const isEditMode = mode === 'edit'
   const shouldSkipProductSelection = mode === 'edit' || mode === 'createFromProduct'
-  
 
-  
   const formDefaults = { 
     ...WIZARD_DEFAULT_VALUES, 
     user_id: userId,
     ...initialData 
   } as WizardFormData
-  
 
-  
   const methods = useForm<WizardFormData>({
     defaultValues: formDefaults,
   })
 
   const { filteredProducts } = useProducts()
   const { data: enumData, isLoading: enumsLoading } = useSpecificationEnums()
-  const selectedProduct = useSelectedProduct(methods, filteredProducts)
-
-  // DISABLED: This useEffect was causing infinite loops due to unstable dependencies
-  // It's only needed for 'createFromProduct' mode, not for 'edit' mode
-  // useEffect(() => {
-  //   if (mode === 'createFromProduct' && selectedProduct && enumData?.productBrands) {
-  //     const currentBrandId = methods.getValues('product_brand_id')
-  //     
-  //     if (!currentBrandId || currentBrandId === 0) {
-  //       const brandId = findEnumByName(enumData.productBrands, selectedProduct.brand)
-  //       if (brandId) {
-  //         methods.setValue('product_brand_id', brandId, { shouldValidate: true })
-  //       }
-  //     }
-  //   }
-  // }, [mode, selectedProduct, productBrandsLength])
+  const selectedProduct = useSelectedProduct(methods, filteredProducts)
 
   const {
     activeStep,
@@ -65,12 +47,31 @@ export const useSpecificationWizard = ({
     canNavigateToStep,
   } = useWizardNavigation(shouldSkipProductSelection ? 1 : 0)
 
-  const { isSubmitting, handleFormSubmit } = useSpecificationSubmission({
-    onSubmit,
+  const { getTransformedData } = useSpecificationTransform({
     methods,
     userId,
     initialData,
   })
+
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+
+  const handleFormSubmit = useCallback(async (): Promise<void> => {
+    setIsSubmitting(true)
+    try {
+      const transformedData = getTransformedData()
+      const completeSpecification = {
+        ...transformedData.specification,
+        tasting_note_ids: transformedData.junctionData.tasting_note_ids,
+        cure_type_ids: transformedData.junctionData.cure_ids,
+        tobacco_type_ids: transformedData.junctionData.tobacco_type_ids,
+      }
+      await onSubmit(completeSpecification)
+    } catch (error) {
+      throw new Error(`Failed to submit specification: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }, [onSubmit, getTransformedData])
 
   return {
     methods,
