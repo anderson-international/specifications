@@ -33,8 +33,10 @@ const AutoSaveIndicator = ({
         return 'Saved ✓'
       case 'error':
         return lastError ? `Save failed: ${lastError}` : 'Save failed'
+      case 'idle':
+        return 'Auto-save ready'
       default:
-        return ''
+        return 'Auto-save ready'
     }
   }
 
@@ -52,10 +54,6 @@ const AutoSaveIndicator = ({
   }
 
   const statusText = getStatusText()
-  
-  if (!statusText) {
-    throw new Error(`AutoSaveIndicator: getStatusText returned empty string for status '${saveStatus}' - invalid state configuration`)
-  }
 
   return (
     <div className={`${styles.indicator} ${getStatusClassName()}`}>

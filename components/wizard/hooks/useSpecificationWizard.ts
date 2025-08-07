@@ -37,7 +37,7 @@ export const useSpecificationWizard = ({
 
   const { filteredProducts } = useProducts()
   const { data: enumData, isLoading: enumsLoading } = useSpecificationEnums()
-  const selectedProduct = useSelectedProduct(methods, filteredProducts)
+  const selectedProduct = useSelectedProduct(methods, filteredProducts)
 
   const {
     activeStep,
@@ -54,15 +54,15 @@ export const useSpecificationWizard = ({
     initialData,
   })
 
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const productHandle = ((): string => {
     if (selectedProduct?.handle) return selectedProduct.handle
     if (initialData.shopify_handle) return initialData.shopify_handle as string
     const formHandle = methods.getValues('shopify_handle')
     if (formHandle) return formHandle
     throw new Error('Product handle unavailable - selectedProduct, initialData, and form values all undefined')
-  })()
-  const { clearDraft, forceSave, saveStatus, lastError } = useWizardAutoSave({
+  })()
+  const { clearDraft, forceSave, saveStatus, lastError, hasSavedOnce } = useWizardAutoSave({
     methods,
     userId,
     productHandle,
@@ -81,7 +81,7 @@ export const useSpecificationWizard = ({
         cure_type_ids: transformedData.junctionData.cure_ids,
         tobacco_type_ids: transformedData.junctionData.tobacco_type_ids,
       }
-      await onSubmit(completeSpecification)
+      await onSubmit(completeSpecification)
       clearDraft()
     } catch (error) {
       throw new Error(`Failed to submit specification: ${error instanceof Error ? error.message : 'Unknown error'}`)
@@ -104,11 +104,12 @@ export const useSpecificationWizard = ({
     handleStepClick,
     handleFormSubmit,
     canNavigateToStep,
-    isEditMode,
+    isEditMode,
     clearDraft,
     forceSave,
     productHandle,
     saveStatus,
     lastError,
+    hasSavedOnce,
   }
 }

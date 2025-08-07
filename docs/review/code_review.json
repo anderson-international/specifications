@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-08-07T10:37:14.891Z",
-  "totalFiles": 1,
+  "timestamp": "2025-08-07T19:43:34.150Z",
+  "totalFiles": 4,
   "results": {
-    "components/wizard/hooks/useWizardAutoSave.ts": {
-      "filePath": "components/wizard/hooks/useWizardAutoSave.ts",
+    "app/ai-specifications/page.tsx": {
+      "filePath": "app/ai-specifications/page.tsx",
       "size": {
-        "lines": 135,
+        "lines": 84,
         "limit": 150,
         "type": "components",
         "status": "PASS",
-        "percentage": 90
+        "percentage": 56
       },
       "comments": {
         "violations": [],
@@ -18,10 +18,141 @@
       },
       "react": {
         "hasReactImport": false,
+        "hasUseCallback": false,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": true,
+        "issues": [
+          "Event handlers should use useCallback"
+        ]
+      },
+      "consoleErrors": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": []
+      },
+      "typescript": {
+        "totalFunctions": 8,
+        "missingReturnTypes": 0,
+        "hasExplicitTypes": true,
+        "status": "PASS"
+      },
+      "fallbackData": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      }
+    },
+    "components/wizard/steps/ProductCharacteristics.tsx": {
+      "filePath": "components/wizard/steps/ProductCharacteristics.tsx",
+      "size": {
+        "lines": 132,
+        "limit": 150,
+        "type": "components",
+        "status": "PASS",
+        "percentage": 88
+      },
+      "comments": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": true,
+        "hasUseCallback": false,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": true,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": []
+      },
+      "typescript": {
+        "totalFunctions": 6,
+        "missingReturnTypes": 0,
+        "hasExplicitTypes": true,
+        "status": "PASS"
+      },
+      "fallbackData": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      }
+    },
+    "components/wizard/steps/TastingProfile.tsx": {
+      "filePath": "components/wizard/steps/TastingProfile.tsx",
+      "size": {
+        "lines": 132,
+        "limit": 150,
+        "type": "components",
+        "status": "PASS",
+        "percentage": 88
+      },
+      "comments": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": true,
         "hasUseCallback": true,
         "hasUseMemo": false,
-        "hasUseEffect": true,
+        "hasUseEffect": false,
         "hasHooks": true,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": []
+      },
+      "typescript": {
+        "totalFunctions": 9,
+        "missingReturnTypes": 0,
+        "hasExplicitTypes": true,
+        "status": "PASS"
+      },
+      "fallbackData": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      }
+    },
+    "lib/services/enumService.ts": {
+      "filePath": "lib/services/enumService.ts",
+      "size": {
+        "lines": 98,
+        "limit": 100,
+        "type": "services",
+        "status": "PASS",
+        "percentage": 98
+      },
+      "comments": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": false,
+        "hasUseCallback": false,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": false,
         "issues": []
       },
       "consoleErrors": {

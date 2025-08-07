@@ -6,7 +6,7 @@ const path = require('path')
 const fs = require('fs')
 
 const testDir = __dirname
-const analyzerScript = path.join(__dirname, '../../scripts/code-review-analyzer.js')
+const analyzerScript = path.join(__dirname, '../../code-review-analyzer.js')
 
 // Test files that SHOULD trigger violations (failures expected)
 const failureTests = [
@@ -42,7 +42,7 @@ function runTest(filename, shouldFail = false) {
   
   try {
     // Run the analyzer on the test file
-    const result = execSync(`cmd /c node "${analyzerScript}" "${filePath}"`, { 
+    const result = execSync(`cmd /c node ${analyzerScript}" "${filePath}`, { 
       encoding: 'utf8',
       cwd: path.dirname(analyzerScript)
     })

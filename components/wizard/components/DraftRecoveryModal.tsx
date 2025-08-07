@@ -2,10 +2,13 @@
 
 import React, { useCallback } from 'react'
 import { WizardDraft, formatDraftAge } from '@/lib/utils/draft-storage'
+import { Product } from '@/lib/types/product'
+import SelectedProductSummary from '../steps/SelectedProductSummary'
 import styles from './DraftRecoveryModal.module.css'
 
 interface DraftRecoveryModalProps {
   draft: WizardDraft
+  selectedProduct?: Product | null
   productTitle?: string
   onRecover: (draft: WizardDraft) => void
   onStartFresh: () => void
@@ -13,6 +16,7 @@ interface DraftRecoveryModalProps {
 
 const DraftRecoveryModal = ({
   draft,
+  selectedProduct,
   productTitle,
   onRecover,
   onStartFresh,
@@ -54,16 +58,19 @@ const DraftRecoveryModal = ({
     >
       <div className={styles.modal}>
         <div className={styles.header}>
-          <div className={styles.icon}>💾</div>
           <h2 id="draft-recovery-title" className={styles.title}>
             Resume Previous Work?
           </h2>
         </div>
 
         <div className={styles.content}>
-          <p id="draft-recovery-description" className={styles.description}>
-            You have unsaved changes for <strong>{productTitle || draft.productHandle}</strong>
-          </p>
+          {selectedProduct ? (
+            <SelectedProductSummary product={selectedProduct} />
+          ) : (
+            <p id="draft-recovery-description" className={styles.description}>
+              <strong>{productTitle || draft.productHandle}</strong>
+            </p>
+          )}
           
           <div className={styles.draftDetails}>
             <div className={styles.detailRow}>
@@ -91,7 +98,7 @@ const DraftRecoveryModal = ({
             onClick={handleRecover}
             autoFocus
           >
-            Continue Draft
+            Resume
           </button>
         </div>
       </div>

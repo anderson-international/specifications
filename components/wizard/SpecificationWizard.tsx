@@ -6,7 +6,6 @@ import type { SpecificationFormData } from '@/types/specification'
 import WizardProgress from './controls/WizardProgress'
 import WizardNavigationFooter from './controls/WizardNavigationFooter'
 import DraftManager from './components/DraftManager'
-import AutoSaveIndicator from './components/AutoSaveIndicator'
 import { useSpecificationWizard } from './hooks/useSpecificationWizard'
 import { useStepValidation } from './hooks/useStepValidation'
 import { useDraftNavigation } from './hooks/useDraftNavigation'
@@ -43,7 +42,7 @@ const SpecificationWizard = ({
     forceSave: _forceSave,
     productHandle,
     saveStatus,
-    lastError,
+    hasSavedOnce,
   } = useSpecificationWizard({ onSubmit, initialData, userId })
   const handleStepClick = useCallback((stepIndex: number) => {
     originalHandleStepClick(stepIndex)
@@ -84,6 +83,7 @@ const SpecificationWizard = ({
         productHandle={productHandle}
         methods={methods}
         isEditMode={isEditMode}
+        selectedProduct={selectedProduct}
         onDraftRecovered={handleDraftRecovered}
       >
         <div className={styles.wizardContainer}>
@@ -120,7 +120,9 @@ const SpecificationWizard = ({
                 selectedProduct,
                 enumData,
                 enumsLoading,
-                filteredProducts
+                filteredProducts,
+                saveStatus,
+                hasSavedOnce
               )}
             </div>
 
@@ -131,14 +133,6 @@ const SpecificationWizard = ({
               isCurrentStepValid={isCurrentStepValid}
               onPrevious={handlePrevious}
               onNext={handleNext}
-              autoSaveIndicator={
-                <AutoSaveIndicator
-                  saveStatus={saveStatus}
-                  isEnabled={!isEditMode && (activeStep + 1) >= 2}
-                  productHandle={productHandle}
-                  lastError={lastError}
-                />
-              }
             />
           </form>
         </div>

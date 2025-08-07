@@ -4,7 +4,7 @@ import React from 'react'
 import WizardStepCard from '../controls/WizardStepCard'
 import CharacteristicSelect from './CharacteristicSelect'
 import ProductAttributeToggles from './ProductAttributeToggles'
-import SelectedProductSummary from './SelectedProductSummary'
+import ProductWithDraftIndicator from '../components/ProductWithDraftIndicator'
 import { useProductCharacteristics } from '../hooks/useProductCharacteristics'
 import { transformEnumToOptions } from '../hooks/useEnumUtils'
 import { Product } from '@/lib/types/product'
@@ -18,18 +18,19 @@ interface ProductCharacteristicsProps {
   selectedProduct?: Product | null
   enumData?: SpecificationEnumData
   enumsLoading?: boolean
+  saveStatus?: import('../types/wizard.types').SaveStatus
+  hasSavedOnce?: boolean
 }
 
-/**
- * Step 2: Product characteristics including grind, experience level and boolean flags
- */
 const ProductCharacteristics = ({
   stepNumber,
   totalSteps,
   disabled = false,
   selectedProduct,
   enumData,
-  enumsLoading,
+  enumsLoading = false,
+  saveStatus = 'idle',
+  hasSavedOnce = false,
 }: ProductCharacteristicsProps): JSX.Element => {
   const {
     grindId,
@@ -48,7 +49,6 @@ const ProductCharacteristics = ({
     handleArtisanChange,
   } = useProductCharacteristics()
 
-  // Use enum data passed from parent to eliminate redundant API calls
   const grinds = enumData?.grinds ? transformEnumToOptions(enumData.grinds) : undefined
   const experienceLevels = enumData?.experienceLevels ? transformEnumToOptions(enumData.experienceLevels) : undefined
   const nicotineLevels = enumData?.nicotineLevels ? transformEnumToOptions(enumData.nicotineLevels) : undefined
@@ -56,25 +56,42 @@ const ProductCharacteristics = ({
 
   const isLoadingEnums = enumsLoading || false
 
+  if (isLoadingEnums || !enumData) {
+    return (
+      <WizardStepCard title="Product Characteristics" stepNumber={stepNumber} totalSteps={totalSteps}>
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          Loading product characteristics...
+        </div>
+      </WizardStepCard>
+    )
+  }
+
   return (
     <WizardStepCard title="Product Characteristics" stepNumber={stepNumber} totalSteps={totalSteps}>
-      {selectedProduct && <SelectedProductSummary product={selectedProduct} />}
+      {selectedProduct && (
+        <ProductWithDraftIndicator 
+          product={selectedProduct}
+          saveStatus={saveStatus}
+          hasSavedOnce={hasSavedOnce}
+          isEnabled={!disabled}
+        />
+      )}
       <div className={styles.characteristicsContainer}>
         <div className={styles.characteristicsRow}>
           <CharacteristicSelect
             id="grind-filter"
             label="Select Grind"
-            value={grindId || ''}
+            value={grindId ?? (() => { throw new Error('ProductCharacteristics: grindId is required but missing. Check form initialization and enum loading.') })()}
             onChange={handleGrindChange}
-            options={grinds || []}
+            options={grinds ?? (() => { throw new Error('ProductCharacteristics: grinds enum data is required but missing. Check enum loading service.') })()}
             disabled={disabled || isLoadingEnums}
           />
           <CharacteristicSelect
             id="experience-level-filter"
             label="Select Experience"
-            value={experienceLevelId || ''}
+            value={experienceLevelId ?? (() => { throw new Error('ProductCharacteristics: experienceLevelId is required but missing. Check form initialization and enum loading.') })()}
             onChange={handleExperienceChange}
-            options={experienceLevels || []}
+            options={experienceLevels ?? (() => { throw new Error('ProductCharacteristics: experienceLevels enum data is required but missing. Check enum loading service.') })()}
             disabled={disabled || isLoadingEnums}
           />
         </div>
@@ -82,17 +99,17 @@ const ProductCharacteristics = ({
           <CharacteristicSelect
             id="nicotine-level-filter"
             label="Select Nicotine Level"
-            value={nicotineLevelId || ''}
+            value={nicotineLevelId ?? (() => { throw new Error('ProductCharacteristics: nicotineLevelId is required but missing. Check form initialization and enum loading.') })()}
             onChange={handleNicotineLevelChange}
-            options={nicotineLevels || []}
+            options={nicotineLevels ?? (() => { throw new Error('ProductCharacteristics: nicotineLevels enum data is required but missing. Check enum loading service.') })()}
             disabled={disabled || isLoadingEnums}
           />
           <CharacteristicSelect
             id="moisture-level-filter"
             label="Select Moisture Level"
-            value={moistureLevelId || ''}
+            value={moistureLevelId ?? (() => { throw new Error('ProductCharacteristics: moistureLevelId is required but missing. Check form initialization and enum loading.') })()}
             onChange={handleMoistureLevelChange}
-            options={moistureLevels || []}
+            options={moistureLevels ?? (() => { throw new Error('ProductCharacteristics: moistureLevels enum data is required but missing. Check enum loading service.') })()}
             disabled={disabled || isLoadingEnums}
           />
         </div>

@@ -19,22 +19,26 @@ interface UseWizardAutoSaveReturn {
   forceSave: () => void
   saveStatus: SaveStatus
   lastError: string | null
+  hasSavedOnce: boolean
 }
 
-const AUTO_SAVE_DELAY_MS = 3000
-
-export function useWizardAutoSave({
+export const useWizardAutoSave = ({
   methods,
   userId,
   productHandle,
   currentStep,
   isEnabled,
   isSubmitting,
-}: UseWizardAutoSaveProps): UseWizardAutoSaveReturn {
-  const saveTimeoutRef = useRef<number>()
-  const lastSavedDataRef = useRef<string>('')
+}: UseWizardAutoSaveProps): UseWizardAutoSaveReturn => {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
   const [lastError, setLastError] = useState<string | null>(null)
+  const [hasSavedOnce, setHasSavedOnce] = useState<boolean>(false)
+  const lastSavedDataRef = useRef<string>('')
+  const debounceTimerRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    lastSavedDataRef.current = JSON.stringify(methods.getValues())
+  }, [methods])
 
   const clearDraft = useCallback(() => {
     if (productHandle) {
@@ -52,13 +56,22 @@ export function useWizardAutoSave({
       try {
         setSaveStatus('saving')
         setLastError(null)
+        const savingStartTime = Date.now()
+        
         saveDraft(userId, productHandle, formData, currentStep)
         lastSavedDataRef.current = currentDataString
-        setSaveStatus('saved')
+        setHasSavedOnce(true)
+
+        const elapsedTime = Date.now() - savingStartTime
+        const remainingTime = Math.max(0, 1000 - elapsedTime)
         
         setTimeout(() => {
-          setSaveStatus('idle')
-        }, 2000)
+          setSaveStatus('saved')
+
+          setTimeout(() => {
+            setSaveStatus('idle')
+          }, 2000)
+        }, remainingTime)
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error'
         setLastError(errorMessage)
@@ -68,67 +81,68 @@ export function useWizardAutoSave({
     }
   }, [methods, userId, productHandle, currentStep, isEnabled, isSubmitting])
 
-  const debouncedSave = useCallback(() => {
-    if (!isEnabled || !productHandle || isSubmitting) return
-
-    setSaveStatus('saving')
-    
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current)
+  useEffect(() => {
+    if (!isEnabled || currentStep < 2) {
+      return
     }
 
-    saveTimeoutRef.current = Number(setTimeout(() => {
-      forceSave()
-    }, AUTO_SAVE_DELAY_MS))
-  }, [forceSave, isEnabled, productHandle, isSubmitting])
+    const subscription = methods.watch((data) => {
+      if (isSubmitting) {
+        return
+      }
 
-  useEffect(() => {
-    if (!isEnabled || !productHandle || currentStep < 2) return
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
 
-    const subscription = methods.watch(() => {
-      debouncedSave()
+      debounceTimerRef.current = window.setTimeout(() => {
+        try {
+          setSaveStatus('saving')
+          setLastError(null)
+          const savingStartTime = Date.now()
+          
+          const dataString = JSON.stringify(data)
+          if (dataString !== lastSavedDataRef.current) {
+            if (!productHandle) {
+              throw new Error('Cannot save draft: productHandle is null. Ensure product selection is complete before auto-save.')
+            }
+            saveDraft(userId, productHandle, data, currentStep)
+            lastSavedDataRef.current = dataString
+            setHasSavedOnce(true)
+
+            const elapsedTime = Date.now() - savingStartTime
+            const remainingTime = Math.max(0, 1000 - elapsedTime)
+            
+            setTimeout(() => {
+              setSaveStatus('saved')
+
+              setTimeout(() => {
+                setSaveStatus('idle')
+              }, 2000)
+            }, remainingTime)
+          }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+          setLastError(errorMessage)
+          setSaveStatus('error')
+          throw new Error(`Failed to save draft: ${errorMessage}`)
+        }
+      }, 1000)
     })
 
     return () => {
       subscription.unsubscribe()
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current)
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
       }
     }
-  }, [methods, debouncedSave, isEnabled, productHandle, currentStep])
-
-  useEffect(() => {
-    if (currentStep >= 2) {
-      forceSave()
-    }
-  }, [currentStep, forceSave])
-
-  useEffect(() => {
-    const handleBeforeUnload = (): void => {
-      if (isEnabled && productHandle && !isSubmitting) {
-        forceSave()
-      }
-    }
-
-    window.addEventListener('beforeunload', handleBeforeUnload)
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload)
-    }
-  }, [forceSave, isEnabled, productHandle, isSubmitting])
-
-  useEffect(() => {
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current)
-      }
-    }
-  }, [])
+  }, [methods, userId, productHandle, currentStep, isEnabled, isSubmitting])
 
   return {
     clearDraft,
     forceSave,
     saveStatus,
     lastError,
+    hasSavedOnce,
   }
 }
