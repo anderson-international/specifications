@@ -3,13 +3,14 @@ import { SpecificationFormData } from '@/types'
 import { UseFormReturn } from 'react-hook-form'
 import { Product } from '@/lib/types/product'
 import { SpecificationEnumData } from '@/types/enum'
+import { TransformedFormData } from '../hooks/specification-transform-utils'
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
 export type WizardFormData = Omit<SpecificationFormData, 'id'>
 
 export interface UseSpecificationWizardProps {
-  onSubmit: (data: SpecificationFormData) => void | Promise<void>
+  onSubmit: (data: TransformedFormData) => void | Promise<void>
   initialData?: Record<string, unknown>
   userId: string
 }
@@ -38,7 +39,7 @@ export interface UseSpecificationWizardReturn {
 }
 
 export interface UseSubmissionProps {
-  onSubmit: (data: SpecificationFormData) => void | Promise<void>
+  onSubmit: (data: TransformedFormData) => void | Promise<void>
   methods: UseFormReturn<WizardFormData>
   userId: string
 }

@@ -2,9 +2,8 @@
 
 import React, { useCallback, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-
+import { TransformedFormData, buildApiRequest } from '@/components/wizard/hooks/specification-transform-utils'
 import SpecificationWizard from '@/components/wizard/SpecificationWizard'
-import { SpecificationFormData } from '@/types'
 import { SpecificationEnumData } from '@/types/enum'
 import { useAuth } from '@/lib/auth-context'
 
@@ -20,7 +19,7 @@ export default function CreateSpecificationClient(
   const { user } = useAuth()
   if (!user?.id) {
     throw new Error('User authentication required for specification creation')
-  }
+  }
   const productId = searchParams.get('productId') || undefined
   const mode = searchParams.get('mode') || undefined
   
@@ -29,14 +28,15 @@ export default function CreateSpecificationClient(
   }
 
   const handleSubmit = useCallback(
-    async (data: SpecificationFormData): Promise<void> => {
+    async (data: TransformedFormData): Promise<void> => {
       try {
-        const response = await fetch('/api/specifications', {
-          method: 'POST',
+        const apiRequest = buildApiRequest(data, user.id)
+        const response = await fetch(apiRequest.url, {
+          method: apiRequest.method,
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(apiRequest.body),
         })
 
         if (!response.ok) {
@@ -48,7 +48,7 @@ export default function CreateSpecificationClient(
         }
 
         const result = await response.json()
-        if (result.error || !result.success) {
+        if (result.error || !result.data) {
           if (result.error) {
             throw new Error(result.error)
           }
@@ -58,7 +58,7 @@ export default function CreateSpecificationClient(
           throw new Error('Create failed')
         }
 
-        router.push('/products')
+        router.push('/specifications')
       } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'Failed to create specification')
       }
