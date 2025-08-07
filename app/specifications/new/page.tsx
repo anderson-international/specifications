@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { SpecificationFormData } from '@/types'
+import { TransformedFormData } from '@/components/wizard/hooks/specification-transform-utils'
 import SpecificationWizard from '@/components/wizard/SpecificationWizard'
 import { useAuth } from '@/lib/auth-context'
 
@@ -10,7 +10,7 @@ export default function NewSpecificationPage(): JSX.Element {
   const { user } = useAuth()
   const router = useRouter()
 
-  const handleSubmit = useCallback(async (_data: SpecificationFormData): Promise<void> => {
+  const handleSubmit = useCallback(async (_data: TransformedFormData): Promise<void> => {
     router.push('/specifications')
   }, [router])
 

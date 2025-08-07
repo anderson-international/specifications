@@ -1,13 +1,14 @@
 'use client'
 
 import { useForm } from 'react-hook-form'
-import { useCallback, useState, useMemo } from 'react'
+import { useCallback, useState, useMemo, useEffect } from 'react'
 import { useProducts } from '@/hooks/useProducts'
 import { useSpecificationEnums } from './useSpecificationEnums'
 import useSpecificationTransform from './useSpecificationTransform'
 import { useSelectedProduct } from './useSelectedProduct'
 import { useWizardNavigation } from './useWizardNavigation'
 import { useWizardAutoSave } from './useWizardAutoSave'
+import { findEnumByName } from './useEnumUtils'
 
 import {
   WizardFormData,
@@ -56,6 +57,22 @@ export const useSpecificationWizard = ({
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
+  // Fix for createFromProduct mode: Set product_brand_id based on selected product
+  useEffect(() => {
+    if (mode === 'createFromProduct' && enumData?.productBrands && filteredProducts.length > 0) {
+      const shopifyHandle = initialData.shopify_handle as string
+      if (shopifyHandle) {
+        const product = filteredProducts.find(p => p.handle === shopifyHandle)
+        if (product) {
+          const brandId = findEnumByName(enumData.productBrands, product.brand)
+          if (brandId !== null) {
+            methods.setValue('product_brand_id', brandId, { shouldValidate: true })
+          }
+        }
+      }
+    }
+  }, [mode, enumData?.productBrands, filteredProducts, initialData.shopify_handle, methods])
+
   const isAutoSaveEnabled = !isEditMode && (activeStep + 1) >= 2
   
   const productHandle = useMemo((): string | null => {
@@ -81,13 +98,7 @@ export const useSpecificationWizard = ({
     setIsSubmitting(true)
     try {
       const transformedData = getTransformedData()
-      const completeSpecification = {
-        ...transformedData.specification,
-        tasting_note_ids: transformedData.junctionData.tasting_note_ids,
-        cure_type_ids: transformedData.junctionData.cure_ids,
-        tobacco_type_ids: transformedData.junctionData.tobacco_type_ids,
-      }
-      await onSubmit(completeSpecification)
+      await onSubmit(transformedData)
       clearDraft()
     } catch (error) {
       throw new Error(`Failed to submit specification: ${error instanceof Error ? error.message : 'Unknown error'}`)
