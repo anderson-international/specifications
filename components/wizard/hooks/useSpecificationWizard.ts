@@ -62,7 +62,7 @@ export const useSpecificationWizard = ({
     if (formHandle) return formHandle
     throw new Error('Product handle unavailable - selectedProduct, initialData, and form values all undefined')
   })()
-  const { clearDraft, forceSave } = useWizardAutoSave({
+  const { clearDraft, forceSave, saveStatus, lastError } = useWizardAutoSave({
     methods,
     userId,
     productHandle,
@@ -108,5 +108,7 @@ export const useSpecificationWizard = ({
     clearDraft,
     forceSave,
     productHandle,
+    saveStatus,
+    lastError,
   }
 }

@@ -27,42 +27,33 @@ const DraftManager = ({
   const [showRecoveryModal, setShowRecoveryModal] = useState(false)
   const [isChecked, setIsChecked] = useState(false)
 
-  // Check for existing draft
   useEffect(() => {
     if (isEditMode || !productHandle || !userId) return
 
-    try {
-      const existingDraft = loadDraft(userId, productHandle)
-      setDraftToRecover(existingDraft)
-      setShowRecoveryModal(true)
-    } catch (error) {
-      // No draft exists or draft expired - continue without modal
-    }
+    const existingDraft = loadDraft(userId, productHandle)
+    setDraftToRecover(existingDraft)
+    setShowRecoveryModal(true)
     setIsChecked(true)
   }, [userId, productHandle, isEditMode, isChecked])
 
   const handleRecoverDraft = useCallback((draft: WizardDraft) => {
     try {
-      // Restore form data
       Object.entries(draft.formData).forEach(([key, value]) => {
-        methods.setValue(key as keyof WizardFormData, value as any)
+        methods.setValue(key as keyof WizardFormData, value as WizardFormData[keyof WizardFormData])
       })
-
-      // Navigate to the saved step
       if (onDraftRecovered) {
         onDraftRecovered(draft.currentStep)
       }
-
-      setShowRecoveryModal(false)
-      setDraftToRecover(null)
-    } catch (error) {
-      throw new Error(`Draft recovery failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } catch (_error) {
+      throw new Error(`Draft recovery failed: ${_error instanceof Error ? _error.message : 'Unknown error'}`)
     }
+    
+    setShowRecoveryModal(false)
+    setDraftToRecover(null)
   }, [methods, onDraftRecovered])
 
   const handleStartFresh = useCallback(() => {
     if (draftToRecover && productHandle) {
-      // Delete the draft since user chose to start fresh
       deleteDraft(userId, productHandle)
     }
     
@@ -70,15 +61,18 @@ const DraftManager = ({
     setDraftToRecover(null)
   }, [draftToRecover, userId, productHandle])
 
-  // Get product title from form data for display
-  const getProductTitle = useCallback((): string | undefined => {
-    if (!draftToRecover) return undefined
+  const getProductTitle = useCallback((): string => {
+    if (!draftToRecover) {
+      throw new Error('DraftManager: getProductTitle called without draftToRecover - invalid component state')
+    }
     
-    // Try to get product title from draft data
     const draftProductTitle = draftToRecover.formData.product_title as string | undefined
     if (draftProductTitle) return draftProductTitle
     
-    // Fallback to handle
+    if (!draftToRecover.productHandle) {
+      throw new Error('DraftManager: draft has no product_title and no productHandle - corrupted draft data')
+    }
+    
     return draftToRecover.productHandle
   }, [draftToRecover])
 

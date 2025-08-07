@@ -42,6 +42,8 @@ const SpecificationWizard = ({
     clearDraft: _clearDraft,
     forceSave: _forceSave,
     productHandle,
+    saveStatus,
+    lastError,
   } = useSpecificationWizard({ onSubmit, initialData, userId })
   const handleStepClick = useCallback((stepIndex: number) => {
     originalHandleStepClick(stepIndex)
@@ -131,9 +133,10 @@ const SpecificationWizard = ({
               onNext={handleNext}
               autoSaveIndicator={
                 <AutoSaveIndicator
-                  methods={methods}
+                  saveStatus={saveStatus}
                   isEnabled={!isEditMode && (activeStep + 1) >= 2}
                   productHandle={productHandle}
+                  lastError={lastError}
                 />
               }
             />

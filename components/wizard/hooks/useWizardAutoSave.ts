@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { WizardFormData } from '../types/wizard.types'
 import { saveDraft, deleteDraft } from '@/lib/utils/draft-storage'
@@ -12,9 +12,13 @@ interface UseWizardAutoSaveProps {
   isSubmitting: boolean
 }
 
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
+
 interface UseWizardAutoSaveReturn {
   clearDraft: () => void
   forceSave: () => void
+  saveStatus: SaveStatus
+  lastError: string | null
 }
 
 const AUTO_SAVE_DELAY_MS = 3000
@@ -29,6 +33,8 @@ export function useWizardAutoSave({
 }: UseWizardAutoSaveProps): UseWizardAutoSaveReturn {
   const saveTimeoutRef = useRef<number>()
   const lastSavedDataRef = useRef<string>('')
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
+  const [lastError, setLastError] = useState<string | null>(null)
 
   const clearDraft = useCallback(() => {
     if (productHandle) {
@@ -43,14 +49,30 @@ export function useWizardAutoSave({
     const currentDataString = JSON.stringify(formData)
 
     if (currentDataString !== lastSavedDataRef.current) {
-      saveDraft(userId, productHandle, formData, currentStep)
-      lastSavedDataRef.current = currentDataString
+      try {
+        setSaveStatus('saving')
+        setLastError(null)
+        saveDraft(userId, productHandle, formData, currentStep)
+        lastSavedDataRef.current = currentDataString
+        setSaveStatus('saved')
+        
+        setTimeout(() => {
+          setSaveStatus('idle')
+        }, 2000)
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        setLastError(errorMessage)
+        setSaveStatus('error')
+        throw new Error(`Failed to save draft: ${errorMessage}`)
+      }
     }
   }, [methods, userId, productHandle, currentStep, isEnabled, isSubmitting])
 
   const debouncedSave = useCallback(() => {
     if (!isEnabled || !productHandle || isSubmitting) return
 
+    setSaveStatus('saving')
+    
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current)
     }
@@ -106,5 +128,7 @@ export function useWizardAutoSave({
   return {
     clearDraft,
     forceSave,
+    saveStatus,
+    lastError,
   }
 }
