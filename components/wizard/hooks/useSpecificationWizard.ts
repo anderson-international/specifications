@@ -1,7 +1,7 @@
 'use client'
 
 import { useForm } from 'react-hook-form'
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useMemo } from 'react'
 import { useProducts } from '@/hooks/useProducts'
 import { useSpecificationEnums } from './useSpecificationEnums'
 import useSpecificationTransform from './useSpecificationTransform'
@@ -55,19 +55,25 @@ export const useSpecificationWizard = ({
   })
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-  const productHandle = ((): string => {
+
+  const isAutoSaveEnabled = !isEditMode && (activeStep + 1) >= 2
+  
+  const productHandle = useMemo((): string | null => {
+    if (!isAutoSaveEnabled) return null
+    
     if (selectedProduct?.handle) return selectedProduct.handle
     if (initialData.shopify_handle) return initialData.shopify_handle as string
     const formHandle = methods.getValues('shopify_handle')
     if (formHandle) return formHandle
+
     throw new Error('Product handle unavailable - selectedProduct, initialData, and form values all undefined')
-  })()
+  }, [isAutoSaveEnabled, selectedProduct?.handle, initialData.shopify_handle, methods])
   const { clearDraft, forceSave, saveStatus, lastError, hasSavedOnce } = useWizardAutoSave({
     methods,
     userId,
     productHandle,
     currentStep: activeStep + 1,
-    isEnabled: !isEditMode && (activeStep + 1) >= 2,
+    isEnabled: isAutoSaveEnabled,
     isSubmitting,
   })
 

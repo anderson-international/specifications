@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-08-06T21:47:08.305Z",
-  "totalFiles": 4,
+  "timestamp": "2025-08-07T20:30:07.239Z",
+  "totalFiles": 2,
   "results": {
-    "lib\\cache\\redis-enum-cache.ts": {
-      "filePath": "lib\\cache\\redis-enum-cache.ts",
+    "components/wizard/steps/SelectedProductSummary.module.css": {
+      "filePath": "components/wizard/steps/SelectedProductSummary.module.css",
       "size": {
-        "lines": 50,
-        "limit": 50,
-        "type": "utils",
+        "lines": 0,
+        "limit": 0,
+        "type": "skipped",
         "status": "PASS",
-        "percentage": 100
+        "percentage": 0
       },
       "comments": {
         "violations": [],
@@ -17,11 +17,6 @@
         "status": "PASS"
       },
       "react": {
-        "hasReactImport": false,
-        "hasUseCallback": false,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": false,
         "issues": []
       },
       "consoleErrors": {
@@ -34,7 +29,7 @@
         "warnings": []
       },
       "typescript": {
-        "totalFunctions": 1,
+        "totalFunctions": 0,
         "missingReturnTypes": 0,
         "hasExplicitTypes": true,
         "status": "PASS"
@@ -45,14 +40,14 @@
         "status": "PASS"
       }
     },
-    "lib\\repositories\\enum-repository.ts": {
-      "filePath": "lib\\repositories\\enum-repository.ts",
+    "components/wizard/components/DraftSaveIndicator.module.css": {
+      "filePath": "components/wizard/components/DraftSaveIndicator.module.css",
       "size": {
-        "lines": 49,
-        "limit": 100,
-        "type": "repositories",
+        "lines": 0,
+        "limit": 0,
+        "type": "skipped",
         "status": "PASS",
-        "percentage": 49
+        "percentage": 0
       },
       "comments": {
         "violations": [],
@@ -60,110 +55,6 @@
         "status": "PASS"
       },
       "react": {
-        "hasReactImport": false,
-        "hasUseCallback": false,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": false,
-        "issues": []
-      },
-      "consoleErrors": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 2,
-        "missingReturnTypes": 0,
-        "hasExplicitTypes": true,
-        "status": "PASS"
-      },
-      "fallbackData": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      }
-    },
-    "lib\\validators\\specification-validator.ts": {
-      "filePath": "lib\\validators\\specification-validator.ts",
-      "size": {
-        "lines": 45,
-        "limit": 50,
-        "type": "utils",
-        "status": "PASS",
-        "percentage": 90
-      },
-      "comments": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "react": {
-        "hasReactImport": false,
-        "hasUseCallback": false,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": false,
-        "issues": []
-      },
-      "consoleErrors": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 1,
-        "missingReturnTypes": 0,
-        "hasExplicitTypes": true,
-        "status": "PASS"
-      },
-      "fallbackData": {
-        "violations": [
-          {
-            "type": "return_null",
-            "line": 9,
-            "content": "return null",
-            "advice": "Throw composed error instead of null return. Null returns mask invalid states and prevent proper error handling. Consider: What upstream validation failed? Why is this data missing?"
-          },
-          {
-            "type": "return_null",
-            "line": 42,
-            "content": "return null",
-            "advice": "Throw composed error instead of null return. Null returns mask invalid states and prevent proper error handling. Consider: What upstream validation failed? Why is this data missing?"
-          }
-        ],
-        "count": 2,
-        "status": "FAIL"
-      }
-    },
-    "types\\enum.ts": {
-      "filePath": "types\\enum.ts",
-      "size": {
-        "lines": 18,
-        "limit": 100,
-        "type": "types",
-        "status": "PASS",
-        "percentage": 18
-      },
-      "comments": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "react": {
-        "hasReactImport": false,
-        "hasUseCallback": false,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": false,
         "issues": []
       },
       "consoleErrors": {

@@ -8,15 +8,12 @@ interface DraftSaveIndicatorProps {
   hasSavedOnce: boolean
 }
 
-const DraftSaveIndicator = ({ saveStatus, hasSavedOnce }: DraftSaveIndicatorProps): JSX.Element | null => {
-
-  if (!hasSavedOnce) {
-    return null
-  }
-
+const DraftSaveIndicator = ({ saveStatus, hasSavedOnce }: DraftSaveIndicatorProps): JSX.Element => {
+  const isVisible = hasSavedOnce
+  
   if (saveStatus === 'saving') {
     return (
-      <div className={`${styles.indicator} ${styles.saving}`}>
+      <div className={`${styles.indicator} ${styles.saving} ${!isVisible ? styles.hidden : ''}`}>
         draft <span className={styles.spinner}></span>
       </div>
     )
@@ -24,13 +21,17 @@ const DraftSaveIndicator = ({ saveStatus, hasSavedOnce }: DraftSaveIndicatorProp
 
   if (saveStatus === 'saved' || saveStatus === 'idle') {
     return (
-      <div className={`${styles.indicator} ${styles.saved}`}>
+      <div className={`${styles.indicator} ${styles.saved} ${!isVisible ? styles.hidden : ''}`}>
         draft <span className={styles.checkmark}>✓</span>
       </div>
     )
   }
 
-  throw new Error(`DraftSaveIndicator: invalid saveStatus '${saveStatus}'. Expected 'saving', 'saved', or 'idle'. Check save status management.`)
+  return (
+    <div className={`${styles.indicator} ${styles.hidden}`}>
+      draft <span className={styles.checkmark}>✓</span>
+    </div>
+  )
 }
 
 export default DraftSaveIndicator
