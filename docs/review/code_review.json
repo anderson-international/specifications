@@ -1,47 +1,9 @@
 {
-  "timestamp": "2025-08-07T20:30:07.239Z",
-  "totalFiles": 2,
+  "timestamp": "2025-08-07T20:41:15.005Z",
+  "totalFiles": 1,
   "results": {
-    "components/wizard/steps/SelectedProductSummary.module.css": {
-      "filePath": "components/wizard/steps/SelectedProductSummary.module.css",
-      "size": {
-        "lines": 0,
-        "limit": 0,
-        "type": "skipped",
-        "status": "PASS",
-        "percentage": 0
-      },
-      "comments": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "react": {
-        "issues": []
-      },
-      "consoleErrors": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 0,
-        "missingReturnTypes": 0,
-        "hasExplicitTypes": true,
-        "status": "PASS"
-      },
-      "fallbackData": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      }
-    },
-    "components/wizard/components/DraftSaveIndicator.module.css": {
-      "filePath": "components/wizard/components/DraftSaveIndicator.module.css",
+    "components/wizard/components/DraftRecoveryModal.module.css": {
+      "filePath": "components/wizard/components/DraftRecoveryModal.module.css",
       "size": {
         "lines": 0,
         "limit": 0,
