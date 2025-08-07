@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-08-07T19:43:34.150Z",
-  "totalFiles": 4,
+  "timestamp": "2025-08-07T20:30:07.239Z",
+  "totalFiles": 2,
   "results": {
-    "app/ai-specifications/page.tsx": {
-      "filePath": "app/ai-specifications/page.tsx",
+    "components/wizard/steps/SelectedProductSummary.module.css": {
+      "filePath": "components/wizard/steps/SelectedProductSummary.module.css",
       "size": {
-        "lines": 84,
-        "limit": 150,
-        "type": "components",
+        "lines": 0,
+        "limit": 0,
+        "type": "skipped",
         "status": "PASS",
-        "percentage": 56
+        "percentage": 0
       },
       "comments": {
         "violations": [],
@@ -17,56 +17,6 @@
         "status": "PASS"
       },
       "react": {
-        "hasReactImport": false,
-        "hasUseCallback": false,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": true,
-        "issues": [
-          "Event handlers should use useCallback"
-        ]
-      },
-      "consoleErrors": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 8,
-        "missingReturnTypes": 0,
-        "hasExplicitTypes": true,
-        "status": "PASS"
-      },
-      "fallbackData": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      }
-    },
-    "components/wizard/steps/ProductCharacteristics.tsx": {
-      "filePath": "components/wizard/steps/ProductCharacteristics.tsx",
-      "size": {
-        "lines": 132,
-        "limit": 150,
-        "type": "components",
-        "status": "PASS",
-        "percentage": 88
-      },
-      "comments": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "react": {
-        "hasReactImport": true,
-        "hasUseCallback": false,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": true,
         "issues": []
       },
       "consoleErrors": {
@@ -79,7 +29,7 @@
         "warnings": []
       },
       "typescript": {
-        "totalFunctions": 6,
+        "totalFunctions": 0,
         "missingReturnTypes": 0,
         "hasExplicitTypes": true,
         "status": "PASS"
@@ -90,14 +40,14 @@
         "status": "PASS"
       }
     },
-    "components/wizard/steps/TastingProfile.tsx": {
-      "filePath": "components/wizard/steps/TastingProfile.tsx",
+    "components/wizard/components/DraftSaveIndicator.module.css": {
+      "filePath": "components/wizard/components/DraftSaveIndicator.module.css",
       "size": {
-        "lines": 132,
-        "limit": 150,
-        "type": "components",
+        "lines": 0,
+        "limit": 0,
+        "type": "skipped",
         "status": "PASS",
-        "percentage": 88
+        "percentage": 0
       },
       "comments": {
         "violations": [],
@@ -105,11 +55,6 @@
         "status": "PASS"
       },
       "react": {
-        "hasReactImport": true,
-        "hasUseCallback": true,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": true,
         "issues": []
       },
       "consoleErrors": {
@@ -122,50 +67,7 @@
         "warnings": []
       },
       "typescript": {
-        "totalFunctions": 9,
-        "missingReturnTypes": 0,
-        "hasExplicitTypes": true,
-        "status": "PASS"
-      },
-      "fallbackData": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      }
-    },
-    "lib/services/enumService.ts": {
-      "filePath": "lib/services/enumService.ts",
-      "size": {
-        "lines": 98,
-        "limit": 100,
-        "type": "services",
-        "status": "PASS",
-        "percentage": 98
-      },
-      "comments": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "react": {
-        "hasReactImport": false,
-        "hasUseCallback": false,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": false,
-        "issues": []
-      },
-      "consoleErrors": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 12,
+        "totalFunctions": 0,
         "missingReturnTypes": 0,
         "hasExplicitTypes": true,
         "status": "PASS"
