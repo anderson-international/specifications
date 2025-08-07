@@ -1,0 +1,36 @@
+.indicator {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  text-align: right;
+  margin-top: -0.25rem;
+  padding-right: 10px;
+}
+
+.saving {
+  color: var(--color-text-secondary);
+}
+
+.saved {
+  color: var(--color-text-secondary);
+}
+
+.spinner {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 1px solid transparent;
+  border-top: 1px solid #10b981;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 0.25rem;
+}
+
+.checkmark {
+  color: #10b981;
+  margin-left: 0.25rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

@@ -4,7 +4,7 @@ import React, { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import WizardStepCard from '../controls/WizardStepCard'
 import Ratings from './Ratings'
-import SelectedProductSummary from './SelectedProductSummary'
+import ProductWithDraftIndicator from '../components/ProductWithDraftIndicator'
 import { Product } from '@/lib/types/product'
 import { SpecificationEnumData } from '@/types/enum'
 import styles from './ReviewSubmission.module.css'
@@ -14,6 +14,8 @@ interface ReviewSubmissionProps {
   totalSteps: number
   disabled?: boolean
   selectedProduct?: Product | null
+  saveStatus?: import('../types/wizard.types').SaveStatus
+  hasSavedOnce?: boolean
   enumData?: SpecificationEnumData
   enumsLoading?: boolean
 }
@@ -29,6 +31,8 @@ const ReviewSubmission = ({
   totalSteps,
   disabled = false,
   selectedProduct,
+  saveStatus = 'idle',
+  hasSavedOnce = false,
   enumData: _enumData,
   enumsLoading: _enumsLoading,
 }: ReviewSubmissionProps): JSX.Element => {
@@ -66,7 +70,14 @@ const ReviewSubmission = ({
       stepNumber={stepNumber}
       totalSteps={totalSteps}
     >
-      {selectedProduct && <SelectedProductSummary product={selectedProduct} />}
+      {selectedProduct && (
+        <ProductWithDraftIndicator 
+          product={selectedProduct}
+          saveStatus={saveStatus}
+          hasSavedOnce={hasSavedOnce}
+          isEnabled={!disabled}
+        />
+      )}
       <Ratings
         starRating={starRating}
         ratingBoost={ratingBoost}

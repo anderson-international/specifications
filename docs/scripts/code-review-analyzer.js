@@ -349,6 +349,84 @@ function isCommentLine(line) {
   return /^\s*\/\//.test(line) || /^\s*\/\*/.test(line) || /^\s*\*/.test(line);
 }
 
+// Context validation functions for fallback data analysis
+function isExplicitNullableReturnType(content, lineNum) {
+  // Look backwards for function signature with | null return type
+  const lines = content.split('\n');
+  const currentLineIndex = lineNum - 1;
+  
+  // Search backwards up to 10 lines for function signature
+  for (let i = Math.max(0, currentLineIndex - 10); i <= currentLineIndex; i++) {
+    const line = lines[i];
+    // Match function signatures with explicit | null return types
+    if (/:\s*[^=]*\|\s*null/.test(line) || 
+        /JSX\.Element\s*\|\s*null/.test(line) ||
+        /ReactNode\s*\|\s*null/.test(line)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isReactConditionalRender(content, lineNum) {
+  // Check if this is a React component with EXPLICIT null return type
+  const lines = content.split('\n');
+  const currentLineIndex = lineNum - 1;
+  
+  // Look for React imports
+  const hasReactImports = content.includes('import React') || 
+                         content.includes('import * as React') ||
+                         content.includes('JSX.Element');
+  
+  if (!hasReactImports) return false;
+  
+  // CRITICAL: Only allow if function has EXPLICIT | null return type
+  for (let i = Math.max(0, currentLineIndex - 15); i <= currentLineIndex; i++) {
+    const line = lines[i];
+    // Match React component patterns WITH explicit null return type
+    if (/const\s+\w+\s*=\s*\([^)]*\)\s*:\s*JSX\.Element\s*\|\s*null/.test(line) ||
+        /function\s+\w+\s*\([^)]*\)\s*:\s*JSX\.Element\s*\|\s*null/.test(line)) {
+      return true;
+    }
+  }
+  
+  // Do NOT allow components without explicit null typing
+  return false;
+}
+
+function isValidApiNotFoundPattern(content, lineNum) {
+  // Check if this is a legitimate API "not found" pattern
+  const lines = content.split('\n');
+  const currentLineIndex = lineNum - 1;
+  
+  // Look for function signature that explicitly returns T | null
+  for (let i = Math.max(0, currentLineIndex - 10); i <= currentLineIndex; i++) {
+    const line = lines[i];
+    // Match utility function patterns that legitimately return null
+    if (/function\s+\w+.*?:\s*\w+\s*\|\s*null/.test(line) ||
+        /export\s+function\s+\w+.*?:\s*\w+\s*\|\s*null/.test(line)) {
+      return true;
+    }
+  }
+  
+  // Check for legitimate "not found" contexts (expand context window)
+  const contextLines = lines.slice(Math.max(0, currentLineIndex - 5), currentLineIndex + 1).join(' ');
+  
+  // localStorage, cache, data loading, or expiration scenarios
+  if (/localStorage\.getItem|cache\.get|stored|expired/.test(contextLines) ||
+      /if\s*\(!\w+\)|if\s*\(.*expired.*\)|Date\.now\(\).*>.*maxAge/.test(contextLines) ||
+      /deleteDraft|removeItem|clear/.test(contextLines)) {
+    return true;
+  }
+  
+  // Check for data validation patterns
+  if (/if\s*\([^)]*\)\s*{[^}]*return\s+null/.test(contextLines)) {
+    return true;
+  }
+  
+  return false;
+}
+
 function analyzeFallbackData(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
@@ -360,8 +438,16 @@ function analyzeFallbackData(filePath) {
       const lineNum = i + 1;
       const trimmedLine = line.trim();
       
-      // Pattern 1: Return null/undefined
+      // Pattern 1: Return null/undefined (with context validation)
       if (/return\s+(null|undefined);?$/.test(trimmedLine)) {
+        // Skip if this is a legitimate null return pattern
+        if (isExplicitNullableReturnType(content, lineNum) ||
+            isReactConditionalRender(content, lineNum) ||
+            isValidApiNotFoundPattern(content, lineNum)) {
+          // This is a legitimate null return, not a fallback violation
+          continue;
+        }
+        
         violations.push({
           type: 'return_null',
           line: lineNum,

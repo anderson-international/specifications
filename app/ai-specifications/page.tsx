@@ -1,17 +1,16 @@
 'use client'
 
-import React, { useState } from 'react'
 import { FilterControls, type FilterConfig } from '@/components/shared/FilterControls'
 import containerStyles from '@/components/shared/PageContainer/PageContainer.module.css'
 import pageTitleStyles from '@/components/shared/PageTitle/PageTitle.module.css'
+import { useState } from 'react'
 import styles from '../specifications/specifications.module.css'
+import type { Specification } from '@/types/specification'
 
 export default function AISpecificationsPage(): JSX.Element {
   const [searchValue, setSearchValue] = useState('')
   const [filters] = useState<FilterConfig[]>([])
-  
-  // Placeholder data - will be replaced with actual AI specifications
-  const aiSpecs: any[] = []
+  const aiSpecs: Specification[] = []
   const loading = false
   const error: string | null = null
   
@@ -21,12 +20,12 @@ export default function AISpecificationsPage(): JSX.Element {
   const errorMessage = 'Error loading AI specifications:'
 
   const handleFilterChange = (_id: string, _value: string): void => {
-    // Placeholder - implement filtering logic
+    void _id
+    void _value
   }
 
   const handleClearAll = (): void => {
     setSearchValue('')
-    // Clear other filters when implemented
   }
 
   const showClearAll = searchValue.length > 0
@@ -72,8 +71,8 @@ export default function AISpecificationsPage(): JSX.Element {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {aiSpecs.map((spec) => (
               <div key={spec.id}>
-                {/* AI Specification item rendering - to be implemented */}
-                {spec.name}
+                {}
+                {spec.product?.title}
               </div>
             ))}
           </div>

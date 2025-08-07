@@ -4,6 +4,8 @@ import { UseFormReturn } from 'react-hook-form'
 import { Product } from '@/lib/types/product'
 import { SpecificationEnumData } from '@/types/enum'
 
+export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
+
 export type WizardFormData = Omit<SpecificationFormData, 'id'>
 
 export interface UseSpecificationWizardProps {
@@ -27,6 +29,12 @@ export interface UseSpecificationWizardReturn {
   handleFormSubmit: (data: WizardFormData) => Promise<void>
   canNavigateToStep: (stepIndex: number) => boolean
   isEditMode: boolean
+  clearDraft: () => void
+  forceSave: () => void
+  productHandle: string | null
+  saveStatus: SaveStatus
+  lastError: string | null
+  hasSavedOnce: boolean
 }
 
 export interface UseSubmissionProps {

@@ -7,6 +7,7 @@ import { useSpecificationEnums } from './useSpecificationEnums'
 import useSpecificationTransform from './useSpecificationTransform'
 import { useSelectedProduct } from './useSelectedProduct'
 import { useWizardNavigation } from './useWizardNavigation'
+import { useWizardAutoSave } from './useWizardAutoSave'
 
 import {
   WizardFormData,
@@ -36,7 +37,7 @@ export const useSpecificationWizard = ({
 
   const { filteredProducts } = useProducts()
   const { data: enumData, isLoading: enumsLoading } = useSpecificationEnums()
-  const selectedProduct = useSelectedProduct(methods, filteredProducts)
+  const selectedProduct = useSelectedProduct(methods, filteredProducts)
 
   const {
     activeStep,
@@ -54,8 +55,23 @@ export const useSpecificationWizard = ({
   })
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const productHandle = ((): string => {
+    if (selectedProduct?.handle) return selectedProduct.handle
+    if (initialData.shopify_handle) return initialData.shopify_handle as string
+    const formHandle = methods.getValues('shopify_handle')
+    if (formHandle) return formHandle
+    throw new Error('Product handle unavailable - selectedProduct, initialData, and form values all undefined')
+  })()
+  const { clearDraft, forceSave, saveStatus, lastError, hasSavedOnce } = useWizardAutoSave({
+    methods,
+    userId,
+    productHandle,
+    currentStep: activeStep + 1,
+    isEnabled: !isEditMode && (activeStep + 1) >= 2,
+    isSubmitting,
+  })
 
-  const handleFormSubmit = useCallback(async (): Promise<void> => {
+  const handleFormSubmit = useCallback(async (_data: WizardFormData): Promise<void> => {
     setIsSubmitting(true)
     try {
       const transformedData = getTransformedData()
@@ -66,12 +82,13 @@ export const useSpecificationWizard = ({
         tobacco_type_ids: transformedData.junctionData.tobacco_type_ids,
       }
       await onSubmit(completeSpecification)
+      clearDraft()
     } catch (error) {
       throw new Error(`Failed to submit specification: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsSubmitting(false)
     }
-  }, [onSubmit, getTransformedData])
+  }, [onSubmit, getTransformedData, clearDraft])
 
   return {
     methods,
@@ -88,5 +105,11 @@ export const useSpecificationWizard = ({
     handleFormSubmit,
     canNavigateToStep,
     isEditMode,
+    clearDraft,
+    forceSave,
+    productHandle,
+    saveStatus,
+    lastError,
+    hasSavedOnce,
   }
 }

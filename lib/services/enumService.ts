@@ -7,9 +7,6 @@ import {
   type UpdateEnumValueInput,
 } from '@/lib/validations/enums'
 
-/**
- * Local service-layer error with HTTP status mapping
- */
 export class ServiceError extends Error {
   public readonly status: number
   public readonly details?: unknown
@@ -49,7 +46,7 @@ export async function listEnums({
 
   const where = search ? { name: { contains: search, mode: 'insensitive' as const } } : undefined
 
-  const [data, total]: [any[], number] = await Promise.all([
+  const [data, total]: [EnumValue[], number] = await Promise.all([
     enumTable.findMany({ where, orderBy: { name: 'asc' }, skip, take: limit }),
     enumTable.count({ where }),
   ])

@@ -6,11 +6,13 @@ import { Product } from '@/lib/types/product'
 import styles from './SelectedProductSummary.module.css'
 
 interface SelectedProductSummaryProps {
-  product: Product | null
+  product: Product
 }
 
-const SelectedProductSummary = ({ product }: SelectedProductSummaryProps): JSX.Element | null => {
-  if (!product) return null
+const SelectedProductSummary = ({ product }: SelectedProductSummaryProps): JSX.Element => {
+  if (!product) {
+    throw new Error('SelectedProductSummary: product is required but missing. Check product selection state and component usage.')
+  }
 
   return (
     <div className={styles.container}>
