@@ -11,7 +11,6 @@ const ProductSelector = ({
   mode,
   onSelectionChange,
   initialSelection = [],
-  searchPlaceholder = 'Search products...',
   disabled = false,
   products,
 }: ProductSelectorProps): JSX.Element => {
@@ -26,10 +25,10 @@ const ProductSelector = ({
     handleConfirmSelection,
   } = useProductSelector({ mode, initialSelection, onSelectionChange, products })
 
-  const handleOpenModal = useCallback(() => setIsModalOpen(true), [])
-  const handleCloseModal = useCallback(() => setIsModalOpen(false), [])
+  const handleOpenModal = useCallback((): void => setIsModalOpen(true), [])
+  const handleCloseModal = useCallback((): void => setIsModalOpen(false), [])
 
-  const handleModalConfirm = useCallback(() => {
+  const handleModalConfirm = useCallback((): void => {
     handleConfirmSelection()
     setIsModalOpen(false)
   }, [handleConfirmSelection])
@@ -51,7 +50,6 @@ const ProductSelector = ({
 
       <ProductSelectorAdapter
         mode={mode}
-        searchPlaceholder={searchPlaceholder}
         disabled={disabled}
         products={products}
         selectedProductIds={selectedProductIds}

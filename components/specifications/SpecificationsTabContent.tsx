@@ -4,10 +4,16 @@ import { FilterControls, type FilterConfig } from '@/components/shared/FilterCon
 import ProductRow from '@/components/shared/ProductSelector/ProductRow'
 import type { Product } from '@/lib/types/product'
 import type { SpecTabId } from './SpecificationsTabNavigation'
+import AsyncStateContainer from '@/components/shared/AsyncStateContainer'
+import ProductList from '@/components/shared/ProductList'
+import CountSummary from '@/components/shared/CountSummary'
+import { useEffect, useState } from 'react'
+import { useAuth } from '@/lib/auth-context'
 
 interface UserProduct extends Product {
   userHasSpec: boolean
   specCount: number
+  specification_id?: string
 }
 import styles from '../../app/specifications/specifications.module.css'
 
@@ -40,59 +46,76 @@ export default function SpecificationsTabContent({
   onCreateClick,
   onEditClick
 }: SpecificationsTabContentProps): JSX.Element {
-  const searchPlaceholder = "Search by product or brand..."
+  const { user } = useAuth()
+  const [localDraftHandles, setLocalDraftHandles] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    if (activeTab !== 'to-do' || !user?.id) {
+      setLocalDraftHandles(new Set())
+      return
+    }
+    const handles = new Set<string>()
+    try {
+      for (const p of filteredProducts) {
+        const handle = (p as { handle?: string }).handle
+        if (!handle) continue
+        const key = `wizard-draft-${user.id}-${handle}`
+        if (typeof window !== 'undefined' && window.localStorage.getItem(key)) {
+          handles.add(handle)
+        }
+      }
+    } catch {
+      void 0
+    }
+    setLocalDraftHandles(handles)
+  }, [activeTab, filteredProducts, user?.id])
   const loadingMessage = activeTab === 'my-specs' ? 'Loading specifications...' : 'Loading products...'
   const errorMessage = activeTab === 'my-specs' ? 'Error loading specifications:' : 'Error loading products:'
-  const emptyMessage = activeTab === 'my-specs' ? 'No specifications found.' : 'No products to review yet.'
+  const emptyMessage: string = activeTab === 'my-specs' ? 'No specifications found.' : 'No products to review yet.'
 
   return (
     <>
       <FilterControls 
         searchQuery={searchValue}
         onSearchChange={onSearchChange}
-        searchPlaceholder={searchPlaceholder}
         filters={filters}
         onFilterChange={onFilterChange}
         onClearAll={onClearAll}
         showClearAll={showClearAll}
       />
       
-      <div className={styles.countSummary}>
-        <span className={styles.countText}>
-          {`${filteredProducts.length} item${filteredProducts.length !== 1 ? 's' : ''}`}
-        </span>
-      </div>
+      <CountSummary
+        count={filteredProducts.length}
+        hintMobile={activeTab === 'my-specs' ? 'Tap to edit' : 'Tap to create'}
+        hintDesktop={activeTab === 'my-specs' ? 'Click to edit' : 'Click to create'}
+      />
       
       <div className={styles.main}>
-        {error && (
-          <div style={{ color: 'var(--color-error)', padding: '1rem', textAlign: 'center' }}>
-            <p>{errorMessage} {error}</p>
-          </div>
-        )}
-        
-        {loading ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-            <p>{loadingMessage}</p>
-          </div>
-        ) : filteredProducts.length === 0 ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-            <p>{emptyMessage}</p>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {filteredProducts.map((product) => (
+        <AsyncStateContainer
+          loading={loading}
+          error={error}
+          empty={!loading && filteredProducts.length === 0}
+          loadingMessage={loadingMessage}
+          errorMessage={errorMessage}
+          emptyMessage={emptyMessage}
+        >
+          <ProductList
+            items={filteredProducts}
+            getKey={(p: UserProduct) => p.id}
+            renderItem={(product: UserProduct) => (
               <ProductRow
-                key={product.id}
                 product={product}
                 mode="single"
                 userHasSpec={product.userHasSpec}
                 specCount={product.specCount}
-                onCreateClick={activeTab === 'to-do' ? () => onCreateClick(product.id) : undefined}
-                onEditClick={() => onEditClick((product as any).specification_id)}
+                hasLocalDraft={activeTab === 'to-do' ? localDraftHandles.has((product as { handle?: string }).handle ?? '') : false}
+                onCreateClick={activeTab === 'to-do' ? () => onCreateClick(product.handle) : undefined}
+                onEditClick={product.specification_id ? () => onEditClick(product.specification_id) : undefined}
               />
-            ))}
-          </div>
-        )}
+            )}
+            containerStyle={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}
+          />
+        </AsyncStateContainer>
       </div>
     </>
   )

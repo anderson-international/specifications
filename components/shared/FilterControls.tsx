@@ -20,7 +20,7 @@ export interface FilterConfig {
 interface FilterControlsProps {
   searchQuery: string
   onSearchChange: (value: string) => void
-  searchPlaceholder: string
+  searchPlaceholder?: string
   filters: FilterConfig[]
   onFilterChange: (id: string, value: string) => void
   onClearAll: () => void
@@ -33,7 +33,7 @@ export const FilterControls: React.FC<FilterControlsProps> = React.memo(
   ({
     searchQuery,
     onSearchChange,
-    searchPlaceholder,
+    searchPlaceholder = 'Search by product...',
     filters,
     onFilterChange,
     onClearAll,
@@ -48,16 +48,9 @@ export const FilterControls: React.FC<FilterControlsProps> = React.memo(
             onSearchChange={onSearchChange}
             searchPlaceholder={searchPlaceholder}
           />
-        </div>
-
-        <div className={styles.filtersRow}>
-          {filters.map((filter) => (
-            <FilterGroup key={filter.id} filter={filter} onFilterChange={onFilterChange} />
-          ))}
-          
           <button
             onClick={onClearAll}
-            className={styles.clearAllButton}
+            className={`${styles.clearAllButton} ${styles.clearAllTop}`}
             type="button"
             disabled={!showClearAll}
             title="Clear all filters"
@@ -65,6 +58,12 @@ export const FilterControls: React.FC<FilterControlsProps> = React.memo(
           >
             ×
           </button>
+        </div>
+
+        <div className={styles.filtersRow}>
+          {filters.map((filter) => (
+            <FilterGroup key={filter.id} filter={filter} onFilterChange={onFilterChange} />
+          ))}
         </div>
 
         {summaryText && (

@@ -4,7 +4,6 @@ import React from 'react'
 import { Product } from '@/lib/types/product'
 import { SpecificationEnumData } from '@/types/enum'
 import { SaveStatus } from '../types/wizard.types'
-import ProductSelection from '../steps/ProductSelection'
 import ProductCharacteristics from '../steps/ProductCharacteristics'
 import TastingProfile from '../steps/TastingProfile'
 import ReviewSubmission from '../steps/ReviewSubmission'
@@ -27,21 +26,6 @@ export interface WizardStep {
 }
 
 export const createWizardSteps = (): WizardStep[] => [
-  {
-    id: 'product',
-    title: 'Product',
-    component: (stepNumber, totalSteps, disabled, onNext, selectedProduct, enumData, enumsLoading, filteredProducts) => (
-      <ProductSelection
-        stepNumber={stepNumber}
-        totalSteps={totalSteps}
-        disabled={disabled}
-        onProductSelect={onNext}
-        enumData={enumData}
-        enumsLoading={enumsLoading}
-        filteredProducts={filteredProducts}
-      />
-    ),
-  },
   {
     id: 'characteristics',
     title: 'Characteristics',

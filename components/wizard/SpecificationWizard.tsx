@@ -116,7 +116,7 @@ const SpecificationWizard = ({
               {currentStep.component(
                 activeStep + 1,
                 totalSteps,
-                isSubmitting || (isEditMode && activeStep === 0),
+                isSubmitting,
                 handleNext,
                 selectedProduct,
                 enumData,

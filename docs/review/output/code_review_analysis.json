@@ -1,343 +1,838 @@
 {
   "metadata": {
-    "timestamp": "2025-08-03T15:15:56.009Z",
-    "totalFiles": 2,
-    "passedFiles": 0,
-    "failedFiles": 2,
-    "averageRisk": 3
+    "timestamp": "2025-08-10T20:03:26.387Z",
+    "totalFiles": 1,
+    "passedFiles": 1,
+    "failedFiles": 0
   },
   "summary": {
     "blockingViolations": 0,
     "eslintErrors": 0,
-    "typescriptIssues": 3,
-    "oversizedFiles": 1
-  },
-  "fileResults": {
-    "lib\\services\\enumService.ts": {
-      "filePath": "lib\\services\\enumService.ts",
-      "timestamp": "2025-08-03T15:15:53.483Z",
-      "size": {
-        "lines": 101,
-        "limit": 100,
-        "type": "services",
-        "status": "FAIL",
-        "percentage": 101
-      },
-      "comments": {
-        "violations": [
-          {
-            "type": "jsdoc",
-            "line": 10,
-            "content": "/**"
-          },
-          {
-            "type": "jsdoc",
-            "line": 11,
-            "content": "* Local service-layer error with HTTP status mapping"
-          }
-        ],
-        "count": 2,
-        "status": "FAIL"
-      },
-      "react": {
-        "hasReactImport": false,
-        "hasUseCallback": false,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": false,
-        "issues": []
-      },
-      "consoleErrors": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 13,
-        "missingReturnTypes": 2,
-        "hasExplicitTypes": false,
-        "status": "FAIL"
-      },
-      "fallbackData": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "overallStatus": "FAIL",
-      "contextGuidance": {
-        "riskLevel": 4,
-        "riskGuidance": {
-          "1-3": "Safe for mechanical/batch fixes",
-          "4-6": "Review carefully before fixing",
-          "7-8": "Analyze thoroughly, seek approval for complex changes",
-          "9-10": "High complexity - require explicit approval before proceeding"
-        },
-        "priorities": [
-          {
-            "type": "TYPESCRIPT_TYPES",
-            "count": 2,
-            "recommendation": "Add explicit return type annotations. Consider type reuse opportunities before creating new types."
-          },
-          {
-            "type": "FILE_SIZE",
-            "overage": 1,
-            "recommendation": "File exceeds 100 line limit by 1 lines. Consider refactoring into smaller, focused modules."
-          }
-        ],
-        "recommendations": [],
-        "contextDocs": [
-          "/tech-code-quality"
-        ]
-      }
+    "typescriptIssues": 0,
+    "oversizedFiles": 0,
+    "deadCodeIssues": {
+      "unusedFiles": 0,
+      "unusedExports": 0,
+      "unusedTypes": 0,
+      "unusedEnumMembers": 0,
+      "unusedClassMembers": 0,
+      "unlistedDependencies": 0,
+      "unresolvedImports": 0
     },
-    "hooks\\useProducts.ts": {
-      "filePath": "hooks\\useProducts.ts",
-      "timestamp": "2025-08-03T15:15:56.009Z",
-      "size": {
-        "lines": 96,
-        "limit": 100,
-        "type": "hooks",
-        "status": "PASS",
-        "percentage": 96
-      },
-      "comments": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "react": {
-        "hasReactImport": false,
-        "hasUseCallback": true,
-        "hasUseMemo": true,
-        "hasUseEffect": true,
-        "hasHooks": true,
-        "issues": []
-      },
-      "consoleErrors": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": [
-          {
-            "line": 57,
-            "column": 6,
-            "message": "React Hook useCallback has a missing dependency: 'retryCount'. Either include it or remove the dependency array.",
-            "ruleId": "react-hooks/exhaustive-deps"
-          }
-        ]
-      },
-      "typescript": {
-        "totalFunctions": 6,
-        "missingReturnTypes": 1,
-        "hasExplicitTypes": false,
-        "status": "FAIL"
-      },
-      "fallbackData": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "overallStatus": "FAIL",
-      "contextGuidance": {
-        "riskLevel": 2,
-        "riskGuidance": {
-          "1-3": "Safe for mechanical/batch fixes",
-          "4-6": "Review carefully before fixing",
-          "7-8": "Analyze thoroughly, seek approval for complex changes",
-          "9-10": "High complexity - require explicit approval before proceeding"
+    "duplicateCode": {
+      "groups": 18,
+      "duplicatedLines": 229,
+      "percentage": 0,
+      "details": [
+        {
+          "groupId": "G-f2879f63",
+          "fingerprint": "ce2429fb",
+          "similarity": {
+            "lines": 32,
+            "tokens": 0,
+            "pct": 0
+          },
+          "category": "form-layout",
+          "severity": "low",
+          "suggestion": "extract component",
+          "recommendedName": "SharedComponent",
+          "targetPath": "components/shared/SharedComponent.tsx",
+          "estimatedEffort": "S",
+          "fileLimitsRisk": false,
+          "occurrences": [
+            {
+              "file": "components\\dashboard\\DashboardTabNavigation.tsx",
+              "functionName": null,
+              "startLine": 27,
+              "endLine": 35,
+              "preview": "<nav className={styles.tabNavigation}>\n{tabs.map((tab, index) => (\n<button"
+            },
+            {
+              "file": "components\\specifications\\SpecificationsTabNavigation.tsx",
+              "functionName": null,
+              "startLine": 29,
+              "endLine": 37,
+              "preview": "<nav className={styles.tabNavigation}>\n{tabs.map((tab, index) => (\n<button"
+            },
+            {
+              "file": "components\\dashboard\\DashboardTabNavigation.tsx",
+              "functionName": null,
+              "startLine": 22,
+              "endLine": 44,
+              "preview": "const handleTabClick = useCallback((tabId: TabId): void => {\nonTabClick(tabId)\n}, [onTabClick])"
+            },
+            {
+              "file": "components\\specifications\\SpecificationsTabNavigation.tsx",
+              "functionName": null,
+              "startLine": 24,
+              "endLine": 46,
+              "preview": "const handleTabClick = useCallback((tabId: SpecTabId): void => {\nonTabClick(tabId)\n}, [onTabClick])"
+            }
+          ],
+          "fixPlanSteps": [
+            "Create shared SharedComponent with props for variability",
+            "Replace duplicate blocks with shared component",
+            "Ensure explicit return types"
+          ],
+          "dependencies": [],
+          "testImpact": "medium"
         },
-        "priorities": [
-          {
-            "type": "TYPESCRIPT_TYPES",
-            "count": 1,
-            "recommendation": "Add explicit return type annotations. Consider type reuse opportunities before creating new types."
-          }
-        ],
-        "recommendations": [],
-        "contextDocs": [
-          "/tech-code-quality"
-        ]
-      }
+        {
+          "groupId": "G-09e0aba2",
+          "fingerprint": "bc2a2eb2",
+          "similarity": {
+            "lines": 22,
+            "tokens": 0,
+            "pct": 0
+          },
+          "category": "general",
+          "severity": "low",
+          "suggestion": "extract util",
+          "recommendedName": "route",
+          "targetPath": "lib/utils/route.ts",
+          "estimatedEffort": "S",
+          "fileLimitsRisk": false,
+          "occurrences": [
+            {
+              "file": "app\\api\\specifications\\ai-synth\\[shopify_handle]\\route.ts",
+              "functionName": null,
+              "startLine": 1,
+              "endLine": 22,
+              "preview": "import { NextRequest, NextResponse } from 'next/server'\nimport { createApiError, withErrorHandling } from '@/lib/api/api-errors'\nimport { AISynthService } from '@/lib/services/ai-synth-service'"
+            },
+            {
+              "file": "app\\api\\specifications\\ai-synth\\[shopify_handle]\\sources\\route.ts",
+              "functionName": null,
+              "startLine": 1,
+              "endLine": 22,
+              "preview": "import { NextRequest, NextResponse } from 'next/server'\nimport { createApiError, withErrorHandling } from '@/lib/api/api-errors'\nimport { AISynthService } from '@/lib/services/ai-synth-service'"
+            }
+          ],
+          "fixPlanSteps": [
+            "Create route pure function",
+            "Replace duplicate logic with util",
+            "Add unit tests if suitable"
+          ],
+          "dependencies": [],
+          "testImpact": "low"
+        },
+        {
+          "groupId": "G-7dd86ffa",
+          "fingerprint": "e9b59138",
+          "similarity": {
+            "lines": 21,
+            "tokens": 0,
+            "pct": 0
+          },
+          "category": "wizard-step-ui",
+          "severity": "low",
+          "suggestion": "extract component",
+          "recommendedName": "WizardStepsComponent",
+          "targetPath": "components/shared/WizardStepsComponent.tsx",
+          "estimatedEffort": "S",
+          "fileLimitsRisk": false,
+          "occurrences": [
+            {
+              "file": "components\\wizard\\constants\\wizardSteps.tsx",
+              "functionName": "createWizardSteps",
+              "startLine": 50,
+              "endLine": 70,
+              "preview": "stepNumber={stepNumber}\ntotalSteps={totalSteps}\ndisabled={disabled}"
+            },
+            {
+              "file": "components\\wizard\\constants\\wizardSteps.tsx",
+              "functionName": "createWizardSteps",
+              "startLine": 34,
+              "endLine": 54,
+              "preview": "stepNumber={stepNumber}\ntotalSteps={totalSteps}\ndisabled={disabled}"
+            }
+          ],
+          "fixPlanSteps": [
+            "Create shared WizardStepsComponent with props for variability",
+            "Replace duplicate blocks with shared component",
+            "Ensure explicit return types"
+          ],
+          "dependencies": [],
+          "testImpact": "medium"
+        },
+        {
+          "groupId": "G-4f9dabd1",
+          "fingerprint": "31b065f3",
+          "similarity": {
+            "lines": 19,
+            "tokens": 0,
+            "pct": 0
+          },
+          "category": "general",
+          "severity": "low",
+          "suggestion": "extract util",
+          "recommendedName": "route",
+          "targetPath": "lib/utils/route.ts",
+          "estimatedEffort": "S",
+          "fileLimitsRisk": false,
+          "occurrences": [
+            {
+              "file": "app\\api\\trials\\[id]\\route.ts",
+              "functionName": "PUT",
+              "startLine": 31,
+              "endLine": 40,
+              "preview": "export async function PUT(\nrequest: NextRequest,\n{ params }: GetParams"
+            },
+            {
+              "file": "app\\api\\trials\\[id]\\route.ts",
+              "functionName": "GET",
+              "startLine": 12,
+              "endLine": 21,
+              "preview": "export async function GET(\nrequest: NextRequest,\n{ params }: GetParams"
+            },
+            {
+              "file": "app\\api\\trials\\[id]\\route.ts",
+              "functionName": "DELETE",
+              "startLine": 67,
+              "endLine": 75,
+              "preview": "_request: NextRequest,\n{ params }: GetParams\n): Promise<NextResponse> {"
+            },
+            {
+              "file": "app\\api\\trials\\[id]\\route.ts",
+              "functionName": "GET",
+              "startLine": 13,
+              "endLine": 21,
+              "preview": "request: NextRequest,\n{ params }: GetParams\n): Promise<NextResponse> {"
+            }
+          ],
+          "fixPlanSteps": [
+            "Create route pure function",
+            "Replace duplicate logic with util",
+            "Add unit tests if suitable"
+          ],
+          "dependencies": [],
+          "testImpact": "low"
+        },
+        {
+          "groupId": "G-72488527",
+          "fingerprint": "82365a50",
+          "similarity": {
+            "lines": 19,
+            "tokens": 0,
+            "pct": 0
+          },
+          "category": "wizard-step-ui",
+          "severity": "low",
+          "suggestion": "extract component",
+          "recommendedName": "SharedComponent",
+          "targetPath": "components/shared/SharedComponent.tsx",
+          "estimatedEffort": "S",
+          "fileLimitsRisk": false,
+          "occurrences": [
+            {
+              "file": "components\\wizard\\steps\\ProductCharacteristics.tsx",
+              "functionName": null,
+              "startLine": 61,
+              "endLine": 79,
+              "preview": "<WizardStepCard title=\"Characteristics\" stepNumber={stepNumber} totalSteps={totalSteps}>\n<div style={{ padding: '2rem', textAlign: 'center' }}>\nLoading characteristics..."
+            },
+            {
+              "file": "components\\wizard\\steps\\TastingProfile.tsx",
+              "functionName": null,
+              "startLine": 64,
+              "endLine": 82,
+              "preview": "<WizardStepCard title=\"Tasting Profile\" stepNumber={stepNumber} totalSteps={totalSteps}>\n<div style={{ padding: '2rem', textAlign: 'center' }}>\nLoading tasting profile options..."
+            }
+          ],
+          "fixPlanSteps": [
+            "Create shared SharedComponent with props for variability",
+            "Replace duplicate blocks with shared component",
+            "Ensure explicit return types"
+          ],
+          "dependencies": [],
+          "testImpact": "medium"
+        },
+        {
+          "groupId": "G-7762043f",
+          "fingerprint": "007f9faf",
+          "similarity": {
+            "lines": 17,
+            "tokens": 0,
+            "pct": 0
+          },
+          "category": "general",
+          "severity": "low",
+          "suggestion": "extract util",
+          "recommendedName": "specification",
+          "targetPath": "lib/utils/specification.ts",
+          "estimatedEffort": "S",
+          "fileLimitsRisk": false,
+          "occurrences": [
+            {
+              "file": "lib\\repositories\\specification-read-repository.ts",
+              "functionName": null,
+              "startLine": 35,
+              "endLine": 42,
+              "preview": "static async findManyWithAI(filters: {\nuserId?: string\nstatus?: string"
+            },
+            {
+              "file": "lib\\repositories\\specification-read-repository.ts",
+              "functionName": null,
+              "startLine": 6,
+              "endLine": 13,
+              "preview": "static async findMany(filters: {\nuserId?: string\nstatus?: string"
+            },
+            {
+              "file": "lib\\repositories\\specification-read-repository.ts",
+              "functionName": null,
+              "startLine": 54,
+              "endLine": 62,
+              "preview": "static async findManyWithoutAI(filters: {\nuserId?: string\nstatus?: string"
+            },
+            {
+              "file": "lib\\repositories\\specification-read-repository.ts",
+              "functionName": null,
+              "startLine": 6,
+              "endLine": 43,
+              "preview": "static async findMany(filters: {\nuserId?: string\nstatus?: string"
+            }
+          ],
+          "fixPlanSteps": [
+            "Create specification pure function",
+            "Replace duplicate logic with util",
+            "Add unit tests if suitable"
+          ],
+          "dependencies": [],
+          "testImpact": "low"
+        },
+        {
+          "groupId": "G-5c81ac7b",
+          "fingerprint": "298ce7ff",
+          "similarity": {
+            "lines": 15,
+            "tokens": 0,
+            "pct": 0
+          },
+          "category": "general",
+          "severity": "low",
+          "suggestion": "extract util",
+          "recommendedName": "redis",
+          "targetPath": "lib/utils/redis.ts",
+          "estimatedEffort": "S",
+          "fileLimitsRisk": false,
+          "occurrences": [
+            {
+              "file": "lib\\cache\\base\\redis-cache-base.ts",
+              "functionName": null,
+              "startLine": 54,
+              "endLine": 68,
+              "preview": "} else {\n// Static cache: use simple get\ncached = await redis.get(this.cacheKey)"
+            },
+            {
+              "file": "lib\\cache\\redis-product-cache.ts",
+              "functionName": null,
+              "startLine": 104,
+              "endLine": 118,
+              "preview": "const products = await this.fetchFreshData()\n\n// Step 1: Clear existing hash"
+            }
+          ],
+          "fixPlanSteps": [
+            "Create redis pure function",
+            "Replace duplicate logic with util",
+            "Add unit tests if suitable"
+          ],
+          "dependencies": [],
+          "testImpact": "low"
+        },
+        {
+          "groupId": "G-a40c5996",
+          "fingerprint": "d5572957",
+          "similarity": {
+            "lines": 14,
+            "tokens": 0,
+            "pct": 0
+          },
+          "category": "form-layout",
+          "severity": "low",
+          "suggestion": "extract component",
+          "recommendedName": "EditPageStatesComponent",
+          "targetPath": "components/shared/EditPageStatesComponent.tsx",
+          "estimatedEffort": "S",
+          "fileLimitsRisk": false,
+          "occurrences": [
+            {
+              "file": "app\\edit-specification\\[id]\\EditPageStates.tsx",
+              "functionName": "NotFoundState",
+              "startLine": 45,
+              "endLine": 58,
+              "preview": "export function NotFoundState({ onReturn }: NotFoundStateProps): JSX.Element {\nconst router = useRouter()\n"
+            },
+            {
+              "file": "app\\edit-specification\\[id]\\EditPageStates.tsx",
+              "functionName": "ErrorState",
+              "startLine": 20,
+              "endLine": 33,
+              "preview": "export function ErrorState({ error, onReturn }: ErrorStateProps): JSX.Element {\nconst router = useRouter()\n"
+            }
+          ],
+          "fixPlanSteps": [
+            "Create shared EditPageStatesComponent with props for variability",
+            "Replace duplicate blocks with shared component",
+            "Ensure explicit return types"
+          ],
+          "dependencies": [],
+          "testImpact": "medium"
+        },
+        {
+          "groupId": "G-ae3d4ed4",
+          "fingerprint": "510a936f",
+          "similarity": {
+            "lines": 13,
+            "tokens": 0,
+            "pct": 0
+          },
+          "category": "general",
+          "severity": "low",
+          "suggestion": "extract util",
+          "recommendedName": "route",
+          "targetPath": "lib/utils/route.ts",
+          "estimatedEffort": "S",
+          "fileLimitsRisk": false,
+          "occurrences": [
+            {
+              "file": "app\\api\\specifications\\[id]\\route.ts",
+              "functionName": null,
+              "startLine": 8,
+              "endLine": 20,
+              "preview": "interface GetParams {\nparams: Promise<{\nid: string"
+            },
+            {
+              "file": "app\\api\\trials\\[id]\\route.ts",
+              "functionName": null,
+              "startLine": 6,
+              "endLine": 18,
+              "preview": "interface GetParams {\nparams: Promise<{\nid: string"
+            }
+          ],
+          "fixPlanSteps": [
+            "Create route pure function",
+            "Replace duplicate logic with util",
+            "Add unit tests if suitable"
+          ],
+          "dependencies": [],
+          "testImpact": "low"
+        },
+        {
+          "groupId": "G-4b5f7e36",
+          "fingerprint": "7674c93b",
+          "similarity": {
+            "lines": 11,
+            "tokens": 0,
+            "pct": 0
+          },
+          "category": "form-layout",
+          "severity": "low",
+          "suggestion": "extract component",
+          "recommendedName": "SharedComponent",
+          "targetPath": "components/shared/SharedComponent.tsx",
+          "estimatedEffort": "S",
+          "fileLimitsRisk": false,
+          "occurrences": [
+            {
+              "file": "app\\create-specification\\CreateSpecificationClient.tsx",
+              "functionName": "CreateSpecificationClient",
+              "startLine": 37,
+              "endLine": 47,
+              "preview": "const apiRequest = buildApiRequest(data, user.id)\nconst response = await fetch(apiRequest.url, {\nmethod: apiRequest.method,"
+            },
+            {
+              "file": "app\\edit-specification\\[id]\\page.tsx",
+              "functionName": "EditSpecificationPage",
+              "startLine": 27,
+              "endLine": 37,
+              "preview": "const apiRequest = buildApiRequest(data, user.id, id)\nconst response = await fetch(apiRequest.url, {\nmethod: apiRequest.method,"
+            }
+          ],
+          "fixPlanSteps": [
+            "Create shared SharedComponent with props for variability",
+            "Replace duplicate blocks with shared component",
+            "Ensure explicit return types"
+          ],
+          "dependencies": [],
+          "testImpact": "medium"
+        }
+      ]
     }
   },
-  "batchGuidance": {
-    "recommendedOrder": [
+  "fileResults": {},
+  "repoDuplicates": {
+    "config": {
+      "includeRoots": [
+        "app",
+        "components",
+        "lib",
+        "hooks",
+        "types"
+      ],
+      "minTokens": 50
+    },
+    "topPairs": [
       {
-        "phase": "ALL_VIOLATIONS",
         "files": [
-          "lib\\services\\enumService.ts",
-          "hooks\\useProducts.ts"
+          "components\\dashboard\\DashboardTabNavigation.tsx",
+          "components\\specifications\\SpecificationsTabNavigation.tsx"
         ],
-        "guidance": "Fix ALL violations. Start with fail-fast issues (fallback data, console errors) as they mask errors and prevent proper debugging. Then address remaining violations by risk level."
+        "occurrences": 2,
+        "totalLines": 32,
+        "segments": [
+          {
+            "aStart": 27,
+            "aEnd": 35,
+            "bStart": 29,
+            "bEnd": 37,
+            "lines": 9
+          },
+          {
+            "aStart": 22,
+            "aEnd": 44,
+            "bStart": 24,
+            "bEnd": 46,
+            "lines": 23
+          }
+        ]
+      },
+      {
+        "files": [
+          "app\\api\\specifications\\ai-synth\\[shopify_handle]\\route.ts",
+          "app\\api\\specifications\\ai-synth\\[shopify_handle]\\sources\\route.ts"
+        ],
+        "occurrences": 1,
+        "totalLines": 22,
+        "segments": [
+          {
+            "aStart": 1,
+            "aEnd": 22,
+            "bStart": 1,
+            "bEnd": 22,
+            "lines": 22
+          }
+        ]
+      },
+      {
+        "files": [
+          "components\\wizard\\constants\\wizardSteps.tsx",
+          "components\\wizard\\constants\\wizardSteps.tsx"
+        ],
+        "occurrences": 1,
+        "totalLines": 21,
+        "segments": [
+          {
+            "aStart": 50,
+            "aEnd": 70,
+            "bStart": 34,
+            "bEnd": 54,
+            "lines": 21
+          }
+        ]
+      },
+      {
+        "files": [
+          "app\\api\\trials\\[id]\\route.ts",
+          "app\\api\\trials\\[id]\\route.ts"
+        ],
+        "occurrences": 2,
+        "totalLines": 19,
+        "segments": [
+          {
+            "aStart": 31,
+            "aEnd": 40,
+            "bStart": 12,
+            "bEnd": 21,
+            "lines": 10
+          },
+          {
+            "aStart": 67,
+            "aEnd": 75,
+            "bStart": 13,
+            "bEnd": 21,
+            "lines": 9
+          }
+        ]
+      },
+      {
+        "files": [
+          "components\\wizard\\steps\\ProductCharacteristics.tsx",
+          "components\\wizard\\steps\\TastingProfile.tsx"
+        ],
+        "occurrences": 1,
+        "totalLines": 19,
+        "segments": [
+          {
+            "aStart": 61,
+            "aEnd": 79,
+            "bStart": 64,
+            "bEnd": 82,
+            "lines": 19
+          }
+        ]
+      },
+      {
+        "files": [
+          "lib\\repositories\\specification-read-repository.ts",
+          "lib\\repositories\\specification-read-repository.ts"
+        ],
+        "occurrences": 2,
+        "totalLines": 17,
+        "segments": [
+          {
+            "aStart": 35,
+            "aEnd": 42,
+            "bStart": 6,
+            "bEnd": 13,
+            "lines": 8
+          },
+          {
+            "aStart": 54,
+            "aEnd": 62,
+            "bStart": 6,
+            "bEnd": 43,
+            "lines": 9
+          }
+        ]
+      },
+      {
+        "files": [
+          "lib\\cache\\base\\redis-cache-base.ts",
+          "lib\\cache\\redis-product-cache.ts"
+        ],
+        "occurrences": 1,
+        "totalLines": 15,
+        "segments": [
+          {
+            "aStart": 54,
+            "aEnd": 68,
+            "bStart": 104,
+            "bEnd": 118,
+            "lines": 15
+          }
+        ]
+      },
+      {
+        "files": [
+          "app\\edit-specification\\[id]\\EditPageStates.tsx",
+          "app\\edit-specification\\[id]\\EditPageStates.tsx"
+        ],
+        "occurrences": 1,
+        "totalLines": 14,
+        "segments": [
+          {
+            "aStart": 45,
+            "aEnd": 58,
+            "bStart": 20,
+            "bEnd": 33,
+            "lines": 14
+          }
+        ]
+      },
+      {
+        "files": [
+          "app\\api\\specifications\\[id]\\route.ts",
+          "app\\api\\trials\\[id]\\route.ts"
+        ],
+        "occurrences": 1,
+        "totalLines": 13,
+        "segments": [
+          {
+            "aStart": 8,
+            "aEnd": 20,
+            "bStart": 6,
+            "bEnd": 18,
+            "lines": 13
+          }
+        ]
+      },
+      {
+        "files": [
+          "app\\create-specification\\CreateSpecificationClient.tsx",
+          "app\\edit-specification\\[id]\\page.tsx"
+        ],
+        "occurrences": 1,
+        "totalLines": 11,
+        "segments": [
+          {
+            "aStart": 37,
+            "aEnd": 47,
+            "bStart": 27,
+            "bEnd": 37,
+            "lines": 11
+          }
+        ]
       }
     ],
-    "contextLoading": [],
-    "riskThresholds": {
-      "lowRisk": [
-        {
-          "filePath": "hooks\\useProducts.ts",
-          "timestamp": "2025-08-03T15:15:56.009Z",
-          "size": {
-            "lines": 96,
-            "limit": 100,
-            "type": "hooks",
-            "status": "PASS",
-            "percentage": 96
+    "byFile": [
+      {
+        "file": "app\\api\\trials\\[id]\\route.ts",
+        "segments": 5,
+        "totalLines": 51,
+        "topMatches": [
+          {
+            "otherFile": "app\\api\\trials\\[id]\\route.ts",
+            "segments": 4,
+            "totalLines": 38
           },
-          "comments": {
-            "violations": [],
-            "count": 0,
-            "status": "PASS"
-          },
-          "react": {
-            "hasReactImport": false,
-            "hasUseCallback": true,
-            "hasUseMemo": true,
-            "hasUseEffect": true,
-            "hasHooks": true,
-            "issues": []
-          },
-          "consoleErrors": {
-            "violations": [],
-            "count": 0,
-            "status": "PASS"
-          },
-          "eslint": {
-            "errors": [],
-            "warnings": [
-              {
-                "line": 57,
-                "column": 6,
-                "message": "React Hook useCallback has a missing dependency: 'retryCount'. Either include it or remove the dependency array.",
-                "ruleId": "react-hooks/exhaustive-deps"
-              }
-            ]
-          },
-          "typescript": {
-            "totalFunctions": 6,
-            "missingReturnTypes": 1,
-            "hasExplicitTypes": false,
-            "status": "FAIL"
-          },
-          "fallbackData": {
-            "violations": [],
-            "count": 0,
-            "status": "PASS"
-          },
-          "overallStatus": "FAIL",
-          "contextGuidance": {
-            "riskLevel": 2,
-            "riskGuidance": {
-              "1-3": "Safe for mechanical/batch fixes",
-              "4-6": "Review carefully before fixing",
-              "7-8": "Analyze thoroughly, seek approval for complex changes",
-              "9-10": "High complexity - require explicit approval before proceeding"
-            },
-            "priorities": [
-              {
-                "type": "TYPESCRIPT_TYPES",
-                "count": 1,
-                "recommendation": "Add explicit return type annotations. Consider type reuse opportunities before creating new types."
-              }
-            ],
-            "recommendations": [],
-            "contextDocs": [
-              "/tech-code-quality"
-            ]
+          {
+            "otherFile": "app\\api\\specifications\\[id]\\route.ts",
+            "segments": 1,
+            "totalLines": 13
           }
-        }
-      ],
-      "mediumRisk": [
-        {
-          "filePath": "lib\\services\\enumService.ts",
-          "timestamp": "2025-08-03T15:15:53.483Z",
-          "size": {
-            "lines": 101,
-            "limit": 100,
-            "type": "services",
-            "status": "FAIL",
-            "percentage": 101
-          },
-          "comments": {
-            "violations": [
-              {
-                "type": "jsdoc",
-                "line": 10,
-                "content": "/**"
-              },
-              {
-                "type": "jsdoc",
-                "line": 11,
-                "content": "* Local service-layer error with HTTP status mapping"
-              }
-            ],
-            "count": 2,
-            "status": "FAIL"
-          },
-          "react": {
-            "hasReactImport": false,
-            "hasUseCallback": false,
-            "hasUseMemo": false,
-            "hasUseEffect": false,
-            "hasHooks": false,
-            "issues": []
-          },
-          "consoleErrors": {
-            "violations": [],
-            "count": 0,
-            "status": "PASS"
-          },
-          "eslint": {
-            "errors": [],
-            "warnings": []
-          },
-          "typescript": {
-            "totalFunctions": 13,
-            "missingReturnTypes": 2,
-            "hasExplicitTypes": false,
-            "status": "FAIL"
-          },
-          "fallbackData": {
-            "violations": [],
-            "count": 0,
-            "status": "PASS"
-          },
-          "overallStatus": "FAIL",
-          "contextGuidance": {
-            "riskLevel": 4,
-            "riskGuidance": {
-              "1-3": "Safe for mechanical/batch fixes",
-              "4-6": "Review carefully before fixing",
-              "7-8": "Analyze thoroughly, seek approval for complex changes",
-              "9-10": "High complexity - require explicit approval before proceeding"
-            },
-            "priorities": [
-              {
-                "type": "TYPESCRIPT_TYPES",
-                "count": 2,
-                "recommendation": "Add explicit return type annotations. Consider type reuse opportunities before creating new types."
-              },
-              {
-                "type": "FILE_SIZE",
-                "overage": 1,
-                "recommendation": "File exceeds 100 line limit by 1 lines. Consider refactoring into smaller, focused modules."
-              }
-            ],
-            "recommendations": [],
-            "contextDocs": [
-              "/tech-code-quality"
-            ]
+        ]
+      },
+      {
+        "file": "components\\wizard\\constants\\wizardSteps.tsx",
+        "segments": 2,
+        "totalLines": 42,
+        "topMatches": [
+          {
+            "otherFile": "components\\wizard\\constants\\wizardSteps.tsx",
+            "segments": 2,
+            "totalLines": 42
           }
-        }
-      ],
-      "highRisk": []
-    }
+        ]
+      },
+      {
+        "file": "lib\\repositories\\specification-read-repository.ts",
+        "segments": 4,
+        "totalLines": 34,
+        "topMatches": [
+          {
+            "otherFile": "lib\\repositories\\specification-read-repository.ts",
+            "segments": 4,
+            "totalLines": 34
+          }
+        ]
+      },
+      {
+        "file": "components\\dashboard\\DashboardTabNavigation.tsx",
+        "segments": 2,
+        "totalLines": 32,
+        "topMatches": [
+          {
+            "otherFile": "components\\specifications\\SpecificationsTabNavigation.tsx",
+            "segments": 2,
+            "totalLines": 32
+          }
+        ]
+      },
+      {
+        "file": "components\\specifications\\SpecificationsTabNavigation.tsx",
+        "segments": 2,
+        "totalLines": 32,
+        "topMatches": [
+          {
+            "otherFile": "components\\dashboard\\DashboardTabNavigation.tsx",
+            "segments": 2,
+            "totalLines": 32
+          }
+        ]
+      },
+      {
+        "file": "app\\edit-specification\\[id]\\EditPageStates.tsx",
+        "segments": 2,
+        "totalLines": 28,
+        "topMatches": [
+          {
+            "otherFile": "app\\edit-specification\\[id]\\EditPageStates.tsx",
+            "segments": 2,
+            "totalLines": 28
+          }
+        ]
+      },
+      {
+        "file": "components\\wizard\\controls\\MultiSelectIcons.tsx",
+        "segments": 2,
+        "totalLines": 22,
+        "topMatches": [
+          {
+            "otherFile": "components\\wizard\\controls\\MultiSelectIcons.tsx",
+            "segments": 2,
+            "totalLines": 22
+          }
+        ]
+      },
+      {
+        "file": "app\\api\\specifications\\ai-synth\\[shopify_handle]\\route.ts",
+        "segments": 1,
+        "totalLines": 22,
+        "topMatches": [
+          {
+            "otherFile": "app\\api\\specifications\\ai-synth\\[shopify_handle]\\sources\\route.ts",
+            "segments": 1,
+            "totalLines": 22
+          }
+        ]
+      },
+      {
+        "file": "app\\api\\specifications\\ai-synth\\[shopify_handle]\\sources\\route.ts",
+        "segments": 1,
+        "totalLines": 22,
+        "topMatches": [
+          {
+            "otherFile": "app\\api\\specifications\\ai-synth\\[shopify_handle]\\route.ts",
+            "segments": 1,
+            "totalLines": 22
+          }
+        ]
+      },
+      {
+        "file": "components\\wizard\\steps\\ProductCharacteristics.tsx",
+        "segments": 1,
+        "totalLines": 19,
+        "topMatches": [
+          {
+            "otherFile": "components\\wizard\\steps\\TastingProfile.tsx",
+            "segments": 1,
+            "totalLines": 19
+          }
+        ]
+      }
+    ]
+  },
+  "actionableItems": {
+    "nextTopGroups": [
+      "G-f2879f63",
+      "G-09e0aba2",
+      "G-7dd86ffa",
+      "G-4f9dabd1",
+      "G-72488527",
+      "G-7762043f",
+      "G-5c81ac7b",
+      "G-a40c5996",
+      "G-ae3d4ed4",
+      "G-4b5f7e36"
+    ],
+    "sharedModulesToCreate": [
+      {
+        "name": "SharedComponent",
+        "path": "components/shared/SharedComponent.tsx",
+        "reason": "form-layout"
+      },
+      {
+        "name": "route",
+        "path": "lib/utils/route.ts",
+        "reason": "general"
+      },
+      {
+        "name": "WizardStepsComponent",
+        "path": "components/shared/WizardStepsComponent.tsx",
+        "reason": "wizard-step-ui"
+      },
+      {
+        "name": "route",
+        "path": "lib/utils/route.ts",
+        "reason": "general"
+      },
+      {
+        "name": "SharedComponent",
+        "path": "components/shared/SharedComponent.tsx",
+        "reason": "wizard-step-ui"
+      }
+    ],
+    "sharedModulesToReuse": [],
+    "dedupeSavingsEstimateLines": 68
   }
 }

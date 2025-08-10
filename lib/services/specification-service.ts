@@ -2,9 +2,6 @@ import { SpecificationReadRepository } from '@/lib/repositories/specification-re
 import { SpecificationWriteRepository } from '@/lib/repositories/specification-write-repository'
 import { type SpecificationWithRelations } from '@/lib/repositories/types/specification-types'
 import { ProductLookupService } from '@/lib/services/product-lookup-service'
-import { productCache } from '@/lib/cache'
-import { type Product } from '@/lib/types/product'
-import { getAllSpecCountsMap } from '@/lib/shopify/database'
 
 import { transformSpecificationToApiResponse, type ApiResponse } from './specification-transformers-api'
 import {
@@ -70,35 +67,4 @@ export class SpecificationService {
     )
   }
 
-  static async getUserProducts(userId: string, userHasSpec: boolean): Promise<Array<Product & { userHasSpec: boolean; specCount: number; specification_id?: string }>> {
-    // Get products with spec counts (not from cache)
-    const cachedProducts = await productCache.getAllProducts()
-    const specCountsMap = await getAllSpecCountsMap()
-    
-    // Merge cached products with spec counts
-    const allProducts = cachedProducts.map(product => ({
-      ...product,
-      spec_count_total: specCountsMap.get(product.handle) ?? 0
-    }))
-    
-    const userSpecs = await SpecificationReadRepository.findMany({ userId })
-    const userShopifyHandles = new Set(userSpecs.map(spec => spec.shopify_handle))
-    
-    // Create a map of shopify_handle -> specification_id for quick lookup
-    const specIdMap = new Map(userSpecs.map(spec => [spec.shopify_handle, spec.id.toString()]))
-    
-    const filtered = allProducts.filter(product => userShopifyHandles.has(product.handle) === userHasSpec)
-    
-    return filtered
-      .map(product => ({
-        ...product,
-        userHasSpec,
-        specCount: product.spec_count_total || 0,
-        specification_id: specIdMap.get(product.handle)
-      }))
-      .sort((a, b) => {
-        const titleComparison = a.title.localeCompare(b.title)
-        return titleComparison !== 0 ? titleComparison : a.brand.localeCompare(b.brand)
-      })
-  }
 }

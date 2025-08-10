@@ -6,7 +6,6 @@ export interface ProductSelectorProps {
   mode: 'single' | 'multi'
   onSelectionChange: (productIds: string[]) => void
   initialSelection?: string[]
-  searchPlaceholder?: string
   disabled?: boolean
   products?: Product[]
 }
@@ -19,6 +18,7 @@ export interface ProductRowProps {
   mode: 'single' | 'multi'
   userHasSpec?: boolean
   specCount?: number
+  hasLocalDraft?: boolean
   onCreateClick?: (productId: string) => void
   onEditClick?: (specificationId: string) => void
 }

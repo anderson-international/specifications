@@ -18,11 +18,6 @@ const NavContent = (): JSX.Element => {
           </Link>
         </li>
         <li>
-          <Link href="/specifications/new" className={styles.navLink}>
-            New Spec
-          </Link>
-        </li>
-        <li>
           <Link href="/specifications" className={styles.navLink}>
             My Specs
           </Link>

@@ -6,6 +6,9 @@ import pageTitleStyles from '@/components/shared/PageTitle/PageTitle.module.css'
 import { useState } from 'react'
 import styles from '../specifications/specifications.module.css'
 import type { Specification } from '@/types/specification'
+import AsyncStateContainer from '@/components/shared/AsyncStateContainer'
+import ProductList from '@/components/shared/ProductList'
+import CountSummary from '@/components/shared/CountSummary'
 
 export default function AISpecificationsPage(): JSX.Element {
   const [searchValue, setSearchValue] = useState('')
@@ -28,7 +31,7 @@ export default function AISpecificationsPage(): JSX.Element {
     setSearchValue('')
   }
 
-  const showClearAll = searchValue.length > 0
+  const showClearAll: boolean = searchValue.length > 0
 
   return (
     <div className={containerStyles.pageContainer}>
@@ -46,37 +49,28 @@ export default function AISpecificationsPage(): JSX.Element {
         showClearAll={showClearAll}
       />
       
-      <div className={styles.countSummary}>
-        <span className={styles.countText}>
-          {`${aiSpecs.length} item${aiSpecs.length !== 1 ? 's' : ''}`}
-        </span>
-      </div>
+      <CountSummary count={aiSpecs.length} />
       
       <div className={styles.main}>
-        {error && (
-          <div style={{ color: 'var(--color-error)', padding: '1rem', textAlign: 'center' }}>
-            <p>{errorMessage} {error}</p>
-          </div>
-        )}
-        
-        {loading ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-            <p>{loadingMessage}</p>
-          </div>
-        ) : aiSpecs.length === 0 ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-            <p>{emptyMessage}</p>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {aiSpecs.map((spec) => (
-              <div key={spec.id}>
-                {}
+        <AsyncStateContainer
+          loading={loading}
+          error={error}
+          empty={!loading && aiSpecs.length === 0}
+          loadingMessage={loadingMessage}
+          errorMessage={errorMessage}
+          emptyMessage={emptyMessage}
+        >
+          <ProductList
+            items={aiSpecs}
+            getKey={(spec: Specification) => spec.id}
+            renderItem={(spec: Specification) => (
+              <div>
                 {spec.product?.title}
               </div>
-            ))}
-          </div>
-        )}
+            )}
+            containerStyle={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
+          />
+        </AsyncStateContainer>
       </div>
     </div>
   )

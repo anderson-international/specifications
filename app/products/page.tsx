@@ -8,7 +8,7 @@ import containerStyles from '@/components/shared/PageContainer/PageContainer.mod
 const EMPTY_SELECTION: string[] = []
 
 export default function ProductsPage(): JSX.Element {
-  const handleProductSelection = useCallback((productIds: string[]) => {
+  const handleProductSelection = useCallback((productIds: string[]): void => {
     alert(`Selected ${productIds.length} products: ${productIds.join(', ')}`)
   }, [])
 
@@ -22,7 +22,6 @@ export default function ProductsPage(): JSX.Element {
         mode="multi"
         onSelectionChange={handleProductSelection}
         initialSelection={EMPTY_SELECTION}
-        searchPlaceholder="Search by product or brand..."
       />
     </div>
   )

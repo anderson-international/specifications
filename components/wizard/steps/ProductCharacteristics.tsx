@@ -1,14 +1,14 @@
 'use client'
 
-import React from 'react'
-import WizardStepCard from '../controls/WizardStepCard'
-import CharacteristicSelect from './CharacteristicSelect'
-import ProductAttributeToggles from './ProductAttributeToggles'
-import ProductWithDraftIndicator from '../components/ProductWithDraftIndicator'
-import { useProductCharacteristics } from '../hooks/useProductCharacteristics'
-import { transformEnumToOptions } from '../hooks/useEnumUtils'
 import { Product } from '@/lib/types/product'
 import { SpecificationEnumData } from '@/types/enum'
+import React from 'react'
+import ProductWithDraftIndicator from '../components/ProductWithDraftIndicator'
+import WizardStepCard from '../controls/WizardStepCard'
+import { transformEnumToOptions } from '../hooks/useEnumUtils'
+import { useProductCharacteristics } from '../hooks/useProductCharacteristics'
+import CharacteristicSelect from './CharacteristicSelect'
+import ProductAttributeToggles from './ProductAttributeToggles'
 import styles from './ProductCharacteristics.module.css'
 
 interface ProductCharacteristicsProps {
@@ -58,16 +58,16 @@ const ProductCharacteristics = ({
 
   if (isLoadingEnums || !enumData) {
     return (
-      <WizardStepCard title="Product Characteristics" stepNumber={stepNumber} totalSteps={totalSteps}>
+      <WizardStepCard title="Characteristics" stepNumber={stepNumber} totalSteps={totalSteps}>
         <div style={{ padding: '2rem', textAlign: 'center' }}>
-          Loading product characteristics...
+          Loading characteristics...
         </div>
       </WizardStepCard>
     )
   }
 
   return (
-    <WizardStepCard title="Product Characteristics" stepNumber={stepNumber} totalSteps={totalSteps}>
+    <WizardStepCard title="Characteristics" stepNumber={stepNumber} totalSteps={totalSteps}>
       {selectedProduct && (
         <ProductWithDraftIndicator 
           product={selectedProduct}

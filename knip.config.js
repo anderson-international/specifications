@@ -11,15 +11,19 @@ module.exports = {
   ],
   
   project: [
-    // Include all source files for dependency analysis
-    '**/*.{js,ts,tsx}',
+    // Include primary source and explicit test/scripts
+    'app/**/*.{ts,tsx,js}',
+    'components/**/*.{ts,tsx,js}',
+    'lib/**/*.{ts,tsx,js}',
+    'hooks/**/*.{ts,tsx,js}',
+    'types/**/*.{ts,tsx,js}',
+
+    // Excludes
     '!node_modules/**',
     '!.next/**',
     '!dist/**',
     '!build/**',
-    // Ignore documentation test/fixture sources to reduce noise
     '!docs/**',
-    '!scripts/**',
   ],
   
   // Include script-specific dependencies

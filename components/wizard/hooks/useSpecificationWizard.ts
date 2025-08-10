@@ -24,7 +24,6 @@ export const useSpecificationWizard = ({
 }: UseSpecificationWizardProps): UseSpecificationWizardReturn => {
   const mode = initialData.mode as string | undefined
   const isEditMode = mode === 'edit'
-  const shouldSkipProductSelection = mode === 'edit' || mode === 'createFromProduct'
 
   const formDefaults = { 
     ...WIZARD_DEFAULT_VALUES, 
@@ -47,7 +46,7 @@ export const useSpecificationWizard = ({
     handlePrevious,
     handleStepClick,
     canNavigateToStep,
-  } = useWizardNavigation(shouldSkipProductSelection ? 1 : 0)
+  } = useWizardNavigation(0)
 
   const { getTransformedData } = useSpecificationTransform({
     methods,
@@ -57,7 +56,6 @@ export const useSpecificationWizard = ({
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-  // Fix for createFromProduct mode: Set product_brand_id based on selected product
   useEffect(() => {
     if (mode === 'createFromProduct' && enumData?.productBrands && filteredProducts.length > 0) {
       const shopifyHandle = initialData.shopify_handle as string
@@ -72,19 +70,15 @@ export const useSpecificationWizard = ({
       }
     }
   }, [mode, enumData?.productBrands, filteredProducts, initialData.shopify_handle, methods])
-
-  const isAutoSaveEnabled = !isEditMode && (activeStep + 1) >= 2
+  const isAutoSaveEnabled = !isEditMode
   
   const productHandle = useMemo((): string | null => {
-    if (!isAutoSaveEnabled) return null
-    
     if (selectedProduct?.handle) return selectedProduct.handle
     if (initialData.shopify_handle) return initialData.shopify_handle as string
     const formHandle = methods.getValues('shopify_handle')
     if (formHandle) return formHandle
-
-    throw new Error('Product handle unavailable - selectedProduct, initialData, and form values all undefined')
-  }, [isAutoSaveEnabled, selectedProduct?.handle, initialData.shopify_handle, methods])
+    return null
+  }, [selectedProduct?.handle, initialData.shopify_handle, methods])
   const { clearDraft, forceSave, saveStatus, lastError, hasSavedOnce } = useWizardAutoSave({
     methods,
     userId,
