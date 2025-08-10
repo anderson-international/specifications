@@ -6,6 +6,7 @@ import { TransformedFormData, buildApiRequest } from '@/components/wizard/hooks/
 import SpecificationWizard from '@/components/wizard/SpecificationWizard'
 import { SpecificationEnumData } from '@/types/enum'
 import { useAuth } from '@/lib/auth-context'
+import { submitSpecification } from '@/lib/utils/submitSpecification'
 
 interface CreateSpecificationClientProps {
   enumData: SpecificationEnumData
@@ -13,7 +14,7 @@ interface CreateSpecificationClientProps {
 
 export default function CreateSpecificationClient(
   _props: CreateSpecificationClientProps
-): JSX.Element {
+): JSX.Element | null {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useAuth()
@@ -35,25 +36,7 @@ export default function CreateSpecificationClient(
     async (data: TransformedFormData): Promise<void> => {
       try {
         const apiRequest = buildApiRequest(data, user.id)
-        const response = await fetch(apiRequest.url, {
-          method: apiRequest.method,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(apiRequest.body),
-        })
-
-        if (!response.ok) {
-          const errorData: { message?: string } = await response
-            .json()
-            .catch(() => ({ message: 'Unknown error' }))
-          if (errorData.message) {
-            throw new Error(errorData.message)
-          }
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-        }
-
-        const result = await response.json()
+        const result = await submitSpecification<{ error?: string; message?: string; data?: unknown }>(apiRequest)
         if (result.error || !result.data) {
           if (result.error) {
             throw new Error(result.error)

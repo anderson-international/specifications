@@ -18,7 +18,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@prisma/client": "^6.12.0",
+    "@prisma/client": "^6.13.0",
     "@upstash/redis": "^1.35.0",
     "dotenv": "^17.1.0",
     "lucide-react": "^0.536.0",
@@ -42,7 +42,7 @@
     "jscpd": "^4.0.5",
     "knip": "^5.61.3",
     "prettier": "^3.3.3",
-    "prisma": "^6.12.0",
+    "prisma": "^6.13.0",
     "typescript": "^5"
   }
 }
