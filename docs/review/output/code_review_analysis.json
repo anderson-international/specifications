@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "timestamp": "2025-08-10T20:03:26.387Z",
-    "totalFiles": 1,
-    "passedFiles": 1,
+    "timestamp": "2025-08-10T21:32:28.670Z",
+    "totalFiles": 4,
+    "passedFiles": 4,
     "failedFiles": 0
   },
   "summary": {
@@ -20,8 +20,8 @@
       "unresolvedImports": 0
     },
     "duplicateCode": {
-      "groups": 18,
-      "duplicatedLines": 229,
+      "groups": 17,
+      "duplicatedLines": 218,
       "percentage": 0,
       "details": [
         {
@@ -418,38 +418,38 @@
           "testImpact": "low"
         },
         {
-          "groupId": "G-4b5f7e36",
-          "fingerprint": "7674c93b",
+          "groupId": "G-3695a223",
+          "fingerprint": "7bf43139",
           "similarity": {
             "lines": 11,
             "tokens": 0,
             "pct": 0
           },
-          "category": "form-layout",
+          "category": "wizard-step-ui",
           "severity": "low",
           "suggestion": "extract component",
-          "recommendedName": "SharedComponent",
-          "targetPath": "components/shared/SharedComponent.tsx",
+          "recommendedName": "MultiSelectIconsComponent",
+          "targetPath": "components/shared/MultiSelectIconsComponent.tsx",
           "estimatedEffort": "S",
           "fileLimitsRisk": false,
           "occurrences": [
             {
-              "file": "app\\create-specification\\CreateSpecificationClient.tsx",
-              "functionName": "CreateSpecificationClient",
-              "startLine": 37,
-              "endLine": 47,
-              "preview": "const apiRequest = buildApiRequest(data, user.id)\nconst response = await fetch(apiRequest.url, {\nmethod: apiRequest.method,"
+              "file": "components\\wizard\\controls\\MultiSelectIcons.tsx",
+              "functionName": "DropdownIcon",
+              "startLine": 24,
+              "endLine": 34,
+              "preview": "export const DropdownIcon = ({ className, width = 16, height = 16 }: IconProps): JSX.Element => (\n<svg\nxmlns=\"http://www.w3.org/2000/svg\""
             },
             {
-              "file": "app\\edit-specification\\[id]\\page.tsx",
-              "functionName": "EditSpecificationPage",
-              "startLine": 27,
-              "endLine": 37,
-              "preview": "const apiRequest = buildApiRequest(data, user.id, id)\nconst response = await fetch(apiRequest.url, {\nmethod: apiRequest.method,"
+              "file": "components\\wizard\\controls\\MultiSelectIcons.tsx",
+              "functionName": "ClearIcon",
+              "startLine": 11,
+              "endLine": 20,
+              "preview": "export const ClearIcon = ({ className, width = 16, height = 16 }: IconProps): JSX.Element => (\n<svg\nxmlns=\"http://www.w3.org/2000/svg\""
             }
           ],
           "fixPlanSteps": [
-            "Create shared SharedComponent with props for variability",
+            "Create shared MultiSelectIconsComponent with props for variability",
             "Replace duplicate blocks with shared component",
             "Ensure explicit return types"
           ],
@@ -648,17 +648,17 @@
       },
       {
         "files": [
-          "app\\create-specification\\CreateSpecificationClient.tsx",
-          "app\\edit-specification\\[id]\\page.tsx"
+          "components\\wizard\\controls\\MultiSelectIcons.tsx",
+          "components\\wizard\\controls\\MultiSelectIcons.tsx"
         ],
         "occurrences": 1,
         "totalLines": 11,
         "segments": [
           {
-            "aStart": 37,
-            "aEnd": 47,
-            "bStart": 27,
-            "bEnd": 37,
+            "aStart": 24,
+            "aEnd": 34,
+            "bStart": 11,
+            "bEnd": 20,
             "lines": 11
           }
         ]
@@ -803,7 +803,7 @@
       "G-5c81ac7b",
       "G-a40c5996",
       "G-ae3d4ed4",
-      "G-4b5f7e36"
+      "G-3695a223"
     ],
     "sharedModulesToCreate": [
       {

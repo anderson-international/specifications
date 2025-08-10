@@ -21,33 +21,24 @@ export class UserProductsService {
     }))
 
     const userSpecs = await SpecificationReadRepository.findMany({ userId })
-    const handles: Set<string> = new Set(userSpecs.map(s => s.shopify_handle))
-
-    const specIdMap = new Map<string, string>(userSpecs.map(s => [s.shopify_handle, s.id.toString()]))
-
-    const latestUpdatedByHandle = new Map<string, Date>()
-    for (const spec of userSpecs) {
-      const current = latestUpdatedByHandle.get(spec.shopify_handle)
-      if (!current || (spec.updated_at && spec.updated_at > current)) {
-        latestUpdatedByHandle.set(spec.shopify_handle, spec.updated_at as Date)
-      }
-    }
-
-    const lastModifiedMap: Map<string, string> = new Map<string, string>(
-      Array.from(latestUpdatedByHandle.entries()).map(([h, d]) => [h, d.toISOString()])
-    )
-
-    const filtered: Product[] = allProducts.filter(p => handles.has(p.handle) === userHasSpec)
-
-    const augmented: UserProduct[] = filtered.map(p => ({
-      ...p,
-      userHasSpec,
-      specCount: p.spec_count_total,
-      specification_id: specIdMap.get(p.handle),
-      lastModified: userHasSpec ? lastModifiedMap.get(p.handle) : undefined,
-    }))
+    const productByHandle = new Map<string, Product>(allProducts.map(p => [p.handle, p]))
 
     if (userHasSpec) {
+      
+      const augmented: UserProduct[] = userSpecs
+        .map(spec => {
+          const p = productByHandle.get(spec.shopify_handle)
+          if (!p) return null
+          return {
+            ...p,
+            userHasSpec: true,
+            specCount: p.spec_count_total,
+            specification_id: spec.id.toString(),
+            lastModified: spec.updated_at ? (spec.updated_at as Date).toISOString() : undefined,
+          } as UserProduct
+        })
+        .filter((x): x is UserProduct => x !== null)
+
       augmented.sort((a, b) => {
         const at = a.lastModified ? Date.parse(a.lastModified) : 0
         const bt = b.lastModified ? Date.parse(b.lastModified) : 0
@@ -55,12 +46,25 @@ export class UserProductsService {
         const t = a.title.localeCompare(b.title)
         return t !== 0 ? t : a.brand.localeCompare(b.brand)
       })
-    } else {
-      augmented.sort((a, b) => {
-        const t = a.title.localeCompare(b.title)
-        return t !== 0 ? t : a.brand.localeCompare(b.brand)
-      })
+
+      return augmented
     }
+
+    
+    const handles: Set<string> = new Set(userSpecs.map(s => s.shopify_handle))
+    const filtered: Product[] = allProducts.filter(p => !handles.has(p.handle))
+    const augmented: UserProduct[] = filtered.map(p => ({
+      ...p,
+      userHasSpec: false,
+      specCount: p.spec_count_total,
+      specification_id: undefined,
+      lastModified: undefined,
+    }))
+
+    augmented.sort((a, b) => {
+      const t = a.title.localeCompare(b.title)
+      return t !== 0 ? t : a.brand.localeCompare(b.brand)
+    })
 
     return augmented
   }
