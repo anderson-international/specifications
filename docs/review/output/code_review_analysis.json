@@ -1,14 +1,16 @@
 {
   "metadata": {
-    "timestamp": "2025-08-10T22:05:59.460Z",
-    "totalFiles": 5,
-    "passedFiles": 2,
-    "failedFiles": 3
+    "timestamp": "2025-08-10T23:18:26.773Z",
+    "totalFiles": 1,
+    "passedFiles": 1,
+    "failedFiles": 0
   },
   "summary": {
-    "blockingViolations": 3,
+    "blockingViolations": 0,
     "eslintErrors": 0,
-    "typescriptIssues": 8,
+    "typescriptIssues": 0,
+    "tscErrors": 0,
+    "tsconfigPath": "tsconfig.json",
     "oversizedFiles": 0,
     "deadCodeIssues": {
       "unusedFiles": 0,
@@ -20,8 +22,8 @@
       "unresolvedImports": 0
     },
     "duplicateCode": {
-      "groups": 17,
-      "duplicatedLines": 218,
+      "groups": 16,
+      "duplicatedLines": 199,
       "percentage": 0,
       "details": [
         {
@@ -207,45 +209,6 @@
           ],
           "dependencies": [],
           "testImpact": "low"
-        },
-        {
-          "groupId": "G-72488527",
-          "fingerprint": "82365a50",
-          "similarity": {
-            "lines": 19,
-            "tokens": 0,
-            "pct": 0
-          },
-          "category": "wizard-step-ui",
-          "severity": "low",
-          "suggestion": "extract component",
-          "recommendedName": "SharedComponent",
-          "targetPath": "components/shared/SharedComponent.tsx",
-          "estimatedEffort": "S",
-          "fileLimitsRisk": false,
-          "occurrences": [
-            {
-              "file": "components\\wizard\\steps\\ProductCharacteristics.tsx",
-              "functionName": null,
-              "startLine": 61,
-              "endLine": 79,
-              "preview": "<WizardStepCard title=\"Characteristics\" stepNumber={stepNumber} totalSteps={totalSteps}>\n<div style={{ padding: '2rem', textAlign: 'center' }}>\nLoading characteristics..."
-            },
-            {
-              "file": "components\\wizard\\steps\\TastingProfile.tsx",
-              "functionName": null,
-              "startLine": 64,
-              "endLine": 82,
-              "preview": "<WizardStepCard title=\"Tasting Profile\" stepNumber={stepNumber} totalSteps={totalSteps}>\n<div style={{ padding: '2rem', textAlign: 'center' }}>\nLoading tasting profile options..."
-            }
-          ],
-          "fixPlanSteps": [
-            "Create shared SharedComponent with props for variability",
-            "Replace duplicate blocks with shared component",
-            "Ensure explicit return types"
-          ],
-          "dependencies": [],
-          "testImpact": "medium"
         },
         {
           "groupId": "G-7762043f",
@@ -455,366 +418,50 @@
           ],
           "dependencies": [],
           "testImpact": "medium"
+        },
+        {
+          "groupId": "G-2adbbba8",
+          "fingerprint": "f8b34946",
+          "similarity": {
+            "lines": 10,
+            "tokens": 0,
+            "pct": 0
+          },
+          "category": "form-layout",
+          "severity": "low",
+          "suggestion": "extract component",
+          "recommendedName": "SharedComponent",
+          "targetPath": "components/shared/SharedComponent.tsx",
+          "estimatedEffort": "S",
+          "fileLimitsRisk": false,
+          "occurrences": [
+            {
+              "file": "components\\specifications\\AISpecificationMarkdownViewer.tsx",
+              "functionName": "AISpecificationMarkdownViewerComponent",
+              "startLine": 19,
+              "endLine": 28,
+              "preview": "}, [aiSpecificationId, fetchMarkdown])\n\nconst handleDownload = React.useCallback(() => {"
+            },
+            {
+              "file": "components\\specifications\\SpecificationMarkdownViewer.tsx",
+              "functionName": "SpecificationMarkdownViewerComponent",
+              "startLine": 19,
+              "endLine": 28,
+              "preview": "}, [specificationId, fetchMarkdown])\n\nconst handleDownload = React.useCallback(() => {"
+            }
+          ],
+          "fixPlanSteps": [
+            "Create shared SharedComponent with props for variability",
+            "Replace duplicate blocks with shared component",
+            "Ensure explicit return types"
+          ],
+          "dependencies": [],
+          "testImpact": "medium"
         }
       ]
     }
   },
-  "fileResults": {
-    "hooks\\useDashboardLeaderboard.ts": {
-      "filePath": "hooks\\useDashboardLeaderboard.ts",
-      "size": {
-        "lines": 58,
-        "limit": 100,
-        "type": "hooks",
-        "status": "PASS",
-        "percentage": 58
-      },
-      "comments": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "react": {
-        "hasReactImport": true,
-        "hasUseCallback": true,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": true,
-        "issues": []
-      },
-      "consoleErrors": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 2,
-        "missingReturnTypes": 2,
-        "hasExplicitTypes": false,
-        "status": "FAIL",
-        "details": [
-          {
-            "name": "renderReviewer",
-            "line": 17,
-            "kind": "wrapped-arrow",
-            "signaturePreview": "const renderReviewer = useCallback("
-          },
-          {
-            "name": "renderLeaderboardTab",
-            "line": 39,
-            "kind": "wrapped-arrow",
-            "signaturePreview": "const renderLeaderboardTab = useCallback("
-          }
-        ]
-      },
-      "fallbackData": {
-        "violations": [
-          {
-            "type": "or_fallback",
-            "line": 30,
-            "content": "r.name || 'Anonymous Reviewer',",
-            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
-          }
-        ],
-        "count": 1,
-        "status": "FAIL"
-      },
-      "deadCode": {
-        "unusedExports": 0,
-        "unusedTypes": 0,
-        "unusedEnumMembers": 0,
-        "unusedClassMembers": 0,
-        "unlistedDependencies": 0,
-        "unresolvedImports": 0,
-        "status": "PASS",
-        "recommendations": []
-      },
-      "duplicates": {
-        "count": 0,
-        "segments": [],
-        "status": "PASS",
-        "recommendations": []
-      }
-    },
-    "hooks\\useDashboardRenderers.ts": {
-      "filePath": "hooks\\useDashboardRenderers.ts",
-      "size": {
-        "lines": 80,
-        "limit": 100,
-        "type": "hooks",
-        "status": "PASS",
-        "percentage": 80
-      },
-      "comments": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "react": {
-        "hasReactImport": true,
-        "hasUseCallback": true,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": true,
-        "issues": []
-      },
-      "consoleErrors": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 3,
-        "missingReturnTypes": 3,
-        "hasExplicitTypes": false,
-        "status": "FAIL",
-        "details": [
-          {
-            "name": "renderOverviewTab",
-            "line": 37,
-            "kind": "wrapped-arrow",
-            "signaturePreview": "const renderOverviewTab = useCallback("
-          },
-          {
-            "name": "renderActivityTab",
-            "line": 52,
-            "kind": "wrapped-arrow",
-            "signaturePreview": "const renderActivityTab = useCallback("
-          },
-          {
-            "name": "renderActionsTab",
-            "line": 61,
-            "kind": "wrapped-arrow",
-            "signaturePreview": "const renderActionsTab = useCallback("
-          }
-        ]
-      },
-      "fallbackData": {
-        "violations": [
-          {
-            "type": "or_fallback",
-            "line": 44,
-            "content": "brandGaps: props.stats?.systemStats.brand_coverage_gaps || [],",
-            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 44,
-            "content": "brandGaps: props.stats?.systemStats.brand_coverage_gaps || [],",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          },
-          {
-            "type": "or_fallback",
-            "line": 45,
-            "content": "weeklyActivity: props.stats?.systemStats.recent_activity_weekly || [],",
-            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 45,
-            "content": "weeklyActivity: props.stats?.systemStats.recent_activity_weekly || [],",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          },
-          {
-            "type": "or_fallback",
-            "line": 46,
-            "content": "monthlyActivity: props.stats?.systemStats.recent_activity_monthly || [],",
-            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 46,
-            "content": "monthlyActivity: props.stats?.systemStats.recent_activity_monthly || [],",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          },
-          {
-            "type": "or_fallback",
-            "line": 66,
-            "content": "priorityProducts: props.stats?.systemStats.products_needing_attention || [],",
-            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 66,
-            "content": "priorityProducts: props.stats?.systemStats.products_needing_attention || [],",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          },
-          {
-            "type": "or_fallback",
-            "line": 67,
-            "content": "attentionProducts: props.stats?.systemStats.products_needing_coverage || [],",
-            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 67,
-            "content": "attentionProducts: props.stats?.systemStats.products_needing_coverage || [],",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          }
-        ],
-        "count": 10,
-        "status": "FAIL"
-      },
-      "deadCode": {
-        "unusedExports": 0,
-        "unusedTypes": 0,
-        "unusedEnumMembers": 0,
-        "unusedClassMembers": 0,
-        "unlistedDependencies": 0,
-        "unresolvedImports": 0,
-        "status": "PASS",
-        "recommendations": []
-      },
-      "duplicates": {
-        "count": 0,
-        "segments": [],
-        "status": "PASS",
-        "recommendations": []
-      }
-    },
-    "hooks\\useDashboardStatsLocal.ts": {
-      "filePath": "hooks\\useDashboardStatsLocal.ts",
-      "size": {
-        "lines": 57,
-        "limit": 100,
-        "type": "hooks",
-        "status": "PASS",
-        "percentage": 57
-      },
-      "comments": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "react": {
-        "hasReactImport": false,
-        "hasUseCallback": false,
-        "hasUseMemo": true,
-        "hasUseEffect": false,
-        "hasHooks": true,
-        "issues": []
-      },
-      "consoleErrors": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 3,
-        "missingReturnTypes": 3,
-        "hasExplicitTypes": false,
-        "status": "FAIL",
-        "details": [
-          {
-            "name": "systemOverviewStats",
-            "line": 11,
-            "kind": "wrapped-arrow",
-            "signaturePreview": "const systemOverviewStats = useMemo("
-          },
-          {
-            "name": "productCoverageStats",
-            "line": 23,
-            "kind": "wrapped-arrow",
-            "signaturePreview": "const productCoverageStats = useMemo("
-          },
-          {
-            "name": "userStats",
-            "line": 38,
-            "kind": "wrapped-arrow",
-            "signaturePreview": "const userStats = useMemo("
-          }
-        ]
-      },
-      "fallbackData": {
-        "violations": [
-          {
-            "type": "optional_chaining_fallback",
-            "line": 13,
-            "content": "{ number: stats?.systemStats.total_products.toLocaleString() || 0, label: 'Total Products' },",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 15,
-            "content": "number: stats?.systemStats.published_specifications.toLocaleString() || 0,",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 18,
-            "content": "{ number: `${stats?.systemStats.coverage_percentage || 0}%`, label: 'Coverage (5+ specs)' },",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 25,
-            "content": "{ number: stats?.systemStats.products_fully_covered || 0, label: 'Fully Covered (5+ specs)' },",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 27,
-            "content": "number: stats?.systemStats.products_partial_coverage || 0,",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 31,
-            "content": "number: stats?.systemStats.products_needing_attention.length || 0,",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 40,
-            "content": "{ number: stats?.userStats.total_specifications || 0, label: 'Total Specifications' },",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 41,
-            "content": "{ number: stats?.userStats.published_specifications || 0, label: 'Published' },",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          },
-          {
-            "type": "optional_chaining_fallback",
-            "line": 42,
-            "content": "{ number: stats?.userStats.needs_revision_specifications || 0, label: 'Needs Revision' },",
-            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
-          }
-        ],
-        "count": 9,
-        "status": "FAIL"
-      },
-      "deadCode": {
-        "unusedExports": 0,
-        "unusedTypes": 0,
-        "unusedEnumMembers": 0,
-        "unusedClassMembers": 0,
-        "unlistedDependencies": 0,
-        "unresolvedImports": 0,
-        "status": "PASS",
-        "recommendations": []
-      },
-      "duplicates": {
-        "count": 0,
-        "segments": [],
-        "status": "PASS",
-        "recommendations": []
-      }
-    }
-  },
+  "fileResults": {},
   "repoDuplicates": {
     "config": {
       "includeRoots": [
@@ -911,23 +558,6 @@
       },
       {
         "files": [
-          "components\\wizard\\steps\\ProductCharacteristics.tsx",
-          "components\\wizard\\steps\\TastingProfile.tsx"
-        ],
-        "occurrences": 1,
-        "totalLines": 19,
-        "segments": [
-          {
-            "aStart": 61,
-            "aEnd": 79,
-            "bStart": 64,
-            "bEnd": 82,
-            "lines": 19
-          }
-        ]
-      },
-      {
-        "files": [
           "lib\\repositories\\specification-read-repository.ts",
           "lib\\repositories\\specification-read-repository.ts"
         ],
@@ -1015,6 +645,23 @@
             "bStart": 11,
             "bEnd": 20,
             "lines": 11
+          }
+        ]
+      },
+      {
+        "files": [
+          "components\\specifications\\AISpecificationMarkdownViewer.tsx",
+          "components\\specifications\\SpecificationMarkdownViewer.tsx"
+        ],
+        "occurrences": 1,
+        "totalLines": 10,
+        "segments": [
+          {
+            "aStart": 19,
+            "aEnd": 28,
+            "bStart": 19,
+            "bEnd": 28,
+            "lines": 10
           }
         ]
       }
@@ -1134,18 +781,22 @@
         ]
       },
       {
-        "file": "components\\wizard\\steps\\ProductCharacteristics.tsx",
-        "segments": 1,
-        "totalLines": 19,
+        "file": "components\\wizard\\types\\product-characteristics.types.ts",
+        "segments": 2,
+        "totalLines": 16,
         "topMatches": [
           {
-            "otherFile": "components\\wizard\\steps\\TastingProfile.tsx",
-            "segments": 1,
-            "totalLines": 19
+            "otherFile": "components\\wizard\\types\\product-characteristics.types.ts",
+            "segments": 2,
+            "totalLines": 16
           }
         ]
       }
     ]
+  },
+  "tsc": {
+    "tsconfigPath": "tsconfig.json",
+    "totalErrors": 0
   },
   "actionableItems": {
     "nextTopGroups": [
@@ -1153,12 +804,12 @@
       "G-09e0aba2",
       "G-7dd86ffa",
       "G-4f9dabd1",
-      "G-72488527",
       "G-7762043f",
       "G-5c81ac7b",
       "G-a40c5996",
       "G-ae3d4ed4",
-      "G-3695a223"
+      "G-3695a223",
+      "G-2adbbba8"
     ],
     "sharedModulesToCreate": [
       {
@@ -1182,9 +833,9 @@
         "reason": "general"
       },
       {
-        "name": "SharedComponent",
-        "path": "components/shared/SharedComponent.tsx",
-        "reason": "wizard-step-ui"
+        "name": "specification",
+        "path": "lib/utils/specification.ts",
+        "reason": "general"
       }
     ],
     "sharedModulesToReuse": [],

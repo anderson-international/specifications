@@ -59,6 +59,14 @@ const ProductCharacteristics = ({
   if (isLoadingEnums || !enumData) {
     return (
       <WizardStepCard title="Characteristics" stepNumber={stepNumber} totalSteps={totalSteps}>
+        {selectedProduct && (
+          <ProductWithDraftIndicator 
+            product={selectedProduct}
+            saveStatus={saveStatus}
+            hasSavedOnce={hasSavedOnce}
+            isEnabled={!disabled}
+          />
+        )}
         <div style={{ padding: '2rem', textAlign: 'center' }}>
           Loading characteristics...
         </div>
