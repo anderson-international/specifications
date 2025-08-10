@@ -217,107 +217,205 @@ function analyzeTypeScript(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
     
-    // Function to extract complete function signatures by parsing carefully
-    function extractCompleteFunctions(content) {
+    const lines = content.split('\n');
+    
+    // Extract function-like constructs with metadata (name, line, kind, wrapper)
+    function extractFunctions(lines) {
       const functions = [];
-      const lines = content.split('\n');
-      
       for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
+        const firstLine = lines[i];
+        let name = '';
+        let kind = '';
+        let wrapperName = null;
         
-        // Check for function/const declarations
-        if (/(?:export\s+)?(?:async\s+)?function\s+\w+|(?:export\s+)?const\s+\w+\s*=/.test(line)) {
-          let funcText = line;
-          let j = i + 1;
-          let parenLevel = 0;
-          let foundOpeningBrace = false;
-          
-          // Count parentheses to find complete parameter list
-          for (let char of line) {
-            if (char === '(') parenLevel++;
-            else if (char === ')') parenLevel--;
-            else if (char === '{' && parenLevel === 0) {
-              foundOpeningBrace = true;
-              break;
-            }
+        const fnDeclMatch = firstLine.match(/(?:export\s+)?(?:default\s+)?(?:async\s+)?function\s+(\w+)/);
+        const constMatch = firstLine.match(/(?:export\s+)?const\s+(\w+)\s*=\s*/);
+        
+        if (!fnDeclMatch && !constMatch) continue;
+        
+        if (fnDeclMatch) {
+          name = fnDeclMatch[1];
+          kind = 'function-declaration';
+        } else if (constMatch) {
+          name = constMatch[1];
+          kind = 'const';
+        }
+        
+        let text = firstLine;
+        let j = i + 1;
+        let parenLevel = 0;
+        let seenArrow = /=>/.test(firstLine);
+        let foundBrace = false;
+        let everSawParen = false;
+        
+        function scan(s) {
+          for (let ch of s) {
+            if (ch === '(') { parenLevel++; everSawParen = true; }
+            else if (ch === ')') { parenLevel = Math.max(0, parenLevel - 1); }
+            else if (ch === '{' && parenLevel === 0) { foundBrace = true; break; }
           }
-          
-          // If we haven't found the opening brace, continue to next lines
-          while (j < lines.length && (!foundOpeningBrace || parenLevel > 0)) {
-            funcText += '\n' + lines[j];
-            
-            for (let char of lines[j]) {
-              if (char === '(') parenLevel++;
-              else if (char === ')') parenLevel--;
-              else if (char === '{' && parenLevel === 0) {
-                foundOpeningBrace = true;
-                break;
-              }
-            }
-            
-            if (foundOpeningBrace && parenLevel === 0) break;
+          if (/=>/.test(s)) seenArrow = true;
+        }
+        
+        scan(firstLine);
+        // Capture header lines conservatively.
+        if (kind === 'const') {
+          // For const assignments, only scan ahead while inside parentheses or to catch an immediate multi-line parameter start.
+          while (!foundBrace && j < lines.length && (parenLevel > 0 || (!seenArrow && !everSawParen && (j - i) < 3))) {
+            text += '\n' + lines[j];
+            scan(lines[j]);
             j++;
           }
-          
-          if (foundOpeningBrace) {
-            functions.push(funcText);
+          // Do not greedily read more lines for consts; avoid inheriting arrows from later unrelated lines.
+        } else {
+          // For function declarations, allow scanning until we see the body start or the arrow.
+          while (!foundBrace && j < lines.length && (parenLevel > 0 || !seenArrow)) {
+            text += '\n' + lines[j];
+            scan(lines[j]);
+            j++;
+          }
+          // Read a few more lines to include the '{' if it appears shortly
+          while (!foundBrace && j < lines.length && j - i < 8) {
+            text += '\n' + lines[j];
+            scan(lines[j]);
+            j++;
           }
         }
+        
+        // Determine wrapper name (if any) for const assignments
+        if (kind === 'const') {
+          const wrapperMatch = text.match(/=\s*([A-Za-z_$][\w$]*)\s*(?:<|\()/);
+          if (wrapperMatch) {
+            wrapperName = wrapperMatch[1];
+            // Distinguish between direct arrow and wrapped
+            if (/=\s*\(/.test(text)) {
+              kind = 'const-arrow';
+            } else {
+              kind = 'wrapped-arrow';
+            }
+          } else {
+            kind = 'const-arrow';
+          }
+        }
+        
+        // Only keep const assignments that are function-like
+        if (kind !== 'function-declaration') {
+          const isArrow = /=\s*(?:async\s+)?[\s\S]*?\)\s*=>/.test(text);
+          const isFunctionKeyword = /function\s*\(/.test(text);
+          const isTypedFunctionVar = /const\s+\w+\s*:\s*[^=]*=>/.test(text);
+          // Wrapper call where the first argument is an arrow (optionally typed): wrapper((args): Type => ...)
+          const isWrapperWithArrowArg = /=\s*[A-Za-z_$][\w$]*\s*(?:<[^>]*>)?\s*\(\s*(?:async\s+)?\([^)]*\)\s*(?::\s*[^)]+)?\s*=>/.test(text);
+          const functionLike = isArrow || isFunctionKeyword || isTypedFunctionVar || isWrapperWithArrowArg;
+          if (!functionLike) {
+            continue; // skip non-function consts (e.g., useRouter(), strings, numbers, objects)
+          }
+        }
+        
+        const signaturePreview = text.split('\n')[0].trim();
+        
+        functions.push({
+          text,
+          startLine: i + 1,
+          name: name || '(anonymous)',
+          kind,
+          wrapperName,
+          signaturePreview,
+        });
       }
-      
       return functions;
     }
     
-    const functions = extractCompleteFunctions(content);
-    const missingReturnTypes = [];
+    const functions = extractFunctions(lines);
+    const missingDetails = [];
+    
+    function hasExplicitReturnType(func) {
+      const clean = func.text.replace(/\s+/g, ' ').trim();
+      
+      function headerBeforeBody(text) {
+        let paren = 0;
+        for (let idx = 0; idx < text.length; idx++) {
+          const ch = text[idx];
+          if (ch === '(') paren++;
+          else if (ch === ')') paren = Math.max(0, paren - 1);
+          else if (ch === '{' && paren === 0) {
+            return text.slice(0, idx);
+          }
+        }
+        return text;
+      }
+      
+      // Prefer a structural check on function declarations: any return type token after ) and before body {
+      if (func.kind === 'function-declaration') {
+        const header = headerBeforeBody(func.text).replace(/\s+/g, ' ');
+        if (/\)\s*:\s*\S/.test(header)) {
+          return true;
+        }
+      }
+      
+      // 1) function declaration annotated: function name(args): Type {
+      if (/function\s+\w+\s*\([^)]*\)\s*:\s*[^\{]+\{/.test(clean)) {
+        return true;
+      }
+      
+      // 2) variable type annotation: const x: (args) => Type = (...)
+      if (/const\s+\w+\s*:\s*[^=]+=\s*/.test(clean)) {
+        return true;
+      }
+      
+      // 3) direct arrow annotation: = (args): Type => (across multiline/nested parens)
+      if (/=\s*(?:async\s+)?[\s\S]*?\)\s*:\s*[^=]+=>/.test(clean)) {
+        return true;
+      }
+      
+      // 4) wrapper generic annotation: = useCallback<(args) => Type>(...)
+      if (func.kind === 'wrapped-arrow' && func.wrapperName === 'useCallback') {
+        const m = clean.match(/=\s*useCallback\s*<([^>]+)>/);
+        if (m && /\([^)]*\)\s*=>\s*[^)]+/.test(m[1])) {
+          return true;
+        }
+      }
+
+      // 4.5) any wrapper call with explicit arrow return type in its argument: = wrapper((args): Type => ...)
+      if (/=\s*[A-Za-z_$][\w$]*\s*(?:<[^>]+>)?\s*\(\s*(?:async\s+)?\([^)]*\)\s*:\s*[^)]+=>/.test(clean)) {
+        return true;
+      }
+      
+      return false;
+    }
     
     functions.forEach(func => {
-      // Clean up the function text for analysis
-      const cleanFunc = func.replace(/\s+/g, ' ').trim();
+      const clean = func.text.replace(/\s+/g, ' ').trim();
       
-      // Check if it's a function/const declaration we care about
-      const isFunctionDeclaration = 
-        /(?:export\s+)?(?:async\s+)?function\s+\w+/.test(cleanFunc) ||
-        /(?:export\s+)?const\s+\w+\s*=\s*(?:async\s+)?\(/.test(cleanFunc);
-        
-      if (!isFunctionDeclaration) return;
+      const shouldSkip = 
+        clean.includes('constructor') ||
+        clean.includes('set ') ||
+        clean.includes('get ') ||
+        /function\s+\w+\s*\(\)\s*\{/.test(clean) ||
+        clean.includes('(): void') ||
+        clean.includes(': void') ||
+        clean.includes('Promise<void>');
       
-      // Check for return type annotation: ): Type => or ): Type {
-      const hasReturnType = 
-        // Pattern 1: Basic types
-        /\)\s*:\s*[^=>{]+(?:=>|\{)/.test(cleanFunc) ||
-        // Pattern 2: Complex types with generics, objects, arrays
-        /\)\s*:\s*[^=>{]*(?:\{[^}]*\}|<[^>]*>|\[[^\]]*\])[^=>{]*(?:=>|\{)/.test(cleanFunc) ||
-        // Pattern 3: Union types (improved to handle nested generics)
-        /\)\s*:\s*.*\|.*(?:=>|\{)/.test(cleanFunc) ||
-        // Pattern 4: Multi-line return types
-        /\)\s*:\s*[\s\S]*?(?:=>|\{)/.test(cleanFunc)
+      if (shouldSkip) return;
       
-      if (!hasReturnType) {
-        // Skip patterns that legitimately don't need return types
-        const shouldSkip = 
-          cleanFunc.includes('constructor') ||
-          cleanFunc.includes('(): void') ||
-          cleanFunc.includes(': void') ||
-          cleanFunc.includes('Promise<void>') ||
-          /function\s+\w+\s*\(\)\s*\{/.test(cleanFunc) || // Empty parameter functions
-          cleanFunc.includes('set ') || // Setter methods
-          cleanFunc.includes('get ') // Getter methods
-        
-        if (!shouldSkip) {
-          missingReturnTypes.push(func.trim());
-        }
+      if (!hasExplicitReturnType(func)) {
+        missingDetails.push({
+          name: func.name,
+          line: func.startLine,
+          kind: func.kind,
+          signaturePreview: func.signaturePreview,
+        });
       }
     });
     
     return {
       totalFunctions: functions.length,
-      missingReturnTypes: missingReturnTypes.length,
-      hasExplicitTypes: missingReturnTypes.length === 0,
-      status: missingReturnTypes.length === 0 ? 'PASS' : 'FAIL'
+      missingReturnTypes: missingDetails.length,
+      hasExplicitTypes: missingDetails.length === 0,
+      status: missingDetails.length === 0 ? 'PASS' : 'FAIL',
+      details: missingDetails,
     };
   } catch (error) {
-    return { totalFunctions: 0, missingReturnTypes: 0, hasExplicitTypes: true, status: 'PASS' };
+    return { totalFunctions: 0, missingReturnTypes: 0, hasExplicitTypes: true, status: 'PASS', details: [] };
   }
 }
 
@@ -629,6 +727,11 @@ function generateCompactSummary(results) {
       // TypeScript violations
       if (file.typescript.status === 'FAIL') {
         summary += `${fileName}: Add ${file.typescript.missingReturnTypes} return types\n`;
+        const details = file.typescript.details || [];
+        details.forEach(d => {
+          const fnName = d.name || '(anonymous)';
+          summary += `${fileName}:${d.line} - Add return type to "${fnName}"\n`;
+        });
       }
       
       // Console error violations (blocking - violates fail-fast principle)

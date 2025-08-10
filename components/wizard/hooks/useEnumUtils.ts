@@ -31,24 +31,17 @@ export const transformEnumToOptions = (
 
   if (filterNone) {
     filteredValues = enumValues.filter((item): boolean => item.name.toLowerCase() !== 'none')
-  }
-
-  // Sort by sort_order if available, otherwise by name alphabetically
-  filteredValues.sort((a, b): number => {
-    // If both have sort_order, sort by sort_order ascending
+  }
+  filteredValues.sort((a, b): number => {
     if (a.sort_order !== undefined && b.sort_order !== undefined) {
       return a.sort_order - b.sort_order
-    }
-    
-    // If only one has sort_order, prioritize it (put it first)
+    }
     if (a.sort_order !== undefined && b.sort_order === undefined) {
       return -1
     }
     if (a.sort_order === undefined && b.sort_order !== undefined) {
       return 1
-    }
-    
-    // If neither has sort_order, sort alphabetically by name
+    }
     return a.name.localeCompare(b.name)
   })
 
@@ -59,7 +52,7 @@ export const transformEnumToOptions = (
   }))
 }
 
-export const useCreateEnumHook = (
+const useCreateEnumHook = (
   selector: (data: SpecificationEnumData) => EnumValue[]
 ): EnumHookResult => {
   const { data: allEnums, isLoading, error } = useSpecificationEnums()

@@ -7,8 +7,13 @@ class CodeFixer {
       filesProcessed: 0,
       commentsRemoved: 0,
       consoleStatementsRemoved: 0,
-      errors: 0
+      errors: 0,
+      filesDeleted: 0,
+      dirsDeleted: 0,
+      missingSkipped: 0
     }
+    // Repository root (script is at docs/scripts/*)
+    this.repoRoot = path.resolve(__dirname, '../../')
   }
 
   /**
@@ -214,6 +219,93 @@ class CodeFixer {
   }
 
   /**
+   * Delete a single path (file or directory) with safety checks
+   * @param {string} targetPath - Absolute or relative path
+   * @returns {boolean}
+   */
+  deletePath(targetPath) {
+    try {
+      if (!targetPath || typeof targetPath !== 'string') {
+        console.error('❌ Invalid path argument')
+        this.stats.errors++
+        return false
+      }
+
+      const abs = path.isAbsolute(targetPath)
+        ? path.normalize(targetPath)
+        : path.resolve(process.cwd(), targetPath)
+
+      // Safety: ensure inside repository and not the repo root itself
+      const relToRoot = path.relative(this.repoRoot, abs)
+      const isOutside = relToRoot.startsWith('..') || path.isAbsolute(relToRoot)
+      if (isOutside || abs === this.repoRoot) {
+        console.error(`⛔ Refused to delete outside repository root: ${abs}`)
+        this.stats.errors++
+        return false
+      }
+
+      if (!fs.existsSync(abs)) {
+        console.log(`⏭️  Skipped (missing): ${path.relative(process.cwd(), abs)}`)
+        this.stats.missingSkipped++
+        return true
+      }
+
+      const stat = fs.lstatSync(abs)
+
+      // Prefer fs.rmSync when available (Node 14+)
+      const rm = fs.rmSync || null
+      if (stat.isDirectory()) {
+        if (rm) {
+          rm.call(fs, abs, { recursive: true, force: true })
+        } else {
+          this._removeRecursively(abs)
+        }
+        console.log(`🗂️  Deleted directory: ${path.relative(process.cwd(), abs)}`)
+        this.stats.dirsDeleted++
+      } else {
+        fs.unlinkSync(abs)
+        console.log(`🗑️  Deleted file: ${path.relative(process.cwd(), abs)}`)
+        this.stats.filesDeleted++
+      }
+
+      return true
+    } catch (error) {
+      console.error(`❌ Error deleting ${targetPath}:`, error.message)
+      this.stats.errors++
+      return false
+    }
+  }
+
+  /**
+   * Fallback recursive removal for Node versions without fs.rmSync
+   * @param {string} p
+   */
+  _removeRecursively(p) {
+    if (!fs.existsSync(p)) return
+    const stat = fs.lstatSync(p)
+    if (stat.isDirectory()) {
+      for (const entry of fs.readdirSync(p)) {
+        this._removeRecursively(path.join(p, entry))
+      }
+      fs.rmdirSync(p)
+    } else {
+      fs.unlinkSync(p)
+    }
+  }
+
+  /**
+   * Delete multiple paths
+   * @param {string[]} paths
+   */
+  deletePaths(paths) {
+    console.log(`🚀 Starting deletion for ${paths.length} path(s)...\n`)
+    for (const p of paths) {
+      this.deletePath(p)
+    }
+    this.printSummary()
+  }
+
+  /**
    * Print processing summary
    */
   printSummary() {
@@ -222,6 +314,9 @@ class CodeFixer {
     console.log(`Files processed: ${this.stats.filesProcessed}`)
     console.log(`Comments removed: ${this.stats.commentsRemoved}`)
     console.log(`Console statements removed: ${this.stats.consoleStatementsRemoved}`)
+    console.log(`Files deleted: ${this.stats.filesDeleted}`)
+    console.log(`Directories deleted: ${this.stats.dirsDeleted}`)
+    console.log(`Missing skipped: ${this.stats.missingSkipped}`)
     console.log(`Errors: ${this.stats.errors}`)
 
     if (this.stats.errors === 0 && this.stats.filesProcessed > 0) {
@@ -237,21 +332,33 @@ function showUsage() {
 Usage:
   node code-fix.js --comments <file1> <file2> ...
   node code-fix.js --console <file1> <file2> ...
+  node code-fix.js --delete <path1> <path2> ...
 
 Flags:
   --comments    Remove all comments from specified files
   --console     Remove console.log/debug/info statements from specified files
+  --delete      Delete specified files/directories (scoped to repo root)
 
 Examples:
   node code-fix.js --comments pages/api/rates/deploy.ts
   node code-fix.js --console pages/api/rates/deploy.ts
   node code-fix.js --comments file1.ts file2.ts file3.ts
+  
+  # Windows CMD (paths without spaces)
+  node docs/scripts/code-fix.js --delete app/assessments hooks/useAssessments.ts
+  
+  # Windows CMD/PowerShell (quote if path has spaces)
+  node docs/scripts/code-fix.js --delete "lib/services/assessment-transformers-api.ts" "lib/types/assessment.ts"
+  
+  # PowerShell (forward slashes also work on Windows)
+  node docs/scripts/code-fix.js --delete 'app/assessments' 'hooks/useAssessments.ts'
 
 Features:
   ✅ Removes JSDoc blocks (/** ... */)
   ✅ Removes single-line comments (// ...)
   ✅ Removes multi-line comments (/* ... */)
   ✅ Removes console.log/debug/info statements
+  ✅ Deletes files and directories safely within repository root
   ✅ Preserves console.error/warn for manual review
 
   ✅ Batch processing support
@@ -260,6 +367,8 @@ Features:
 
 Safety:
   - Only processes .ts, .js, .tsx, .jsx files
+  - Deletion is restricted to inside the repository root
+  - Refuses to delete the repository root itself
   - Preserves code structure and spacing
 `)
 }
@@ -294,6 +403,15 @@ function main() {
 
     const fixer = new CodeFixer()
     fixer.processFilesForConsole(files)
+  } else if (flag === '--delete') {
+    if (files.length === 0) {
+      console.error('❌ No paths specified for deletion')
+      console.error('   Usage: node code-fix.js --delete <path1> <path2> ...')
+      process.exit(1)
+    }
+
+    const fixer = new CodeFixer()
+    fixer.deletePaths(files)
   } else {
     console.error(`❌ Unknown flag: ${flag}`)
     showUsage()

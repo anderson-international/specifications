@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-08-07T20:41:15.005Z",
-  "totalFiles": 1,
+  "timestamp": "2025-08-10T00:10:23.248Z",
+  "totalFiles": 2,
   "results": {
-    "components/wizard/components/DraftRecoveryModal.module.css": {
-      "filePath": "components/wizard/components/DraftRecoveryModal.module.css",
+    "components/wizard/SpecificationWizard.tsx": {
+      "filePath": "components/wizard/SpecificationWizard.tsx",
       "size": {
-        "lines": 0,
-        "limit": 0,
-        "type": "skipped",
+        "lines": 147,
+        "limit": 150,
+        "type": "components",
         "status": "PASS",
-        "percentage": 0
+        "percentage": 98
       },
       "comments": {
         "violations": [],
@@ -17,6 +17,11 @@
         "status": "PASS"
       },
       "react": {
+        "hasReactImport": true,
+        "hasUseCallback": true,
+        "hasUseMemo": true,
+        "hasUseEffect": false,
+        "hasHooks": true,
         "issues": []
       },
       "consoleErrors": {
@@ -29,10 +34,55 @@
         "warnings": []
       },
       "typescript": {
-        "totalFunctions": 0,
+        "totalFunctions": 2,
         "missingReturnTypes": 0,
         "hasExplicitTypes": true,
+        "status": "PASS",
+        "details": []
+      },
+      "fallbackData": {
+        "violations": [],
+        "count": 0,
         "status": "PASS"
+      }
+    },
+    "components/wizard/hooks/useCharacteristicEnums.ts": {
+      "filePath": "components/wizard/hooks/useCharacteristicEnums.ts",
+      "size": {
+        "lines": 39,
+        "limit": 150,
+        "type": "components",
+        "status": "PASS",
+        "percentage": 26
+      },
+      "comments": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": false,
+        "hasUseCallback": true,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": true,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": []
+      },
+      "typescript": {
+        "totalFunctions": 4,
+        "missingReturnTypes": 0,
+        "hasExplicitTypes": true,
+        "status": "PASS",
+        "details": []
       },
       "fallbackData": {
         "violations": [],

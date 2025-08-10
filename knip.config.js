@@ -17,6 +17,9 @@ module.exports = {
     '!.next/**',
     '!dist/**',
     '!build/**',
+    // Ignore documentation test/fixture sources to reduce noise
+    '!docs/**',
+    '!scripts/**',
   ],
   
   // Include script-specific dependencies
