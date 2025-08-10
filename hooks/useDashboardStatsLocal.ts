@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { DashboardStats } from './useDashboardStats'
+import type { DashboardStats } from '@/types/dashboard'
 
 export interface UseDashboardStatsLocalReturn {
   systemOverviewStats: Array<{ number: string | number; label: string }>

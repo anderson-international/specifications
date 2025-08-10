@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { ReviewerLeaderboard } from '../app/api/dashboard/stats/types'
-import { DashboardStats } from './useDashboardStats'
+import type { DashboardStats } from '@/types/dashboard'
 import styles from '../app/Dashboard.module.css'
 
 export interface UseDashboardLeaderboardProps {
