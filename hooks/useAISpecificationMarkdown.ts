@@ -10,6 +10,6 @@ interface UseAISpecificationMarkdownReturn {
 }
 
 export const useAISpecificationMarkdown = (): UseAISpecificationMarkdownReturn => {
-  const { markdown, loading, error, fetchMarkdown } = useMarkdown<number>((aiSpecId) => `/api/specifications/${aiSpecId}/markdown`)
+  const { markdown, loading, error, fetchMarkdown } = useMarkdown<[number]>((aiSpecId) => `/api/specifications/${aiSpecId}/markdown`)
   return { markdown, loading, error, fetchMarkdown }
 }

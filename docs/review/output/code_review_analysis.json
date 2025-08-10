@@ -1,14 +1,14 @@
 {
   "metadata": {
-    "timestamp": "2025-08-10T21:32:28.670Z",
-    "totalFiles": 4,
-    "passedFiles": 4,
-    "failedFiles": 0
+    "timestamp": "2025-08-10T22:05:59.460Z",
+    "totalFiles": 5,
+    "passedFiles": 2,
+    "failedFiles": 3
   },
   "summary": {
-    "blockingViolations": 0,
+    "blockingViolations": 3,
     "eslintErrors": 0,
-    "typescriptIssues": 0,
+    "typescriptIssues": 8,
     "oversizedFiles": 0,
     "deadCodeIssues": {
       "unusedFiles": 0,
@@ -459,7 +459,362 @@
       ]
     }
   },
-  "fileResults": {},
+  "fileResults": {
+    "hooks\\useDashboardLeaderboard.ts": {
+      "filePath": "hooks\\useDashboardLeaderboard.ts",
+      "size": {
+        "lines": 58,
+        "limit": 100,
+        "type": "hooks",
+        "status": "PASS",
+        "percentage": 58
+      },
+      "comments": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": true,
+        "hasUseCallback": true,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": true,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": []
+      },
+      "typescript": {
+        "totalFunctions": 2,
+        "missingReturnTypes": 2,
+        "hasExplicitTypes": false,
+        "status": "FAIL",
+        "details": [
+          {
+            "name": "renderReviewer",
+            "line": 17,
+            "kind": "wrapped-arrow",
+            "signaturePreview": "const renderReviewer = useCallback("
+          },
+          {
+            "name": "renderLeaderboardTab",
+            "line": 39,
+            "kind": "wrapped-arrow",
+            "signaturePreview": "const renderLeaderboardTab = useCallback("
+          }
+        ]
+      },
+      "fallbackData": {
+        "violations": [
+          {
+            "type": "or_fallback",
+            "line": 30,
+            "content": "r.name || 'Anonymous Reviewer',",
+            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
+          }
+        ],
+        "count": 1,
+        "status": "FAIL"
+      },
+      "deadCode": {
+        "unusedExports": 0,
+        "unusedTypes": 0,
+        "unusedEnumMembers": 0,
+        "unusedClassMembers": 0,
+        "unlistedDependencies": 0,
+        "unresolvedImports": 0,
+        "status": "PASS",
+        "recommendations": []
+      },
+      "duplicates": {
+        "count": 0,
+        "segments": [],
+        "status": "PASS",
+        "recommendations": []
+      }
+    },
+    "hooks\\useDashboardRenderers.ts": {
+      "filePath": "hooks\\useDashboardRenderers.ts",
+      "size": {
+        "lines": 80,
+        "limit": 100,
+        "type": "hooks",
+        "status": "PASS",
+        "percentage": 80
+      },
+      "comments": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": true,
+        "hasUseCallback": true,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": true,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": []
+      },
+      "typescript": {
+        "totalFunctions": 3,
+        "missingReturnTypes": 3,
+        "hasExplicitTypes": false,
+        "status": "FAIL",
+        "details": [
+          {
+            "name": "renderOverviewTab",
+            "line": 37,
+            "kind": "wrapped-arrow",
+            "signaturePreview": "const renderOverviewTab = useCallback("
+          },
+          {
+            "name": "renderActivityTab",
+            "line": 52,
+            "kind": "wrapped-arrow",
+            "signaturePreview": "const renderActivityTab = useCallback("
+          },
+          {
+            "name": "renderActionsTab",
+            "line": 61,
+            "kind": "wrapped-arrow",
+            "signaturePreview": "const renderActionsTab = useCallback("
+          }
+        ]
+      },
+      "fallbackData": {
+        "violations": [
+          {
+            "type": "or_fallback",
+            "line": 44,
+            "content": "brandGaps: props.stats?.systemStats.brand_coverage_gaps || [],",
+            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 44,
+            "content": "brandGaps: props.stats?.systemStats.brand_coverage_gaps || [],",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          },
+          {
+            "type": "or_fallback",
+            "line": 45,
+            "content": "weeklyActivity: props.stats?.systemStats.recent_activity_weekly || [],",
+            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 45,
+            "content": "weeklyActivity: props.stats?.systemStats.recent_activity_weekly || [],",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          },
+          {
+            "type": "or_fallback",
+            "line": 46,
+            "content": "monthlyActivity: props.stats?.systemStats.recent_activity_monthly || [],",
+            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 46,
+            "content": "monthlyActivity: props.stats?.systemStats.recent_activity_monthly || [],",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          },
+          {
+            "type": "or_fallback",
+            "line": 66,
+            "content": "priorityProducts: props.stats?.systemStats.products_needing_attention || [],",
+            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 66,
+            "content": "priorityProducts: props.stats?.systemStats.products_needing_attention || [],",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          },
+          {
+            "type": "or_fallback",
+            "line": 67,
+            "content": "attentionProducts: props.stats?.systemStats.products_needing_coverage || [],",
+            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 67,
+            "content": "attentionProducts: props.stats?.systemStats.products_needing_coverage || [],",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          }
+        ],
+        "count": 10,
+        "status": "FAIL"
+      },
+      "deadCode": {
+        "unusedExports": 0,
+        "unusedTypes": 0,
+        "unusedEnumMembers": 0,
+        "unusedClassMembers": 0,
+        "unlistedDependencies": 0,
+        "unresolvedImports": 0,
+        "status": "PASS",
+        "recommendations": []
+      },
+      "duplicates": {
+        "count": 0,
+        "segments": [],
+        "status": "PASS",
+        "recommendations": []
+      }
+    },
+    "hooks\\useDashboardStatsLocal.ts": {
+      "filePath": "hooks\\useDashboardStatsLocal.ts",
+      "size": {
+        "lines": 57,
+        "limit": 100,
+        "type": "hooks",
+        "status": "PASS",
+        "percentage": 57
+      },
+      "comments": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": false,
+        "hasUseCallback": false,
+        "hasUseMemo": true,
+        "hasUseEffect": false,
+        "hasHooks": true,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [],
+        "count": 0,
+        "status": "PASS"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": []
+      },
+      "typescript": {
+        "totalFunctions": 3,
+        "missingReturnTypes": 3,
+        "hasExplicitTypes": false,
+        "status": "FAIL",
+        "details": [
+          {
+            "name": "systemOverviewStats",
+            "line": 11,
+            "kind": "wrapped-arrow",
+            "signaturePreview": "const systemOverviewStats = useMemo("
+          },
+          {
+            "name": "productCoverageStats",
+            "line": 23,
+            "kind": "wrapped-arrow",
+            "signaturePreview": "const productCoverageStats = useMemo("
+          },
+          {
+            "name": "userStats",
+            "line": 38,
+            "kind": "wrapped-arrow",
+            "signaturePreview": "const userStats = useMemo("
+          }
+        ]
+      },
+      "fallbackData": {
+        "violations": [
+          {
+            "type": "optional_chaining_fallback",
+            "line": 13,
+            "content": "{ number: stats?.systemStats.total_products.toLocaleString() || 0, label: 'Total Products' },",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 15,
+            "content": "number: stats?.systemStats.published_specifications.toLocaleString() || 0,",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 18,
+            "content": "{ number: `${stats?.systemStats.coverage_percentage || 0}%`, label: 'Coverage (5+ specs)' },",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 25,
+            "content": "{ number: stats?.systemStats.products_fully_covered || 0, label: 'Fully Covered (5+ specs)' },",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 27,
+            "content": "number: stats?.systemStats.products_partial_coverage || 0,",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 31,
+            "content": "number: stats?.systemStats.products_needing_attention.length || 0,",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 40,
+            "content": "{ number: stats?.userStats.total_specifications || 0, label: 'Total Specifications' },",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 41,
+            "content": "{ number: stats?.userStats.published_specifications || 0, label: 'Published' },",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 42,
+            "content": "{ number: stats?.userStats.needs_revision_specifications || 0, label: 'Needs Revision' },",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          }
+        ],
+        "count": 9,
+        "status": "FAIL"
+      },
+      "deadCode": {
+        "unusedExports": 0,
+        "unusedTypes": 0,
+        "unusedEnumMembers": 0,
+        "unusedClassMembers": 0,
+        "unlistedDependencies": 0,
+        "unresolvedImports": 0,
+        "status": "PASS",
+        "recommendations": []
+      },
+      "duplicates": {
+        "count": 0,
+        "segments": [],
+        "status": "PASS",
+        "recommendations": []
+      }
+    }
+  },
   "repoDuplicates": {
     "config": {
       "includeRoots": [

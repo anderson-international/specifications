@@ -101,18 +101,21 @@ export default function SpecificationsTabContent({
         >
           <ProductList
             items={filteredProducts}
-            getKey={(p: UserProduct) => p.id}
-            renderItem={(product: UserProduct) => (
-              <ProductRow
-                product={product}
-                mode="single"
-                userHasSpec={product.userHasSpec}
-                specCount={product.specCount}
-                hasLocalDraft={activeTab === 'to-do' ? localDraftHandles.has((product as { handle?: string }).handle ?? '') : false}
-                onCreateClick={activeTab === 'to-do' ? () => onCreateClick(product.handle) : undefined}
-                onEditClick={product.specification_id ? () => onEditClick(product.specification_id) : undefined}
-              />
-            )}
+            getKey={(p: UserProduct) => (activeTab === 'my-specs' ? p.specification_id! : p.id)}
+            renderItem={(product: UserProduct) => {
+              const specId: string | undefined = product.specification_id
+              return (
+                <ProductRow
+                  product={product}
+                  mode="single"
+                  userHasSpec={product.userHasSpec}
+                  specCount={product.specCount}
+                  hasLocalDraft={activeTab === 'to-do' ? localDraftHandles.has((product as { handle?: string }).handle ?? '') : false}
+                  onCreateClick={activeTab === 'to-do' ? () => onCreateClick(product.handle) : undefined}
+                  onEditClick={specId ? () => onEditClick(specId) : undefined}
+                />
+              )
+            }}
             containerStyle={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}
           />
         </AsyncStateContainer>

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { DashboardStats } from './useDashboardStats'
+import type { DashboardStats } from '@/types/dashboard'
 import { useDashboardStatsLocal } from './useDashboardStatsLocal'
 import { useDashboardLeaderboard } from './useDashboardLeaderboard'
 import DashboardOverviewTab from '../components/dashboard/DashboardOverviewTab'
