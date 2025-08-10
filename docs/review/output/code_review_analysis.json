@@ -1,12 +1,12 @@
 {
   "metadata": {
-    "timestamp": "2025-08-10T21:28:14.179Z",
-    "totalFiles": 1,
-    "passedFiles": 0,
-    "failedFiles": 1
+    "timestamp": "2025-08-10T21:32:28.670Z",
+    "totalFiles": 4,
+    "passedFiles": 4,
+    "failedFiles": 0
   },
   "summary": {
-    "blockingViolations": 1,
+    "blockingViolations": 0,
     "eslintErrors": 0,
     "typescriptIssues": 0,
     "oversizedFiles": 0,
@@ -459,79 +459,7 @@
       ]
     }
   },
-  "fileResults": {
-    "lib\\services\\user-products-service.ts": {
-      "filePath": "lib/services/user-products-service.ts",
-      "size": {
-        "lines": 72,
-        "limit": 100,
-        "type": "services",
-        "status": "PASS",
-        "percentage": 72
-      },
-      "comments": {
-        "violations": [
-          {
-            "type": "inline",
-            "line": 27,
-            "content": "// One entry per spec (Admin will naturally see duplicates; non-admins have DB uniqueness)"
-          },
-          {
-            "type": "inline",
-            "line": 53,
-            "content": "// To-do tab: products without a user spec"
-          }
-        ],
-        "count": 2,
-        "status": "FAIL"
-      },
-      "react": {
-        "hasReactImport": false,
-        "hasUseCallback": false,
-        "hasUseMemo": false,
-        "hasUseEffect": false,
-        "hasHooks": false,
-        "issues": []
-      },
-      "consoleErrors": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "eslint": {
-        "errors": [],
-        "warnings": []
-      },
-      "typescript": {
-        "totalFunctions": 0,
-        "missingReturnTypes": 0,
-        "hasExplicitTypes": true,
-        "status": "PASS",
-        "details": []
-      },
-      "fallbackData": {
-        "violations": [],
-        "count": 0,
-        "status": "PASS"
-      },
-      "deadCode": {
-        "unusedExports": 0,
-        "unusedTypes": 0,
-        "unusedEnumMembers": 0,
-        "unusedClassMembers": 0,
-        "unlistedDependencies": 0,
-        "unresolvedImports": 0,
-        "status": "PASS",
-        "recommendations": []
-      },
-      "duplicates": {
-        "count": 0,
-        "segments": [],
-        "status": "PASS",
-        "recommendations": []
-      }
-    }
-  },
+  "fileResults": {},
   "repoDuplicates": {
     "config": {
       "includeRoots": [
