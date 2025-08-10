@@ -24,11 +24,27 @@ export class UserProductsService {
     const productByHandle = new Map<string, Product>(allProducts.map(p => [p.handle, p]))
 
     if (userHasSpec) {
-      
       const augmented: UserProduct[] = userSpecs
         .map(spec => {
           const p = productByHandle.get(spec.shopify_handle)
-          if (!p) return null
+          if (!p) {
+            const count = specCountsMap.get(spec.shopify_handle) ?? 1
+            const placeholder: Product = {
+              id: `missing::${spec.shopify_handle}`,
+              handle: spec.shopify_handle,
+              title: spec.shopify_handle,
+              brand: spec.product_enum_brands?.name ?? '',
+              image_url: '',
+              spec_count_total: count,
+            }
+            return {
+              ...placeholder,
+              userHasSpec: true,
+              specCount: count,
+              specification_id: spec.id.toString(),
+              lastModified: spec.updated_at ? (spec.updated_at as Date).toISOString() : undefined,
+            } as UserProduct
+          }
           return {
             ...p,
             userHasSpec: true,
@@ -37,7 +53,6 @@ export class UserProductsService {
             lastModified: spec.updated_at ? (spec.updated_at as Date).toISOString() : undefined,
           } as UserProduct
         })
-        .filter((x): x is UserProduct => x !== null)
 
       augmented.sort((a, b) => {
         const at = a.lastModified ? Date.parse(a.lastModified) : 0

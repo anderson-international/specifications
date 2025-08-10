@@ -230,6 +230,61 @@ function runEslint(filePath) {
   }
 }
 
+// Run TypeScript compiler (project-wide) and collect diagnostics
+function runTsc(tsconfigPathArg) {
+  const byFile = {};
+  let totalErrors = 0;
+  const defaultTsconfig = path.join(ROOT_DIR, 'tsconfig.json');
+  const tsconfigPathUsed = tsconfigPathArg || defaultTsconfig;
+  const cmd = fs.existsSync(tsconfigPathUsed)
+    ? `npx tsc --noEmit --pretty false -p "${tsconfigPathUsed.replace(/"/g, '\\"')}"`
+    : 'npx tsc --noEmit --pretty false';
+  try {
+    // Success: no compiler errors
+    execSync(cmd, { cwd: ROOT_DIR, stdio: 'pipe' });
+    return { byFile, totalErrors, tsconfigPath: tsconfigPathUsed };
+  } catch (error) {
+    const out = (error && (error.stdout?.toString() || error.stderr?.toString())) || '';
+    const lines = out.split(/\r?\n/);
+    const add = (fileKey, item) => {
+      if (!byFile[fileKey]) byFile[fileKey] = [];
+      byFile[fileKey].push(item);
+      totalErrors++;
+    };
+    for (const raw of lines) {
+      const line = String(raw || '').trim();
+      if (!line || !/error\s+TS\d+/i.test(line)) continue;
+      // Pattern 1: C:\\path\\file.ts(12,34): error TS1234: Message
+      let m = line.match(/^(.*\.(?:ts|tsx))\((\d+),(\d+)\):\s*error\s+TS(\d+):\s*(.+)$/i);
+      if (m) {
+        const fileRaw = m[1];
+        const fileAbs = path.isAbsolute(fileRaw) ? fileRaw : path.join(ROOT_DIR, fileRaw);
+        const fileKey = toRepoRelative(fileAbs);
+        add(fileKey, { line: parseInt(m[2], 10), column: parseInt(m[3], 10), code: `TS${m[4]}`, message: m[5] });
+        continue;
+      }
+      // Pattern 2: C:\\path\\file.ts:12:34 - error TS1234: Message
+      m = line.match(/^(.*\.(?:ts|tsx)):(\d+):(\d+)\s*-\s*error\s+TS(\d+):\s*(.+)$/i);
+      if (m) {
+        const fileRaw = m[1];
+        const fileAbs = path.isAbsolute(fileRaw) ? fileRaw : path.join(ROOT_DIR, fileRaw);
+        const fileKey = toRepoRelative(fileAbs);
+        add(fileKey, { line: parseInt(m[2], 10), column: parseInt(m[3], 10), code: `TS${m[4]}`, message: m[5] });
+        continue;
+      }
+      // Pattern 3: Global error without file path: error TS1234: Message
+      m = line.match(/^error\s+TS(\d+):\s*(.+)$/i);
+      if (m) {
+        add('__global__', { line: 0, column: 0, code: `TS${m[1]}`, message: m[2] });
+        continue;
+      }
+      // Fallback: unparsed line, still count to avoid false PASS
+      add('__global__', { line: 0, column: 0, code: 'UNKNOWN', message: line });
+    }
+    return { byFile, totalErrors, tsconfigPath: tsconfigPathUsed, raw: out };
+  }
+}
+
 // Run Knip repo-wide to detect dead code & related issues
 function runKnip() {
   try {
@@ -960,6 +1015,7 @@ function generateCompactSummary(results) {
     r.comments.status === 'FAIL' || 
     r.size.status === 'FAIL' || 
     r.typescript.status === 'FAIL' ||
+    (r.typescriptCompiler && r.typescriptCompiler.status === 'FAIL') ||
     r.consoleErrors.status === 'FAIL' ||
     r.fallbackData.status === 'FAIL' ||
     (r.deadCode && r.deadCode.status === 'FAIL') ||
@@ -998,6 +1054,22 @@ function generateCompactSummary(results) {
           const fnName = d.name || '(anonymous)';
           summary += `${fileName}:${d.line} - Add return type to "${fnName}"\n`;
         });
+      }
+      // TypeScript compiler diagnostics
+      if (file.typescriptCompiler && file.typescriptCompiler.errorCount > 0) {
+        const count = file.typescriptCompiler.errorCount;
+        summary += `${fileName}: ${count} TypeScript compiler error(s)\n`;
+        const list = Array.isArray(file.typescriptCompiler.errors) ? file.typescriptCompiler.errors.slice(0, 5) : [];
+        list.forEach(e => {
+          const code = e.code || 'TS';
+          const line = typeof e.line === 'number' ? e.line : 0;
+          const col = typeof e.column === 'number' ? e.column : 0;
+          const msg = (e.message || '').trim();
+          summary += `${fileName}:${line}:${col} - ${code}: ${msg}\n`;
+        });
+        if ((file.typescriptCompiler.errors || []).length > 5) {
+          summary += `${fileName}: ...and more\n`;
+        }
       }
       
       // Console error violations (blocking - violates fail-fast principle)
@@ -1052,8 +1124,8 @@ function generateCompactSummary(results) {
 
 function generateBatchSummary(results) {
   const totalFiles = results.length;
-  const passedFiles = results.filter(r => r.comments.status === 'PASS' && r.size.status === 'PASS' && r.typescript.status === 'PASS' && r.eslint.errors.length === 0 && r.consoleErrors.status === 'PASS' && r.fallbackData.status === 'PASS' && (!r.deadCode || r.deadCode.status === 'PASS') && (!r.duplicates || r.duplicates.status === 'PASS'));
-  const failedFiles = results.filter(r => r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL' || r.eslint.errors.length > 0 || r.consoleErrors.status === 'FAIL' || r.fallbackData.status === 'FAIL' || (r.deadCode && r.deadCode.status === 'FAIL') || (r.duplicates && r.duplicates.status === 'FAIL'));
+  const passedFiles = results.filter(r => r.comments.status === 'PASS' && r.size.status === 'PASS' && r.typescript.status === 'PASS' && (!r.typescriptCompiler || r.typescriptCompiler.status === 'PASS') && r.eslint.errors.length === 0 && r.consoleErrors.status === 'PASS' && r.fallbackData.status === 'PASS' && (!r.deadCode || r.deadCode.status === 'PASS') && (!r.duplicates || r.duplicates.status === 'PASS'));
+  const failedFiles = results.filter(r => r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL' || (r.typescriptCompiler && r.typescriptCompiler.status === 'FAIL') || r.eslint.errors.length > 0 || r.consoleErrors.status === 'FAIL' || r.fallbackData.status === 'FAIL' || (r.deadCode && r.deadCode.status === 'FAIL') || (r.duplicates && r.duplicates.status === 'FAIL'));
   
   let summary = `=== BATCH TEST SUMMARY ===\n`;
   summary += `Total Files: ${totalFiles} | Passed: ${passedFiles.length} | Failed: ${failedFiles.length}\n\n`;
@@ -1066,6 +1138,7 @@ function generateBatchSummary(results) {
       if (file.comments.status === 'FAIL') issues.push('comments');
       if (file.size.status === 'FAIL') issues.push('size');
       if (file.typescript.status === 'FAIL') issues.push(`typescript (${file.typescript.missingReturnTypes} missing)`);
+      if (file.typescriptCompiler && file.typescriptCompiler.status === 'FAIL') issues.push(`tsc (${file.typescriptCompiler.errorCount})`);
       if (file.consoleErrors.status === 'FAIL') issues.push(`console-errors (${file.consoleErrors.count} fail-fast violations)`);
       if (file.fallbackData.status === 'FAIL') issues.push(`fallback-data (${file.fallbackData.count} violations)`);
       if (file.eslint.errors.length > 0) issues.push(`eslint (${file.eslint.errors.length} errors)`);
@@ -1106,6 +1179,7 @@ function main() {
       '  - React usage patterns',
       '  - console.error/console.warn fail-fast violations',
       '  - ESLint errors/warnings (via npx eslint)',
+      '  - TypeScript compiler diagnostics (via npx tsc --noEmit)',
       '  - Fallback data anti-patterns (null/undefined returns, || defaults, etc.)',
       '  - Dead code & unresolved imports (via knip, repo-wide)',
       '  - Duplicate code detection (via jscpd, repo-wide, default min-tokens=50)',
@@ -1116,6 +1190,8 @@ function main() {
       '                           Use "." to scan entire repo or include "docs" to scan test fixtures.',
       '  --debug                   Print extra debug info (e.g., JSCPD scan details)',
       '  --report-all              Include all files in JSON report (default: only files with violations)',
+      '  --tsconfig <path>         Use a specific tsconfig.json (default: repo root tsconfig.json)',
+      '  --skip-tsc                Skip TypeScript compiler checks (not recommended)',
       '',
       'Examples:',
       '  node docs/scripts/code-review-analyzer.js app/page.tsx',
@@ -1140,6 +1216,8 @@ function main() {
   let jscpdIncludeRoots = undefined;
   let debugMode = false;
   let reportAll = false;
+  let tsconfigOverride = undefined;
+  let skipTsc = false;
   const files = [];
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -1179,6 +1257,25 @@ function main() {
       reportAll = true;
       continue;
     }
+    if (a === '--tsconfig') {
+      const v = args[i + 1];
+      i++;
+      if (typeof v === 'string') {
+        tsconfigOverride = path.isAbsolute(v) ? v : path.join(ROOT_DIR, v);
+      }
+      continue;
+    }
+    if (a.startsWith('--tsconfig=')) {
+      const v = a.split('=')[1];
+      if (typeof v === 'string') {
+        tsconfigOverride = path.isAbsolute(v) ? v : path.join(ROOT_DIR, v);
+      }
+      continue;
+    }
+    if (a === '--skip-tsc') {
+      skipTsc = true;
+      continue;
+    }
     files.push(a);
   }
   
@@ -1199,6 +1296,7 @@ function main() {
   // Repo-wide dead/dup code analysis
   const knipData = runKnip();
   const jscpdData = runJscpd(TMP_JSCPD_DIR, { includeRoots: jscpdIncludeRoots, minTokens: jscpdMinTokens });
+  const tscData = skipTsc ? { byFile: {}, totalErrors: 0, tsconfigPath: (tsconfigOverride || path.join(ROOT_DIR, 'tsconfig.json')) } : runTsc(tsconfigOverride);
   // JSCPD debug: confirm scanned files and detectClones return shape (only with --debug)
   if (debugMode) {
     try {
@@ -1212,6 +1310,20 @@ function main() {
   }
   const knipAgg = applyKnipToResults(results, knipData);
   const jscpdAgg = applyJscpdToResults(results, jscpdData);
+
+  // Attach TypeScript compiler diagnostics to file results
+  try {
+    const resultKey = (fp) => toRepoRelative(path.isAbsolute(fp) ? fp : path.join(ROOT_DIR, fp));
+    results.forEach(r => {
+      const key = resultKey(r.filePath);
+      const errors = (tscData && tscData.byFile && tscData.byFile[key]) || [];
+      r.typescriptCompiler = {
+        errors,
+        errorCount: errors.length,
+        status: errors.length > 0 ? 'FAIL' : 'PASS'
+      };
+    });
+  } catch (_) {}
   
   // Generate appropriate summary
   let summary;
@@ -1222,9 +1334,9 @@ function main() {
   }
   
   console.log(summary);
-  // Repo-wide aggregate summary (knip/jscpd)
+  // Repo-wide aggregate summary (knip/jscpd/tsc)
   try {
-    const repoLine = `Repo-wide: dead-code (unusedFiles=${knipAgg.summary?.unusedFiles || 0}, unresolvedImports=${knipAgg.summary?.unresolvedImports || 0}, unlistedDeps=${knipAgg.summary?.unlistedDependencies || 0}) | duplicates (groups=${jscpdAgg.summary?.groups || 0}, lines=${jscpdAgg.summary?.duplicatedLines || 0}, pct=${jscpdAgg.summary?.percentage || 0})`;
+    const repoLine = `Repo-wide: dead-code (unusedFiles=${knipAgg.summary?.unusedFiles || 0}, unresolvedImports=${knipAgg.summary?.unresolvedImports || 0}, unlistedDeps=${knipAgg.summary?.unlistedDependencies || 0}) | duplicates (groups=${jscpdAgg.summary?.groups || 0}, lines=${jscpdAgg.summary?.duplicatedLines || 0}, pct=${jscpdAgg.summary?.percentage || 0}) | tscErrors=${tscData?.totalErrors || 0}`;
     console.log(repoLine);
   } catch (_) {}
   
@@ -1252,7 +1364,8 @@ function main() {
     (r.deadCode && r.deadCode.status === 'FAIL') ||
     (r.duplicates && r.duplicates.status === 'FAIL')
   );
-  const hasRepoFailures = hasRepoDeadCodeIssues || hasRepoDuplicates;
+  const hasTscErrors = Boolean(tscData && (tscData.totalErrors || 0) > 0);
+  const hasRepoFailures = hasRepoDeadCodeIssues || hasRepoDuplicates || hasTscErrors;
 
   const finalHasFailures = hasFailures || hasRepoFailures;
   
@@ -1260,16 +1373,19 @@ function main() {
   const passedFiles = results.length - results.filter(r => (
     r.eslint.errors.length > 0 || r.eslint.warnings.length > 0 ||
     r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL' ||
+    (r.typescriptCompiler && r.typescriptCompiler.status === 'FAIL') ||
     r.consoleErrors.status === 'FAIL' || r.fallbackData.status === 'FAIL' ||
     (r.deadCode && r.deadCode.status === 'FAIL') || (r.duplicates && r.duplicates.status === 'FAIL')
   )).length;
   const failedFiles = results.length - passedFiles;
   const eslintErrors = results.reduce((a, r) => a + r.eslint.errors.length, 0);
   const typescriptIssues = results.reduce((a, r) => a + (r.typescript?.missingReturnTypes || 0), 0);
+  const tscErrors = (tscData && tscData.totalErrors) || 0;
   const oversizedFiles = results.filter(r => r.size.status === 'FAIL').length;
   const isFailingFile = (r) => (
     r.eslint.errors.length > 0 || r.eslint.warnings.length > 0 ||
     r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL' ||
+    (r.typescriptCompiler && r.typescriptCompiler.status === 'FAIL') ||
     r.consoleErrors.status === 'FAIL' || r.fallbackData.status === 'FAIL' ||
     (r.deadCode && r.deadCode.status === 'FAIL') || (r.duplicates && r.duplicates.status === 'FAIL')
   );
@@ -1557,12 +1673,15 @@ function main() {
       blockingViolations: failedFiles,
       eslintErrors,
       typescriptIssues,
+      tscErrors,
+      tsconfigPath: (typeof tscData?.tsconfigPath === 'string' ? toRepoRelative(tscData.tsconfigPath) : 'not provided'),
       oversizedFiles,
       deadCodeIssues: knipAgg.summary,
       duplicateCode: dupSummaryWithDetails
     },
     fileResults,
     repoDuplicates,
+    tsc: { tsconfigPath: (typeof tscData?.tsconfigPath === 'string' ? toRepoRelative(tscData.tsconfigPath) : 'not provided'), totalErrors: tscErrors },
     actionableItems: actionableItemsOut
   };
   

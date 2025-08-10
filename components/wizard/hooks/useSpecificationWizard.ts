@@ -37,7 +37,8 @@ export const useSpecificationWizard = ({
 
   const { filteredProducts } = useProducts()
   const { data: enumData, isLoading: enumsLoading } = useSpecificationEnums()
-  const selectedProduct = useSelectedProduct(methods, filteredProducts)
+  const selectedProduct = useSelectedProduct(methods, filteredProducts)
+  const shopifyHandle = methods.watch('shopify_handle')
 
   const {
     activeStep,
@@ -75,10 +76,9 @@ export const useSpecificationWizard = ({
   const productHandle = useMemo((): string | null => {
     if (selectedProduct?.handle) return selectedProduct.handle
     if (initialData.shopify_handle) return initialData.shopify_handle as string
-    const formHandle = methods.getValues('shopify_handle')
-    if (formHandle) return formHandle
+    if (shopifyHandle) return shopifyHandle
     return null
-  }, [selectedProduct?.handle, initialData.shopify_handle, methods])
+  }, [selectedProduct?.handle, initialData.shopify_handle, shopifyHandle])
   const { clearDraft, forceSave, saveStatus, lastError, hasSavedOnce } = useWizardAutoSave({
     methods,
     userId,

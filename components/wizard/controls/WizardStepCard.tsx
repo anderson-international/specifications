@@ -11,34 +11,17 @@ interface WizardStepCardProps {
   isValid?: boolean
 }
 
-/**
- * A card layout wrapper for wizard step content
- * Provides consistent styling and header/footer for all steps
- */
 const WizardStepCard = ({
   title,
   children,
-  stepNumber,
-  totalSteps,
-  isValid = true,
+  stepNumber: _stepNumber,
+  totalSteps: _totalSteps,
+  isValid: _isValid = true,
 }: WizardStepCardProps): JSX.Element => {
   return (
-    <div className={styles.card}>
-      <div className={styles.header}>
-        <h2 className={styles.title}>{title}</h2>
-        <div className={styles.stepIndicator}>
-          Step {stepNumber} of {totalSteps}
-          {!isValid && (
-            <span className={styles.invalidIndicator} aria-label="Invalid step">
-              !
-            </span>
-          )}
-        </div>
-      </div>
+    <div className={styles.card} aria-label={title}>
       <div className={styles.content}>{children}</div>
     </div>
   )
-}
-
-// Export with React.memo for performance optimization
+}
 export default React.memo(WizardStepCard)

@@ -1,8 +1,6 @@
-
-
 export const PRODUCTS_QUERY = `
   query GetProducts($first: Int!, $after: String) {
-    products(first: $first, after: $after, query: "status:active AND product_type:Tobacco Snuff") {
+    products(first: $first, after: $after, query: "status:active AND (product_type:'Tobacco Snuff' OR product_type:'Herbal Snuff')") {
       edges {
         node {
           handle
