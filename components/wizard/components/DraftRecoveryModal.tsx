@@ -21,15 +21,15 @@ const DraftRecoveryModal = ({
   onRecover,
   onStartFresh,
 }: DraftRecoveryModalProps): JSX.Element => {
-  const handleRecover = useCallback(() => {
+  const handleRecover = useCallback((): void => {
     onRecover(draft)
   }, [draft, onRecover])
 
-  const handleStartFresh = useCallback(() => {
+  const handleStartFresh = useCallback((): void => {
     onStartFresh()
   }, [onStartFresh])
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent): void => {
     if (e.key === 'Enter') {
       handleRecover()
     } else if (e.key === 'Escape') {
@@ -37,11 +37,11 @@ const DraftRecoveryModal = ({
     }
   }, [handleRecover, handleStartFresh])
 
-  const currentStepTitle = (() => {
+  const currentStepTitle: string = (() => {
     switch (draft.currentStep) {
-      case 2: return 'Characteristics'
-      case 3: return 'Tasting Profile'
-      case 4: return 'Review & Submission'
+      case 1: return 'Characteristics'
+      case 2: return 'Tasting Profile'
+      case 3: return 'Review & Submission'
       default: return `Step ${draft.currentStep}`
     }
   })()

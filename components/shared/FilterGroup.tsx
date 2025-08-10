@@ -17,13 +17,16 @@ export const FilterGroup: React.FC<FilterGroupProps> = React.memo(({ filter, onF
     [filter.id, onFilterChange]
   )
 
+  const isBrand: boolean = filter.id === 'brand'
+
   return (
-    <div key={filter.id} className={styles.filterGroup}>
+    <div key={filter.id} className={`${styles.filterGroup} ${isBrand ? styles.brandGroup : ''}`}>
       {filter.label && (
         <label htmlFor={filter.id} className={styles.label}>
           {filter.label}
         </label>
       )}
+
       <select
         id={filter.id}
         value={filter.value}

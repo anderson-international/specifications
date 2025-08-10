@@ -155,3 +155,16 @@
 }
 
 /* Button styles moved to shared Button module */
+
+/* Right side container for count + hint */
+.rightMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.actionHint {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #a0aec0);
+  white-space: nowrap;
+}

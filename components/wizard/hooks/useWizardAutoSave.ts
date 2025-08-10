@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
-import { WizardFormData } from '../types/wizard.types'
+import { WizardFormData, SaveStatus } from '../types/wizard.types'
 import { saveDraft, deleteDraft } from '@/lib/utils/draft-storage'
 
 interface UseWizardAutoSaveProps {
@@ -11,9 +11,6 @@ interface UseWizardAutoSaveProps {
   isEnabled: boolean
   isSubmitting: boolean
 }
-
-type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
-
 interface UseWizardAutoSaveReturn {
   clearDraft: () => void
   forceSave: () => void
@@ -35,18 +32,28 @@ export const useWizardAutoSave = ({
   const [hasSavedOnce, setHasSavedOnce] = useState<boolean>(false)
   const lastSavedDataRef = useRef<string>('')
   const debounceTimerRef = useRef<number | null>(null)
+  const hasUserEditedRef = useRef<boolean>(false)
+
+  const scheduleSaveStatusUpdate = (savingStartTime: number, setSave: (s: SaveStatus) => void): void => {
+    const elapsedTime = Date.now() - savingStartTime
+    const remainingTime = Math.max(0, 1000 - elapsedTime)
+    setTimeout(() => {
+      setSave('saved')
+      setTimeout(() => { setSave('idle') }, 2000)
+    }, remainingTime)
+  }
 
   useEffect(() => {
     lastSavedDataRef.current = JSON.stringify(methods.getValues())
   }, [methods])
 
-  const clearDraft = useCallback(() => {
+  const clearDraft = useCallback((): void => {
     if (productHandle) {
       deleteDraft(userId, productHandle)
     }
   }, [userId, productHandle])
 
-  const forceSave = useCallback(() => {
+  const forceSave = useCallback((): void => {
     if (!isEnabled || !productHandle || isSubmitting) return
 
     const formData = methods.getValues()
@@ -62,16 +69,7 @@ export const useWizardAutoSave = ({
         lastSavedDataRef.current = currentDataString
         setHasSavedOnce(true)
 
-        const elapsedTime = Date.now() - savingStartTime
-        const remainingTime = Math.max(0, 1000 - elapsedTime)
-        
-        setTimeout(() => {
-          setSaveStatus('saved')
-
-          setTimeout(() => {
-            setSaveStatus('idle')
-          }, 2000)
-        }, remainingTime)
+        scheduleSaveStatusUpdate(savingStartTime, setSaveStatus)
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error'
         setLastError(errorMessage)
@@ -82,12 +80,21 @@ export const useWizardAutoSave = ({
   }, [methods, userId, productHandle, currentStep, isEnabled, isSubmitting])
 
   useEffect(() => {
-    if (!isEnabled || currentStep < 2) {
+    if (!isEnabled) {
       return
     }
 
-    const subscription = methods.watch((data) => {
+    const subscription: { unsubscribe: () => void } = methods.watch((data) => {
       if (isSubmitting) {
+        return
+      }
+
+      const dataStringImmediate = JSON.stringify(data)
+      if (!hasUserEditedRef.current) {
+        if (dataStringImmediate !== lastSavedDataRef.current) {
+          hasUserEditedRef.current = true
+          lastSavedDataRef.current = dataStringImmediate
+        }
         return
       }
 
@@ -97,29 +104,20 @@ export const useWizardAutoSave = ({
 
       debounceTimerRef.current = window.setTimeout(() => {
         try {
-          setSaveStatus('saving')
-          setLastError(null)
-          const savingStartTime = Date.now()
-          
-          const dataString = JSON.stringify(data)
+          const latestData = methods.getValues()
+          const dataString = JSON.stringify(latestData)
           if (dataString !== lastSavedDataRef.current) {
             if (!productHandle) {
               throw new Error('Cannot save draft: productHandle is null. Ensure product selection is complete before auto-save.')
             }
-            saveDraft(userId, productHandle, data, currentStep)
+            setSaveStatus('saving')
+            setLastError(null)
+            const savingStartTime = Date.now()
+            saveDraft(userId, productHandle, latestData, currentStep)
             lastSavedDataRef.current = dataString
             setHasSavedOnce(true)
 
-            const elapsedTime = Date.now() - savingStartTime
-            const remainingTime = Math.max(0, 1000 - elapsedTime)
-            
-            setTimeout(() => {
-              setSaveStatus('saved')
-
-              setTimeout(() => {
-                setSaveStatus('idle')
-              }, 2000)
-            }, remainingTime)
+            scheduleSaveStatusUpdate(savingStartTime, setSaveStatus)
           }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Unknown error'

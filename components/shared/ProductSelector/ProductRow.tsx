@@ -1,12 +1,12 @@
 'use client'
 
 import React, { useCallback } from 'react'
-import Image from 'next/image'
-import { FileText } from 'lucide-react'
+import { FileText, Check } from 'lucide-react'
 import type { ProductRowProps } from './product-selector-interfaces'
 import styles from './ProductRow.module.css'
 import rowStyles from '@/components/shared/RowStyles/RowStyles.module.css'
-import buttonStyles from '@/components/shared/Button/Button.module.css'
+import ProductThumbnail from '@/components/shared/ProductThumbnail/ProductThumbnail'
+import { useKeyboardSelect } from '@/hooks/useKeyboardSelect'
 
 const ProductRow = ({
   product,
@@ -16,6 +16,7 @@ const ProductRow = ({
   mode,
   userHasSpec,
   specCount,
+  hasLocalDraft,
   onCreateClick,
   onEditClick,
 }: ProductRowProps): JSX.Element => {
@@ -24,41 +25,28 @@ const ProductRow = ({
     if (count <= 9) return styles.specCountBadgeYellow
     return styles.specCountBadgeGreen
   }, [])
-  const handleClick = useCallback(() => {
-    if (!disabled && onSelect) {
+  const handleClick = useCallback((): void => {
+    if (disabled) return
+    if (onSelect) {
       onSelect(product)
+      return
     }
-  }, [disabled, onSelect, product])
+    if (userHasSpec && onEditClick) {
+      const specId = (product as { specification_id?: string }).specification_id
+      if (specId) {
+        onEditClick(specId)
+        return
+      }
+    }
+    if (onCreateClick) {
+      const pid = (product as { handle?: string }).handle ?? product.id
+      onCreateClick(pid)
+    }
+  }, [disabled, onSelect, product, userHasSpec, onEditClick, onCreateClick])
 
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault()
-        handleClick()
-      }
-    },
-    [handleClick]
-  )
+  const handleKeyDown = useKeyboardSelect(disabled, handleClick)
   
-  const handleCreateClick = useCallback(
-    (event: React.MouseEvent) => {
-      event.stopPropagation()
-      if (!disabled && onCreateClick) {
-        onCreateClick(product.id)
-      }
-    },
-    [disabled, onCreateClick, product.id]
-  )
   
-  const handleEditClick = useCallback(
-    (event: React.MouseEvent) => {
-      event.stopPropagation()
-      if (!disabled && onEditClick && (product as any).specification_id) {
-        onEditClick((product as any).specification_id)
-      }
-    },
-    [disabled, onEditClick, product]
-  )
   
   return (
     <div
@@ -70,45 +58,38 @@ const ProductRow = ({
       {...(mode === 'multi' && { 'aria-checked': isSelected })}
       aria-disabled={disabled}
     >
-      <div className={rowStyles.imageWrapper}>
-        {product.image_url ? (
-          <Image
-            src={product.image_url}
-            alt={product.title}
-            className={rowStyles.productImage}
-            width={40}
-            height={40}
-            priority={false}
-            loading="lazy"
-          />
-        ) : (
-          <div className={rowStyles.imagePlaceholder}>
-            <span>{product.title.substring(0, 2).toUpperCase()}</span>
-          </div>
-        )}
-      </div>
+      <ProductThumbnail
+        imageUrl={product.image_url}
+        title={product.title}
+        width={40}
+        height={40}
+        wrapperClassName={rowStyles.imageWrapper}
+        imageClassName={rowStyles.productImage}
+        placeholderClassName={rowStyles.imagePlaceholder}
+        priority={false}
+        loading="lazy"
+      />
       <div className={rowStyles.rowInfo}>
         <h3 className={rowStyles.rowTitle}>{product.title}</h3>
       </div>
 
-      <div className={styles.specCountContainer}>
-        <FileText size={16} className={styles.specIcon} />
-        <span className={`${styles.specCountBadge} ${getBadgeStyle(specCount ?? 0)}`}>
-          {specCount ?? 0}
-        </span>
+      <div className={styles.rightMeta}>
+        {hasLocalDraft && (
+          <div
+            className={styles.userSpecIndicator}
+            title="Draft saved locally"
+            aria-label="Draft saved locally"
+          >
+            <Check size={16} />
+          </div>
+        )}
+        <div className={styles.specCountContainer}>
+          <FileText size={16} className={styles.specIcon} />
+          <span className={`${styles.specCountBadge} ${getBadgeStyle(specCount ?? 0)}`}>
+            {specCount ?? 0}
+          </span>
+        </div>
       </div>
-
-      {userHasSpec !== undefined && (
-        <button
-          className={userHasSpec ? buttonStyles.editButton : buttonStyles.createButton}
-          onClick={userHasSpec ? handleEditClick : handleCreateClick}
-          disabled={disabled}
-          type="button"
-          aria-label={userHasSpec ? `Edit specification for ${product.title}` : `Create specification for ${product.title}`}
-        >
-          {userHasSpec ? 'Edit' : 'Create'}
-        </button>
-      )}
 
       {mode === 'multi' && (
         <div className={styles.checkbox}>

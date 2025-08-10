@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { TransformedFormData, buildApiRequest } from '@/components/wizard/hooks/specification-transform-utils'
 import SpecificationWizard from '@/components/wizard/SpecificationWizard'
@@ -23,9 +23,13 @@ export default function CreateSpecificationClient(
   const productId = searchParams.get('productId') || undefined
   const mode = searchParams.get('mode') || undefined
   
-  if ((mode === 'edit' || mode === 'createFromProduct') && !productId) {
-    throw new Error(`${mode} mode requires productId parameter`)
-  }
+  useEffect(() => {
+    if (!productId) {
+      router.replace('/specifications')
+    }
+  }, [productId, router])
+  
+  
 
   const handleSubmit = useCallback(
     async (data: TransformedFormData): Promise<void> => {
@@ -40,7 +44,9 @@ export default function CreateSpecificationClient(
         })
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ message: 'Unknown error' }))
+          const errorData: { message?: string } = await response
+            .json()
+            .catch(() => ({ message: 'Unknown error' }))
           if (errorData.message) {
             throw new Error(errorData.message)
           }
@@ -58,15 +64,15 @@ export default function CreateSpecificationClient(
           throw new Error('Create failed')
         }
 
-        router.push('/specifications')
+        router.push('/specifications?tab=my-specs')
       } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'Failed to create specification')
       }
     },
-    [router]
+    [router, user.id]
   )
 
-  const initialData = useMemo(() => {
+  const initialData: Record<string, unknown> = useMemo(() => {
     if (productId) {
       return {
         shopify_handle: productId,
@@ -75,6 +81,8 @@ export default function CreateSpecificationClient(
     }
     return {}
   }, [productId, mode])
+
+  if (!productId) return null
 
   return (
     <SpecificationWizard

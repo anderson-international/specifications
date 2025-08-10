@@ -1,6 +1,5 @@
 'use client'
 
-import buttonStyles from '@/components/shared/Button/Button.module.css'
 import containerStyles from '@/components/shared/PageContainer/PageContainer.module.css'
 import pageTitleStyles from '@/components/shared/PageTitle/PageTitle.module.css'
 
@@ -9,20 +8,28 @@ import SpecificationsTabNavigation, { type SpecTabId } from '@/components/specif
 import { useToDoFilters } from '@/hooks/useToDoFilters'
 import { useUserProducts } from '@/hooks/useUserProducts'
 import { useAuth } from '@/lib/auth-context'
-import { useRouter } from 'next/navigation'
-import { useCallback, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useState, useEffect } from 'react'
 import styles from './specifications.module.css'
 
 export default function SpecificationsPage(): JSX.Element {
   const { user } = useAuth()
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<SpecTabId>('my-specs')
+  const searchParams = useSearchParams()
+  const [activeTab, setActiveTab] = useState<SpecTabId>('to-do')
   
   if (!user?.id) {
     throw new Error('User authentication required for specifications page')
   }
   
   const { products, loading, error } = useUserProducts(user.id, activeTab)
+  
+  useEffect(() => {
+    const tabParam = searchParams.get('tab')
+    if (tabParam === 'my-specs' || tabParam === 'to-do') {
+      setActiveTab(tabParam as SpecTabId)
+    }
+  }, [searchParams])
   
   const {
     searchValue,
@@ -36,7 +43,8 @@ export default function SpecificationsPage(): JSX.Element {
 
   const handleTabClick = useCallback((tab: SpecTabId): void => {
     setActiveTab(tab)
-  }, [])
+    router.replace(`/specifications?tab=${tab}`)
+  }, [router])
 
   const handleCreateClick = useCallback((productId: string): void => {
     router.push(`/create-specification?productId=${encodeURIComponent(productId)}&mode=createFromProduct`)
@@ -47,21 +55,14 @@ export default function SpecificationsPage(): JSX.Element {
   }, [router])
 
   const tabs = [
-    { id: 'my-specs' as const, label: 'Done' },
-    { id: 'to-do' as const, label: 'To Do' }
+    { id: 'to-do' as const, label: 'To Do' },
+    { id: 'my-specs' as const, label: 'Done' }
   ]
 
   return (
     <div className={containerStyles.pageContainer}>
       <div className={pageTitleStyles.pageHeader}>
         <h1 className={pageTitleStyles.pageTitle}>My Specs</h1>
-        <button
-          className={buttonStyles.createButton}
-          onClick={() => router.push('/create-specification')}
-          type="button"
-        >
-          New Spec
-        </button>
       </div>
 
       <SpecificationsTabNavigation

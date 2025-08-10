@@ -1,22 +1,23 @@
 'use client'
 
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { ItemList, useItemListFilters, type ItemListConfig } from '@/components/shared/ItemList'
 import ProductRow from './ProductRow'
 import { useProductDataSource } from './useProductDataSource'
 import type { Product } from './product-selector-interfaces'
+import { useUserSpecHandles } from './useUserSpecHandles'
 
 interface ProductSelectorAdapterProps {
   mode: 'single' | 'multi'
-  searchPlaceholder?: string
   disabled?: boolean
   products?: Product[]
   selectedProductIds: string[]
   onProductSelect: (product: Product) => void
 }
 
+type ExtendedProduct = Product & { userHasSpec?: boolean }
+
 const ProductSelectorAdapter: React.FC<ProductSelectorAdapterProps> = ({
-  searchPlaceholder = 'Search products...',
   products: externalProducts,
   selectedProductIds,
   onProductSelect,
@@ -24,6 +25,16 @@ const ProductSelectorAdapter: React.FC<ProductSelectorAdapterProps> = ({
   mode,
 }) => {
   const { products, isLoading, error } = useProductDataSource({ externalProducts })
+  const { doneHandles, statusReady, statusError } = useUserSpecHandles()
+
+  if (!products) {
+    throw new Error('Product list is required for ProductSelectorAdapter')
+  }
+
+  const annotatedProducts: ExtendedProduct[] = useMemo(() => {
+    if (!statusReady) return products as ExtendedProduct[]
+    return products.map(p => ({ ...p, userHasSpec: doneHandles.has(p.handle) }))
+  }, [products, statusReady, doneHandles])
 
   const {
     searchQuery,
@@ -33,33 +44,51 @@ const ProductSelectorAdapter: React.FC<ProductSelectorAdapterProps> = ({
     setFilter,
     clearAll,
     hasActiveFilters,
-  } = useItemListFilters({
-    items: products || [],
-    searchFields: useCallback((product: Product) => [product.title, product.brand], []),
-    getFilterValue: useCallback((product: Product, filterId: string) => {
+  } = useItemListFilters<ExtendedProduct>({
+    items: annotatedProducts,
+    searchFields: useCallback((product: ExtendedProduct) => [product.title, product.brand], []),
+    getFilterValue: useCallback((product: ExtendedProduct, filterId: string) => {
       if (filterId === 'brand') return product.brand
+      if (filterId === 'status') return product.userHasSpec ? 'done' : 'todo'
       return ''
     }, []),
-    getAvailableFilterOptions: useCallback((products: Product[], filterId: string) => {
+    getAvailableFilterOptions: useCallback((items: ExtendedProduct[], filterId: string) => {
       if (filterId === 'brand') {
-        const brands = Array.from(new Set(products.map(p => p.brand)))
+        const brands = Array.from(new Set(items.map(p => p.brand)))
         return [
-          { value: '', label: 'All Brands' },
+          { value: '', label: 'Brands' },
           ...brands.map(brand => ({ value: brand, label: brand }))
+        ]
+      }
+      if (filterId === 'status') {
+        return [
+          { value: 'todo', label: 'To Do' },
+          { value: 'done', label: 'Done' },
         ]
       }
       return []
     }, []),
-    filterIds: ['brand'],
+    filterIds: useMemo(() => (statusReady ? ['brand', 'status'] : ['brand']), [statusReady]),
   })
 
+  const defaultStatusApplied = useRef(false)
+  useEffect(() => {
+    if (!statusReady || defaultStatusApplied.current) return
+    const statusEntry = filterConfigs.find(f => f.id === 'status')
+    if (!statusEntry) return
+    if (!statusEntry.value) {
+      setFilter('status', 'todo')
+    }
+    defaultStatusApplied.current = true
+  }, [statusReady, filterConfigs, setFilter])
+
   const config: ItemListConfig = {
-    searchPlaceholder,
+    searchPlaceholder: 'Search by product...',
     emptyStateText: 'No products found matching your criteria.',
     showCreateButton: false,
   }
 
-  const renderProduct = useCallback((product: Product): JSX.Element => {
+  const renderProduct = useCallback((product: ExtendedProduct): JSX.Element => {
     if (!product.handle) {
       throw new Error(`Product missing required handle: ${JSON.stringify(product)}`)
     }
@@ -72,6 +101,8 @@ const ProductSelectorAdapter: React.FC<ProductSelectorAdapterProps> = ({
         onSelect={onProductSelect}
         disabled={disabled}
         mode={mode}
+        specCount={product.spec_count_total}
+        userHasSpec={product.userHasSpec}
       />
     )
   }, [selectedProductIds, onProductSelect, disabled, mode])
@@ -80,21 +111,27 @@ const ProductSelectorAdapter: React.FC<ProductSelectorAdapterProps> = ({
     window.location.reload()
   }, [])
 
+  const handleClearAll = useCallback((): void => {
+    clearAll()
+    setFilter('status', 'todo')
+    defaultStatusApplied.current = true
+  }, [clearAll, setFilter])
+
   return (
     <ItemList
       config={config}
       items={filteredProducts}
       isLoading={isLoading}
-      error={error}
+      error={error ?? statusError}
       onRetry={handleRetry}
       searchQuery={searchQuery}
       onSearchChange={setSearchQuery}
       filters={filterConfigs}
       onFilterChange={setFilter}
-      onClearAll={clearAll}
+      onClearAll={handleClearAll}
       showClearAll={hasActiveFilters}
       renderItem={renderProduct}
-      getItemKey={(product: Product) => product.handle}
+      getItemKey={(product: ExtendedProduct) => product.handle}
     />
   )
 }

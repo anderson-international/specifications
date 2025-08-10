@@ -13,6 +13,8 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "sync-schema": "node scripts/sync-schema.js",
+    "analyze:knip": "knip",
+    "analyze:jscpd": "jscpd --pattern \"**/*.{ts,tsx,js}\" --ignore \"**/{.next,node_modules,dist,build}/**\" --min-tokens 50",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -26,8 +28,7 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.57.0",
     "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1",
-    "zod": "^3.25.62"
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.15.31",

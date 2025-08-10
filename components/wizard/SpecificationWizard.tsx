@@ -2,8 +2,9 @@
 
 import React, { useMemo, useCallback } from 'react'
 import { FormProvider } from 'react-hook-form'
-import type { SpecificationFormData } from '@/types/specification'
+import type { TransformedFormData } from './hooks/specification-transform-utils'
 import WizardProgress from './controls/WizardProgress'
+import type { WizardStep as ProgressWizardStep } from './controls/WizardStepDisplay'
 import WizardNavigationFooter from './controls/WizardNavigationFooter'
 import DraftManager from './components/DraftManager'
 import { useSpecificationWizard } from './hooks/useSpecificationWizard'
@@ -14,7 +15,7 @@ import { createWizardSteps } from './constants/wizardSteps'
 import styles from './SpecificationWizard.module.css'
 
 interface SpecificationWizardProps {
-  onSubmit: (data: SpecificationFormData) => void | Promise<void>
+  onSubmit: (data: TransformedFormData) => void | Promise<void>
   initialData?: Record<string, unknown>
   userId: string
 }
@@ -44,7 +45,7 @@ const SpecificationWizard = ({
     saveStatus,
     hasSavedOnce,
   } = useSpecificationWizard({ onSubmit, initialData, userId })
-  const handleStepClick = useCallback((stepIndex: number) => {
+  const handleStepClick = useCallback<((stepIndex: number) => void)>((stepIndex: number): void => {
     originalHandleStepClick(stepIndex)
   }, [originalHandleStepClick])
   
@@ -57,7 +58,7 @@ const SpecificationWizard = ({
     methods
   })
 
-  const steps = useMemo(() => createWizardSteps(), [])
+  const steps = useMemo<ReturnType<typeof createWizardSteps>>((): ReturnType<typeof createWizardSteps> => createWizardSteps(), [])
   const currentStep = steps[activeStep]
   const totalSteps = steps.length
 
@@ -67,7 +68,7 @@ const SpecificationWizard = ({
   })
 
   const progressSteps = useMemo(
-    () => steps.map((step, index) => ({
+    (): ProgressWizardStep[] => steps.map((step, index) => ({
       id: index + 1,
       title: step.title,
     })),
@@ -115,7 +116,7 @@ const SpecificationWizard = ({
               {currentStep.component(
                 activeStep + 1,
                 totalSteps,
-                isSubmitting || (isEditMode && activeStep === 0),
+                isSubmitting,
                 handleNext,
                 selectedProduct,
                 enumData,

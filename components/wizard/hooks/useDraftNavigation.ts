@@ -12,9 +12,9 @@ interface UseDraftNavigationReturn {
 export function useDraftNavigation({ onStepClick }: UseDraftNavigationProps): UseDraftNavigationReturn {
   const [draftRecoveryStep, setDraftRecoveryStep] = useState<number | null>(null)
 
-  const handleDraftRecovered = useCallback((step: number) => {
+  const handleDraftRecovered = useCallback((step: number): void => {
     setDraftRecoveryStep(step)
-    onStepClick(step - 1)
+    onStepClick(step)
   }, [onStepClick])
 
   return {

@@ -2,12 +2,10 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import type { FilterConfig } from '@/components/shared/FilterControls'
-import type { Product } from '@/lib/types/product'
-
-interface UserProduct extends Product {
-  userHasSpec: boolean
-  specCount: number
-}
+import type { UserProduct } from '@/lib/services/user-products-service'
+import type { SpecTabId } from '@/hooks/useUserProducts'
+import { usePerTabBrandFilter } from './specs/usePerTabBrandFilter'
+import { useProductFilterData } from './specs/useProductFilterData'
 
 interface UseToDoFiltersReturn {
   searchValue: string
@@ -23,50 +21,30 @@ interface UseToDoFiltersReturn {
 
 export function useToDoFilters(
   products: UserProduct[],
-  activeTab: string
+  activeTab: SpecTabId
 ): UseToDoFiltersReturn {
   const [searchValue, setSearchValue] = useState('')
-  const [selectedBrand, setSelectedBrand] = useState<string>('')
+  const { selectedBrand, setSelectedBrand, clearBrand } = usePerTabBrandFilter(activeTab)
 
-  const filteredProducts = useMemo(() => {
-    if (activeTab !== 'to-do') return products
-    
-    return products.filter(product => {
-      const matchesSearch = !searchValue || 
-        product.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-        product.brand.toLowerCase().includes(searchValue.toLowerCase())
-      
-      const matchesBrand = !selectedBrand || product.brand === selectedBrand
-      
-      return matchesSearch && matchesBrand
-    })
-  }, [products, searchValue, selectedBrand, activeTab])
+  const { filteredProducts, brandOptions } = useProductFilterData(products, searchValue, selectedBrand)
 
-  const brandOptions = useMemo(() => {
-    const brands = [...new Set(products.map(p => p.brand))].sort()
-    return [
-      { value: '', label: 'All Brands' },
-      ...brands.map(brand => ({ value: brand, label: brand }))
-    ]
-  }, [products])
-
-  const filters = useMemo(() => [{
+  const filters: FilterConfig[] = useMemo(() => ([{
     id: 'brand',
     label: 'Brand',
     value: selectedBrand,
-    options: brandOptions
-  }], [selectedBrand, brandOptions])
+    options: brandOptions,
+  }]), [selectedBrand, brandOptions])
 
-  const handleFilterChange = useCallback((id: string, value: string) => {
+  const handleFilterChange = useCallback((id: string, value: string): void => {
     if (id === 'brand') {
       setSelectedBrand(value)
     }
-  }, [])
+  }, [setSelectedBrand])
 
-  const handleClearAll = useCallback(() => {
+  const handleClearAll = useCallback((): void => {
     setSearchValue('')
-    setSelectedBrand('')
-  }, [])
+    clearBrand()
+  }, [clearBrand])
 
   const showClearAll = searchValue !== '' || selectedBrand !== ''
 

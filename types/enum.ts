@@ -1,16 +1,6 @@
 export {
-  type EnumValue,
-  type EnumQueryOptions,
-  type EnumQueryResult
+  type EnumValue
 } from './enum-value'
-
-export {
-  type EnumTableOperations,
-  type EnumTableName,
-  type TypedPrismaEnumClient,
-  isValidEnumTableName,
-  getEnumTable
-} from './enum-operations'
 
 export {
   type SpecificationEnumData

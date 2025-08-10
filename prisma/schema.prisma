@@ -46,6 +46,53 @@ model ai_spec_sources {
   @@index([source_spec_id], map: "idx_ai_spec_sources_source_spec")
 }
 
+model trial_junction_tasting_notes {
+  trial_review_id         BigInt
+  tasting_note_id         Int
+  spec_enum_tasting_notes spec_enum_tasting_notes @relation(fields: [tasting_note_id], references: [id], onUpdate: NoAction, map: "assessment_junction_tasting_notes_tasting_note_id_fkey")
+  trial_product_reviews   trial_product_reviews   @relation(fields: [trial_review_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "trial_junction_tasting_notes_trial_review_id_fkey")
+
+  @@id([trial_review_id, tasting_note_id], map: "assessment_junction_tasting_notes_pkey")
+}
+
+model trial_product_brands {
+  id             BigInt           @id(map: "assessment_suppliers_pkey") @default(autoincrement())
+  name           String           @unique(map: "assessment_suppliers_name_key")
+  created_at     DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime         @default(now()) @db.Timestamptz(6)
+  trial_products trial_products[]
+}
+
+model trial_products {
+  id                    BigInt                  @id @default(autoincrement())
+  name                  String
+  brand_id              BigInt
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  trial_product_reviews trial_product_reviews[]
+  trial_product_brands  trial_product_brands    @relation(fields: [brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "trial_products_brand_id_fkey")
+
+  @@unique([name, brand_id], map: "uq_trial_products_name_brand")
+  @@index([brand_id], map: "idx_trial_products_brand_id")
+}
+
+model trial_product_reviews {
+  id                           BigInt                         @id(map: "assessments_pkey") @default(autoincrement())
+  rating                       Int
+  review                       String?
+  should_sell                  Boolean                        @default(false)
+  created_at                   DateTime                       @default(now()) @db.Timestamptz(6)
+  updated_at                   DateTime                       @default(now()) @db.Timestamptz(6)
+  user_id                      String?                        @db.Uuid
+  trial_product_id             BigInt
+  trial_junction_tasting_notes trial_junction_tasting_notes[]
+  trial_products               trial_products                 @relation(fields: [trial_product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "assessments_trial_product_id_fkey")
+  system_users                 system_users?                  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_assessments_system_users")
+
+  @@index([trial_product_id], map: "idx_trial_product_reviews_trial_product_id")
+  @@index([user_id], map: "idx_trial_product_reviews_user_id")
+}
+
 model jotform {
   submission_id         String    @unique @db.VarChar(20)
   reviewer              String?   @db.VarChar(50)
@@ -150,12 +197,13 @@ model spec_enum_statuses {
 }
 
 model spec_enum_tasting_notes {
-  id                          Int                           @id(map: "enum_tasting_notes_pkey") @default(autoincrement())
-  name                        String                        @unique @db.VarChar(255)
-  created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
-  updated_at                  DateTime?                     @default(now()) @db.Timestamp(6)
-  sort_order                  Int?
-  spec_junction_tasting_notes spec_junction_tasting_notes[]
+  id                           Int                            @id(map: "enum_tasting_notes_pkey") @default(autoincrement())
+  name                         String                         @unique @db.VarChar(255)
+  created_at                   DateTime?                      @default(now()) @db.Timestamp(6)
+  updated_at                   DateTime?                      @default(now()) @db.Timestamp(6)
+  sort_order                   Int?
+  spec_junction_tasting_notes  spec_junction_tasting_notes[]
+  trial_junction_tasting_notes trial_junction_tasting_notes[]
 }
 
 model spec_enum_tobacco_types {
@@ -244,15 +292,16 @@ model system_enum_roles {
 }
 
 model system_users {
-  id                String            @id(map: "users_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email             String            @unique
-  name              String?
-  created_at        DateTime?         @default(now()) @db.Timestamptz(6)
-  slack_userid      String?           @db.VarChar(30)
-  jotform_name      String?           @db.VarChar(100)
-  role_id           Int               @default(2)
-  specifications    specifications[]
-  system_enum_roles system_enum_roles @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_role_id")
+  id                    String                  @id(map: "users_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                 String                  @unique
+  name                  String?
+  created_at            DateTime?               @default(now()) @db.Timestamptz(6)
+  slack_userid          String?                 @db.VarChar(30)
+  jotform_name          String?                 @db.VarChar(100)
+  role_id               Int                     @default(2)
+  specifications        specifications[]
+  system_enum_roles     system_enum_roles       @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_role_id")
+  trial_product_reviews trial_product_reviews[]
 
   @@index([email], map: "idx_user_email")
   @@index([slack_userid], map: "idx_user_slack_userid")

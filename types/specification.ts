@@ -2,7 +2,7 @@ import type { SpecificationFormData } from './index'
 export type { SpecificationFormData }
 import type { Product } from '@/lib/types/product'
 
-export type SpecificationStatus = 'published' | 'needs_revision'
+type SpecificationStatus = 'published' | 'needs_revision'
 
 export interface Specification {
   id: string
@@ -40,23 +40,4 @@ export interface Specification {
 
   product: Product | null
 }
-
-export interface SpecificationFilters {
-  search: string
-  status: SpecificationStatus | 'all'
-  sortBy: 'updated' | 'created' | 'progress' | 'score'
-  sortOrder: 'asc' | 'desc'
-}
-
-export interface SpecificationListResponse {
-  specifications: Specification[]
-  pagination: {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-  }
-  filters: SpecificationFilters
-}
-
 

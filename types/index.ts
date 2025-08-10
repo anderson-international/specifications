@@ -1,4 +1,4 @@
-export interface User {
+interface User {
   id: string
   name: string | null
   email: string | null
@@ -35,14 +35,14 @@ export interface SpecificationFormData {
   enum_product_brands?: EnumBrand
 }
 
-export interface EnumStatus {
+interface EnumStatus {
   id: number
   name: string
   created_at: Date
   updated_at: Date
 }
 
-export interface EnumBrand {
+interface EnumBrand {
   id: number
   name: string
   created_at: Date
@@ -57,13 +57,6 @@ export interface ApiResponse<T = unknown> {
   timestamp: string
 }
 
-export interface PaginationInfo {
-  page: number
-  limit: number
-  total: number
-  totalPages: number
-}
-
 export interface AuthUser {
   id: string // UUID from database
   name: string | null // TEXT, nullable
@@ -75,11 +68,7 @@ export interface AuthUser {
   jotform_name?: string | null // CHARACTER VARYING(100), nullable
 }
 
-export interface AuthContextType {
-  user: AuthUser | null
-  setUser: (user: AuthUser | null) => void
-  isAuthenticated: boolean
-}
+ 
 
 export const USER_ROLES = {
   1: 'Admin',
@@ -87,4 +76,4 @@ export const USER_ROLES = {
   3: 'Public',
 } as const
 
-export type UserRole = keyof typeof USER_ROLES
+ 

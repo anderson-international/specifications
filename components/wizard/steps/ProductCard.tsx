@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useCallback } from 'react'
-import Image from 'next/image'
+import ProductThumbnail from '@/components/shared/ProductThumbnail/ProductThumbnail'
+import { useKeyboardSelect } from '@/hooks/useKeyboardSelect'
 import { Product } from './types'
 import styles from './ProductCard.module.css'
 
@@ -12,32 +13,19 @@ interface ProductCardProps {
   disabled?: boolean
 }
 
-/**
- * Card component to display a single product in the product grid
- */
+
 const ProductCard = ({
   product,
   isSelected,
   onSelect,
   disabled = false,
 }: ProductCardProps): JSX.Element => {
-  // Handle card click
   const handleClick = useCallback((): void => {
     if (disabled) return
     onSelect(product.handle)
   }, [disabled, onSelect, product.handle])
 
-  // Handle keyboard interaction
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent): void => {
-      if (disabled) return
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault()
-        onSelect(product.handle)
-      }
-    },
-    [disabled, onSelect, product.handle]
-  )
+  const handleKeyDown = useKeyboardSelect(disabled, handleClick)
 
   return (
     <div
@@ -48,25 +36,17 @@ const ProductCard = ({
       role="button"
       aria-pressed={isSelected}
     >
-      <div className={styles.imageWrapper}>
-        {product.image_url ? (
-          <Image
-            src={product.image_url}
-            alt={product.title}
-            className={styles.productImage}
-            width={80}
-            height={80}
-            priority={false}
-            loading="lazy"
-          />
-        ) : (
-          <div className={styles.imagePlaceholder}>
-            <span>{product.title.substring(0, 2).toUpperCase()}</span>
-          </div>
-        )}
-
-        {/* Reviewed badge removed - is_reviewed property not available in canonical Product interface */}
-      </div>
+      <ProductThumbnail
+        imageUrl={product.image_url}
+        title={product.title}
+        width={80}
+        height={80}
+        wrapperClassName={styles.imageWrapper}
+        imageClassName={styles.productImage}
+        placeholderClassName={styles.imagePlaceholder}
+        priority={false}
+        loading="lazy"
+      />
 
       <div className={styles.content}>
         <h3 className={styles.title}>{product.title}</h3>
@@ -76,5 +56,4 @@ const ProductCard = ({
   )
 }
 
-// Export with React.memo for performance optimization
 export default React.memo(ProductCard)
