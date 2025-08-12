@@ -1,4 +1,4 @@
-export interface TrialSupplierRef {
+export interface TrialBrandRef {
   id: number
   name: string
 }
@@ -17,12 +17,12 @@ export interface TrialTastingNoteRef {
 export interface Trial {
   id: number
   product_name: string
-  supplier_id: number
+  brand_id: number
   rating: number
   review: string | null
   should_sell: boolean
   user_id: string | null
-  supplier: TrialSupplierRef
+  brand: TrialBrandRef
   user?: TrialUserRef | null
   tasting_note_ids: number[]
   enums: {

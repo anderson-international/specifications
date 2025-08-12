@@ -3,7 +3,7 @@ import type { CreateTrialReviewData, UpdateTrialReviewData } from '@/lib/reposit
 export function transformTrialForCreate(trial: Record<string, unknown>): CreateTrialReviewData {
   return {
     product_name: trial.product_name as string,
-    supplier_id: BigInt(trial.supplier_id as number | string),
+    brand_id: BigInt(trial.brand_id as number | string),
     rating: trial.rating as number,
     review: (trial.review as string) ?? null,
     should_sell: Boolean(trial.should_sell),

@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "timestamp": "2025-08-10T23:18:26.773Z",
-    "totalFiles": 1,
-    "passedFiles": 1,
+    "timestamp": "2025-08-12T15:49:00.840Z",
+    "totalFiles": 17,
+    "passedFiles": 17,
     "failedFiles": 0
   },
   "summary": {
@@ -22,8 +22,8 @@
       "unresolvedImports": 0
     },
     "duplicateCode": {
-      "groups": 16,
-      "duplicatedLines": 199,
+      "groups": 15,
+      "duplicatedLines": 189,
       "percentage": 0,
       "details": [
         {

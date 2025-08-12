@@ -12,6 +12,8 @@ Perform the steps below sequentially. Do not skip any steps. Do not rely on memo
 
 ## Step 1 - Load Critical Conext
 /run code-critical
+### Load code quality validation guidance and tool usage
+/run code-validation
 
 ## Step 2: Set Approval Gates
 **AI INSTRUCTION**: You must operate under these mandatory constraints:
@@ -27,13 +29,5 @@ Perform the steps below sequentially. Do not skip any steps. Do not rely on memo
 **AI ACTION REQUIRED**: 
  - Establish the goal of this conversation.
  - Ask follow on questions until satisfied you have understood the goal.
- - **Important**: Questions should be asked one at a time. 
+ - **Important**: Questions should be asked one at a time.
 
-
-## Step 4 Load Vital Context
-
-### Load task specific context
-/run auto-context
-
-### Load code quality validation guidance and tool usage
-/run code-validation

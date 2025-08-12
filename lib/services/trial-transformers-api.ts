@@ -3,12 +3,13 @@ import type { TrialReviewWithRelations } from '@/lib/repositories/types/trial-ty
 export interface TrialApiResponse {
   id: number
   product_name: string
-  supplier_id: number
+  trial_product_id: number
+  brand_id: number
   rating: number
   review: string | null
   should_sell: boolean
   user_id: string | null
-  supplier: { id: number; name: string }
+  brand: { id: number; name: string }
   user?: { id: string; name: string | null; email: string | null } | null
   tasting_note_ids: number[]
   enums: {
@@ -24,13 +25,14 @@ export function transformTrialToApiResponse(a: TrialReviewWithRelations): TrialA
   if (!Array.isArray(a.trial_junction_tasting_notes)) throw new Error('Missing tasting notes include on review')
   return {
     id: Number(a.id),
+    trial_product_id: Number(a.trial_products.id),
     product_name: a.trial_products.name,
-    supplier_id: Number(a.trial_products.brand_id),
+    brand_id: Number(a.trial_products.brand_id),
     rating: a.rating,
     review: a.review ?? null,
     should_sell: a.should_sell,
     user_id: a.user_id ?? null,
-    supplier: {
+    brand: {
       id: Number(a.trial_products.trial_product_brands.id),
       name: a.trial_products.trial_product_brands.name,
     },

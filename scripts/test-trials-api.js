@@ -100,7 +100,7 @@ async function createTrial({ brandId, tastingNoteIds }) {
   const body = {
     trial: {
       product_name: `API Test ${timestamp}`,
-      supplier_id: brandId,
+      brand_id: brandId,
       rating: 4,
       review: 'integration test',
       should_sell: true,

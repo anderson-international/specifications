@@ -28,6 +28,7 @@ description: Independent code reviewer — strict reviewer role; no fixes
 
 
 ## 1. Get Production Files
+run git status --porcelain in the repository root to get the modified files
 ```bash
 cmd /c git status --porcelain
 ```

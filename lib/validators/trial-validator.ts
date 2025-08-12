@@ -1,10 +1,8 @@
+import { validateUUID } from '@/lib/validators/common'
+
 export class TrialValidator {
   static validateUserId(userId: string | null): string | null {
-    if (!userId) return 'User ID is required'
-    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)) {
-      return `Invalid userId format: expected UUID, got '${userId}'`
-    }
-    return null
+    return validateUUID(userId)
   }
 
   static validateId(idString: string): { id: bigint; error: string | null } {
@@ -18,7 +16,7 @@ export class TrialValidator {
     const trial = body?.trial as Record<string, unknown> | undefined
     if (!trial) return 'Missing required object: trial'
 
-    const required = ['product_name', 'supplier_id', 'rating', 'should_sell', 'user_id']
+    const required = ['product_name', 'brand_id', 'rating', 'should_sell', 'user_id']
     for (const key of required) {
       if (trial[key] === undefined || trial[key] === null) return `Missing required field: ${key}`
     }

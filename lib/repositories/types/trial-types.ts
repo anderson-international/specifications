@@ -7,7 +7,7 @@ export type TrialReviewWithRelations = Prisma.trial_product_reviewsGetPayload<{
 
 export interface CreateTrialReviewData {
   product_name: string
-  supplier_id: bigint
+  brand_id: bigint
   rating: number
   review?: string | null
   should_sell: boolean

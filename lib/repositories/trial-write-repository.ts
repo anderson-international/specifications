@@ -10,11 +10,11 @@ export class TrialWriteRepository {
   ): Promise<TrialReviewWithRelations> {
     return prisma.$transaction(async (tx) => {
       const product = await tx.trial_products.upsert({
-        where: { name_brand_id: { name: data.product_name, brand_id: data.supplier_id } },
+        where: { name_brand_id: { name: data.product_name, brand_id: data.brand_id } },
         update: { updated_at: new Date() },
         create: {
           name: data.product_name,
-          brand_id: data.supplier_id,
+          brand_id: data.brand_id,
         },
       })
 

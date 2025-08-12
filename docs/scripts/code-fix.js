@@ -72,19 +72,20 @@ class CodeFixer {
     let result = content
 
     // Remove console.log statements (debugging only)
-    result = result.replace(/^\s*console\.log\([^)]*\);?\s*$/gm, (match) => {
+    // Allow optional trailing inline comments so order with --comments is irrelevant
+    result = result.replace(/^\s*console\.log\([^)]*\);?(?:\s*\/\/.*)?\s*$/gm, (match) => {
       removedCount++
       return ''
     })
 
     // Remove console.debug statements
-    result = result.replace(/^\s*console\.debug\([^)]*\);?\s*$/gm, (match) => {
+    result = result.replace(/^\s*console\.debug\([^)]*\);?(?:\s*\/\/.*)?\s*$/gm, (match) => {
       removedCount++
       return ''
     })
 
     // Remove console.info statements
-    result = result.replace(/^\s*console\.info\([^)]*\);?\s*$/gm, (match) => {
+    result = result.replace(/^\s*console\.info\([^)]*\);?(?:\s*\/\/.*)?\s*$/gm, (match) => {
       removedCount++
       return ''
     })
@@ -327,49 +328,82 @@ class CodeFixer {
 
 function showUsage() {
   console.log(`
-🔧 Code Fix Tool
+🔧 Code Fix Tool — docs/scripts/code-fix.js
 
-Usage:
-  node code-fix.js --comments <file1> <file2> ...
-  node code-fix.js --console <file1> <file2> ...
-  node code-fix.js --delete <path1> <path2> ...
+Automate removal of code comments and debug console statements; safely delete files/directories within the repository.
 
-Flags:
-  --comments    Remove all comments from specified files
-  --console     Remove console.log/debug/info statements from specified files
-  --delete      Delete specified files/directories (scoped to repo root)
+USAGE
+  node docs/scripts/code-fix.js --help
+  node docs/scripts/code-fix.js --comments <file1> [file2 ...]
+  node docs/scripts/code-fix.js --console  <file1> [file2 ...]
+  node docs/scripts/code-fix.js --delete   <path1> [path2 ...]
+  node docs/scripts/code-fix.js --comments --console <file1> [file2 ...]
+  node docs/scripts/code-fix.js --console  --comments <file1> [file2 ...]
 
-Examples:
-  node code-fix.js --comments pages/api/rates/deploy.ts
-  node code-fix.js --console pages/api/rates/deploy.ts
-  node code-fix.js --comments file1.ts file2.ts file3.ts
-  
-  # Windows CMD (paths without spaces)
+OPTIONS
+  --help, -h        Show this help and exit 0
+
+  --comments        Remove all comments from specified files
+                    • Supports: .ts .tsx .js .jsx
+                    • Removes: JSDoc (/** ... */), multi-line (/* ... */), single-line (// ...), and inline // while preserving code
+
+  --console         Remove debug console statements from specified files
+                    • Removes: console.log, console.debug, console.info
+                    • Keeps:   console.warn, console.error (intentional — review manually)
+
+  --delete          Delete specified files/directories (scoped to repo root)
+                    • Safe-guards:
+                      - Refuses deletion outside repo root
+                      - Refuses deleting the repo root itself
+                      - Missing paths are logged as “Skipped (missing)”
+                    • Uses fs.rmSync({ recursive: true, force: true }) when available, otherwise a safe recursive fallback
+
+COMBINING OPERATIONS
+  • You can combine --comments and --console; order does not matter
+  • --delete cannot be combined with other flags and must be used alone
+
+OUTPUT
+  • Per-item progress logs
+  • Summary block:
+      Files processed
+      Comments removed
+      Console statements removed
+      Files deleted
+      Directories deleted
+      Missing skipped
+      Errors
+
+EXIT CODES
+  0  Success (including --help)
+  1  Misuse or error (e.g., unknown flag, missing arguments, unsupported file type, deletion safety violation)
+
+EXAMPLES
+  # Remove comments from files
+  node docs/scripts/code-fix.js --comments pages/api/rates/deploy.ts
+  node docs/scripts/code-fix.js --comments file1.ts file2.tsx file3.js
+
+  # Remove debug console statements
+  node docs/scripts/code-fix.js --console pages/api/rates/deploy.ts
+
+  # Combine operations (order agnostic)
+  node docs/scripts/code-fix.js --comments --console pages/api/rates/deploy.ts
+  node docs/scripts/code-fix.js --console --comments pages/api/rates/deploy.ts
+
+  # Delete files/dirs (Windows CMD without spaces)
   node docs/scripts/code-fix.js --delete app/assessments hooks/useAssessments.ts
-  
-  # Windows CMD/PowerShell (quote if path has spaces)
-  node docs/scripts/code-fix.js --delete "lib/services/assessment-transformers-api.ts" "lib/types/assessment.ts"
-  
-  # PowerShell (forward slashes also work on Windows)
-  node docs/scripts/code-fix.js --delete 'app/assessments' 'hooks/useAssessments.ts'
 
-Features:
-  ✅ Removes JSDoc blocks (/** ... */)
-  ✅ Removes single-line comments (// ...)
-  ✅ Removes multi-line comments (/* ... */)
-  ✅ Removes console.log/debug/info statements
-  ✅ Deletes files and directories safely within repository root
-  ✅ Preserves console.error/warn for manual review
+  # Delete files/dirs with spaces (CMD/PowerShell)
+  node docs/scripts/code-fix.js --delete "lib/services/assessment-transformers-api.ts" "lib/types/assessment types.ts"
 
-  ✅ Batch processing support
-  ✅ TypeScript/JavaScript file validation
-  ✅ Processing statistics
+NOTES
+  • Paths may be relative to the current working directory or absolute
+  • For fix operations, only .ts, .tsx, .js, .jsx are processed; other types are rejected
+  • Globs are not expanded by CMD — pass explicit paths
+  • Use "--" to stop flag parsing if a path starts with a dash (e.g., -- "--strange-file.ts")
 
-Safety:
-  - Only processes .ts, .js, .tsx, .jsx files
-  - Deletion is restricted to inside the repository root
-  - Refuses to delete the repository root itself
-  - Preserves code structure and spacing
+RECOMMENDED POST-RUN (production dirs: app/, components/, lib/, types/, hooks/)
+  # Validate changes meet code quality and TypeScript checks
+  node docs/scripts/code-review-analyzer.js <modified-files>
 `)
 }
 
@@ -382,41 +416,81 @@ function main() {
     process.exit(1)
   }
 
-  const flag = args[0]
-  const files = args.slice(1)
+  // Help flag can appear anywhere
+  if (args.some((a) => a === '--help' || a === '-h' || a === 'help' || a === '/?')) {
+    showUsage()
+    process.exit(0)
+  }
 
-  if (flag === '--comments') {
-    if (files.length === 0) {
-      console.error('❌ No files specified for comment removal')
-      console.error('   Usage: node code-fix.js --comments <file1> <file2> ...')
-      process.exit(1)
+  // Parse flags (ordered) and collect files
+  const ops = [] // ordered list of operation flags
+  const files = []
+  let parsingFlags = true
+  for (const a of args) {
+    if (parsingFlags) {
+      if (a === '--') { parsingFlags = false; continue }
+      if (a.startsWith('--')) {
+        if (a === '--comments' || a === '--console' || a === '--delete') {
+          if (!ops.includes(a)) ops.push(a)
+        } else if (a === '--help' || a === '-h') {
+          // already handled above, but keep for completeness
+          showUsage(); process.exit(0)
+        } else {
+          console.error(`❌ Unknown flag: ${a}`)
+          showUsage()
+          process.exit(1)
+        }
+      } else {
+        parsingFlags = false
+        files.push(a)
+      }
+    } else {
+      files.push(a)
     }
+  }
 
-    const fixer = new CodeFixer()
-    fixer.processFiles(files)
-  } else if (flag === '--console') {
-    if (files.length === 0) {
-      console.error('❌ No files specified for console statement removal')
-      console.error('   Usage: node code-fix.js --console <file1> <file2> ...')
-      process.exit(1)
-    }
-
-    const fixer = new CodeFixer()
-    fixer.processFilesForConsole(files)
-  } else if (flag === '--delete') {
-    if (files.length === 0) {
-      console.error('❌ No paths specified for deletion')
-      console.error('   Usage: node code-fix.js --delete <path1> <path2> ...')
-      process.exit(1)
-    }
-
-    const fixer = new CodeFixer()
-    fixer.deletePaths(files)
-  } else {
-    console.error(`❌ Unknown flag: ${flag}`)
+  if (ops.length === 0) {
+    console.error('❌ No operation flag specified')
     showUsage()
     process.exit(1)
   }
+
+  const hasDelete = ops.includes('--delete')
+  if (hasDelete && ops.length > 1) {
+    console.error('❌ --delete cannot be combined with other flags')
+    showUsage()
+    process.exit(1)
+  }
+
+  if (files.length === 0) {
+    if (hasDelete) {
+      console.error('❌ No paths specified for deletion')
+      console.error('   Usage: node code-fix.js --delete <path1> <path2> ...')
+    } else {
+      console.error('❌ No files specified')
+      console.error('   Usage: node code-fix.js --comments [--console] <file1> <file2> ...')
+    }
+    process.exit(1)
+  }
+
+  const fixer = new CodeFixer()
+
+  if (hasDelete) {
+    fixer.deletePaths(files)
+    return
+  }
+
+  console.log(`🚀 Starting fix operations: ${ops.join(' ')} for ${files.length} file(s)...\n`)
+  for (const filePath of files) {
+    for (const op of ops) {
+      if (op === '--comments') {
+        fixer.processFile(filePath)
+      } else if (op === '--console') {
+        fixer.processFileForConsole(filePath)
+      }
+    }
+  }
+  fixer.printSummary()
 }
 
 // Run if called directly

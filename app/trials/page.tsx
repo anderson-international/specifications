@@ -31,21 +31,21 @@ export default function TrialsPage(): JSX.Element {
     hasActiveFilters,
   } = useItemListFilters<Trial>({
     items: trials,
-    searchFields: (t) => [t.product_name, t.supplier.name, t.review ?? ''],
-    getFilterValue: (t, id) => {
-      if (id === 'supplier') return t.supplier.name
+    searchFields: (t): string[] => [t.product_name, t.brand.name],
+    getFilterValue: (t, id): string => {
+      if (id === 'brand') return t.brand.name
       if (id === 'rating') return String(t.rating)
       if (id === 'should_sell') return t.should_sell ? 'Yes' : 'No'
       return ''
     },
-    getAvailableFilterOptions: (items, id) => {
+    getAvailableFilterOptions: (items, id): { value: string; label: string }[] => {
       const set = new Set<string>()
-      if (id === 'supplier') items.forEach(i => set.add(i.supplier.name))
+      if (id === 'brand') items.forEach(i => set.add(i.brand.name))
       if (id === 'rating') items.forEach(i => set.add(String(i.rating)))
       if (id === 'should_sell') items.forEach(i => set.add(i.should_sell ? 'Yes' : 'No'))
       return Array.from(set).sort().map(v => ({ value: v, label: v }))
     },
-    filterIds: ['supplier', 'rating', 'should_sell'],
+    filterIds: ['brand', 'rating', 'should_sell'],
   })
 
   return (
@@ -82,7 +82,7 @@ export default function TrialsPage(): JSX.Element {
         onClearAll={clearAll}
         showClearAll={hasActiveFilters}
         getItemKey={(t) => String(t.id)}
-        renderItem={(t) => (
+        renderItem={(t): JSX.Element => (
           <div className={rowStyles.baseRow}>
             <div className={rowStyles.imageWrapper}>
               <div className={rowStyles.imagePlaceholder}>
@@ -92,11 +92,11 @@ export default function TrialsPage(): JSX.Element {
 
             <div className={rowStyles.rowInfo}>
               <h3 className={rowStyles.rowTitle}>{t.product_name}</h3>
-              <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>{t.supplier.name}</div>
+              <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>{t.brand.name}</div>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <StarRating value={t.rating} onChange={() => { /* read-only */ }} disabled />
+              <StarRating value={t.rating} onChange={(v): void => { void v }} disabled />
               <button
                 className={buttonStyles.editButton}
                 type="button"
