@@ -13,7 +13,6 @@ cmd /c node docs/scripts/code-fix.js --help
 ```
 
 ## File Scope
-
 **Review Only**: Production files in `app/`, `components/`, `lib/`, `types/`, `hooks/`, `types/` 
 **Exclude**: `*.md`, `*.js`, `*.prisma`, `docs/`, `test/`, `.windsurf/`, `.gitignore` files
 
