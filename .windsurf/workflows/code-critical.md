@@ -7,12 +7,20 @@ description: Essential context refresh for AI conversations
 This workflow loads the most critical constraints and patterns that AIs regularly forget, plus ways of working and current schema information.
 
 ## FIRST: Understand your core tools
-// turbo
 
 ```bash
 cmd /c node docs/scripts/docs-loader.js --help
+```
+
+```bash
 cmd /c node docs/scripts/schema-query.js --help
+```
+
+```bash
 cmd /c node docs/scripts/code-review-analyzer.js --help
+```
+
+```bash
 cmd /c node docs/scripts/code-fix.js --help
 ```
 
@@ -23,14 +31,12 @@ cmd /c node docs/scripts/code-fix.js --help
 
 ## Load Core Constraints & Patterns
 **Load context directly**
-// turbo
 
 ```bash
 cmd /c node docs/scripts/docs-loader.js ai-critical
 ```
 
 ## Load Current Schema Index
-// turbo
 
 ```bash
 cmd /c node docs/scripts/schema-query.js --index

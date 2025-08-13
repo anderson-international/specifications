@@ -1,14 +1,18 @@
-import React from 'react'
-import type { Metadata } from 'next'
-import '@/styles/globals.css'
-import { AuthProvider } from '@/lib/auth-context'
 import DevAuthWrapper from '@/components/auth/DevAuthWrapper'
 import AppLayout from '@/components/layout/AppLayout'
+import { AuthProvider } from '@/lib/auth-context'
+import '@/styles/globals.css'
+import type { Metadata } from 'next'
+import React from 'react'
 
 export const metadata: Metadata = {
   title: 'Snuff Specifications',
   description: 'Specification management system for snuff products',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
+
 
 export const viewport = 'width=device-width, initial-scale=1'
 
