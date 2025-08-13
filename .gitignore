@@ -45,4 +45,4 @@ prisma/*.db-journal
 .netlify/
 
 #review
-docs/review/output
+docs/review/output/code_review_analysis.json
