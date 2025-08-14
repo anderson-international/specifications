@@ -63,6 +63,57 @@ function toRepoRelative(p) {
   }
 }
 
+// Determine if a repo-relative path is a reviewable production TypeScript file
+function isReviewablePath(relPath) {
+  try {
+    const n = String(relPath || '').replace(/\\/g, '/').replace(/^\.\/+/, '');
+    // Restrict to production directories
+    if (!/^(app|components|lib|hooks|types)\//.test(n)) return false;
+    // Exclusions
+    if (/^docs\//.test(n)) return false;
+    if (/^test\//.test(n)) return false;
+    if (/^\.windsurf\//.test(n)) return false;
+    if (/node_modules\//.test(n)) return false;
+    if (/\.d\.ts$/i.test(n)) return false; // exclude declaration files
+    // Only .ts or .tsx
+    if (!/\.(ts|tsx)$/i.test(n)) return false;
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+// Collect changed files using `git status --porcelain -z` and return absolute paths
+function collectPorcelainFiles() {
+  try {
+    const out = execSync('git status --porcelain -z', { cwd: ROOT_DIR, encoding: 'utf8' });
+    const tokens = out.split('\0').filter(Boolean);
+    const rels = [];
+    for (let i = 0; i < tokens.length; i++) {
+      const t = tokens[i];
+      if (!t || t.length < 3) continue;
+      const xy = t.slice(0, 2);
+      const rest = t.slice(3); // path after status and space
+      if (xy[0] === 'R' || xy[0] === 'C') {
+        // Renames/Copies provide two paths in -z: take the destination path (next token) if available
+        const next = tokens[i + 1];
+        const newPath = (typeof next === 'string' && next.length > 0) ? next : rest;
+        if (isReviewablePath(newPath)) rels.push(newPath.trim());
+        if (typeof next === 'string' && next.length > 0) i += 1; // consume the extra token
+      } else {
+        const p = rest.trim();
+        if (isReviewablePath(p)) rels.push(p);
+      }
+    }
+    // de-duplicate and convert to absolute paths
+    const uniqueAbs = Array.from(new Set(rels)).map(r => path.join(ROOT_DIR, r));
+    return uniqueAbs;
+  } catch (e) {
+    console.error(`Error running git porcelain: ${e.message}`);
+    return [];
+  }
+}
+
 function analyzeComments(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
@@ -1188,6 +1239,8 @@ function main() {
       '  --jscpd-min-tokens <n>   Set the JSCPD min tokens threshold (default 50)',
       '  --jscpd-include <dirs>   Comma-separated include roots to scan (default "app,components,lib,hooks,types").',
       '                           Use "." to scan entire repo or include "docs" to scan test fixtures.',
+      '  --porcelain               Auto-select changed TypeScript files via `git status --porcelain -z`',
+      '  --no-autofix              Disable default auto-fix of comments/console lines',
       '  --debug                   Print extra debug info (e.g., JSCPD scan details)',
       '  --report-all              Include all files in JSON report (default: only files with violations)',
       '  --tsconfig <path>         Use a specific tsconfig.json (default: repo root tsconfig.json)',
@@ -1196,6 +1249,8 @@ function main() {
       'Examples:',
       '  node docs/scripts/code-review-analyzer.js app/page.tsx',
       '  node docs/scripts/code-review-analyzer.js components/Button.tsx hooks/useThing.ts',
+      '  node docs/scripts/code-review-analyzer.js --porcelain',
+      '  node docs/scripts/code-review-analyzer.js --porcelain --no-autofix',
       '  node docs/scripts/code-review-analyzer.js --help',
       '  node docs/scripts/code-review-analyzer.js --jscpd-min-tokens 35 --jscpd-include . app/page.tsx',
       '',
@@ -1218,6 +1273,8 @@ function main() {
   let reportAll = false;
   let tsconfigOverride = undefined;
   let skipTsc = false;
+  let porcelainMode = false;
+  let noAutofix = false;
   const files = [];
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -1257,6 +1314,10 @@ function main() {
       reportAll = true;
       continue;
     }
+    if (a === '--no-autofix') {
+      noAutofix = true;
+      continue;
+    }
     if (a === '--tsconfig') {
       const v = args[i + 1];
       i++;
@@ -1276,392 +1337,376 @@ function main() {
       skipTsc = true;
       continue;
     }
+    if (a === '--porcelain') {
+      porcelainMode = true;
+      continue;
+    }
     files.push(a);
   }
   
-  if (files.length === 0) {
-    console.error('Usage: node code-review-analyzer.js <file1> <file2> ...');
-    process.exit(1);
+  // If porcelain is enabled and no positional files were provided, collect from git status
+  if (porcelainMode && files.length === 0) {
+    const collected = collectPorcelainFiles();
+    for (const f of collected) files.push(f);
+    if (debugMode) {
+      const rels = files.map(toRepoRelative);
+      console.log(`Porcelain mode selected ${rels.length} file(s): ${rels.join(', ')}`);
+    }
   }
   
+  if (files.length === 0) {
+    if (porcelainMode) {
+      console.log('No reviewable TypeScript changes detected by git porcelain.');
+      process.exit(0);
+    } else {
+      console.error('Usage: node code-review-analyzer.js <file1> <file2> ...');
+      process.exit(1);
+    }
+  }
+
   // Check if this is a batch test (multiple files with test patterns)
   const isBatchTest = files.length > 1 && files.some(f => f.includes('test/typescript-analyzer/'));
-  
-  // FAIL-SAFE: Delete stale analysis file
-  deleteStaleAnalysis();
-  
-  // Analyze all files
-  const results = files.map(analyzeFile);
-  
-  // Repo-wide dead/dup code analysis
-  const knipData = runKnip();
-  const jscpdData = runJscpd(TMP_JSCPD_DIR, { includeRoots: jscpdIncludeRoots, minTokens: jscpdMinTokens });
-  const tscData = skipTsc ? { byFile: {}, totalErrors: 0, tsconfigPath: (tsconfigOverride || path.join(ROOT_DIR, 'tsconfig.json')) } : runTsc(tsconfigOverride);
-  // JSCPD debug: confirm scanned files and detectClones return shape (only with --debug)
-  if (debugMode) {
+
+// FAIL-SAFE: Delete stale analysis file
+deleteStaleAnalysis();
+
+// Default autofix step: remove comments and debug consoles before analyzing (unless disabled)
+let autofixStats = { enabled: !noAutofix && process.env.CODE_REVIEW_NO_AUTOFIX !== '1', filesProcessed: 0, commentsRemoved: 0, consolesRemoved: 0, errors: 0 };
+if (autofixStats.enabled) {
+  try {
+    // Build argument list (absolute paths for safety)
+    const targetFiles = files.map(fp => (path.isAbsolute(fp) ? fp : path.join(ROOT_DIR, fp)));
+    // Run code-fix.js with both operations
+    const cmd = ['node', 'docs/scripts/code-fix.js', '--comments', '--console', '--', ...targetFiles].join(' ');
+    const out = execSync(cmd, { cwd: ROOT_DIR, stdio: 'pipe' }).toString();
+    // Parse summary lines
+    const mFiles = out.match(/Files processed:\s*(\d+)/);
+    const mComments = out.match(/Comments removed:\s*(\d+)/);
+    const mConsoles = out.match(/Console statements removed:\s*(\d+)/);
+    const mErrors = out.match(/Errors:\s*(\d+)/);
+    if (mFiles) autofixStats.filesProcessed = parseInt(mFiles[1], 10) || 0;
+    if (mComments) autofixStats.commentsRemoved = parseInt(mComments[1], 10) || 0;
+    if (mConsoles) autofixStats.consolesRemoved = parseInt(mConsoles[1], 10) || 0;
+    if (mErrors) autofixStats.errors = parseInt(mErrors[1], 10) || 0;
+  } catch (err) {
     try {
-      const dbg = (jscpdData && jscpdData.debug) || {};
-      const samples = Array.isArray(dbg.samplePaths) ? dbg.samplePaths.slice(0, 3).map(p => toRepoRelative(p)) : [];
-      const shape = dbg.clonesShape ? JSON.stringify(dbg.clonesShape) : 'n/a';
-      const roots = Array.isArray(dbg.includeRoots) ? dbg.includeRoots.join(',') : 'default';
-      const minTok = (typeof dbg.minTokens === 'number') ? dbg.minTokens : 'default';
-      console.log(`JSCPD scan: files=${dbg.filesCount || 0}, roots=${roots}, minTokens=${minTok}, examples=${samples.join(' | ')}, clonesShape=${shape}`);
+      const raw = (err && (err.stdout?.toString() || err.stderr?.toString())) || '';
+      const mFiles = raw.match(/Files processed:\s*(\d+)/);
+      const mComments = raw.match(/Comments removed:\s*(\d+)/);
+      const mConsoles = raw.match(/Console statements removed:\s*(\d+)/);
+      const mErrors = raw.match(/Errors:\s*(\d+)/);
+      if (mFiles) autofixStats.filesProcessed = parseInt(mFiles[1], 10) || 0;
+      if (mComments) autofixStats.commentsRemoved = parseInt(mComments[1], 10) || 0;
+      if (mConsoles) autofixStats.consolesRemoved = parseInt(mConsoles[1], 10) || 0;
+      if (mErrors) autofixStats.errors = parseInt(mErrors[1], 10) || 0;
+      console.warn('Autofix ran with non-zero exit; continuing analysis.');
     } catch (_) {}
   }
-  const knipAgg = applyKnipToResults(results, knipData);
-  const jscpdAgg = applyJscpdToResults(results, jscpdData);
+}
 
-  // Attach TypeScript compiler diagnostics to file results
-  try {
-    const resultKey = (fp) => toRepoRelative(path.isAbsolute(fp) ? fp : path.join(ROOT_DIR, fp));
-    results.forEach(r => {
-      const key = resultKey(r.filePath);
-      const errors = (tscData && tscData.byFile && tscData.byFile[key]) || [];
-      r.typescriptCompiler = {
-        errors,
-        errorCount: errors.length,
-        status: errors.length > 0 ? 'FAIL' : 'PASS'
-      };
-    });
-  } catch (_) {}
-  
-  // Generate appropriate summary
-  let summary;
-  if (isBatchTest) {
-    summary = generateBatchSummary(results);
-  } else {
-    summary = generateCompactSummary(results);
-  }
-  
-  console.log(summary);
-  // Repo-wide aggregate summary (knip/jscpd/tsc)
-  try {
-    const repoLine = `Repo-wide: dead-code (unusedFiles=${knipAgg.summary?.unusedFiles || 0}, unresolvedImports=${knipAgg.summary?.unresolvedImports || 0}, unlistedDeps=${knipAgg.summary?.unlistedDependencies || 0}) | duplicates (groups=${jscpdAgg.summary?.groups || 0}, lines=${jscpdAgg.summary?.duplicatedLines || 0}, pct=${jscpdAgg.summary?.percentage || 0}) | tscErrors=${tscData?.totalErrors || 0}`;
-    console.log(repoLine);
-  } catch (_) {}
-  
-  // Check if any files failed and exit with appropriate code
-  const hasRepoDeadCodeIssues = Boolean((knipAgg && knipAgg.summary) && (
-    (knipAgg.summary.unusedFiles || 0) > 0 ||
-    (knipAgg.summary.unusedExports || 0) > 0 ||
-    (knipAgg.summary.unusedTypes || 0) > 0 ||
-    (knipAgg.summary.unusedEnumMembers || 0) > 0 ||
-    (knipAgg.summary.unusedClassMembers || 0) > 0 ||
-    (knipAgg.summary.unlistedDependencies || 0) > 0 ||
-    (knipAgg.summary.unresolvedImports || 0) > 0
-  ));
-  const hasRepoDuplicates = Boolean((jscpdAgg && jscpdAgg.summary) && (
-    (jscpdAgg.summary.groups || 0) > 0 ||
-    (jscpdAgg.summary.duplicatedLines || 0) > 0
-  ));
-  const hasFailures = results.some(r => 
-    r.eslint.errors.length > 0 || r.eslint.warnings.length > 0 || 
-    r.comments.status === 'FAIL' || 
-    r.size.status === 'FAIL' || 
-    r.typescript.status === 'FAIL' ||
-    r.consoleErrors.status === 'FAIL' ||
-    r.fallbackData.status === 'FAIL' ||
-    (r.deadCode && r.deadCode.status === 'FAIL') ||
-    (r.duplicates && r.duplicates.status === 'FAIL')
-  );
-  const hasTscErrors = Boolean(tscData && (tscData.totalErrors || 0) > 0);
-  const hasRepoFailures = hasRepoDeadCodeIssues || hasRepoDuplicates || hasTscErrors;
+// Analyze all files
+const results = files.map(analyzeFile);
 
-  const finalHasFailures = hasFailures || hasRepoFailures;
-  
-  // Write detailed analysis to file
-  const passedFiles = results.length - results.filter(r => (
-    r.eslint.errors.length > 0 || r.eslint.warnings.length > 0 ||
-    r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL' ||
-    (r.typescriptCompiler && r.typescriptCompiler.status === 'FAIL') ||
-    r.consoleErrors.status === 'FAIL' || r.fallbackData.status === 'FAIL' ||
-    (r.deadCode && r.deadCode.status === 'FAIL') || (r.duplicates && r.duplicates.status === 'FAIL')
-  )).length;
-  const failedFiles = results.length - passedFiles;
-  const eslintErrors = results.reduce((a, r) => a + r.eslint.errors.length, 0);
-  const typescriptIssues = results.reduce((a, r) => a + (r.typescript?.missingReturnTypes || 0), 0);
-  const tscErrors = (tscData && tscData.totalErrors) || 0;
-  const oversizedFiles = results.filter(r => r.size.status === 'FAIL').length;
-  const isFailingFile = (r) => (
-    r.eslint.errors.length > 0 || r.eslint.warnings.length > 0 ||
-    r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL' ||
-    (r.typescriptCompiler && r.typescriptCompiler.status === 'FAIL') ||
-    r.consoleErrors.status === 'FAIL' || r.fallbackData.status === 'FAIL' ||
-    (r.deadCode && r.deadCode.status === 'FAIL') || (r.duplicates && r.duplicates.status === 'FAIL')
-  );
-  const filteredResults = reportAll ? results : results.filter(isFailingFile);
-  const fileResults = filteredResults.reduce((acc, r) => {
-    acc[toRepoRelative(r.filePath)] = r;
-    return acc;
-  }, {});
-  // Build actionable repo-wide duplicates section for AI consumers
-  let repoDuplicates;
-  try {
-    const jdbg = (jscpdData && jscpdData.debug) || {};
-    const cfgIncludeRoots = Array.isArray(jdbg.includeRoots) ? jdbg.includeRoots : ["app","components","lib","hooks","types"];
-    const cfgMinTokens = (typeof jdbg.minTokens === 'number') ? jdbg.minTokens : 50;
-    const rawDups = Array.isArray(jscpdData && jscpdData.duplicates) ? jscpdData.duplicates : [];
+// Repo-wide dead/dup code analysis
+const knipData = runKnip();
+const jscpdData = runJscpd(TMP_JSCPD_DIR, { includeRoots: jscpdIncludeRoots, minTokens: jscpdMinTokens });
+const tscData = skipTsc ? { byFile: {}, totalErrors: 0, tsconfigPath: (tsconfigOverride || path.join(ROOT_DIR, 'tsconfig.json')) } : runTsc(tsconfigOverride);
+const knipAgg = applyKnipToResults(results, knipData);
+const jscpdAgg = applyJscpdToResults(results, jscpdData);
 
-    const topPairsLimit = 10;
-    const segmentsPerPairLimit = 3;
-    const byFileLimit = 10;
-    const topMatchesPerFileLimit = 5;
+let repoDuplicates;
+try {
+  const rawDups = Array.isArray(jscpdData?.duplicates) ? jscpdData.duplicates : [];
+  const cfgIncludeRoots = jscpdIncludeRoots;
+  const cfgMinTokens = jscpdMinTokens;
+  const topPairsLimit = 10;
+  const segmentsPerPairLimit = 3;
+  const byFileLimit = 10;
+  const topMatchesPerFileLimit = 5;
 
-    const pairMap = new Map(); // key: A||B -> { a, b, segments: [{ aStart, aEnd, bStart, bEnd, lines }] }
-    const perFileMap = new Map(); // file -> { file, segments, totalLines, matches: Map(other -> { otherFile, segments, totalLines }) }
+  const pairMap = new Map(); // key: A||B -> { a, b, segments: [{ aStart, aEnd, bStart, bEnd, lines }] }
+  const perFileMap = new Map(); // file -> { file, segments, totalLines, matches: Map(other -> { otherFile, segments, totalLines }) }
 
-    const makePairKey = (A, B) => (A <= B ? `${A}||${B}` : `${B}||${A}`);
-    const addPairSeg = (A, B, seg) => {
-      const key = makePairKey(A, B);
-      let entry = pairMap.get(key);
-      if (!entry) {
-        const a = A <= B ? A : B;
-        const b = A <= B ? B : A;
-        entry = { a, b, segments: [] };
-        pairMap.set(key, entry);
-      }
-      entry.segments.push(seg);
-    };
-    const addPerFile = (file, other, seg) => {
-      let entry = perFileMap.get(file);
-      if (!entry) {
-        entry = { file, segments: 0, totalLines: 0, matches: new Map() };
-        perFileMap.set(file, entry);
-      }
-      entry.segments += 1;
-      entry.totalLines += (typeof seg.lines === 'number' ? seg.lines : 0);
-      let m = entry.matches.get(other);
-      if (!m) {
-        m = { otherFile: other, segments: 0, totalLines: 0 };
-        entry.matches.set(other, m);
-      }
-      m.segments += 1;
-      m.totalLines += (typeof seg.lines === 'number' ? seg.lines : 0);
-    };
-
-    for (const d of rawDups) {
-      const aName = d && d.firstFile && d.firstFile.name;
-      const bName = d && d.secondFile && d.secondFile.name;
-      if (!aName || !bName) continue;
-      const A = toRepoRelative(aName);
-      const B = toRepoRelative(bName);
-      const seg = {
-        aStart: d.firstFile.start,
-        aEnd: d.firstFile.end,
-        bStart: d.secondFile.start,
-        bEnd: d.secondFile.end,
-        lines: (typeof d.lines === 'number' ? d.lines : 0)
-      };
-      addPairSeg(A, B, seg);
-      addPerFile(A, B, seg);
-      addPerFile(B, A, seg);
+  const makePairKey = (A, B) => (A <= B ? `${A}||${B}` : `${B}||${A}`);
+  const addPairSeg = (A, B, seg) => {
+    const key = makePairKey(A, B);
+    let entry = pairMap.get(key);
+    if (!entry) {
+      const a = A <= B ? A : B;
+      const b = A <= B ? B : A;
+      entry = { a, b, segments: [] };
+      pairMap.set(key, entry);
     }
+    entry.segments.push(seg);
+  };
+  const addPerFile = (file, other, seg) => {
+    let entry = perFileMap.get(file);
+    if (!entry) {
+      entry = { file, segments: 0, totalLines: 0, matches: new Map() };
+      perFileMap.set(file, entry);
+    }
+    entry.segments += 1;
+    entry.totalLines += (typeof seg.lines === 'number' ? seg.lines : 0);
+    let m = entry.matches.get(other);
+    if (!m) {
+      m = { otherFile: other, segments: 0, totalLines: 0 };
+      entry.matches.set(other, m);
+    }
+    m.segments += 1;
+    m.totalLines += (typeof seg.lines === 'number' ? seg.lines : 0);
+  };
 
-    const topPairs = Array.from(pairMap.values()).map(p => ({
+  for (const d of rawDups) {
+    const aName = d && d.firstFile && d.firstFile.name;
+    const bName = d && d.secondFile && d.secondFile.name;
+    if (!aName || !bName) continue;
+    const A = toRepoRelative(aName);
+    const B = toRepoRelative(bName);
+    const seg = {
+      aStart: d.firstFile.start,
+      aEnd: d.firstFile.end,
+      bStart: d.secondFile.start,
+      bEnd: d.secondFile.end,
+      lines: (typeof d.lines === 'number' ? d.lines : 0)
+    };
+    addPairSeg(A, B, seg);
+    addPerFile(A, B, seg);
+    addPerFile(B, A, seg);
+  }
+
+  const topPairs = Array.from(pairMap.values()).map(p => ({
+    files: [p.a, p.b],
+    occurrences: p.segments.length,
+    totalLines: p.segments.reduce((acc, s) => acc + (s.lines || 0), 0),
+    segments: p.segments.slice(0, segmentsPerPairLimit)
+  }))
+  .sort((x, y) => (y.totalLines - x.totalLines) || (y.occurrences - x.occurrences) || (x.files.join('|').localeCompare(y.files.join('|'))))
+  .slice(0, topPairsLimit);
+
+  const byFile = Array.from(perFileMap.values()).map(f => {
+    const topMatches = Array.from(f.matches.values())
+      .sort((x, y) => (y.totalLines - x.totalLines) || (y.segments - x.segments) || x.otherFile.localeCompare(y.otherFile))
+      .slice(0, topMatchesPerFileLimit);
+    return {
+      file: f.file,
+      segments: f.segments,
+      totalLines: f.totalLines,
+      topMatches
+    };
+  })
+  .sort((x, y) => (y.totalLines - x.totalLines) || (y.segments - x.segments) || x.file.localeCompare(y.file))
+  .slice(0, byFileLimit);
+
+  repoDuplicates = {
+    config: { includeRoots: cfgIncludeRoots, minTokens: cfgMinTokens },
+    topPairs,
+    byFile
+  };
+
+  // Build duplicate group details and actionable rollup (bounded for size)
+  const groupsLimit = 10;
+  const hashString = (s) => {
+    let h = 2166136261; // FNV-1a 32-bit
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return (h >>> 0).toString(16).padStart(8, '0');
+  };
+  const safeRead = (relPath) => {
+    try { return fs.readFileSync(path.join(ROOT_DIR, relPath), 'utf8'); } catch { return ''; }
+  };
+  const findFunctionName = (content, nearLine) => {
+    try {
+      const ls = content.split('\n');
+      for (let i = Math.max(0, nearLine - 1); i >= Math.max(0, nearLine - 25); i--) {
+        const L = ls[i] || '';
+        let m = L.match(/\bexport\s+function\s+(\w+)/) ||
+                L.match(/\bfunction\s+(\w+)/) ||
+                L.match(/\bexport\s+const\s+(\w+)\s*=\s*\(/) ||
+                L.match(/\bconst\s+(\w+)\s*=\s*\(/);
+        if (m) return m[1];
+      }
+    } catch {}
+    return undefined;
+  };
+  const getPreview = (content, start, end) => {
+    try {
+      const ls = content.split('\n');
+      const startIdx = Math.max(0, start - 1);
+      const endIdx = Math.min(ls.length, Math.max(startIdx + 1, Math.min(end, start + 2)));
+      return ls.slice(startIdx, endIdx).map(s => s.trim()).join('\n');
+    } catch { return ''; }
+  };
+  const deriveCategorySuggestion = (files) => {
+    const joined = files.join(' ');
+    if (/wizard/i.test(joined)) return { category: 'wizard-step-ui', suggestion: 'extract component' };
+    if (/components\//.test(joined) || /\.tsx$/i.test(joined)) return { category: 'form-layout', suggestion: 'extract component' };
+    if (/hooks\//.test(joined) || /\buse[A-Z]/.test(joined)) return { category: 'hook', suggestion: 'extract hook' };
+    if (/lib\/(utils|helpers)/.test(joined)) return { category: 'util', suggestion: 'extract util' };
+    if (/(lib|services)\//.test(joined)) return { category: 'fetch-service', suggestion: 'merge services' };
+    if (/filter/i.test(joined)) return { category: 'filter-controls', suggestion: 'extract component' };
+    return { category: 'general', suggestion: 'extract util' };
+  };
+  const makeNameAndPath = (suggestion, files) => {
+    const base = (p) => path.basename(p).replace(/\.[tj]sx?$/i, '');
+    const a = base(files[0] || '');
+    const b = base(files[1] || '');
+    let common = '';
+    for (let i = 0; i < Math.min(a.length, b.length); i++) {
+      if (a[i] === b[i] && /[A-Za-z]/.test(a[i])) common += a[i]; else break;
+    }
+    if (common.length < 3) common = (suggestion === 'extract hook') ? 'useShared' : 'Shared';
+    let name, targetPath;
+    if (suggestion === 'extract component') {
+      name = common.replace(/^use/, '');
+      if (!/^[A-Z]/.test(name)) name = name.charAt(0).toUpperCase() + name.slice(1);
+      if (!/(Component|Form)$/.test(name)) name += 'Component';
+      targetPath = `components/shared/${name}.tsx`;
+    } else if (suggestion === 'extract hook') {
+      name = common.startsWith('use') ? common : `use${common.charAt(0).toUpperCase()}${common.slice(1)}`;
+      targetPath = `hooks/${name}.ts`;
+    } else if (suggestion === 'extract util') {
+      name = common || 'sharedUtil';
+      targetPath = `lib/utils/${name}.ts`;
+    } else {
+      name = common.replace(/^use/, '') || 'SharedService';
+      if (!/Service$/.test(name)) name += 'Service';
+      targetPath = `lib/services/${name}.ts`;
+    }
+    return { name, path: targetPath };
+  };
+  const severityFrom = (totalLines, occ) => {
+    if (totalLines >= 80 || occ >= 3) return 'high';
+    if (totalLines >= 40) return 'medium';
+    return 'low';
+  };
+
+  const groupsSorted = Array.from(pairMap.values())
+    .map(p => ({
       files: [p.a, p.b],
       occurrences: p.segments.length,
       totalLines: p.segments.reduce((acc, s) => acc + (s.lines || 0), 0),
       segments: p.segments.slice(0, segmentsPerPairLimit)
     }))
     .sort((x, y) => (y.totalLines - x.totalLines) || (y.occurrences - x.occurrences) || (x.files.join('|').localeCompare(y.files.join('|'))))
-    .slice(0, topPairsLimit);
+    .slice(0, groupsLimit);
 
-    const byFile = Array.from(perFileMap.values()).map(f => {
-      const topMatches = Array.from(f.matches.values())
-        .sort((x, y) => (y.totalLines - x.totalLines) || (y.segments - x.segments) || x.otherFile.localeCompare(y.otherFile))
-        .slice(0, topMatchesPerFileLimit);
-      return {
-        file: f.file,
-        segments: f.segments,
-        totalLines: f.totalLines,
-        topMatches
-      };
-    })
-    .sort((x, y) => (y.totalLines - x.totalLines) || (y.segments - x.segments) || x.file.localeCompare(y.file))
-    .slice(0, byFileLimit);
+  const duplicateCodeDetails = groupsSorted.map(g => {
+    const { category, suggestion } = deriveCategorySuggestion(g.files);
+    const severity = severityFrom(g.totalLines, g.occurrences);
+    const firstSeg = g.segments[0];
+    const contentA = safeRead(g.files[0]);
+    const contentB = safeRead(g.files[1]);
+    const previewA = contentA ? getPreview(contentA, firstSeg.aStart, firstSeg.aEnd) : '';
+    const groupKey = `${g.files[0]}|${g.files[1]}|` + g.segments.map(s => `${s.aStart}-${s.aEnd}-${s.bStart}-${s.bEnd}`).join(',');
+    const groupId = `G-${hashString(groupKey)}`;
+    const fingerprint = hashString(previewA);
+    const { name: recommendedName, path: targetPath } = makeNameAndPath(suggestion, g.files);
+    const occurrences = [];
+    for (const s of g.segments) {
+      occurrences.push({
+        file: g.files[0],
+        functionName: contentA ? (findFunctionName(contentA, s.aStart) || null) : null,
+        startLine: s.aStart,
+        endLine: s.aEnd,
+        preview: contentA ? getPreview(contentA, s.aStart, Math.min(s.aEnd, s.aStart + 2)) : ''
+      });
+      occurrences.push({
+        file: g.files[1],
+        functionName: contentB ? (findFunctionName(contentB, s.bStart) || null) : null,
+        startLine: s.bStart,
+        endLine: s.bEnd,
+        preview: contentB ? getPreview(contentB, s.bStart, Math.min(s.bEnd, s.bStart + 2)) : ''
+      });
+    }
+    const fixPlanSteps = (() => {
+      if (suggestion === 'extract component') return [
+        `Create shared ${recommendedName} with props for variability`,
+        'Replace duplicate blocks with shared component',
+        'Ensure explicit return types'
+      ];
+      if (suggestion === 'extract hook') return [
+        `Create ${recommendedName} with inputs and standardized return`,
+        'Use the hook in both call sites',
+        'Ensure explicit return types'
+      ];
+      if (suggestion === 'extract util') return [
+        `Create ${recommendedName} pure function`,
+        'Replace duplicate logic with util',
+        'Add unit tests if suitable'
+      ];
+      return [
+        `Consolidate service logic into ${recommendedName}`,
+        'Replace duplicate service functions',
+        'Review file-size limits after merge'
+      ];
+    })();
+    const estimatedEffort = (severity === 'high') ? 'L' : (severity === 'medium' ? 'M' : 'S');
+    const fileLimitsRisk = (suggestion === 'merge services') && (g.totalLines > 100);
+    return {
+      groupId,
+      fingerprint,
+      similarity: { lines: g.totalLines, tokens: 0, pct: 0 },
+      category,
+      severity,
+      suggestion,
+      recommendedName,
+      targetPath,
+      estimatedEffort,
+      fileLimitsRisk,
+      occurrences,
+      fixPlanSteps,
+      dependencies: [],
+      testImpact: (suggestion === 'merge services' || suggestion === 'extract component') ? 'medium' : 'low'
+    };
+  });
 
-    repoDuplicates = {
-      config: { includeRoots: cfgIncludeRoots, minTokens: cfgMinTokens },
-      topPairs,
-      byFile
-    };
+  const nextTopGroups = duplicateCodeDetails.map(d => d.groupId);
+  const sharedModulesToCreate = duplicateCodeDetails
+    .filter(d => /^(extract component|extract hook|extract util)$/.test(d.suggestion))
+    .slice(0, 5)
+    .map(d => ({ name: d.recommendedName, path: d.targetPath, reason: d.category }));
+  const sharedModulesToReuse = [];
+  const dedupeSavingsEstimateLines = duplicateCodeDetails
+    .reduce((acc, d) => acc + (d.similarity.lines * Math.max(0, (Math.ceil(d.occurrences?.length / 2) || 1) - 1)), 0);
 
-    // Build duplicate group details and actionable rollup (bounded for size)
-    const groupsLimit = 10;
-    const hashString = (s) => {
-      let h = 2166136261; // FNV-1a 32-bit
-      for (let i = 0; i < s.length; i++) {
-        h ^= s.charCodeAt(i);
-        h = Math.imul(h, 16777619);
-      }
-      return (h >>> 0).toString(16).padStart(8, '0');
-    };
-    const safeRead = (relPath) => {
-      try { return fs.readFileSync(path.join(ROOT_DIR, relPath), 'utf8'); } catch { return ''; }
-    };
-    const findFunctionName = (content, nearLine) => {
-      try {
-        const ls = content.split('\n');
-        for (let i = Math.max(0, nearLine - 1); i >= Math.max(0, nearLine - 25); i--) {
-          const L = ls[i] || '';
-          let m = L.match(/\bexport\s+function\s+(\w+)/) ||
-                  L.match(/\bfunction\s+(\w+)/) ||
-                  L.match(/\bexport\s+const\s+(\w+)\s*=\s*\(/) ||
-                  L.match(/\bconst\s+(\w+)\s*=\s*\(/);
-          if (m) return m[1];
-        }
-      } catch {}
-      return undefined;
-    };
-    const getPreview = (content, start, end) => {
-      try {
-        const ls = content.split('\n');
-        const startIdx = Math.max(0, start - 1);
-        const endIdx = Math.min(ls.length, Math.max(startIdx + 1, Math.min(end, start + 2)));
-        return ls.slice(startIdx, endIdx).map(s => s.trim()).join('\n');
-      } catch { return ''; }
-    };
-    const deriveCategorySuggestion = (files) => {
-      const joined = files.join(' ');
-      if (/wizard/i.test(joined)) return { category: 'wizard-step-ui', suggestion: 'extract component' };
-      if (/components\//.test(joined) || /\.tsx$/i.test(joined)) return { category: 'form-layout', suggestion: 'extract component' };
-      if (/hooks\//.test(joined) || /\buse[A-Z]/.test(joined)) return { category: 'hook', suggestion: 'extract hook' };
-      if (/lib\/(utils|helpers)/.test(joined)) return { category: 'util', suggestion: 'extract util' };
-      if (/(lib|services)\//.test(joined)) return { category: 'fetch-service', suggestion: 'merge services' };
-      if (/filter/i.test(joined)) return { category: 'filter-controls', suggestion: 'extract component' };
-      return { category: 'general', suggestion: 'extract util' };
-    };
-    const makeNameAndPath = (suggestion, files) => {
-      const base = (p) => path.basename(p).replace(/\.[tj]sx?$/i, '');
-      const a = base(files[0] || '');
-      const b = base(files[1] || '');
-      let common = '';
-      for (let i = 0; i < Math.min(a.length, b.length); i++) {
-        if (a[i] === b[i] && /[A-Za-z]/.test(a[i])) common += a[i]; else break;
-      }
-      if (common.length < 3) common = (suggestion === 'extract hook') ? 'useShared' : 'Shared';
-      let name, targetPath;
-      if (suggestion === 'extract component') {
-        name = common.replace(/^use/, '');
-        if (!/^[A-Z]/.test(name)) name = name.charAt(0).toUpperCase() + name.slice(1);
-        if (!/(Component|Form)$/.test(name)) name += 'Component';
-        targetPath = `components/shared/${name}.tsx`;
-      } else if (suggestion === 'extract hook') {
-        name = common.startsWith('use') ? common : `use${common.charAt(0).toUpperCase()}${common.slice(1)}`;
-        targetPath = `hooks/${name}.ts`;
-      } else if (suggestion === 'extract util') {
-        name = common || 'sharedUtil';
-        targetPath = `lib/utils/${name}.ts`;
-      } else {
-        name = common.replace(/^use/, '') || 'SharedService';
-        if (!/Service$/.test(name)) name += 'Service';
-        targetPath = `lib/services/${name}.ts`;
-      }
-      return { name, path: targetPath };
-    };
-    const severityFrom = (totalLines, occ) => {
-      if (totalLines >= 80 || occ >= 3) return 'high';
-      if (totalLines >= 40) return 'medium';
-      return 'low';
-    };
-
-    const groupsSorted = Array.from(pairMap.values())
-      .map(p => ({
-        files: [p.a, p.b],
-        occurrences: p.segments.length,
-        totalLines: p.segments.reduce((acc, s) => acc + (s.lines || 0), 0),
-        segments: p.segments.slice(0, segmentsPerPairLimit)
-      }))
-      .sort((x, y) => (y.totalLines - x.totalLines) || (y.occurrences - x.occurrences) || (x.files.join('|').localeCompare(y.files.join('|'))))
-      .slice(0, groupsLimit);
-
-    const duplicateCodeDetails = groupsSorted.map(g => {
-      const { category, suggestion } = deriveCategorySuggestion(g.files);
-      const severity = severityFrom(g.totalLines, g.occurrences);
-      const firstSeg = g.segments[0];
-      const contentA = safeRead(g.files[0]);
-      const contentB = safeRead(g.files[1]);
-      const previewA = contentA ? getPreview(contentA, firstSeg.aStart, firstSeg.aEnd) : '';
-      const groupKey = `${g.files[0]}|${g.files[1]}|` + g.segments.map(s => `${s.aStart}-${s.aEnd}-${s.bStart}-${s.bEnd}`).join(',');
-      const groupId = `G-${hashString(groupKey)}`;
-      const fingerprint = hashString(previewA);
-      const { name: recommendedName, path: targetPath } = makeNameAndPath(suggestion, g.files);
-      const occurrences = [];
-      for (const s of g.segments) {
-        occurrences.push({
-          file: g.files[0],
-          functionName: contentA ? (findFunctionName(contentA, s.aStart) || null) : null,
-          startLine: s.aStart,
-          endLine: s.aEnd,
-          preview: contentA ? getPreview(contentA, s.aStart, Math.min(s.aEnd, s.aStart + 2)) : ''
-        });
-        occurrences.push({
-          file: g.files[1],
-          functionName: contentB ? (findFunctionName(contentB, s.bStart) || null) : null,
-          startLine: s.bStart,
-          endLine: s.bEnd,
-          preview: contentB ? getPreview(contentB, s.bStart, Math.min(s.bEnd, s.bStart + 2)) : ''
-        });
-      }
-      const fixPlanSteps = (() => {
-        if (suggestion === 'extract component') return [
-          `Create shared ${recommendedName} with props for variability`,
-          'Replace duplicate blocks with shared component',
-          'Ensure explicit return types'
-        ];
-        if (suggestion === 'extract hook') return [
-          `Create ${recommendedName} with inputs and standardized return`,
-          'Use the hook in both call sites',
-          'Ensure explicit return types'
-        ];
-        if (suggestion === 'extract util') return [
-          `Create ${recommendedName} pure function`,
-          'Replace duplicate logic with util',
-          'Add unit tests if suitable'
-        ];
-        return [
-          `Consolidate service logic into ${recommendedName}`,
-          'Replace duplicate service functions',
-          'Review file-size limits after merge'
-        ];
-      })();
-      const estimatedEffort = (severity === 'high') ? 'L' : (severity === 'medium' ? 'M' : 'S');
-      const fileLimitsRisk = (suggestion === 'merge services') && (g.totalLines > 100);
-      return {
-        groupId,
-        fingerprint,
-        similarity: { lines: g.totalLines, tokens: 0, pct: 0 },
-        category,
-        severity,
-        suggestion,
-        recommendedName,
-        targetPath,
-        estimatedEffort,
-        fileLimitsRisk,
-        occurrences,
-        fixPlanSteps,
-        dependencies: [],
-        testImpact: (suggestion === 'merge services' || suggestion === 'extract component') ? 'medium' : 'low'
-      };
-    });
-
-    const nextTopGroups = duplicateCodeDetails.map(d => d.groupId);
-    const sharedModulesToCreate = duplicateCodeDetails
-      .filter(d => /^(extract component|extract hook|extract util)$/.test(d.suggestion))
-      .slice(0, 5)
-      .map(d => ({ name: d.recommendedName, path: d.targetPath, reason: d.category }));
-    const sharedModulesToReuse = [];
-    const dedupeSavingsEstimateLines = duplicateCodeDetails
-      .reduce((acc, d) => acc + (d.similarity.lines * Math.max(0, (Math.ceil(d.occurrences?.length / 2) || 1) - 1)), 0);
-
-    var duplicateCodeDetailsOut = duplicateCodeDetails; // expose outside try
-    var actionableItemsOut = { nextTopGroups, sharedModulesToCreate, sharedModulesToReuse, dedupeSavingsEstimateLines };
-  } catch (_) {
-    repoDuplicates = { config: { includeRoots: [], minTokens: 0 }, topPairs: [], byFile: [] };
-    var duplicateCodeDetailsOut = [];
-    var actionableItemsOut = { nextTopGroups: [], sharedModulesToCreate: [], sharedModulesToReuse: [], dedupeSavingsEstimateLines: 0 };
-  }
+  var duplicateCodeDetailsOut = duplicateCodeDetails; // expose outside try
+  var actionableItemsOut = { nextTopGroups, sharedModulesToCreate, sharedModulesToReuse, dedupeSavingsEstimateLines };
+} catch (_) {
+  repoDuplicates = { config: { includeRoots: [], minTokens: 0 }, topPairs: [], byFile: [] };
+  var duplicateCodeDetailsOut = [];
+  var actionableItemsOut = { nextTopGroups: [], sharedModulesToCreate: [], sharedModulesToReuse: [], dedupeSavingsEstimateLines: 0 };
+}
   const dupSummaryWithDetails = Object.assign({}, jscpdAgg.summary, { details: duplicateCodeDetailsOut });
+  // Compute summary metrics for final report
+  const passedFiles = results.filter(r =>
+    r.comments.status === 'PASS' &&
+    r.size.status === 'PASS' &&
+    r.typescript.status === 'PASS' &&
+    (!r.typescriptCompiler || r.typescriptCompiler.status === 'PASS') &&
+    (Array.isArray(r.eslint?.errors) ? r.eslint.errors.length === 0 : true) &&
+    r.consoleErrors.status === 'PASS' &&
+    r.fallbackData.status === 'PASS' &&
+    (!r.deadCode || r.deadCode.status === 'PASS') &&
+    (!r.duplicates || r.duplicates.status === 'PASS')
+  ).length;
+  const failedFiles = results.filter(r =>
+    r.comments.status === 'FAIL' ||
+    r.size.status === 'FAIL' ||
+    r.typescript.status === 'FAIL' ||
+    (r.typescriptCompiler && r.typescriptCompiler.status === 'FAIL') ||
+    (Array.isArray(r.eslint?.errors) ? r.eslint.errors.length > 0 : false) ||
+    r.consoleErrors.status === 'FAIL' ||
+    r.fallbackData.status === 'FAIL' ||
+    (r.deadCode && r.deadCode.status === 'FAIL') ||
+    (r.duplicates && r.duplicates.status === 'FAIL')
+  ).length;
+  const eslintErrors = results.reduce((acc, r) => acc + (Array.isArray(r.eslint?.errors) ? r.eslint.errors.length : 0), 0);
+  const typescriptIssues = results.reduce((acc, r) => acc + (typeof r.typescript?.missingReturnTypes === 'number' ? r.typescript.missingReturnTypes : 0), 0);
+  const tscErrors = typeof tscData?.totalErrors === 'number' ? tscData.totalErrors : 0;
+  const oversizedFiles = results.filter(r => r.size && r.size.status === 'FAIL').length;
+  const finalHasFailures = (failedFiles > 0) || (tscErrors > 0);
   const detailedAnalysis = {
     metadata: {
       timestamp: new Date().toISOString(),
@@ -1677,13 +1722,37 @@ function main() {
       tsconfigPath: (typeof tscData?.tsconfigPath === 'string' ? toRepoRelative(tscData.tsconfigPath) : 'not provided'),
       oversizedFiles,
       deadCodeIssues: knipAgg.summary,
+      autofix: (autofixStats && autofixStats.enabled) ? {
+        filesProcessed: autofixStats.filesProcessed,
+        commentsRemoved: autofixStats.commentsRemoved,
+        consolesRemoved: autofixStats.consolesRemoved,
+        errors: autofixStats.errors
+      } : { filesProcessed: 0, commentsRemoved: 0, consolesRemoved: 0, errors: 0 },
       duplicateCode: dupSummaryWithDetails
     },
-    fileResults,
+    results,
     repoDuplicates,
     tsc: { tsconfigPath: (typeof tscData?.tsconfigPath === 'string' ? toRepoRelative(tscData.tsconfigPath) : 'not provided'), totalErrors: tscErrors },
     actionableItems: actionableItemsOut
   };
+  
+  // Generate human-readable summaries and include them in the report
+  const compactSummary = generateCompactSummary(results);
+  const batchSummary = generateBatchSummary(results);
+  detailedAnalysis.humanSummary = {
+    compact: compactSummary,
+    batch: batchSummary
+  };
+  
+  // Print summaries to console: compact always, batch only on failures
+  try {
+    if (compactSummary) {
+      console.log('\n' + compactSummary);
+    }
+    if (finalHasFailures && batchSummary) {
+      console.log(batchSummary);
+    }
+  } catch (_) { /* no-op */ }
   
   try {
     if (finalHasFailures) {

@@ -17,12 +17,14 @@ cmd /c node docs/scripts/schema-query.js --help
 ```
 
 ```bash
-cmd /c node docs/scripts/code-review-analyzer.js --help
+cmd /c node docs/review/code-review.js --help
 ```
 
 ```bash
 cmd /c node docs/scripts/code-fix.js --help
 ```
+
+Note: `docs/scripts/code-fix.js` is a fallback utility. The orchestrator (`docs/review/code-review.js`) performs comment and console removals by default before analysis.
 
 ## SECOND: Run critical workflows
 **Execute these - do not skip**

@@ -26,19 +26,19 @@ class CodeFixer {
     let result = content
 
     // Remove JSDoc blocks (/** ... */)
-    result = result.replace(/\/\*\*[\s\S]*?\*\//g, (match) => {
+    result = result.replace(/\/\*\*[\s\S]*?\*\//g, () => {
       removedCount++
       return ''
     })
 
     // Remove multi-line comments (/* ... */)
-    result = result.replace(/\/\*[\s\S]*?\*\//g, (match) => {
+    result = result.replace(/\/\*[\s\S]*?\*\//g, () => {
       removedCount++
       return ''
     })
 
     // Remove single-line comments (// ...)
-    result = result.replace(/^\s*\/\/.*$/gm, (match) => {
+    result = result.replace(/^\s*\/\/.*$/gm, () => {
       removedCount++
       return ''
     })
@@ -73,19 +73,19 @@ class CodeFixer {
 
     // Remove console.log statements (debugging only)
     // Allow optional trailing inline comments so order with --comments is irrelevant
-    result = result.replace(/^\s*console\.log\([^)]*\);?(?:\s*\/\/.*)?\s*$/gm, (match) => {
+    result = result.replace(/^\s*console\.log\([^)]*\);?(?:\s*\/\/.*)?\s*$/gm, () => {
       removedCount++
       return ''
     })
 
     // Remove console.debug statements
-    result = result.replace(/^\s*console\.debug\([^)]*\);?(?:\s*\/\/.*)?\s*$/gm, (match) => {
+    result = result.replace(/^\s*console\.debug\([^)]*\);?(?:\s*\/\/.*)?\s*$/gm, () => {
       removedCount++
       return ''
     })
 
     // Remove console.info statements
-    result = result.replace(/^\s*console\.info\([^)]*\);?(?:\s*\/\/.*)?\s*$/gm, (match) => {
+    result = result.replace(/^\s*console\.info\([^)]*\);?(?:\s*\/\/.*)?\s*$/gm, () => {
       removedCount++
       return ''
     })

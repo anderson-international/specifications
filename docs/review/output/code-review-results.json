@@ -1,0 +1,349 @@
+{
+  "generatedAt": "2025-08-14T21:45:26.125Z",
+  "args": [
+    "--porcelain"
+  ],
+  "options": {
+    "concurrency": 4,
+    "porcelainMode": true,
+    "noAutofix": false,
+    "debugMode": false,
+    "skipTsc": false
+  },
+  "filesAnalyzed": 3,
+  "results": [
+    {
+      "filePath": "c:\\Users\\Jonny\\Code\\specifications\\app\\porcelain-demo.tsx",
+      "relPath": "app\\porcelain-demo.tsx",
+      "fileType": "components",
+      "size": {
+        "lines": 6,
+        "limit": 150,
+        "status": "PASS"
+      },
+      "comments": {
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": false,
+        "hasUseCallback": false,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": false,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [
+          {
+            "line": 2,
+            "method": "warn",
+            "content": "console.warn('warn from demo');",
+            "guidance": "Replace console.warn with proper error throwing. Use 'throw new Error(message)' instead of logging and continuing execution."
+          }
+        ],
+        "count": 1,
+        "status": "FAIL"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": [
+          {
+            "line": 2,
+            "column": 3,
+            "message": "Unexpected console statement  no-console"
+          }
+        ]
+      },
+      "typescript": {
+        "totalFunctions": 1,
+        "missingReturnTypes": 0,
+        "hasExplicitTypes": true,
+        "status": "PASS",
+        "details": []
+      },
+      "fallbackData": {
+        "violations": [
+          {
+            "type": "or_fallback",
+            "line": 3,
+            "content": "const val = undefined || 'fallback';",
+            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
+          }
+        ],
+        "count": 1,
+        "status": "FAIL"
+      },
+      "typescriptCompiler": {
+        "errorCount": 1,
+        "errors": [
+          {
+            "line": 3,
+            "column": 15,
+            "code": "TS2873",
+            "message": "This kind of expression is always falsy."
+          }
+        ],
+        "status": "FAIL"
+      },
+      "deadCode": {
+        "unusedExports": 0,
+        "unusedTypes": 0,
+        "unusedEnumMembers": 0,
+        "unusedClassMembers": 0,
+        "unlistedDependencies": 0,
+        "unresolvedImports": 0,
+        "status": "PASS",
+        "recommendations": []
+      },
+      "duplicates": {
+        "count": 0,
+        "segments": [],
+        "status": "PASS",
+        "recommendations": []
+      }
+    },
+    {
+      "filePath": "c:\\Users\\Jonny\\Code\\specifications\\components\\TestBad.tsx",
+      "relPath": "components\\TestBad.tsx",
+      "fileType": "components",
+      "size": {
+        "lines": 15,
+        "limit": 150,
+        "status": "PASS"
+      },
+      "comments": {
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": true,
+        "hasUseCallback": false,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": false,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [
+          {
+            "line": 5,
+            "method": "error",
+            "content": "console.error('should be throw');",
+            "guidance": "Replace console.error with proper error throwing. Use 'throw new Error(message)' instead of logging and continuing execution."
+          }
+        ],
+        "count": 1,
+        "status": "FAIL"
+      },
+      "eslint": {
+        "errors": [
+          {
+            "line": 3,
+            "column": 10,
+            "message": "'helper' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars"
+          }
+        ],
+        "warnings": [
+          {
+            "line": 3,
+            "column": 20,
+            "message": "Unexpected any. Specify a different type                                  @typescript-eslint/no-explicit-any"
+          },
+          {
+            "line": 3,
+            "column": 28,
+            "message": "Unexpected any. Specify a different type                                  @typescript-eslint/no-explicit-any"
+          },
+          {
+            "line": 5,
+            "column": 3,
+            "message": "Unexpected console statement                                              no-console"
+          }
+        ]
+      },
+      "typescript": {
+        "totalFunctions": 2,
+        "missingReturnTypes": 2,
+        "hasExplicitTypes": false,
+        "status": "FAIL",
+        "details": [
+          {
+            "name": "helper",
+            "line": 3,
+            "kind": "function-declaration",
+            "signaturePreview": "function helper(a: any, b: any) {"
+          },
+          {
+            "name": "TestBad",
+            "line": 9,
+            "kind": "const-arrow",
+            "signaturePreview": "const TestBad = (props) => {"
+          }
+        ]
+      },
+      "fallbackData": {
+        "violations": [
+          {
+            "type": "or_fallback",
+            "line": 10,
+            "content": "const title = props?.title || 'Default';",
+            "advice": "Throw composed error instead of silent fallback. This pattern hides missing required data. Recommend deeper analysis: Is this data truly optional, or should upstream validation catch this?"
+          },
+          {
+            "type": "optional_chaining_fallback",
+            "line": 10,
+            "content": "const title = props?.title || 'Default';",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          }
+        ],
+        "count": 2,
+        "status": "FAIL"
+      },
+      "typescriptCompiler": {
+        "errorCount": 1,
+        "errors": [
+          {
+            "line": 9,
+            "column": 18,
+            "code": "TS7006",
+            "message": "Parameter 'props' implicitly has an 'any' type."
+          }
+        ],
+        "status": "FAIL"
+      },
+      "deadCode": {
+        "unusedExports": 0,
+        "unusedTypes": 0,
+        "unusedEnumMembers": 0,
+        "unusedClassMembers": 0,
+        "unlistedDependencies": 0,
+        "unresolvedImports": 0,
+        "status": "PASS",
+        "recommendations": []
+      },
+      "duplicates": {
+        "count": 0,
+        "segments": [],
+        "status": "PASS",
+        "recommendations": []
+      }
+    },
+    {
+      "filePath": "c:\\Users\\Jonny\\Code\\specifications\\hooks\\useBad.ts",
+      "relPath": "hooks\\useBad.ts",
+      "fileType": "hooks",
+      "size": {
+        "lines": 8,
+        "limit": 100,
+        "status": "PASS"
+      },
+      "comments": {
+        "count": 0,
+        "status": "PASS"
+      },
+      "react": {
+        "hasReactImport": false,
+        "hasUseCallback": false,
+        "hasUseMemo": false,
+        "hasUseEffect": false,
+        "hasHooks": true,
+        "issues": []
+      },
+      "consoleErrors": {
+        "violations": [
+          {
+            "line": 5,
+            "method": "warn",
+            "content": "console.warn('warn!');",
+            "guidance": "Replace console.warn with proper error throwing. Use 'throw new Error(message)' instead of logging and continuing execution."
+          }
+        ],
+        "count": 1,
+        "status": "FAIL"
+      },
+      "eslint": {
+        "errors": [],
+        "warnings": [
+          {
+            "line": 2,
+            "column": 34,
+            "message": "Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any"
+          },
+          {
+            "line": 5,
+            "column": 3,
+            "message": "Unexpected console statement              no-console"
+          }
+        ]
+      },
+      "typescript": {
+        "totalFunctions": 1,
+        "missingReturnTypes": 1,
+        "hasExplicitTypes": false,
+        "status": "FAIL",
+        "details": [
+          {
+            "name": "useBad",
+            "line": 2,
+            "kind": "function-declaration",
+            "signaturePreview": "export function useBad(options?: any) {"
+          }
+        ]
+      },
+      "fallbackData": {
+        "violations": [
+          {
+            "type": "optional_chaining_fallback",
+            "line": 4,
+            "content": "const value = options?.value || 0;",
+            "advice": "Throw composed error instead of defensive fallback. Optional chaining with fallbacks suggests unclear data contracts. Recommend deeper analysis: Should this property be guaranteed? Is validation missing?"
+          }
+        ],
+        "count": 1,
+        "status": "FAIL"
+      },
+      "typescriptCompiler": {
+        "errorCount": 0,
+        "errors": [],
+        "status": "PASS"
+      },
+      "deadCode": {
+        "unusedExports": 0,
+        "unusedTypes": 0,
+        "unusedEnumMembers": 0,
+        "unusedClassMembers": 0,
+        "unlistedDependencies": 0,
+        "unresolvedImports": 0,
+        "status": "PASS",
+        "recommendations": []
+      },
+      "duplicates": {
+        "count": 0,
+        "segments": [],
+        "status": "PASS",
+        "recommendations": []
+      }
+    }
+  ],
+  "repo": {
+    "knip": {
+      "unusedFiles": 0,
+      "unusedExports": 0,
+      "unusedTypes": 0,
+      "unusedEnumMembers": 0,
+      "unusedClassMembers": 0,
+      "unlistedDependencies": 0,
+      "unresolvedImports": 0
+    },
+    "jscpd": {
+      "groups": 15,
+      "duplicatedLines": 189,
+      "percentage": 0
+    },
+    "tsc": {
+      "totalErrors": 5,
+      "tsconfigPath": "c:\\Users\\Jonny\\Code\\specifications\\tsconfig.json"
+    }
+  }
+}

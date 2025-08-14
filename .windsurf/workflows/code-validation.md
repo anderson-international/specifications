@@ -9,13 +9,55 @@ Run the following commands to understand the options available for your code rev
 // turbo
 
 ```bash
-cmd /c node docs/scripts/code-review-analyzer.js --help
+cmd /c node docs/review/code-review.js --help
 cmd /c node docs/scripts/code-fix.js --help
 ```
 
+Note: `docs/scripts/code-fix.js` is a fallback utility. The orchestrator (`docs/review/code-review.js`) performs comment and console removals by default before analysis.
+
 ## File Scope
-**Review Only**: Production files in `app/`, `components/`, `lib/`, `types/`, `hooks/`, `types/` 
-**Exclude**: `*.md`, `*.js`, `*.prisma`, `docs/`, `test/`, `.windsurf/`, `.gitignore` files
+### Automatic 
+Limit the scope of the reviewed files to TypeScript files changed since the last git sync via
+```bash
+cmd /c node docs/review/code-review.js --porcelain 
+```
+### Manual
+```bash
+cmd /c node docs/review/code-review.js <file1> [file2 ...]
+```
+
+## Recommended Options
+
+- Concurrency (default 4):
+  ```bash
+  cmd /c node docs/review/code-review.js --porcelain --concurrency 4
+  ```
+- Debug + timing instrumentation:
+  ```bash
+  cmd /c node docs/review/code-review.js --porcelain --debug
+  ```
+- Force report file even with no violations:
+  ```bash
+  cmd /c node docs/review/code-review.js --porcelain --report-all
+  ```
+- Disable autofix (if needed):
+  ```bash
+  cmd /c node docs/review/code-review.js --porcelain --no-autofix
+  ```
+  Or via env var:
+  ```bash
+  cmd /c set CODE_REVIEW_NO_AUTOFIX=1 && node docs/review/code-review.js --porcelain
+  ```
+- Repo-wide analyzers:
+  - JSCPD include roots and token size:
+    ```bash
+    cmd /c node docs/review/code-review.js --porcelain --jscpd-include . --jscpd-min-tokens 60
+    ```
+  - TypeScript config or skip TSC:
+    ```bash
+    cmd /c node docs/review/code-review.js --porcelain --tsconfig path\to\tsconfig.json
+    cmd /c node docs/review/code-review.js --porcelain --skip-tsc
+    ```
 
 ## Enforcement
 - **Zero tolerance** for skipping validation
