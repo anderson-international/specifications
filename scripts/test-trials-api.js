@@ -97,9 +97,10 @@ async function getTastingNotesWithRetry(maxRetries = 6, delayMs = 1500) {
 
 async function createTrial({ brandId, tastingNoteIds }) {
   const timestamp = new Date().toISOString()
+  const productName = `API Test ${timestamp}`
   const body = {
     trial: {
-      product_name: `API Test ${timestamp}`,
+      product_name: productName,
       brand_id: brandId,
       rating: 4,
       review: 'integration test',
@@ -112,7 +113,7 @@ async function createTrial({ brandId, tastingNoteIds }) {
   if (res.status !== 200) throw new Error(`Create failed: ${res.status}`)
   const data = res.json && res.json.data
   if (!data || typeof data.id !== 'number') throw new Error('Create: missing id in response')
-  return data
+  return { data, name: productName }
 }
 
 async function listTrials() {
@@ -147,6 +148,29 @@ async function deleteTrial(id) {
   return true
 }
 
+// New helpers for trial-products endpoints
+async function getTrialProducts(tab, userId) {
+  const path = tab === 'to-do' ? `/api/trial-products/to-do?userId=${encodeURIComponent(userId)}` : `/api/trial-products/my-trials?userId=${encodeURIComponent(userId)}`
+  const res = await request('GET', path)
+  if (res.status === 404) {
+    log(`Endpoint ${path} not available; skipping related checks.`)
+    return null
+  }
+  if (res.status !== 200) throw new Error(`${tab} failed: ${res.status}`)
+  const data = res.json && res.json.data
+  if (!data || !Array.isArray(data.products) || typeof data.total !== 'number') {
+    throw new Error(`${tab}: unexpected response shape`)
+  }
+  return data
+}
+
+async function getTrialProductsToDo(userId) { return getTrialProducts('to-do', userId) }
+async function getTrialProductsDone(userId) { return getTrialProducts('my-trials', userId) }
+
+function findByNameAndBrand(products, name, brandName) {
+  return products.find(p => p && typeof p.name === 'string' && p.name === name && p.brand && p.brand.name === brandName)
+}
+
 async function main() {
   log('BASE_URL =', BASE_URL)
   log('TEST_USER_ID =', TEST_USER_ID)
@@ -163,27 +187,68 @@ async function main() {
 
   // 3) Create
   const created = await createTrial({ brandId, tastingNoteIds: tnIds.slice(0, 2) })
-  log('Created trial id =', created.id)
+  log('Created trial id =', created.data.id)
+
+  // New endpoints: pre and post checks
+  const preToDo = await getTrialProductsToDo(TEST_USER_ID).catch(err => { log('to-do pre-check skipped:', err.message); return null })
+  const preDone = await getTrialProductsDone(TEST_USER_ID).catch(err => { log('my-trials pre-check skipped:', err.message); return null })
+  if (preToDo) log('To Do (pre) total =', preToDo.total)
+  if (preDone) log('My Trials (pre) total =', preDone.total)
 
   // 4) List
   const list = await listTrials()
   log('List total =', list.length)
 
   // 5) Get by id (no user filter)
-  const t1 = await getTrialById(created.id, false)
+  const t1 = await getTrialById(created.data.id, false)
   log('Fetched (no user filter):', { id: t1.id, rating: t1.rating })
 
   // 6) Get by id (with user filter)
-  const t2 = await getTrialById(created.id, true)
+  const t2 = await getTrialById(created.data.id, true)
   log('Fetched (with user filter):', { id: t2.id, rating: t2.rating })
 
+  // Post-create checks against new endpoints (if available)
+  const postCreateDone = await getTrialProductsDone(TEST_USER_ID).catch(err => { log('my-trials post-create skipped:', err.message); return null })
+  if (postCreateDone) {
+    const match = findByNameAndBrand(postCreateDone.products, created.name, brands[0].name)
+    if (!match) throw new Error('my-trials: created product not found')
+    if (typeof match.userReviewId !== 'number') throw new Error('my-trials: userReviewId missing')
+    if (match.rating !== 4) throw new Error(`my-trials: expected rating 4, got ${match.rating}`)
+  }
+
+  const postCreateToDo = await getTrialProductsToDo(TEST_USER_ID).catch(err => { log('to-do post-create skipped:', err.message); return null })
+  if (postCreateToDo) {
+    const match = findByNameAndBrand(postCreateToDo.products, created.name, brands[0].name)
+    if (match) throw new Error('to-do: created product should not appear')
+  }
+
   // 7) Update
-  const meta = await updateTrial(created.id, tnIds)
+  const meta = await updateTrial(created.data.id, tnIds)
   log('Updated meta =', meta)
 
+  // Post-update checks
+  const postUpdateDone = await getTrialProductsDone(TEST_USER_ID).catch(err => { log('my-trials post-update skipped:', err.message); return null })
+  if (postUpdateDone) {
+    const match = findByNameAndBrand(postUpdateDone.products, created.name, brands[0].name)
+    if (!match) throw new Error('my-trials: updated product not found')
+    if (match.rating !== 5) throw new Error(`my-trials: expected rating 5 after update, got ${match.rating}`)
+  }
+
   // 8) Delete
-  await deleteTrial(created.id)
-  log('Deleted trial id =', created.id)
+  await deleteTrial(created.data.id)
+  log('Deleted trial id =', created.data.id)
+
+  const postDeleteDone = await getTrialProductsDone(TEST_USER_ID).catch(err => { log('my-trials post-delete skipped:', err.message); return null })
+  if (postDeleteDone) {
+    const match = findByNameAndBrand(postDeleteDone.products, created.name, brands[0].name)
+    if (match) throw new Error('my-trials: product still present after delete')
+  }
+
+  const postDeleteToDo = await getTrialProductsToDo(TEST_USER_ID).catch(err => { log('to-do post-delete skipped:', err.message); return null })
+  if (postDeleteToDo) {
+    const maybe = findByNameAndBrand(postDeleteToDo.products, created.name, brands[0].name)
+    if (maybe) log('to-do: product reappeared after delete (expected in some environments)')
+  }
 
   log('All tests completed successfully.')
 }

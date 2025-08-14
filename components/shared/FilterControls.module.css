@@ -33,10 +33,9 @@
 }
 
 .filterGroup {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
-  flex-grow: 1;
-  flex-shrink: 1;
+  flex: 0 0 auto;
   min-width: 0;
 }
 
@@ -95,8 +94,8 @@
   height: 3rem;
   box-sizing: border-box;
   flex-shrink: 0;
-  width: 100%;
-  min-width: 0;
+  width: auto;        /* shrink to fit content */
+  min-width: 8rem;    /* reasonable minimum */
 }
 
 .select:focus {
@@ -188,14 +187,13 @@
 
 @media (min-width: 768px) {
   .filterGroup {
-    flex-grow: 0;
-    flex-shrink: 0;
+    flex: 0 0 auto;
   }
   
   .select {
     width: auto;
-    min-width: 250px;
-    max-width: 250px;
+    min-width: 10rem;
+    max-width: none;
   }
 }
 

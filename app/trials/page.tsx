@@ -1,16 +1,18 @@
 'use client'
 
-import buttonStyles from '@/components/shared/Button/Button.module.css'
 import containerStyles from '@/components/shared/PageContainer/PageContainer.module.css'
 import pageTitleStyles from '@/components/shared/PageTitle/PageTitle.module.css'
-import rowStyles from '@/components/shared/RowStyles/RowStyles.module.css'
-import ItemList from '@/components/shared/ItemList/ItemList'
-import { useItemListFilters } from '@/hooks/useItemListFilters'
-import { useTrials } from '@/hooks/useTrials'
-import type { Trial } from '@/lib/types/trial'
-import StarRating from '@/components/wizard/steps/StarRating'
+import type { TrialUserProduct } from '@/lib/types/trial'
 import { useAuth } from '@/lib/auth-context'
-import React from 'react'
+import React, { useMemo, useState, useCallback, useEffect } from 'react'
+import { useTrialProducts } from '@/hooks/useTrialProducts'
+import SpecificationsTabNavigation, { type SpecTabId } from '@/components/specifications/SpecificationsTabNavigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useTrialDraftProductIds } from '@/hooks/useTrialDraftProductIds'
+import CountSummary from '@/components/shared/CountSummary'
+import { FilterControls } from '@/components/shared/FilterControls'
+import AsyncStateContainer from '@/components/shared/AsyncStateContainer'
+import TrialsList from '@/components/trials/TrialsList'
 
 export default function TrialsPage(): JSX.Element {
   const { user } = useAuth()
@@ -19,97 +21,105 @@ export default function TrialsPage(): JSX.Element {
     throw new Error('User authentication required for trials page')
   }
 
-  const { trials, loading, error, refetch } = useTrials(user.id)
-
-  const {
-    searchQuery,
-    setSearchQuery,
-    filteredItems,
-    filterConfigs,
-    setFilter,
-    clearAll,
-    hasActiveFilters,
-  } = useItemListFilters<Trial>({
-    items: trials,
-    searchFields: (t): string[] => [t.product_name, t.brand.name],
-    getFilterValue: (t, id): string => {
-      if (id === 'brand') return t.brand.name
-      if (id === 'rating') return String(t.rating)
-      if (id === 'should_sell') return t.should_sell ? 'Yes' : 'No'
-      return ''
-    },
-    getAvailableFilterOptions: (items, id): { value: string; label: string }[] => {
-      const set = new Set<string>()
-      if (id === 'brand') items.forEach(i => set.add(i.brand.name))
-      if (id === 'rating') items.forEach(i => set.add(String(i.rating)))
-      if (id === 'should_sell') items.forEach(i => set.add(i.should_sell ? 'Yes' : 'No'))
-      return Array.from(set).sort().map(v => ({ value: v, label: v }))
-    },
-    filterIds: ['brand', 'rating', 'should_sell'],
+  const { toDo, done, loading, error } = useTrialProducts(user.id)
+  const draftProducts = useTrialDraftProductIds(user.id)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  type Tab = 'to-do' | 'done'
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    const t = searchParams?.get('tab')
+    return t === 'done' || t === 'my-specs' ? 'done' : 'to-do'
   })
+  const [search, setSearch] = useState('')
+  const [brand, setBrand] = useState<string>('')
+
+  const currentItems: TrialUserProduct[] = activeTab === 'to-do' ? toDo : done
+  const brandOptions: string[] = useMemo((): string[] => {
+    const s = new Set<string>()
+    currentItems.forEach(i => { if (i.brand?.name) s.add(i.brand.name) })
+    return Array.from(s).sort()
+  }, [currentItems])
+
+  const filtered: TrialUserProduct[] = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    return currentItems.filter(i => {
+      const matchesSearch = q.length === 0 || i.name.toLowerCase().includes(q) || i.brand.name.toLowerCase().includes(q)
+      const matchesBrand = !brand || i.brand.name === brand
+      return matchesSearch && matchesBrand
+    })
+  }, [currentItems, search, brand])
+
+  const tabs: { id: SpecTabId; label: string }[] = [
+    { id: 'to-do', label: 'To Do' },
+    { id: 'my-specs', label: 'Done' },
+  ]
+
+  useEffect(() => {
+    try { sessionStorage.setItem('trials:lastTab', activeTab) } catch { void 0 }
+  }, [activeTab])
+
+  const handleTabClick = useCallback((tabId: SpecTabId): void => {
+    const next: Tab = tabId === 'my-specs' ? 'done' : 'to-do'
+    setActiveTab(next)
+    try {
+      const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
+      params.set('tab', next)
+      const qs = params.toString()
+      router.replace(qs ? `${pathname}?${qs}` : pathname)
+    } catch { void 0 }
+  }, [pathname, router])
+
+  const handleRowActivate = useCallback((item: TrialUserProduct): void => {
+    router.push(`/trials/new?productId=${encodeURIComponent(String(item.id))}&tab=${activeTab}`)
+  }, [router, activeTab])
 
   return (
     <div className={containerStyles.pageContainer}>
       <div className={pageTitleStyles.pageHeader}>
         <h1 className={pageTitleStyles.pageTitle}>My Trials</h1>
-        <button
-          className={buttonStyles.createButton}
-          type="button"
-          disabled
-          title="Creation form not available yet"
-        >
-          New Trial
-        </button>
       </div>
 
-      <ItemList<Trial>
-        config={{
-          searchPlaceholder: 'Search trials',
-          emptyStateText: 'No trials yet',
-          emptySubtext: 'Create your first trial to get started.',
-          showCreateButton: false,
-          createButtonText: 'New Trial',
-          createButtonHref: '/trials/new',
-        }}
-        items={filteredItems}
-        isLoading={loading}
-        error={error}
-        onRetry={refetch}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        filters={filterConfigs}
-        onFilterChange={setFilter}
-        onClearAll={clearAll}
-        showClearAll={hasActiveFilters}
-        getItemKey={(t) => String(t.id)}
-        renderItem={(t): JSX.Element => (
-          <div className={rowStyles.baseRow}>
-            <div className={rowStyles.imageWrapper}>
-              <div className={rowStyles.imagePlaceholder}>
-                <span>{t.product_name.substring(0, 2).toUpperCase()}</span>
-              </div>
-            </div>
+      <SpecificationsTabNavigation tabs={tabs} activeTab={activeTab === 'done' ? 'my-specs' : 'to-do'} onTabClick={handleTabClick} />
 
-            <div className={rowStyles.rowInfo}>
-              <h3 className={rowStyles.rowTitle}>{t.product_name}</h3>
-              <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>{t.brand.name}</div>
-            </div>
+      <div style={{ marginTop: '1rem' }}>
+        <FilterControls
+          searchQuery={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search trials"
+          filters={[{
+            id: 'brand',
+            label: 'Brand',
+            value: brand,
+            options: brandOptions.map(v => ({ value: v, label: v })),
+          }]}
+          onFilterChange={(id, value) => { if (id === 'brand') setBrand(value) }}
+          onClearAll={() => { setBrand(''); setSearch('') }}
+          showClearAll={Boolean(brand || search)}
+        />
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <StarRating value={t.rating} onChange={(v): void => { void v }} disabled />
-              <button
-                className={buttonStyles.editButton}
-                type="button"
-                disabled
-                title="Edit form not available yet"
-                aria-label={`Edit trial for ${t.product_name}`}
-              >
-                Edit
-              </button>
-            </div>
-          </div>
-        )}
-      />
+        <CountSummary
+          count={filtered.length}
+          hintMobile={activeTab === 'to-do' ? 'Tap a row to create a review' : 'Tap a row to edit your review'}
+          hintDesktop={activeTab === 'to-do' ? 'Click a row to create a review' : 'Click a row to edit your review'}
+        />
+
+        <AsyncStateContainer
+          loading={loading}
+          error={error}
+          empty={!loading && !error && filtered.length === 0}
+          loadingMessage="Loading trials..."
+          errorMessage="Failed to load trials."
+          emptyMessage={activeTab === 'to-do' ? 'No trial products to review.' : 'No completed trial reviews.'}
+        >
+          <TrialsList
+            items={filtered}
+            activeTab={activeTab}
+            draftProducts={draftProducts}
+            onActivate={handleRowActivate}
+          />
+        </AsyncStateContainer>
+      </div>
     </div>
   )
 }

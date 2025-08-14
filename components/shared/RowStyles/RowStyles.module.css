@@ -47,6 +47,40 @@
   text-overflow: ellipsis;
 }
 
+/* Status icon on the right (e.g., draft exists) */
+.statusIcon {
+  color: var(--btn-success);
+  font-size: 1rem;
+  margin-left: 0.5rem;
+}
+
+/* Right-side container for status + badges */
+.rightMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Circular count badge (small) */
+.countBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.countBadgeRed { background: #dc2626; color: #ffffff; }
+.countBadgeYellow { background: #fbbf24; color: #000000; }
+.countBadgeGreen { background: #059669; color: #ffffff; }
+
 /* Image styles - reused from wizard components */
 .imageWrapper {
   width: 40px;

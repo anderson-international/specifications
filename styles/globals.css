@@ -10,6 +10,14 @@
   --btn-success: #469b3b;
   --divider: #a1a1a1;
   --banner: #ffffff;
+  /* Wizard theme aliases */
+  --card: var(--bg-card);
+  --text-on-accent: #ffffff;
+  --background-hover: #2b2f38;
+  --btn-primary-hover: #1469a8;
+  /* Status colors */
+  --error-color: #ef4444;
+  --color-error: var(--error-color);
 }
 
 /* Reset and Base Styles */

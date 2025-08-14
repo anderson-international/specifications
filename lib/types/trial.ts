@@ -17,6 +17,7 @@ export interface TrialTastingNoteRef {
 export interface Trial {
   id: number
   product_name: string
+  trial_product_id: number
   brand_id: number
   rating: number
   review: string | null
@@ -30,4 +31,14 @@ export interface Trial {
   }
   created_at: string
   updated_at: string
+}
+
+export interface TrialUserProduct {
+  id: number
+  name: string
+  brand: { id: number; name: string }
+  userReviewId?: number
+  lastModified?: string
+  rating?: number
+  totalTrialsCount?: number
 }

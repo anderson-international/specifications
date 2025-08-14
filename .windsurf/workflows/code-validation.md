@@ -5,6 +5,7 @@ description: Mandatory code quality for all file operations
 # Code Quality Validation
 
 ## FIRST: Understand your core validation tools
+Run the following commands to understand the options available for your code review and code fix tools
 // turbo
 
 ```bash
