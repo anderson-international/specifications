@@ -1,5 +1,6 @@
 ---
 description: Mandatory code quality for all file operations
+auto_execution_mode: 1
 ---
 
 # Code Quality Validation
@@ -36,18 +37,11 @@ cmd /c node docs/review/code-review.js <file1> [file2 ...]
   ```bash
   cmd /c node docs/review/code-review.js --porcelain --debug
   ```
-- Force report file even with no violations:
-  ```bash
-  cmd /c node docs/review/code-review.js --porcelain --report-all
-  ```
 - Disable autofix (if needed):
   ```bash
   cmd /c node docs/review/code-review.js --porcelain --no-autofix
   ```
-  Or via env var:
-  ```bash
-  cmd /c set CODE_REVIEW_NO_AUTOFIX=1 && node docs/review/code-review.js --porcelain
-  ```
+
 - Repo-wide analyzers:
   - JSCPD include roots and token size:
     ```bash

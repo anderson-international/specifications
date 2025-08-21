@@ -1,4 +1,4 @@
-const fs = require('fs');
+const { readFileSmart } = require('../utils/fs-utils');
 
 function isValidBooleanLogic(line) {
   return /\|\|\s*(true|false|\w+\.\w+|\w+\(\)|\w+)\s*$/.test(line) || /const\s+\w+\s*=\s*\w+\s*\|\|\s*\w+/.test(line);
@@ -67,7 +67,7 @@ function isValidApiNotFoundPattern(content, lineNum) {
 
 function analyzeFallbackData(filePath) {
   try {
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = readFileSmart(filePath);
     const lines = content.split('\n');
     const violations = [];
 

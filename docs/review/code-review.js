@@ -11,7 +11,7 @@ const { mapLimit } = require('./components/utils/concurrency');
 const { analyzeComments } = require('./components/per-file/analyze-comments');
 const { analyzeReactPatterns } = require('./components/per-file/analyze-react');
 const { analyzeConsoleErrors } = require('./components/per-file/analyze-console');
-const { runEslint } = require('./components/per-file/run-eslint');
+const { runEslint, runEslintBatch } = require('./components/per-file/run-eslint');
 const { analyzeTypeScript } = require('./components/per-file/analyze-typescript');
 const { analyzeFallbackData } = require('./components/per-file/analyze-fallback');
 
@@ -26,7 +26,7 @@ const { generateCompactSummary, generateBatchSummary } = require('./components/s
 
 function printUsage() {
   const usage = [
-    'Usage: node docs/review/code-review.js <file1> [file2 ...]',
+    'Usage: cmd /c node docs/review/code-review.js <file1> [file2 ...]',
     '',
     'Description:',
     '  Modular code review analyzer for TypeScript/TSX files:',
@@ -46,7 +46,7 @@ function printUsage() {
     '  --jscpd-min-tokens <n>     Set JSCPD min tokens (default 50)',
     '  --jscpd-include <dirs>     Comma-separated include roots (default: app,components,lib,hooks,types; use "." for repo)',
     '  --no-autofix               Disable default auto-fix of comments/console lines',
-    '  --debug                    Print debug + timing info',
+    '  --debug                    Print extra debug details; summaries always include total time',
     '  --report-all               Include all files in JSON report if report is written',
     '  --tsconfig <path>          Use a specific tsconfig.json (default: repo root tsconfig.json)',
     '  --skip-tsc                 Skip TypeScript compiler checks',
@@ -56,6 +56,16 @@ function printUsage() {
     '  1  One or more violations found or write error',
   ].join('\n');
   console.log(usage);
+}
+
+// Format milliseconds as minutes and seconds, e.g., "2m 03s"
+function formatMs(ms) {
+  if (typeof ms !== 'number' || !Number.isFinite(ms) || ms < 0) return '0m 00s';
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  const ss = String(seconds).padStart(2, '0');
+  return `${minutes}m ${ss}s`;
 }
 
 async function main() {
@@ -119,8 +129,35 @@ async function main() {
 
   if (files.length === 0) {
     if (porcelainMode) {
-      console.log('No reviewable TypeScript changes detected by git porcelain.');
-      process.exit(0);
+      // Minimal report for porcelain with no selected files
+      try {
+        ensureDir(OUTPUT_DIR);
+        const tNow = Date.now();
+        const timing = { autofixMs: 0, perFileMs: 0, repoMs: 0, totalMs: (tNow - t0) };
+        const payload = {
+          generatedAt: new Date().toISOString(),
+          args: process.argv.slice(2),
+          options: { concurrency, jscpdMinTokens, jscpdIncludeRoots, porcelainMode, noAutofix, debugMode, tsconfigOverride, skipTsc },
+          timing,
+          filesAnalyzed: 0,
+          results: [],
+          summary: { status: 'pass', noViolations: true, porcelainNoFiles: true, message: 'No files selected by porcelain. No analysis performed. No further action required.' },
+          repo: {
+            knip: { unusedFiles: 0, unusedExports: 0, unusedTypes: 0, unusedEnumMembers: 0, unusedClassMembers: 0, unlistedDependencies: 0, unresolvedImports: 0 },
+            jscpd: { groups: 0, duplicatedLines: 0, percentage: 0 },
+            tsc: { totalErrors: 0, tsconfigPath: tsconfigOverride || path.join(ROOT_DIR, 'tsconfig.json') }
+          }
+        };
+        writeJson(RESULTS_FILE, payload);
+        console.log('No reviewable TypeScript changes detected by git porcelain.');
+        console.log(`Report written → ${RESULTS_FILE}`);
+        console.log(`⏱ Total time: ${formatMs(timing.totalMs)}`);
+        console.log('No further action required.');
+        process.exit(0);
+      } catch (err) {
+        console.error(`Failed to write porcelain no-files report: ${err && err.message}`);
+        process.exit(1);
+      }
     }
     console.error('Usage: node docs/review/code-review.js <file1> <file2> ...');
     process.exit(1);
@@ -165,39 +202,92 @@ async function main() {
   }
   const tAutofix1 = Date.now();
 
+  // Optional ESLint batch (single run) to speed up per-file phase
+  const useEslintBatch = process.env.CODE_REVIEW_ESLINT_BATCH !== '0';
+  let eslintMap = {};
+  let eslintBatchMs = 0;
+  if (useEslintBatch) {
+    const tEslintBatch0 = Date.now();
+    try {
+      const CHUNK_SIZE = 200;
+      for (let i = 0; i < absFiles.length; i += CHUNK_SIZE) {
+        const chunk = absFiles.slice(i, i + CHUNK_SIZE);
+        const partial = await runEslintBatch(chunk);
+        for (const [k, v] of Object.entries(partial)) {
+          eslintMap[k] = v;
+        }
+      }
+    } catch (_) {}
+    eslintBatchMs = Date.now() - tEslintBatch0;
+    if (debugMode) console.log(`[eslint-batch] analyzed ${Object.keys(eslintMap).length} file(s) in ${formatMs(eslintBatchMs)}`);
+  }
+
   // Per-file analysis in parallel
   const tFiles0 = Date.now();
   const results = await mapLimit(absFiles, concurrency, async (filePath) => {
     const rel = toRepoRelative(filePath);
     const fileType = getFileType(filePath);
     const limit = FILE_SIZE_LIMITS[fileType];
+    const tLines0 = Date.now();
     const lines = countLines(filePath);
+    const linesMs = Date.now() - tLines0;
     const size = { lines, limit, status: (typeof limit === 'number' && lines > limit) ? 'FAIL' : 'PASS' };
-
+    
+    const tComments0 = Date.now();
     const commentsArr = analyzeComments(filePath);
+    const commentsMs = Date.now() - tComments0;
     const comments = { count: commentsArr.length, status: commentsArr.length === 0 ? 'PASS' : 'FAIL' };
-
+    
+    const tReact0 = Date.now();
     const react = analyzeReactPatterns(filePath);
+    const reactMs = Date.now() - tReact0;
 
+    const tConsole0 = Date.now();
     const consoleErrors = analyzeConsoleErrors(filePath);
+    const consoleMs = Date.now() - tConsole0;
 
-    const eslint = runEslint(filePath);
+    const tEslint0 = Date.now();
+    const eslint = useEslintBatch ? (eslintMap[filePath] || runEslint(filePath)) : runEslint(filePath);
+    const eslintMs = Date.now() - tEslint0;
 
+    const tTs0 = Date.now();
     const typescript = analyzeTypeScript(filePath);
+    const typescriptMs = Date.now() - tTs0;
 
+    const tFallback0 = Date.now();
     const fallbackData = analyzeFallbackData(filePath);
+    const fallbackMs = Date.now() - tFallback0;
 
-    return { filePath: filePath, relPath: rel, fileType, size, comments, react, consoleErrors, eslint, typescript, fallbackData };
+    const timing = { linesMs, commentsMs, reactMs, consoleMs, eslintMs, typescriptMs, fallbackMs };
+
+    return { filePath: filePath, relPath: rel, fileType, size, comments, react, consoleErrors, eslint, typescript, fallbackData, timing };
   });
   const tFiles1 = Date.now();
 
   // Repo-wide analyzers concurrently
   const tRepo0 = Date.now();
-  const [knipData, jscpdData, tscData] = await Promise.all([
-    runKnip(),
-    runJscpd({ includeRoots: jscpdIncludeRoots, minTokens: jscpdMinTokens }),
-    skipTsc ? Promise.resolve({ byFile: {}, totalErrors: 0, tsconfigPath: (tsconfigOverride || path.join(ROOT_DIR, 'tsconfig.json')) }) : runTsc(tsconfigOverride)
-  ]);
+  const repoBreakdown = {};
+  const pKnip = (async () => {
+    const s = Date.now();
+    const d = await runKnip();
+    repoBreakdown.knipMs = Date.now() - s;
+    return d;
+  })();
+  const pJscpd = (async () => {
+    const s = Date.now();
+    const d = await runJscpd({ includeRoots: jscpdIncludeRoots, minTokens: jscpdMinTokens });
+    repoBreakdown.jscpdMs = Date.now() - s;
+    return d;
+  })();
+  const pTsc = (async () => {
+    const s = Date.now();
+    const d = skipTsc
+      ? { byFile: {}, totalErrors: 0, tsconfigPath: (tsconfigOverride || path.join(ROOT_DIR, 'tsconfig.json')) }
+      : await runTsc(tsconfigOverride);
+    repoBreakdown.tscMs = Date.now() - s;
+    return d;
+  })();
+  const [knipData, jscpdData, tscData] = await Promise.all([pKnip, pJscpd, pTsc]);
   const tRepo1 = Date.now();
 
   // Attach TSC per-file
@@ -214,55 +304,97 @@ async function main() {
   const knipAgg = applyKnipToResults(results, knipData || {});
   const jscpdAgg = applyJscpdToResults(results, jscpdData || {});
 
-  // Summaries and result JSON
-  const compactSummary = generateCompactSummary(results);
+  // Repo-wide violation detection and summary
+  const repoViolation = ((tscData.totalErrors || 0) > 0) ||
+    (knipAgg.summary.unusedFiles > 0 ||
+     knipAgg.summary.unusedExports > 0 ||
+     knipAgg.summary.unusedTypes > 0 ||
+     knipAgg.summary.unusedEnumMembers > 0 ||
+     knipAgg.summary.unusedClassMembers > 0 ||
+     knipAgg.summary.unlistedDependencies > 0 ||
+     knipAgg.summary.unresolvedImports > 0) ||
+    (jscpdAgg.summary.groups > 0 ||
+     jscpdAgg.summary.duplicatedLines > 0 ||
+     jscpdAgg.summary.percentage > 0);
+
+  const repoSummary = {
+    knip: knipAgg.summary,
+    jscpd: jscpdAgg.summary,
+    tsc: { totalErrors: tscData.totalErrors || 0, tsconfigPath: tscData.tsconfigPath || null }
+  };
+
+  // Summaries and result JSON (with timing)
+  const t1 = Date.now();
+  const timing = {
+    autofixMs: (tAutofix1 - tAutofix0),
+    perFileMs: (tFiles1 - tFiles0),
+    repoMs: (tRepo1 - tRepo0),
+    totalMs: (t1 - t0),
+    eslintBatchMs,
+    repoBreakdown
+  };
+
+  const compactSummary = generateCompactSummary(results, { timing, debugMode, repo: repoSummary });
   console.log(compactSummary);
-  const batchSummary = generateBatchSummary(results);
+  const batchSummary = generateBatchSummary(results, { timing, debugMode, repo: repoSummary });
   console.log(batchSummary);
 
   // Determine if any violations exist
-  const anyViolation = results.some(r =>
+  const perFileViolation = results.some(r =>
     r.eslint.errors.length > 0 || r.eslint.warnings.length > 0 ||
     r.comments.status === 'FAIL' || r.size.status === 'FAIL' ||
     r.typescript.status === 'FAIL' || (r.typescriptCompiler && r.typescriptCompiler.status === 'FAIL') ||
     r.consoleErrors.status === 'FAIL' || r.fallbackData.status === 'FAIL' ||
     (r.deadCode && r.deadCode.status === 'FAIL') || (r.duplicates && r.duplicates.status === 'FAIL')
   );
+  const anyViolation = perFileViolation || repoViolation;
 
-  // Write JSON report only if violations exist (or reportAll demanded?)
-  if (anyViolation) {
-    try {
-      ensureDir(OUTPUT_DIR);
-      const payload = {
-        generatedAt: new Date().toISOString(),
-        args: process.argv.slice(2),
-        options: { concurrency, jscpdMinTokens, jscpdIncludeRoots, porcelainMode, noAutofix, debugMode, tsconfigOverride, skipTsc },
-        filesAnalyzed: results.length,
-        results: reportAll ? results : results.filter(r => (
+  // Write JSON report always (concise payload on zero violations)
+  try {
+    ensureDir(OUTPUT_DIR);
+    const hasViolations = anyViolation;
+    const resultsToWrite = hasViolations
+      ? (reportAll ? results : results.filter(r => (
           r.eslint.errors.length > 0 || r.eslint.warnings.length > 0 || r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL' || r.consoleErrors.status === 'FAIL' || r.fallbackData.status === 'FAIL' || (r.typescriptCompiler && r.typescriptCompiler.status === 'FAIL') || (r.deadCode && r.deadCode.status === 'FAIL') || (r.duplicates && r.duplicates.status === 'FAIL')
-        )),
-        repo: {
-          knip: knipAgg.summary,
-          jscpd: jscpdAgg.summary,
-          tsc: { totalErrors: tscData.totalErrors || 0, tsconfigPath: tscData.tsconfigPath || null }
-        }
-      };
-      writeJson(RESULTS_FILE, payload);
-      if (debugMode) console.log(`Wrote report: ${toRepoRelative(RESULTS_FILE)}`);
+        )))
+      : (reportAll ? results : []);
+
+    const payload = {
+      generatedAt: new Date().toISOString(),
+      args: process.argv.slice(2),
+      options: { concurrency, jscpdMinTokens, jscpdIncludeRoots, porcelainMode, noAutofix, debugMode, tsconfigOverride, skipTsc },
+      timing,
+      filesAnalyzed: results.length,
+      results: resultsToWrite,
+      summary: hasViolations
+        ? { status: 'fail', message: 'Violations detected. Action required.' }
+        : { status: 'pass', noViolations: true, message: 'No violations detected. No further action required.' },
+      repo: {
+        knip: knipAgg.summary,
+        jscpd: jscpdAgg.summary,
+        tsc: { totalErrors: tscData.totalErrors || 0, tsconfigPath: tscData.tsconfigPath || null }
+      }
+    };
+    writeJson(RESULTS_FILE, payload);
+    if (debugMode) console.log(`Wrote report: ${toRepoRelative(RESULTS_FILE)}`);
+    if (hasViolations) {
       console.log(`AI ACTION REQUIRED: Consume and process this report to implement all recommended fixes → ${RESULTS_FILE}`);
-    } catch (err) {
-      console.error(`Failed to write report: ${err && err.message}`);
-      process.exit(1);
+    } else {
+      console.log(`No violations detected. Report written → ${RESULTS_FILE}`);
+      console.log('No further action required.');
     }
+  } catch (err) {
+    console.error(`Failed to write report: ${err && err.message}`);
+    process.exit(1);
   }
 
-  // Debug timing
+  // Debug timing (detailed breakdown, minutes/seconds)
   if (debugMode) {
-    const t1 = Date.now();
-    console.log('[timing] autofix ms:', (tAutofix1 - tAutofix0));
-    console.log('[timing] per-file ms:', (tFiles1 - tFiles0));
-    console.log('[timing] repo-wide ms:', (tRepo1 - tRepo0));
-    console.log('[timing] total ms:', (t1 - t0));
+    console.log('[timing] autofix:', formatMs(timing.autofixMs));
+    console.log('[timing] per-file:', formatMs(timing.perFileMs));
+    console.log('[timing] repo-wide:', formatMs(timing.repoMs));
+    if (timing.eslintBatchMs) console.log('[timing] eslint-batch:', formatMs(timing.eslintBatchMs));
+    console.log('[timing] total:', formatMs(timing.totalMs));
   }
 
   process.exit(anyViolation ? 1 : 0);

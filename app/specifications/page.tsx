@@ -31,6 +31,12 @@ export default function SpecificationsPage(): JSX.Element {
     }
   }, [searchParams])
   
+  useEffect(() => {
+    if (typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined') {
+      window.sessionStorage.setItem('specs:lastTab', activeTab)
+    }
+  }, [activeTab])
+  
   const {
     searchValue,
     setSearchValue,
@@ -47,12 +53,12 @@ export default function SpecificationsPage(): JSX.Element {
   }, [router])
 
   const handleCreateClick = useCallback((productId: string): void => {
-    router.push(`/create-specification?productId=${encodeURIComponent(productId)}&mode=createFromProduct`)
-  }, [router])
+    router.push(`/create-specification?productId=${encodeURIComponent(productId)}&mode=createFromProduct&tab=${activeTab}`)
+  }, [router, activeTab])
 
   const handleEditClick = useCallback((specificationId: string): void => {
-    router.push(`/edit-specification/${encodeURIComponent(specificationId)}`)
-  }, [router])
+    router.push(`/edit-specification/${encodeURIComponent(specificationId)}?tab=${activeTab}`)
+  }, [router, activeTab])
 
   const tabs = [
     { id: 'to-do' as const, label: 'To Do' },

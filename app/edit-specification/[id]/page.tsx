@@ -2,12 +2,13 @@
 
 import React, { useCallback, use } from 'react'
 import { SpecificationWizard } from '@/components/wizard/SpecificationWizard'
-import { notFound, useRouter } from 'next/navigation'
+import { notFound, useRouter, useSearchParams } from 'next/navigation'
 import { TransformedFormData, buildApiRequest } from '@/components/wizard/hooks/specification-transform-utils'
 import { useAuthenticatedUser } from '@/lib/auth-context'
 import { useSpecificationData } from '@/components/wizard/hooks/useSpecificationData'
 import { LoadingState, ErrorState, NotFoundState } from './EditPageStates'
 import { submitSpecification } from '@/lib/utils/submitSpecification'
+import { useSpecBack } from '@/hooks/useSpecBack'
 
 interface EditSpecificationPageProps {
   params: Promise<{
@@ -20,7 +21,13 @@ export default function EditSpecificationPage({
 }: EditSpecificationPageProps): JSX.Element {
   const { id } = use(params)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const user = useAuthenticatedUser()
+  const initialTab = ((): 'to-do' | 'my-specs' => {
+    const t = searchParams?.get('tab')
+    return t === 'my-specs' ? 'my-specs' : 'to-do'
+  })()
+  const handleBack = useSpecBack(router, initialTab)
   
   const { data: specificationData, isLoading, error } = useSpecificationData(id)
 
@@ -36,20 +43,16 @@ export default function EditSpecificationPage({
       const details = parts.length > 0 ? `: ${parts.join(' | ')}` : ''
       throw new Error(`Update failed${details}`)
     }
-    router.push('/specifications')
+    router.push('/specifications?tab=my-specs')
   }, [id, router, user.id])
 
   if (!id || id === 'undefined') {
     notFound()
   }
-  
-
 
   if (isLoading) return <LoadingState />
   if (error) return <ErrorState error={error} />
   if (!specificationData) return <NotFoundState />
-
-
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -57,6 +60,7 @@ export default function EditSpecificationPage({
         onSubmit={handleSubmit}
         initialData={{ ...specificationData, mode: 'edit' } as unknown as Record<string, unknown>}
         userId={user.id}
+        onBackToList={handleBack}
       />
     </div>
   )

@@ -1,10 +1,12 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { exec } = require('child_process');
+const { promisify } = require('util');
+const execAsync = promisify(exec);
 const { ROOT_DIR, toRepoRelative } = require('../utils/paths');
 
 // Run TypeScript compiler (project-wide) and collect diagnostics
-function runTsc(tsconfigPathArg) {
+async function runTsc(tsconfigPathArg) {
   const byFile = {};
   let totalErrors = 0;
   const defaultTsconfig = path.join(ROOT_DIR, 'tsconfig.json');
@@ -14,7 +16,7 @@ function runTsc(tsconfigPathArg) {
     : 'npx tsc --noEmit --pretty false';
   try {
     // Success: no compiler errors
-    execSync(cmd, { cwd: ROOT_DIR, stdio: 'pipe' });
+    await execAsync(cmd, { cwd: ROOT_DIR, maxBuffer: 64 * 1024 * 1024 });
     return { byFile, totalErrors, tsconfigPath: tsconfigPathUsed };
   } catch (error) {
     const out = (error && (error.stdout?.toString() || error.stderr?.toString())) || '';

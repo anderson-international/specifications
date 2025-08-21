@@ -1,7 +1,7 @@
 const path = require('path');
 const { FILE_SIZE_LIMITS, getFileType } = require('./utils/filters');
 
-function generateCompactSummary(results) {
+function generateCompactSummary(results, opts = {}) {
   const totalFiles = results.length;
   const failedFiles = results.filter(r => 
     r.eslint.errors.length > 0 || r.eslint.warnings.length > 0 || 
@@ -15,6 +15,24 @@ function generateCompactSummary(results) {
     (r.duplicates && r.duplicates.status === 'FAIL')
   );
   const passingFiles = totalFiles - failedFiles.length;
+  const repo = opts && opts.repo ? opts.repo : null;
+  const hasRepoViolations = !!(repo && (
+    (repo.tsc && (repo.tsc.totalErrors || 0) > 0) ||
+    (repo.knip && (
+      (repo.knip.unusedFiles || 0) > 0 ||
+      (repo.knip.unusedExports || 0) > 0 ||
+      (repo.knip.unusedTypes || 0) > 0 ||
+      (repo.knip.unusedEnumMembers || 0) > 0 ||
+      (repo.knip.unusedClassMembers || 0) > 0 ||
+      (repo.knip.unlistedDependencies || 0) > 0 ||
+      (repo.knip.unresolvedImports || 0) > 0
+    )) ||
+    (repo.jscpd && (
+      (repo.jscpd.groups || 0) > 0 ||
+      (repo.jscpd.duplicatedLines || 0) > 0 ||
+      (repo.jscpd.percentage || 0) > 0
+    ))
+  ));
   
   let summary = `CODE REVIEW: ${totalFiles} files | ${passingFiles} passed | ${failedFiles.length} failed\n`;
   summary += `\n`;
@@ -94,21 +112,147 @@ function generateCompactSummary(results) {
         });
       }
     });
+    if (hasRepoViolations) {
+      summary += `\nREPO-WIDE VIOLATIONS (blocking):\n`;
+      if (repo && repo.tsc && (repo.tsc.totalErrors || 0) > 0) {
+        summary += `TypeScript compiler: ${repo.tsc.totalErrors} error(s) repo-wide\n`;
+      }
+      if (repo && repo.knip) {
+        const k = repo.knip;
+        const knipParts = [];
+        if ((k.unusedFiles || 0) > 0) knipParts.push(`unused files ${k.unusedFiles}`);
+        if ((k.unusedExports || 0) > 0) knipParts.push(`unused exports ${k.unusedExports}`);
+        if ((k.unusedTypes || 0) > 0) knipParts.push(`unused types ${k.unusedTypes}`);
+        if ((k.unusedEnumMembers || 0) > 0) knipParts.push(`unused enum members ${k.unusedEnumMembers}`);
+        if ((k.unusedClassMembers || 0) > 0) knipParts.push(`unused class members ${k.unusedClassMembers}`);
+        if ((k.unlistedDependencies || 0) > 0) knipParts.push(`unlisted dependencies ${k.unlistedDependencies}`);
+        if ((k.unresolvedImports || 0) > 0) knipParts.push(`unresolved imports ${k.unresolvedImports}`);
+        if (knipParts.length) summary += `knip: ${knipParts.join(', ')}\n`;
+      }
+      if (repo && repo.jscpd) {
+        const j = repo.jscpd;
+        if ((j.groups || 0) > 0 || (j.duplicatedLines || 0) > 0 || (j.percentage || 0) > 0) {
+          const parts = [];
+          if ((j.groups || 0) > 0) parts.push(`${j.groups} groups`);
+          if ((j.duplicatedLines || 0) > 0) parts.push(`${j.duplicatedLines} duplicated lines`);
+          if ((j.percentage || 0) > 0) parts.push(`${j.percentage}%`);
+          summary += `jscpd: ${parts.join(', ')}\n`;
+        }
+      }
+    }
     summary += `\nACTION REQUIRED: Fix all violations above.\n`;
   } else {
-    summary += `✅ All files passed code review standards.\n`;
+    if (hasRepoViolations) {
+      summary += `REPO-WIDE VIOLATIONS (blocking):\n`;
+      if (repo && repo.tsc && (repo.tsc.totalErrors || 0) > 0) {
+        summary += `TypeScript compiler: ${repo.tsc.totalErrors} error(s) repo-wide\n`;
+      }
+      if (repo && repo.knip) {
+        const k = repo.knip;
+        const knipParts = [];
+        if ((k.unusedFiles || 0) > 0) knipParts.push(`unused files ${k.unusedFiles}`);
+        if ((k.unusedExports || 0) > 0) knipParts.push(`unused exports ${k.unusedExports}`);
+        if ((k.unusedTypes || 0) > 0) knipParts.push(`unused types ${k.unusedTypes}`);
+        if ((k.unusedEnumMembers || 0) > 0) knipParts.push(`unused enum members ${k.unusedEnumMembers}`);
+        if ((k.unusedClassMembers || 0) > 0) knipParts.push(`unused class members ${k.unusedClassMembers}`);
+        if ((k.unlistedDependencies || 0) > 0) knipParts.push(`unlisted dependencies ${k.unlistedDependencies}`);
+        if ((k.unresolvedImports || 0) > 0) knipParts.push(`unresolved imports ${k.unresolvedImports}`);
+        if (knipParts.length) summary += `knip: ${knipParts.join(', ')}\n`;
+      }
+      if (repo && repo.jscpd) {
+        const j = repo.jscpd;
+        if ((j.groups || 0) > 0 || (j.duplicatedLines || 0) > 0 || (j.percentage || 0) > 0) {
+          const parts = [];
+          if ((j.groups || 0) > 0) parts.push(`${j.groups} groups`);
+          if ((j.duplicatedLines || 0) > 0) parts.push(`${j.duplicatedLines} duplicated lines`);
+          if ((j.percentage || 0) > 0) parts.push(`${j.percentage}%`);
+          summary += `jscpd: ${parts.join(', ')}\n`;
+        }
+      }
+      summary += `\nACTION REQUIRED: Fix all violations above.\n`;
+    } else {
+      summary += `✅ All files passed code review standards.\n`;
+    }
+  }
+  
+  // Append timing information to the summary if provided (format as minutes/seconds)
+  if (opts && opts.timing) {
+    const t = opts.timing;
+    const f = (ms) => formatMs(ms);
+    if (opts.debugMode) {
+      summary += `\n⏱ Timing: autofix ${f(t.autofixMs)} | per-file ${f(t.perFileMs)} | repo ${f(t.repoMs)} | total ${f(t.totalMs)}\n`;
+      if (t.repoBreakdown) {
+        const rb = t.repoBreakdown;
+        const parts = [];
+        if (typeof rb.knipMs === 'number') parts.push(`knip ${f(rb.knipMs)}`);
+        if (typeof rb.jscpdMs === 'number') parts.push(`jscpd ${f(rb.jscpdMs)}`);
+        if (typeof rb.tscMs === 'number') parts.push(`tsc ${f(rb.tscMs)}`);
+        if (parts.length) summary += `   repo breakdown: ${parts.join(' | ')}\n`;
+      }
+    } else {
+      summary += `\n⏱ Total time: ${f(t.totalMs)}\n`;
+    }
   }
   
   return summary;
 }
 
-function generateBatchSummary(results) {
+function generateBatchSummary(results, opts = {}) {
   const totalFiles = results.length;
   const passedFiles = results.filter(r => r.comments.status === 'PASS' && r.size.status === 'PASS' && r.typescript.status === 'PASS' && (!r.typescriptCompiler || r.typescriptCompiler.status === 'PASS') && r.eslint.errors.length === 0 && r.consoleErrors.status === 'PASS' && r.fallbackData.status === 'PASS' && (!r.deadCode || r.deadCode.status === 'PASS') && (!r.duplicates || r.duplicates.status === 'PASS'));
   const failedFiles = results.filter(r => r.comments.status === 'FAIL' || r.size.status === 'FAIL' || r.typescript.status === 'FAIL' || (r.typescriptCompiler && r.typescriptCompiler.status === 'FAIL') || r.eslint.errors.length > 0 || r.consoleErrors.status === 'FAIL' || r.fallbackData.status === 'FAIL' || (r.deadCode && r.deadCode.status === 'FAIL') || (r.duplicates && r.duplicates.status === 'FAIL'));
+  const repo = opts && opts.repo ? opts.repo : null;
+  const hasRepoViolations = !!(repo && (
+    (repo.tsc && (repo.tsc.totalErrors || 0) > 0) ||
+    (repo.knip && (
+      (repo.knip.unusedFiles || 0) > 0 ||
+      (repo.knip.unusedExports || 0) > 0 ||
+      (repo.knip.unusedTypes || 0) > 0 ||
+      (repo.knip.unusedEnumMembers || 0) > 0 ||
+      (repo.knip.unusedClassMembers || 0) > 0 ||
+      (repo.knip.unlistedDependencies || 0) > 0 ||
+      (repo.knip.unresolvedImports || 0) > 0
+    )) ||
+    (repo.jscpd && (
+      (repo.jscpd.groups || 0) > 0 ||
+      (repo.jscpd.duplicatedLines || 0) > 0 ||
+      (repo.jscpd.percentage || 0) > 0
+    ))
+  ));
   
   let summary = `=== BATCH TEST SUMMARY ===\n`;
   summary += `Total Files: ${totalFiles} | Passed: ${passedFiles.length} | Failed: ${failedFiles.length}\n\n`;
+  if (hasRepoViolations) {
+    summary += `REPO-WIDE VIOLATIONS (blocking):\n`;
+    if (repo && repo.tsc && (repo.tsc.totalErrors || 0) > 0) {
+      summary += `TypeScript compiler: ${repo.tsc.totalErrors} error(s) repo-wide\n`;
+    }
+    if (repo && repo.knip) {
+      const k = repo.knip;
+      const knipParts = [];
+      if ((k.unusedFiles || 0) > 0) knipParts.push(`unused files ${k.unusedFiles}`);
+      if ((k.unusedExports || 0) > 0) knipParts.push(`unused exports ${k.unusedExports}`);
+      if ((k.unusedTypes || 0) > 0) knipParts.push(`unused types ${k.unusedTypes}`);
+      if ((k.unusedEnumMembers || 0) > 0) knipParts.push(`unused enum members ${k.unusedEnumMembers}`);
+      if ((k.unusedClassMembers || 0) > 0) knipParts.push(`unused class members ${k.unusedClassMembers}`);
+      if ((k.unlistedDependencies || 0) > 0) knipParts.push(`unlisted dependencies ${k.unlistedDependencies}`);
+      if ((k.unresolvedImports || 0) > 0) knipParts.push(`unresolved imports ${k.unresolvedImports}`);
+      if (knipParts.length) summary += `knip: ${knipParts.join(', ')}\n`;
+    }
+    if (repo && repo.jscpd) {
+      const j = repo.jscpd;
+      if ((j.groups || 0) > 0 || (j.duplicatedLines || 0) > 0 || (j.percentage || 0) > 0) {
+        const parts = [];
+        if ((j.groups || 0) > 0) parts.push(`${j.groups} groups`);
+        if ((j.duplicatedLines || 0) > 0) parts.push(`${j.duplicatedLines} duplicated lines`);
+        if ((j.percentage || 0) > 0) parts.push(`${j.percentage}%`);
+        summary += `jscpd: ${parts.join(', ')}\n`;
+      }
+    }
+    summary += `\n`;
+    summary += `🔧 ACTION REQUIRED: Repo-wide violations must be corrected.\n`;
+    summary += `   No violations are acceptable - fix all issues above.\n\n`;
+  }
   
   if (failedFiles.length > 0) {
     summary += `⚠️  FAILED FILES - ALL VIOLATIONS MUST BE FIXED:\n`;
@@ -141,7 +285,36 @@ function generateBatchSummary(results) {
     summary += `\n`;
   }
   
+  // Append timing information to the batch summary if provided (format as minutes/seconds)
+  if (opts && opts.timing) {
+    const t = opts.timing;
+    const f = (ms) => formatMs(ms);
+    if (opts.debugMode) {
+      summary += `⏱ Timing: autofix ${f(t.autofixMs)} | per-file ${f(t.perFileMs)} | repo ${f(t.repoMs)} | total ${f(t.totalMs)}\n`;
+      if (t.repoBreakdown) {
+        const rb = t.repoBreakdown;
+        const parts = [];
+        if (typeof rb.knipMs === 'number') parts.push(`knip ${f(rb.knipMs)}`);
+        if (typeof rb.jscpdMs === 'number') parts.push(`jscpd ${f(rb.jscpdMs)}`);
+        if (typeof rb.tscMs === 'number') parts.push(`tsc ${f(rb.tscMs)}`);
+        if (parts.length) summary += `   repo breakdown: ${parts.join(' | ')}\n`;
+      }
+    } else {
+      summary += `⏱ Total time: ${f(t.totalMs)}\n`;
+    }
+  }
+  
   return summary;
 }
 
 module.exports = { generateCompactSummary, generateBatchSummary };
+
+// Format milliseconds as minutes and seconds, e.g., "2m 03s" or "0m 45s"
+function formatMs(ms) {
+  if (typeof ms !== 'number' || !Number.isFinite(ms) || ms < 0) return '0m 00s';
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  const ss = String(seconds).padStart(2, '0');
+  return `${minutes}m ${ss}s`;
+}

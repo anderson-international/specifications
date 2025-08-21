@@ -11,6 +11,7 @@ interface WizardNavigationFooterProps {
   onPrevious: () => void
   onNext: (e: React.MouseEvent<HTMLButtonElement>) => void
   autoSaveIndicator?: React.ReactNode
+  onBackToList?: () => void
 }
 
 const WizardNavigationFooter = ({
@@ -21,6 +22,7 @@ const WizardNavigationFooter = ({
   onPrevious,
   onNext,
   autoSaveIndicator,
+  onBackToList,
 }: WizardNavigationFooterProps): JSX.Element => {
   return (
     <div className={styles.wizardFooter}>
@@ -32,6 +34,18 @@ const WizardNavigationFooter = ({
         )}
         
         <div className={styles.navigationButtons}>
+          {onBackToList && (
+            <button
+              type="button"
+              onClick={onBackToList}
+              className={styles.backButton}
+              disabled={isSubmitting}
+              title="Back to list"
+              aria-label="Back to list"
+            >
+              ←
+            </button>
+          )}
           {activeStep > 0 && (
             <button
               type="button"

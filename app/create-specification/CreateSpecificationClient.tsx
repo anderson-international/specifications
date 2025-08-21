@@ -7,6 +7,7 @@ import SpecificationWizard from '@/components/wizard/SpecificationWizard'
 import { SpecificationEnumData } from '@/types/enum'
 import { useAuth } from '@/lib/auth-context'
 import { submitSpecification } from '@/lib/utils/submitSpecification'
+import { useSpecBack } from '@/hooks/useSpecBack'
 
 interface CreateSpecificationClientProps {
   enumData: SpecificationEnumData
@@ -23,14 +24,17 @@ export default function CreateSpecificationClient(
   }
   const productId = searchParams.get('productId') || undefined
   const mode = searchParams.get('mode') || undefined
+  const initialTab = ((): 'to-do' | 'my-specs' => {
+    const t = searchParams?.get('tab')
+    return t === 'my-specs' ? 'my-specs' : 'to-do'
+  })()
+  const handleBack = useSpecBack(router, initialTab)
   
   useEffect(() => {
     if (!productId) {
       router.replace('/specifications')
     }
   }, [productId, router])
-  
-  
 
   const handleSubmit = useCallback(
     async (data: TransformedFormData): Promise<void> => {
@@ -72,6 +76,7 @@ export default function CreateSpecificationClient(
       onSubmit={handleSubmit}
       initialData={initialData}
       userId={user.id}
+      onBackToList={handleBack}
     />
   )
 }

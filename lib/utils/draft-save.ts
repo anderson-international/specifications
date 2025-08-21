@@ -1,5 +1,4 @@
 import { WizardDraft, getDraftKey } from './draft-types'
-import { cleanupOldDrafts } from './draft-cleanup'
 
 export function saveDraft(
   userId: string, 
@@ -18,8 +17,15 @@ export function saveDraft(
     
     const key = getDraftKey(userId, productHandle)
     localStorage.setItem(key, JSON.stringify(draft))
-
-    cleanupOldDrafts(userId)
+    if (
+      typeof window !== 'undefined' &&
+      typeof window.dispatchEvent === 'function' &&
+      typeof CustomEvent === 'function'
+    ) {
+      window.dispatchEvent(
+        new CustomEvent('spec-draft-saved', { detail: { key, userId, productHandle } })
+      )
+    }
   } catch (error) {
 
     throw new Error(`Failed to save draft: ${error instanceof Error ? error.message : 'Unknown error'}`)

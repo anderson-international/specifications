@@ -2,15 +2,41 @@ const fs = require('fs');
 const path = require('path');
 const { ensureDir, OUTPUT_DIR, OLD_ANALYSIS_FILE, LEGACY_ANALYSIS_FILE } = require('./paths');
 
+// Simple in-memory cache for file contents during a single analyzer run
+const _fileContentCache = new Map();
+
 function countLines(filePath) {
   try {
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = readFileSmart(filePath);
     if (!content) return 0;
     // Normalize newlines for consistent counting
     return content.split(/\r?\n/).length;
   } catch (e) {
     return 0;
   }
+}
+
+function readFileCached(filePath) {
+  try {
+    if (_fileContentCache.has(filePath)) return _fileContentCache.get(filePath);
+    const content = fs.readFileSync(filePath, 'utf8');
+    _fileContentCache.set(filePath, content || '');
+    return content || '';
+  } catch (_) {
+    _fileContentCache.set(filePath, '');
+    return '';
+  }
+}
+
+function readFileSmart(filePath) {
+  if (process.env.CODE_REVIEW_CACHE_FILES === '0') {
+    try {
+      return fs.readFileSync(filePath, 'utf8');
+    } catch (_) {
+      return '';
+    }
+  }
+  return readFileCached(filePath);
 }
 
 function readJson(filePath, fallback = null) {
@@ -41,6 +67,7 @@ function deleteStaleReports() {
 
 module.exports = {
   countLines,
+  readFileSmart,
   readJson,
   writeJson,
   deleteFileIfExists,

@@ -1,5 +1,6 @@
 ---
 description: Independent code reviewer — no manual fixes; normalization (comments/console cleanup) allowed
+auto_execution_mode: 1
 ---
 
 ## Code Review - Fresh Analysis Only
@@ -33,7 +34,6 @@ description: Independent code reviewer — no manual fixes; normalization (comme
 - Optional flags (fallbacks, use only if explicitly needed):
   - Read-only run (no autofix): add `--no-autofix`.
   - Timing/instrumentation: add `--debug`.
-  - Always write report (even if zero violations): add `--report-all`.
   - Note: The tool prints an "AI ACTION REQUIRED" line and writes the report to `docs/review/output/code-review-results.json`.
   - If the report file is missing (e.g., zero violations), re-run with `--report-all` to generate an explicit report file.
 

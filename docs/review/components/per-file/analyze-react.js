@@ -1,8 +1,8 @@
-const fs = require('fs');
+const { readFileSmart } = require('../utils/fs-utils');
 
 function analyzeReactPatterns(filePath) {
   try {
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = readFileSmart(filePath);
 
     const hasReactImport = content.includes('import React') || content.includes('import * as React');
     const hasUseCallback = content.includes('useCallback');

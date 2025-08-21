@@ -3,6 +3,15 @@ import { WizardDraft, getDraftKey } from './draft-types'
 export function deleteDraft(userId: string, productHandle: string): void {
   const key = getDraftKey(userId, productHandle)
   localStorage.removeItem(key)
+  if (
+    typeof window !== 'undefined' &&
+    typeof window.dispatchEvent === 'function' &&
+    typeof CustomEvent === 'function'
+  ) {
+    window.dispatchEvent(
+      new CustomEvent('spec-draft-deleted', { detail: { key, userId, productHandle } })
+    )
+  }
 }
 
 export function getAllUserDrafts(userId: string): WizardDraft[] {
@@ -28,5 +37,4 @@ export function getAllUserDrafts(userId: string): WizardDraft[] {
     new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime()
   )
 }
-
 

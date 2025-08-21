@@ -1,18 +1,22 @@
 ---
 description: Initialize new conversations with goal establishment and approval gating
+auto_execution_mode: 1
 ---
 
 # Hello AI - A New Chat Conversation Initialization
 
 ## Purpose
-This workflow establishes conversation goals, sets approval gates, and selects appropriate context loaders for efficient AI-assisted development.
+This workflow establishes conversation goals, loads critical context files and sets approval gates
 
 ## **CRITICAL AI INSTRUCTION**
 Perform the steps below sequentially. Do not skip any steps. Do not rely on memories of previous runs of this workflow. Ensure you run the each workflow marked with the /run command.
 
-## Step 1 - Load Critical Conext
+# **REQUIRED** - Do not skip these steps
+
+##Step 1 - Load Critical Conext
+- Load critical guidance and tool usage
 /run code-critical
-### Load code quality validation guidance and tool usage
+- Load code quality validation guidance and tool usage
 /run code-validation
 
 ## Step 2: Set Approval Gates
@@ -30,4 +34,3 @@ Perform the steps below sequentially. Do not skip any steps. Do not rely on memo
  - Establish the goal of this conversation.
  - Ask follow on questions until satisfied you have understood the goal.
  - **Important**: Questions should be asked one at a time.
-

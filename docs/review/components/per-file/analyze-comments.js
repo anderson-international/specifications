@@ -1,8 +1,8 @@
-const fs = require('fs');
+const { readFileSmart } = require('../utils/fs-utils');
 
 function analyzeComments(filePath) {
   try {
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = readFileSmart(filePath);
     const lines = content.split('\n');
 
     const violations = [];

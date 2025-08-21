@@ -1,12 +1,15 @@
-const { execSync } = require('child_process');
+const { exec } = require('child_process');
+const { promisify } = require('util');
+const execAsync = promisify(exec);
 const { ROOT_DIR } = require('../utils/paths');
 
 async function runKnip() {
   try {
-    const output = execSync('npx knip --reporter json --no-progress', {
+    const { stdout, stderr } = await execAsync('npx knip --reporter json --no-progress', {
       cwd: ROOT_DIR,
-      stdio: 'pipe'
-    }).toString();
+      maxBuffer: 64 * 1024 * 1024
+    });
+    const output = String(stdout || stderr || '');
     return JSON.parse(output);
   } catch (error) {
     const out = (error && (error.stdout?.toString() || error.stderr?.toString())) || '';

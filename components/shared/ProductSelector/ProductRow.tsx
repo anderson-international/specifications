@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback } from 'react'
-import { FileText, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 import type { ProductRowProps } from './product-selector-interfaces'
 import styles from './ProductRow.module.css'
 import rowStyles from '@/components/shared/RowStyles/RowStyles.module.css'
@@ -20,11 +20,6 @@ const ProductRow = ({
   onCreateClick,
   onEditClick,
 }: ProductRowProps): JSX.Element => {
-  const getBadgeStyle = useCallback((count: number): string => {
-    if (count <= 4) return styles.specCountBadgeRed
-    if (count <= 9) return styles.specCountBadgeYellow
-    return styles.specCountBadgeGreen
-  }, [])
   const handleClick = useCallback((): void => {
     if (disabled) return
     if (onSelect) {
@@ -45,9 +40,7 @@ const ProductRow = ({
   }, [disabled, onSelect, product, userHasSpec, onEditClick, onCreateClick])
 
   const handleKeyDown = useKeyboardSelect(disabled, handleClick)
-  
-  
-  
+
   return (
     <div
       className={`${rowStyles.baseRow} ${isSelected ? rowStyles.rowSelected : ''} ${disabled ? styles.disabled : ''}`}
@@ -83,12 +76,17 @@ const ProductRow = ({
             <Check size={16} />
           </div>
         )}
-        <div className={styles.specCountContainer}>
-          <FileText size={16} className={styles.specIcon} />
-          <span className={`${styles.specCountBadge} ${getBadgeStyle(specCount ?? 0)}`}>
-            {specCount ?? 0}
-          </span>
-        </div>
+        {(() => {
+          const c = specCount ?? 0
+          const cls = c <= 4
+            ? rowStyles.countBadgeRed
+            : c <= 9
+              ? rowStyles.countBadgeYellow
+              : rowStyles.countBadgeGreen
+          return (
+            <span className={`${rowStyles.countBadge} ${cls}`}>{c}</span>
+          )
+        })()}
       </div>
 
       {mode === 'multi' && (
@@ -109,3 +107,4 @@ const ProductRow = ({
 }
 
 export default React.memo(ProductRow)
+

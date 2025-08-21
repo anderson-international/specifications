@@ -18,12 +18,14 @@ interface SpecificationWizardProps {
   onSubmit: (data: TransformedFormData) => void | Promise<void>
   initialData?: Record<string, unknown>
   userId: string
+  onBackToList?: () => void
 }
 
 const SpecificationWizard = ({
   onSubmit,
   initialData = {},
   userId,
+  onBackToList,
 }: SpecificationWizardProps): JSX.Element => {
   const {
     methods,
@@ -74,8 +76,6 @@ const SpecificationWizard = ({
     })),
     [steps]
   )
-
-
 
   return (
     <FormProvider {...methods}>
@@ -134,6 +134,7 @@ const SpecificationWizard = ({
               isCurrentStepValid={isCurrentStepValid}
               onPrevious={handlePrevious}
               onNext={handleNext}
+              onBackToList={onBackToList}
             />
           </form>
         </div>

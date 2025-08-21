@@ -7,7 +7,7 @@ import type { SpecTabId } from './SpecificationsTabNavigation'
 import AsyncStateContainer from '@/components/shared/AsyncStateContainer'
 import ProductList from '@/components/shared/ProductList'
 import CountSummary from '@/components/shared/CountSummary'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
 
 interface UserProduct extends Product {
@@ -49,7 +49,7 @@ export default function SpecificationsTabContent({
   const { user } = useAuth()
   const [localDraftHandles, setLocalDraftHandles] = useState<Set<string>>(new Set())
 
-  useEffect(() => {
+  const computeLocalDraftHandles = useCallback((): void => {
     if (activeTab !== 'to-do' || !user?.id) {
       setLocalDraftHandles(new Set())
       return
@@ -69,6 +69,28 @@ export default function SpecificationsTabContent({
     }
     setLocalDraftHandles(handles)
   }, [activeTab, filteredProducts, user?.id])
+
+  useEffect(() => {
+    computeLocalDraftHandles()
+  }, [computeLocalDraftHandles])
+
+  useEffect(() => {
+    if (activeTab !== 'to-do' || !user?.id) return
+    const onSaved = (): void => computeLocalDraftHandles()
+    const onDeleted = (): void => computeLocalDraftHandles()
+    const onStorage = (e: StorageEvent): void => {
+      if (!e.key) return
+      if (e.key.startsWith(`wizard-draft-${user.id}-`)) computeLocalDraftHandles()
+    }
+    window.addEventListener('spec-draft-saved', onSaved)
+    window.addEventListener('spec-draft-deleted', onDeleted)
+    window.addEventListener('storage', onStorage)
+    return () => {
+      window.removeEventListener('spec-draft-saved', onSaved)
+      window.removeEventListener('spec-draft-deleted', onDeleted)
+      window.removeEventListener('storage', onStorage)
+    }
+  }, [activeTab, user?.id, computeLocalDraftHandles])
   const loadingMessage = activeTab === 'my-specs' ? 'Loading specifications...' : 'Loading products...'
   const errorMessage = activeTab === 'my-specs' ? 'Error loading specifications:' : 'Error loading products:'
   const emptyMessage: string = activeTab === 'my-specs' ? 'No specifications found.' : 'No products to review yet.'

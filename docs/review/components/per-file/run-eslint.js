@@ -1,4 +1,7 @@
-const { execSync } = require('child_process');
+ const { execSync, exec } = require('child_process');
+ const { promisify } = require('util');
+ const execAsync = promisify(exec);
+ const path = require('path');
 
 function runEslint(filePath) {
   try {
@@ -30,4 +33,54 @@ function runEslint(filePath) {
   }
 }
 
-module.exports = { runEslint };
+// Run ESLint once for all files and return a map of absolutePath -> { errors, warnings }
+async function runEslintBatch(filePaths) {
+  const resultMap = {};
+  try {
+    const files = Array.isArray(filePaths) ? filePaths.filter(Boolean) : [];
+    if (files.length === 0) return resultMap;
+    const quoted = files.map(fp => `"${String(fp).replace(/"/g, '\\"')}"`).join(' ');
+    const cmd = `npx eslint --format json --no-ignore --max-warnings=0 ${quoted}`;
+    try {
+      const { stdout, stderr } = await execAsync(cmd, { maxBuffer: 64 * 1024 * 1024 });
+      const raw = String(stdout || stderr || '[]');
+      let arr;
+      try { arr = JSON.parse(raw); } catch { arr = []; }
+      if (!Array.isArray(arr)) arr = [];
+      for (const item of arr) {
+        const key = path.resolve(item.filePath || '');
+        const errors = [];
+        const warnings = [];
+        const msgs = Array.isArray(item.messages) ? item.messages : [];
+        for (const m of msgs) {
+          const entry = { line: m.line || 0, column: m.column || 0, message: (m.message || '').trim() };
+          if (m.severity === 2) errors.push(entry); else if (m.severity === 1) warnings.push(entry);
+        }
+        resultMap[key] = { errors, warnings };
+      }
+    } catch (err) {
+      const raw = String((err && (err.stdout?.toString() || err.stderr?.toString())) || '[]');
+      try {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          for (const item of arr) {
+            const key = path.resolve(item.filePath || '');
+            const errors = [];
+            const warnings = [];
+            const msgs = Array.isArray(item.messages) ? item.messages : [];
+            for (const m of msgs) {
+              const entry = { line: m.line || 0, column: m.column || 0, message: (m.message || '').trim() };
+              if (m.severity === 2) errors.push(entry); else if (m.severity === 1) warnings.push(entry);
+            }
+            resultMap[key] = { errors, warnings };
+          }
+        }
+      } catch (_) {
+        // If JSON parse fails, fall back to empty results
+      }
+    }
+  } catch (_) {}
+  return resultMap;
+}
+
+module.exports = { runEslint, runEslintBatch };

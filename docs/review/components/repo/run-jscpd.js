@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { exec } = require('child_process');
+const { promisify } = require('util');
+const execAsync = promisify(exec);
 const { ROOT_DIR, TMP_JSCPD_DIR } = require('../utils/paths');
 
 async function runJscpd(apiOpts = {}) {
@@ -81,7 +83,8 @@ async function runJscpd(apiOpts = {}) {
 
   try {
     fs.writeFileSync(tmpScript, scriptSource, 'utf8');
-    const out = execSync(`node "${tmpScript}"`, { cwd: ROOT_DIR, stdio: 'pipe' }).toString();
+    const { stdout, stderr } = await execAsync(`node "${tmpScript}"`, { cwd: ROOT_DIR, maxBuffer: 64 * 1024 * 1024 });
+    const out = String(stdout || stderr || '');
     try {
       return JSON.parse(out);
     } catch (parseErr) {
